@@ -226,6 +226,9 @@ body.kensa header{height:auto!important;flex-wrap:wrap}
 .cal i.e{background:none;border:0}.cal i.fu{opacity:.45}
 .cal i.on{background:var(--green);border-color:var(--green);color:#fff}
 .cal i.td{box-shadow:0 0 0 2px var(--tomato)}
+.cal i{cursor:pointer}.cal i.sel{outline:3px solid #f5c518;outline-offset:1px}
+#calm{width:auto;font-weight:800;font-size:15px;padding:6px 30px 6px 10px}
+.calday{margin-top:10px;background:var(--floor-2);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--muted)}.calday b{color:var(--ink)}.calday ul{margin:6px 0 0;padding-left:18px;color:var(--ink)}.calday .ok{background:var(--green);color:#fff;border-radius:6px;padding:1px 7px;font-weight:700;font-size:12px}.calday .no{background:#ddd;color:#666;border-radius:6px;padding:1px 7px;font-size:12px}
 </style>
 
 </head>
@@ -1156,7 +1159,7 @@ function vHero(){
   <h2>ごはん＆パワー図鑑 <small style="font-size:13px;color:var(--muted)">${Object.keys(FOODS).filter(k=>((m.foods||{})[k]||0)>0).length} / ${Object.keys(FOODS).length} しゅるい</small></h2>
   <div class="zktabs" id="zktabs"></div><div class="zkb">${[['野菜',k=>FSUB(k)==='veg'],['果物',k=>FSUB(k)==='fruit'],['食品',k=>FSUB(k)==='shoku'],['食事メニュー',k=>FSUB(k)==='menu'],['海の幸',k=>FOODS[k].cat==='sea'],['飲み物',k=>FOODS[k].cat==='drink'],['パワースポット',k=>FOODS[k].cat==='power'],['こころのパワー',k=>FOODS[k].cat==='heart'],['必殺技',k=>FOODS[k].cat==='move'],['ヨガのアーサナ',k=>FOODS[k].cat==='yoga'],['トレーナーの愛',k=>FOODS[k].cat==='energy'],['キレイ＆強く',k=>FOODS[k].cat==='beauty'],['ラッキー',k=>FOODS[k].cat==='luck'],['サプリ＆くすり',k=>FOODS[k].cat==='care']].map(([lab,fl],si)=>`<div class="zsec" data-zi="${si}" data-lab="${lab}" data-n="${Object.keys(FOODS).filter(fl).length}"><div class="shelf">${lab} <small>${Object.keys(FOODS).filter(fl).length}</small></div><div class="pantry">${Object.keys(FOODS).filter(fl).map(k=>{const f=FOODS[k],n=(m.foods||{})[k]||0;return `<div class="pc ${n||KS()?'':'none'} ${f.rare?'rare':''}"><canvas class="food" data-food="${k}"></canvas><b class="${(n||KS())&&f.name.length>6?'ln':''}">${n||KS()?f.name:'？？？'}</b><div class="ct">${n}<small>こ</small></div><div class="ef"><span class="st" style="background:${STAT[f.stat].c}">${STAT[f.stat].name}</span>+${fxp(f)}</div>${n>=10?`<div class="tt got">★${f.title}</div>`:''}</div>`}).join('')}</div></div>`).join('')}</div>
   <p class="muted" style="margin:6px 2px 0">毎日のごはんと、宿題のスタンプでもらえます。キラキラのカードはめったに出ないレアです。お酒はEXP控えめです。</p>
-  <h2>今月のスケジュール</h2>
+  <h2>今月のトレーニング</h2>
   ${monthCal(m)}
   <h2>トレーナーからの宿題</h2>
   <div class="stack">${m.homework.length?m.homework.slice().reverse().map(h=>`
@@ -1332,12 +1335,19 @@ function vZukan(){
 
 function HWGROUPS(){return [['おうちの宿題','fix',HOMEWORK],...EXG.map(([g,xs])=>['加圧トレ・'+g,'ex',xs]),['YOGA','yoga',Object.keys(FOODS).filter(k=>FOODS[k].cat==='yoga').map(k=>FOODS[k].name)],['有酸素','cardio',CARDIO]]}
 function ymd(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
-function monthCal(m){const now=new Date(),Y=now.getFullYear(),M=now.getMonth(),last=new Date(Y,M+1,0).getDate(),first=(new Date(Y,M,1).getDay()+6)%7,td=now.getDate();
-  const dow=(now.getDay()+6)%7,mon=new Date(Y,M,td-dow),vs=new Set(m.visits||[]);
-  const on=d=>{const dt=new Date(Y,M,d);if(vs.has(ymd(dt)))return true;const diff=Math.round((dt-mon)/864e5);if(diff>=0&&diff<7)return !!m.streak[diff];if(dt<mon){const r=hashStr(m.id+ymd(dt))%7;return r<Math.max(1,m.streak.filter(Boolean).length)}return false};
+let calYM=null;
+function dayLog(m,dt){const k=ymd(dt);return S.feed.filter(f=>f.who===m.id&&ymd(new Date(f.t))===k).map(f=>f.text)}
+function monthCal(m){const now=new Date();if(!calYM)calYM=[now.getFullYear(),now.getMonth()];const [Y,M]=calYM,last=new Date(Y,M+1,0).getDate(),first=(new Date(Y,M,1).getDay()+6)%7,isCur=Y===now.getFullYear()&&M===now.getMonth(),td=isCur?now.getDate():(new Date(Y,M,1)<now?last:0);
+  const dow=(now.getDay()+6)%7,mon=new Date(now.getFullYear(),now.getMonth(),now.getDate()-dow),vs=new Set(m.visits||[]);
+  const on=d=>{const dt=new Date(Y,M,d);if(vs.has(ymd(dt))||dayLog(m,dt).length)return true;const diff=Math.round((dt-mon)/864e5);if(diff>=0&&diff<7)return !!m.streak[diff];if(dt<mon){const r=hashStr(m.id+ymd(dt))%7;return r<Math.max(1,m.streak.filter(Boolean).length)}return false};
   let cells='',cnt=0;for(let i=0;i<first;i++)cells+='<i class="e"></i>';
-  for(let d=1;d<=last;d++){const v=d<=td&&on(d);if(v)cnt++;const w=(first+d-1)%7;cells+=`<i class="${v?'on':''} ${d===td?'td':''} ${d>td?'fu':''} ${w===5?'sa':w===6?'su':''}">${d}</i>`}
-  return `<div class="card"><div class="calh"><b>${Y}年${M+1}月</b><span>来館 <b>${cnt}</b> 日</span></div><div class="cal">${['月','火','水','木','金','土','日'].map((x,i)=>`<em class="${i===5?'sa':i===6?'su':''}">${x}</em>`).join('')}${cells}</div><div class="muted" style="margin-top:8px;font-size:12px">緑の日が来館日です。来るだけで「根性」が上がります。</div></div>`}
+  for(let d=1;d<=last;d++){const v=d<=td&&on(d);if(v)cnt++;const w=(first+d-1)%7;cells+=`<i data-cd="${d}" class="${v?'on':''} ${isCur&&d===now.getDate()?'td':''} ${d>td?'fu':''} ${w===5?'sa':w===6?'su':''}">${d}</i>`}
+  const opts=[];for(let i=0;i<12;i++){const d=new Date(now.getFullYear(),now.getMonth()-i,1);opts.push(`<option value="${d.getFullYear()}-${d.getMonth()}" ${d.getFullYear()===Y&&d.getMonth()===M?'selected':''}>${d.getFullYear()}年${d.getMonth()+1}月</option>`)}
+  return `<div class="card" id="calbox"><div class="calh"><select id="calm" aria-label="月をえらぶ">${opts.join('')}</select><span>来館 <b>${cnt}</b> 日</span></div><div class="cal">${['月','火','水','木','金','土','日'].map((x,i)=>`<em class="${i===5?'sa':i===6?'su':''}">${x}</em>`).join('')}${cells}</div><div class="calday" id="calday">日付をタップすると、その日に来た記録とトレーニング内容が見られます。</div></div>`}
+function calDay(m,d){const [Y,M]=calYM,dt=new Date(Y,M,d),log=dayLog(m,dt),c=document.querySelector(`#calbox [data-cd="${d}"]`),v=c&&c.classList.contains('on');
+  return `<b>${M+1}月${d}日（${'日月火水木金土'[dt.getDay()]}）</b> ${v?'<span class="ok">来館</span>':'<span class="no">お休み</span>'}`+(log.length?`<ul>${log.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`:v?'<div>ジムにチェックイン（トレーニング内容の記録なし）</div>':'')}
+document.addEventListener('change',e=>{if(e.target.id==='calm'){const [y,mm]=e.target.value.split('-').map(Number);calYM=[y,mm];const b=document.getElementById('calbox');if(b)b.outerHTML=monthCal(me())}});
+document.addEventListener('click',e=>{const c=e.target.closest('#calbox [data-cd]');if(!c)return;document.querySelectorAll('#calbox .sel').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');document.getElementById('calday').innerHTML=calDay(me(),+c.dataset.cd)});
 function vGuild(){
   setTimeout(()=>{const L=$('#htl');if(!L)return;let base=HOMEWORK[0],kind='fix';const O=$('#hopt');
     const sel=(id,arr,def,unit)=>`<label>${unit}<select id="${id}">${arr.map(v=>`<option ${v===def?'selected':''}>${v}</option>`).join('')}</select></label>`;
