@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>キタエル・クエスト</title>
-<meta name="theme-color" content="#ffe9f0">
+<meta name="theme-color" content="#ffffff">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -18,8 +18,8 @@
 <style>
 /* Layout: one-column phone app. Soft pastel look for a mostly-female membership; the four stats keep bumper-plate hues (red, blue, yellow, green), softened. */
 :root{
-  --floor:#fff6f8; --floor-2:#ffe9f0; --panel:#ffffff; --line:#f6d3de; --stage:#f1e6fb;
-  --chalk:#4b3442; --muted:#9a7d8b;
+  --floor:#e6f4ff; --floor-2:#f1f8ff; --panel:#ffffff; --line:#d8e8f5; --stage:#f1e6fb;
+  --chalk:#3d3450; --muted:#7f8aa1;
   --red:#f06b7e; --blue:#6aa8f0; --yellow:#f7c948; --green:#5cc98a;
   --gold:#e9a400; --accent:#e8578a;
   --display:"M PLUS Rounded 1c","Zen Maru Gothic","Hiragino Maru Gothic ProN",system-ui,sans-serif;
@@ -29,14 +29,29 @@
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html,body{background:var(--floor);color:var(--chalk)}
-body{font-family:var(--body);font-size:15px;line-height:1.6;
-  background-image:radial-gradient(rgba(232,87,138,.10) 1.5px,transparent 1.5px);background-size:14px 14px}
+body{font-family:var(--body);font-size:15px;line-height:1.6;min-height:100%;
+  background-image:linear-gradient(180deg,#bfe5ff 0%,#e3f3ff 45%,#fff0f6 100%);background-repeat:no-repeat;background-size:100% 100%}
+/* ロゴ：1文字ずつ色の違う丸いタイル */
+.tiles{display:flex;gap:3px;flex-wrap:nowrap}
+.tiles b{display:grid;place-items:center;width:26px;height:28px;border-radius:7px;color:#fff;font-family:var(--display);font-weight:800;font-size:16px;line-height:1;box-shadow:inset 0 -4px 0 rgba(0,0,0,.16)}
+.tiles i{width:5px}
+/* 浮島のステージ */
+.scene{position:relative;margin-top:14px;border-radius:24px;overflow:hidden;background:linear-gradient(180deg,#9fd8ff,#d9f0ff 70%,#fbe8f2);border:2px solid #fff;box-shadow:0 6px 18px rgba(80,140,200,.18)}
+.scene canvas{display:block;width:100%;height:auto;image-rendering:pixelated}
+.nametag{position:absolute;left:50%;transform:translateX(-50%);top:8%;background:#fff;border:2px solid var(--accent);color:var(--accent);border-radius:999px;padding:2px 12px;font-weight:900;font-size:13px;white-space:nowrap;box-shadow:0 2px 0 rgba(232,87,138,.25)}
+.nametag small{color:var(--muted);font-weight:700;margin-left:6px}
+.bonus{margin-top:12px;background:#fff;border-radius:20px;padding:14px;text-align:center;border:2px solid #fde3ec;box-shadow:0 4px 0 #fde3ec}
+.bonus .bt{font-size:13px;color:var(--muted)}
+.bonus .bv{font-family:var(--display);font-weight:800;font-size:34px;color:#e0a100;line-height:1.3}
+.bonus .bv small{font-size:15px}
+.cloud{position:absolute;background:#fff;border-radius:999px;opacity:.9;animation:drift 18s linear infinite alternate}
+@keyframes drift{from{transform:translateX(-12px)}to{transform:translateX(12px)}}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--floor-2)}
 .app{max-width:520px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 96px}
-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--floor-2);border-bottom:1px solid var(--line);
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:rgba(255,255,255,.88);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
   margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-left,0px));display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .logo{font-family:var(--display);font-size:18px;white-space:nowrap;letter-spacing:.04em;flex:1;min-width:0}
-.logo small{display:block;font-family:var(--body);font-size:11px;color:var(--muted);letter-spacing:.08em}
+.logo small{display:block;margin-top:3px;font-family:var(--body);font-size:11px;color:var(--muted);letter-spacing:.08em}
 select,input,button{font:inherit;color:inherit}
 select,input{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:7px 9px;min-width:0}
 button{cursor:pointer;border:0;border-radius:12px;padding:9px 14px;background:var(--panel);border:1px solid var(--line)}
@@ -144,7 +159,7 @@ tr.me td{color:var(--accent)}
 <body>
 <div class="app">
   <header>
-    <div class="logo">キタエル・クエスト<small>GYM × ADVENTURE ／ 試作版</small></div>
+    <div class="logo"><div class="tiles" role="img" aria-label="キタエル・クエスト"><b style="background:#ec6a84">キ</b><b style="background:#f2b230">タ</b><b style="background:#5cb14c">エ</b><b style="background:#5aa8e0">ル</b><i></i><b style="background:#9b84dc">ク</b><b style="background:#ec6a84">エ</b><b style="background:#f2b230">ス</b><b style="background:#5cb14c">ト</b></div><small>GYM × ADVENTURE ／ 試作版</small></div>
     <select id="who" aria-label="表示する会員"></select>
     <button id="modeBtn" class="mode" type="button">トレーナー</button>
   </header>
@@ -331,6 +346,7 @@ function paintHero(cv,stage,cls,hair,look){
     P([[5,3],[6,3],[6,4],[10,3],[9,3],[9,4],[5,2],[10,2]],'#0b0d14');P([[5,3],[10,3]],'#3c4466');P([[7,6],[8,6]],SKD);
   }
   if(AN){R(4,0,8,8,null);AN.head(R,P,SK,SKD);AN.ears(R,P,SK,SKD);}
+  if(look!=='hamster'&&look!=='a')P([[5,5],[10,5]],'#f6a5b8'); // ほっぺ
   if(look==='g'){R(4,4,1,3,hair);R(11,4,1,3,hair);P([[6,5],[9,5]],'#e2483d');P([[7,1],[8,1]],'#f2c230');}
   R(5,11,6,1,shirt);R(5,12,6,1,'#3a3f4d');R(5,13,2,2,'#3a3f4d');R(9,13,2,2,'#3a3f4d');
   R(5,15,2,1,has(5)?cls:'#222');R(9,15,2,1,has(5)?cls:'#222');
@@ -445,6 +461,33 @@ function paintKami(cv,stage,cls){
   })[stage]();
   for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(g[y][x]){c.fillStyle=g[y][x];c.fillRect(x,y,1,1);}
 }
+// 浮島の上にキャラクターを立たせた場面（ホーム画面用）
+function drawScene(cv,m){
+  const W=320,H=200;cv.width=W;cv.height=H;const c=cv.getContext('2d');c.imageSmoothingEnabled=false;c.clearRect(0,0,W,H);
+  const cx=160,cy=128,hw=118,hh=40,th=26;
+  const poly=(pts,col)=>{c.fillStyle=col;c.beginPath();pts.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.closePath();c.fill();};
+  // 側面（土）と草の縁
+  poly([[cx-hw,cy],[cx,cy+hh],[cx,cy+hh+th],[cx-hw,cy+th]],'#c48a5c');
+  poly([[cx+hw,cy],[cx,cy+hh],[cx,cy+hh+th],[cx+hw,cy+th]],'#a8714a');
+  poly([[cx-hw,cy],[cx,cy+hh],[cx,cy+hh+7],[cx-hw,cy+7]],'#8fd16e');
+  poly([[cx+hw,cy],[cx,cy+hh],[cx,cy+hh+7],[cx+hw,cy+7]],'#76bb59');
+  // 上面（芝生のタイル）
+  poly([[cx,cy-hh],[cx+hw,cy],[cx,cy+hh],[cx-hw,cy]],'#b3e88c');
+  c.strokeStyle='rgba(255,255,255,.35)';c.lineWidth=1;
+  for(let i=1;i<6;i++){const t=i/6;c.beginPath();c.moveTo(cx-hw+hw*t,cy-hh*t);c.lineTo(cx+hw*t,cy+hh-hh*t);c.stroke();c.beginPath();c.moveTo(cx+hw-hw*t,cy-hh*t);c.lineTo(cx-hw*t,cy+hh-hh*t);c.stroke();}
+  // 道（クリーム色）
+  poly([[cx-14,cy-hh+7],[cx+hw-30,cy-6],[cx+hw-46,cy+2],[cx-30,cy-hh+15]],'#fbefb8');
+  // 木（ブロック）
+  const box=(x,y,w,h,d,top,l,r)=>{poly([[x,y],[x+w,y-w/2],[x+w+d,y-w/2+d/2],[x+d,y+d/2]],top);poly([[x,y],[x+d,y+d/2],[x+d,y+d/2+h],[x,y+h]],l);poly([[x+d,y+d/2],[x+w+d,y-w/2+d/2],[x+w+d,y-w/2+d/2+h],[x+d,y+d/2+h]],r);};
+  box(66,96,8,22,8,'#9a6a44','#a8754c','#8a5c3a');box(52,70,22,22,22,'#8be08a','#6cc56c','#58ad58');
+  // ダンベル
+  c.fillStyle='#7d8494';c.fillRect(218,128,24,3);c.fillStyle='#ec6a84';c.fillRect(214,123,6,13);c.fillRect(240,123,6,13);
+  // 花
+  [[110,140,'#ff9cc0'],[196,150,'#ffe27a'],[250,118,'#c7a8ff'],[96,124,'#ffffff']].forEach(([x,y,col])=>{c.fillStyle=col;c.fillRect(x,y,4,4);});
+  // キャラクター（影つき）
+  c.fillStyle='rgba(0,0,0,.12)';c.beginPath();c.ellipse(cx,cy+2,30,8,0,0,7);c.fill();
+  const sp=document.createElement('canvas');drawSprite(sp,m);c.drawImage(sp,cx-48,cy-92,96,96);
+}
 function drawSprite(cv,m){const st=stageOfLv(levelOf(total(m)).lv);if(m.look==='g')return paintKami(cv,st,STAT[topStat(m)].hex);paintHero(cv,st,STAT[topStat(m)].hex,hairOf(m),m.look);}
 function drawBoss(cv,ratio){
   const art=`....rrrrrr....
@@ -505,8 +548,11 @@ function vHero(){
   const m=me(),L=levelOf(total(m)),days=['月','火','水','木','金','土','日'];
   const visits=m.streak.filter(Boolean).length;
   $('#view').innerHTML=`
-  <div class="hero">
-    <canvas class="sprite" id="sp" aria-label="冒険者の姿"></canvas>
+  <div class="scene"><span class="cloud" style="left:8%;top:12%;width:64px;height:18px"></span><span class="cloud" style="right:10%;top:26%;width:46px;height:14px;animation-duration:24s"></span>
+    <canvas id="sp" width="320" height="200" aria-label="冒険者の姿"></canvas>
+    <div class="nametag">${esc(m.name)}<small>Lv${L.lv}</small></div></div>
+  ${S.bonusDay!==dayKey()?`<div class="bonus"><div class="bt">⭐ ギルドから 今日のごほうびが とどきました</div><div class="bv">+20 <small>EXP</small></div><button type="button" class="btn-main" id="bonus" style="width:100%">受けとる</button></div>`:''}
+  <div class="card" style="margin-top:12px">
     <div class="stack" style="gap:6px;min-width:0">
       <div class="name">${esc(m.name)}${L.lv>=100?` <span style="color:var(--accent)">${'★'.repeat(1+Math.floor((L.lv-100)/10))}</span>`:''}</div>
       <div class="muted" style="font-size:12px">姿：${nameHtml(evoInfo(m.look,stageOfLv(L.lv)))}</div>
@@ -515,7 +561,7 @@ function vHero(){
       <div class="bar" aria-label="次のレベルまで"><i style="width:${L.into/L.need*100}%"></i></div>
       <div class="muted">次のレベルまで ${L.need-L.into} EXP</div>
       <label>見た目<select id="lk">${LOOKS.map(([k,l])=>`<option value="${k}" ${(m.look||'m')===k?'selected':''}>${l}</option>`).join('')}</select></label>
-      <button type="button" id="zk" style="font-size:12px;padding:5px 10px;align-self:flex-start">進化図鑑（${stageOfLv(L.lv)+1}/21）</button>
+      <button type="button" id="zk" class="btn-main" style="font-size:13px;padding:7px 16px;align-self:flex-start">進化図鑑を見る（${stageOfLv(L.lv)+1}/21）</button>
     </div>
   </div>
   <div class="stats">${Object.entries(STAT).map(([k,v])=>`
@@ -542,7 +588,8 @@ function vHero(){
     <div class="muted">${Math.min(visits,S.quest.goal)} / ${S.quest.goal} 回　達成で 称号チャンス＋100 EXP</div>
   </div>
   <div class="demo">試作版です。他の会員は毎日ランダムに30人だけ表示され、ジムの会員数は分からないようになっています。 <button type="button" id="nextDay" style="font-size:12px;padding:3px 8px">翌日の顔ぶれを見る</button><br>会員データはデモ用で、このブラウザの中にだけ保存されます。上のメニューで会員を切り替えると、他の人の画面も見られます。 <button type="button" id="reset" style="font-size:12px;padding:3px 8px;margin-left:4px">初期化</button></div>`;
-  drawSprite($('#sp'),m);
+  drawScene($('#sp'),m);
+  const bb=$('#bonus');if(bb)bb.onclick=()=>{S.bonusDay=dayKey();gain(m,'grit',20,'今日のごほうびを受けとった');vHero();};
   $('#zk').onclick=()=>{tab='zukan';zLook=m.look||'m';render();window.scrollTo(0,0)};
   $('#lk').onchange=e=>{m.look=e.target.value;save();vHero()};
   document.querySelectorAll('[data-hw]').forEach(b=>b.onclick=()=>{const h=m.homework.find(x=>x.id==b.dataset.hw);h.status='done';h.doneAt=Date.now();save();toast('報告しました！ トレーナーのスタンプを待とう');vHero()});
@@ -610,7 +657,7 @@ function vFeed(){
       <div class="what">${esc(p.text)}</div>
       <div class="meta"><span class="muted"><span class="tag" style="background:${STAT[p.stat].c}">${STAT[p.stat].name}+${p.xp}</span> ${ago(p.t)}</span>
       <button type="button" class="cheer ${cheered?'done':''}" data-c="${p.id}" ${p.who===m.id?'disabled':''}>エール ${p.cheers.length}</button></div></div></div>`}).join('')}</div>`;
-  document.querySelectorAll('canvas[data-av]').forEach(c=>{const w=byId(c.dataset.av);if(w)drawSprite(c,w);else{c.width=1;c.height=1;const x=c.getContext('2d');x.fillStyle='#3a7bea';x.fillRect(0,0,1,1)}});
+  document.querySelectorAll('canvas[data-av]').forEach(c=>{const w=byId(c.dataset.av);if(w)drawSprite(c,w);else{c.width=1;c.height=1;const x=c.getContext('2d');x.fillStyle='#e8578a';x.fillRect(0,0,1,1)}});
   document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{
     const p=S.feed.find(x=>x.id==b.dataset.c);if(p.cheers.includes(m.id))return;
     p.cheers.push(m.id);m.stats.grit+=2;const tgt=byId(p.to||p.who);if(tgt){tgt.stats.grit+=2}save();toast('エールを送りました！ 根性+2');vFeed()});
