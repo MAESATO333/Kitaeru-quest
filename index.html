@@ -232,13 +232,13 @@ body.kensa header{height:auto!important;flex-wrap:wrap}
 .calday{margin-top:10px;background:var(--floor-2);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--muted)}.calday b{color:var(--ink)}.calday ul{margin:6px 0 0;padding-left:18px;color:var(--ink)}.calday .ok{background:var(--green);color:#fff;border-radius:6px;padding:1px 7px;font-weight:700;font-size:12px}.calday .no{background:#ddd;color:#666;border-radius:6px;padding:1px 7px;font-size:12px}
 
 .deco{display:none}
-@media (min-width:900px){
+@media (min-width:1180px){
 .deco{display:block;position:fixed;top:0;bottom:120px;width:calc((100vw - 520px)/2);pointer-events:none;z-index:0;overflow:hidden}
 .deco.l{left:0}.deco.r{right:0}
 .app{position:relative;z-index:1}
 .dk{position:absolute;display:flex;flex-direction:column;align-items:center;transform:translate(-50%,0)}
-.dk canvas{width:min(clamp(84px,9vw,132px),12.5vh);image-rendering:pixelated;filter:drop-shadow(0 4px 0 rgba(60,90,20,.12))}
-.dk .bb{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:2px 9px;font-size:clamp(11px,1vw,14px);font-weight:800;color:var(--ink);white-space:nowrap;margin-bottom:-20px;z-index:2;position:relative;box-shadow:2px 2px 0 var(--lemon)}
+.dk canvas{width:100px;image-rendering:pixelated;filter:drop-shadow(0 4px 0 rgba(60,90,20,.12))}
+.dk .bb{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:2px 9px;font-size:clamp(11px,1vw,14px);font-weight:800;color:var(--ink);white-space:nowrap;margin-bottom:24px;z-index:2;position:relative;box-shadow:2px 2px 0 var(--lemon)}
 .dk .bb::after{content:'';position:absolute;left:50%;bottom:-7px;margin-left:-5px;border:5px solid transparent;border-top-color:var(--ink);border-bottom:0}
 .dk.bob canvas{animation:dbob 1.6s ease-in-out infinite}
 .dk.hop canvas{animation:dhop 1s cubic-bezier(.3,0,.5,1) infinite}
@@ -246,9 +246,9 @@ body.kensa header{height:auto!important;flex-wrap:wrap}
 .dk.run{animation:drun 6s ease-in-out infinite alternate}
 .dk.slp canvas{animation:dbob 3.2s ease-in-out infinite}
 @keyframes dbob{50%{transform:translateY(-6px)}}
-@keyframes dhop{0%,100%{transform:translateY(0)}45%{transform:translateY(-22px)}}
+@keyframes dhop{0%,100%{transform:translateY(0)}45%{transform:translateY(-14px)}}
 @keyframes dsway{50%{transform:rotate(-6deg)}}
-@keyframes drun{to{margin-left:60px}}
+@keyframes drun{to{margin-left:16px}}
 .dsun{position:absolute;width:64px;height:64px;border-radius:50%;background:radial-gradient(circle,#ffe27a 55%,rgba(255,226,122,0) 70%)}
 .dcloud{position:absolute;width:120px;height:34px;background:#fff;border-radius:30px;opacity:.85}
 .dcloud::before{content:'';position:absolute;left:24px;top:-18px;width:52px;height:44px;background:#fff;border-radius:50%}
@@ -1492,16 +1492,21 @@ function scene(k,sc){const H=HEROES.find(h=>h.key===k);if(!H)return null;const o
  return cv}
 function flip(cv){const f=document.createElement('canvas');f.width=cv.width;f.height=cv.height;const c=f.getContext('2d');c.translate(cv.width,0);c.scale(-1,1);c.drawImage(cv,0,0);return f}
 const L=[['carrot','lift'],['piman','run'],['onion','yoga'],['cabbage','eat'],['daikon','jump'],['tomato','dumb'],['pumpkin','sleep'],['broccoli','cheer'],['shoga','run'],['imo','cheer'],
- ['carrot','yoga'],['piman','eat'],['onion','jump'],['cabbage','sleep'],['daikon','water'],['tomato','lift'],['pumpkin','flower'],['broccoli','dumb'],['shoga','jump'],['imo','eat']];
+ ['pumpkin','dumb'],['broccoli','lift'],['shoga','yoga'],['imo','eat'],['tomato','jump'],['cabbage','sleep'],['pumpkin','flower'],['broccoli','dumb'],['shoga','jump'],['imo','eat']];
 const keys=HEROES.map(h=>h.key);const fix=k=>keys.includes(k)?k:keys.find(x=>x.startsWith(k.slice(0,3)))||keys[0];
 const POS=[[28,4],[70,9],[30,21],[72,26],[26,38],[70,43],[32,55],[68,60],[30,71],[70,76]];
 ['l','r'].forEach((side,si)=>{const d=document.createElement('div');d.className='deco '+side;d.setAttribute('aria-hidden','true');
  d.innerHTML=si?'<div class="dcloud" style="left:12%;top:9%"></div><div class="dsun" style="right:8%;top:2%"></div>':'<div class="dcloud" style="left:46%;top:3%"></div><div class="dcloud" style="left:6%;top:58%;transform:scale(.7)"></div>';
- L.slice(si*10,si*10+10).forEach(([k,sc],i)=>{let cv=scene(fix(k),sc);if(!cv)return;if((si+i)%3===1&&sc!=='lift')cv=flip(cv);const w=document.createElement('div');const [x,y]=POS[i];w.className='dk '+AN[sc];
+ L.slice(si*10,si*10+6).forEach(([k,sc],i)=>{let cv=scene(fix(k),sc);if(!cv)return;if((si+i)%3===1&&sc!=='lift')cv=flip(cv);const w=document.createElement('div');const [x,y]=POS[i];w.className='dk '+AN[sc];
   w.style.left=(si?100-x:x)+'%';w.style.top=(i===0?1:y)+'%';w.style.animationDelay=w.style.animationDelay=(-i*0.37)+'s';
-  if(i%2===0){const b=document.createElement('div');b.className='bb';b.textContent=si?({0:'上腕三頭筋',2:'スクワット！',4:'吸って〜吐いて〜',6:'タンパク質大好き❤',8:'イェーイ！'}[i]||SC[sc]):SC[sc];w.appendChild(b)}
+  if(true){const b=document.createElement('div');b.className='bb';b.textContent=si?({0:'上腕三頭筋',1:'スクワット！',2:'吸って〜吐いて〜',3:'タンパク質大好き❤',4:'イェーイ！'}[i]||SC[sc]):SC[sc];w.appendChild(b)}
   cv.style.animationDelay=(-i*0.29)+'s';w.appendChild(cv);d.appendChild(w)});
  document.body.appendChild(d)});
+function lay(){document.querySelectorAll('.deco').forEach(d=>{const H=d.clientHeight,W=d.clientWidth;if(!H)return;const it=[...d.querySelectorAll('.dk')];const slot=H/3.5;
+ const cw=Math.max(48,Math.min(128,(slot-90)/0.864,W*0.36));
+ it.forEach((w,i)=>{const cv=w.querySelector('canvas');cv.style.width=cw+'px';const col=i%2,k=i>>1;const bb=w.querySelector('.bb');const bh=bb?bb.offsetHeight+8:0;
+  const y=k*slot+(col?slot*0.5:0)+ (bb?0:Math.max(0,34-0));w.style.top=Math.round(y+ (bb?0:0))+'px';});});}
+lay();addEventListener('resize',lay);
 })();</script><script>(()=>{let yi=0;const f=()=>{const sec=[...document.querySelectorAll('.zkb .zsec')].find(x=>x.dataset.lab==='ヨガのアーサナ');if(!sec||sec.dataset.y)return;sec.dataset.y=1;const pan=sec.querySelector('.pantry');const cards=[...pan.children];
  const by={};cards.forEach(c=>{const cv=c.querySelector('canvas[data-food]');const g=cv?yg(cv.dataset.food):'whole';(by[g]=by[g]||[]).push(c)});
  const sub=document.createElement('div');sub.className='ysub';sub.innerHTML=YG.filter(([gk])=>by[gk]).map(([gk,gl],i)=>`<button type="button" data-yg="${gk}">${gl}<small>${by[gk].length}</small></button>`).join('');pan.before(sub);
