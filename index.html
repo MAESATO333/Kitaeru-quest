@@ -197,6 +197,17 @@ h2 .tb{color:#fff;-webkit-text-fill-color:#fff}
 body.kensa header::after{margin:12px 0 4px;padding:5px 8px;line-height:1.5;flex-basis:100%;width:100%;grid-column:1/-1;box-sizing:border-box;height:auto;position:static;left:auto;right:auto;bottom:auto}
 body.kensa header{height:auto!important;flex-wrap:wrap}
 #view>:first-child{margin-top:16px}
+
+.zktabs{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 10px}
+.zktabs button{font:inherit;font-size:12px;font-weight:700;border:2px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:4px 10px;cursor:pointer}
+.zktabs button small{font-size:10px;opacity:.7;margin-left:3px}
+.zktabs button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.zkb{width:100%;min-width:0;max-width:100%}.zkb .zsec{display:none;width:100%}.zkb .zsec.on{display:block}
+.zkb .pantry{display:grid;grid-auto-flow:column;grid-template-rows:repeat(2,auto);grid-template-columns:none;grid-auto-columns:86px;width:100%;box-sizing:border-box;overflow-x:auto;scroll-snap-type:x proximity;padding:2px 2px 10px;-webkit-overflow-scrolling:touch}
+.zkb .pantry>.pc{scroll-snap-align:start}
+.zkb .shelf small{font-size:11px;opacity:.8}
+.zkb .shelf{white-space:nowrap}
+.zkhint{font-size:11px;color:var(--muted);margin:2px 2px 0}
 </style>
 
 </head>
@@ -738,6 +749,8 @@ const FOODS={
  y_crocodiletwist:{"name": "ワニのねじり", "stat": "grit", "eff": "ナクラーサナ／背骨すっきり", "title": "ワニのねじりマスター", "cat": "yoga", "pal": {"f": "#f0c8a0", "h": "#4a3426", "s": "#f0c8a0", "T": "#7a5bd0", "P": "#3a3f4d", "k": "#f0c8a0", "m": "#9b2f5e"}, "art": ["............", "............", "............", "............", "............", "............", ".........s..", "...P.....s..", "..PPP....s..", ".kP.P....shh", ".k...sssssff", "mmmmmmmmmmmm"]},
  y_supstretch:{"name": "寝て全身のびのび", "stat": "grit", "eff": "スプタ・ターダーサナ／全身をうーんと", "title": "寝て全身のびのびマスター", "cat": "yoga", "pal": {"f": "#f0c8a0", "h": "#4a3426", "s": "#f0c8a0", "T": "#e8b80c", "P": "#3a3f4d", "k": "#f0c8a0", "m": "#4f7d2a"}, "art": ["............", "............", "............", "............", "............", "............", "............", "............", "............", "sshh......Pk", "ssffsTTTPPPk", "mmmmmmmmmmmm"]}
 };
+const FOODSUB={"cabbage": "veg", "komatsuna": "veg", "lettuce": "veg", "hakusai": "veg", "carrot": "veg", "onion": "veg", "tomato": "veg", "daikon": "veg", "corn": "veg", "pumpkin": "veg", "satsuma": "veg", "horenso": "veg", "moyashi": "veg", "piman": "veg", "goya": "veg", "edamame": "veg", "okra": "veg", "nasu": "veg", "kyuri": "veg", "paprika": "veg", "zucchini": "veg", "shoga": "veg", "satoimo": "veg", "broccoli": "veg", "renkon": "veg", "gobo": "veg", "asparagus": "veg", "negi": "veg", "shimeji": "veg", "kinoko": "veg", "banana": "fruit", "kiwi": "fruit", "apple": "fruit", "grape": "fruit", "nashi": "fruit", "peach": "fruit", "muscat": "fruit", "strawberry": "fruit", "blueberry": "fruit", "melon": "fruit", "lemon": "fruit", "mango": "fruit", "avocado": "fruit", "kuri": "fruit", "soy": "shoku", "soymilk": "shoku", "tofu1": "shoku", "tofu2": "shoku", "genmai": "shoku", "soyprotein": "shoku", "chikuwa": "shoku", "ganmo": "shoku", "mct": "shoku", "supp": "shoku", "hakko": "shoku", "olive": "shoku", "egoma": "shoku", "natto": "shoku", "kimchi": "shoku", "umeboshi": "shoku", "aburaage": "shoku", "satsumaage": "shoku", "isobeage": "shoku", "atsuage": "shoku", "tsukemono": "shoku", "shokupan": "shoku", "pan": "shoku", "nuts": "shoku", "cashew": "shoku", "almond": "shoku", "peanut": "shoku", "kurumi": "shoku", "salad": "menu", "sp_salad": "menu", "usp_salad": "menu", "indiancurry": "menu", "vegcurry": "menu", "sainocurry": "menu", "fries": "menu", "miso": "menu", "vegsoup": "menu", "cocoichi": "menu", "pasta": "menu", "yasainabe": "menu", "miyakosoba": "menu", "okinawasoba": "menu", "nihonsoba": "menu", "zarusoba": "menu", "hoikoro": "menu", "mabo": "menu", "yasaiitame": "menu", "morning": "menu", "lunchset": "menu", "teishoku": "menu", "dinnercourse": "menu", "dinnerset": "menu", "udon": "menu", "onigiri": "menu", "inari": "menu", "rokusuke": "menu", "sushi": "menu", "nomikai": "menu"};
+function FSUB(k){return FOODS[k].cat?null:(FOODSUB[k]||'shoku')}
 function paintFood(cv,key){const f=FOODS[key];cv.width=12;cv.height=12;const c=cv.getContext('2d');c.clearRect(0,0,12,12);
   const off=Math.floor((12-f.art.length)/2);
   f.art.forEach((r,y)=>[...r].forEach((ch,x)=>{const col=f.pal[ch];if(col){c.fillStyle=col;c.fillRect(x,y+off,1,1);}}));}
@@ -1123,7 +1136,7 @@ function vHero(){
   <p class="muted" style="margin:-4px 2px 8px;font-size:12px">タップして相棒をえらぶと、島にいっしょに立ちます。相棒の得意な能力は、EXPが1.1倍。</p>
   <div class="heroes">${HEROES.map(h=>`<button type="button" class="vhero ${m.buddy===h.key?'on':''}" data-buddy="${h.key}"><canvas data-hero="${h.key}"></canvas><b>${h.name}</b><span>${h.role}・${h.stat}</span></button>`).join('')}</div>
   <h2>ごはん＆パワー図鑑 <small style="font-size:13px;color:var(--muted)">${Object.keys(FOODS).filter(k=>((m.foods||{})[k]||0)>0).length} / ${Object.keys(FOODS).length} しゅるい</small></h2>
-  ${[['食べ物',k=>!FOODS[k].cat],['海の幸',k=>FOODS[k].cat==='sea'],['飲み物',k=>FOODS[k].cat==='drink'],['パワースポット',k=>FOODS[k].cat==='power'],['こころのパワー',k=>FOODS[k].cat==='heart'],['必殺技',k=>FOODS[k].cat==='move'],['ヨガのアーサナ',k=>FOODS[k].cat==='yoga'],['エネルギー！',k=>FOODS[k].cat==='energy'],['キレイ＆強く',k=>FOODS[k].cat==='beauty'],['ラッキー',k=>FOODS[k].cat==='luck'],['サプリ＆くすり',k=>FOODS[k].cat==='care']].map(([lab,fl])=>`<div class="shelf">${lab}</div><div class="pantry">${Object.keys(FOODS).filter(fl).map(k=>{const f=FOODS[k],n=(m.foods||{})[k]||0;return `<div class="pc ${n||KS()?'':'none'} ${f.rare?'rare':''}"><canvas class="food" data-food="${k}"></canvas><b class="${(n||KS())&&f.name.length>6?'ln':''}">${n||KS()?f.name:'？？？'}</b><div class="ct">${n}<small>こ</small></div><div class="ef"><span class="st" style="background:${STAT[f.stat].c}">${STAT[f.stat].name}</span>+${fxp(f)}</div>${n>=10?`<div class="tt got">★${f.title}</div>`:''}</div>`}).join('')}</div>`).join('')}
+  <div class="zktabs" id="zktabs"></div><div class="zkb">${[['野菜',k=>FSUB(k)==='veg'],['果物',k=>FSUB(k)==='fruit'],['食品',k=>FSUB(k)==='shoku'],['食事メニュー',k=>FSUB(k)==='menu'],['海の幸',k=>FOODS[k].cat==='sea'],['飲み物',k=>FOODS[k].cat==='drink'],['パワースポット',k=>FOODS[k].cat==='power'],['こころのパワー',k=>FOODS[k].cat==='heart'],['必殺技',k=>FOODS[k].cat==='move'],['ヨガのアーサナ',k=>FOODS[k].cat==='yoga'],['トレーナーの愛',k=>FOODS[k].cat==='energy'],['キレイ＆強く',k=>FOODS[k].cat==='beauty'],['ラッキー',k=>FOODS[k].cat==='luck'],['サプリ＆くすり',k=>FOODS[k].cat==='care']].map(([lab,fl],si)=>`<div class="zsec" data-zi="${si}" data-lab="${lab}" data-n="${Object.keys(FOODS).filter(fl).length}"><div class="shelf">${lab} <small>${Object.keys(FOODS).filter(fl).length}</small></div><div class="pantry">${Object.keys(FOODS).filter(fl).map(k=>{const f=FOODS[k],n=(m.foods||{})[k]||0;return `<div class="pc ${n||KS()?'':'none'} ${f.rare?'rare':''}"><canvas class="food" data-food="${k}"></canvas><b class="${(n||KS())&&f.name.length>6?'ln':''}">${n||KS()?f.name:'？？？'}</b><div class="ct">${n}<small>こ</small></div><div class="ef"><span class="st" style="background:${STAT[f.stat].c}">${STAT[f.stat].name}</span>+${fxp(f)}</div>${n>=10?`<div class="tt got">★${f.title}</div>`:''}</div>`}).join('')}</div></div>`).join('')}</div>
   <p class="muted" style="margin:6px 2px 0">毎日のごはんと、宿題のスタンプでもらえます。キラキラのカードはめったに出ないレアです。お酒はEXP控えめです。</p>
   <h2>今週の来館</h2>
   <div class="card">
@@ -1201,7 +1214,7 @@ function vLog(){
     $('#ya').onchange=upd;$('#ymin').oninput=upd;upd();
     $('#go').onclick=()=>{const k=$('#ya').value,y=FOODS[k];giveFood(m,k);gain(m,y.stat,calc(),`YOGA ${y.name} ${$('#ymin').value}分`);tab='hero';render()};
   }else if(logType==='meal'){
-    const MG=[['食べ物',k=>!FOODS[k].cat],['海の幸',k=>FOODS[k].cat==='sea'],['飲み物',k=>FOODS[k].cat==='drink']];
+    const MG=[['野菜',k=>FSUB(k)==='veg'],['果物',k=>FSUB(k)==='fruit'],['食品',k=>FSUB(k)==='shoku'],['食事メニュー',k=>FSUB(k)==='menu'],['海の幸',k=>FOODS[k].cat==='sea'],['飲み物',k=>FOODS[k].cat==='drink']];
     f.innerHTML=`<div class="stack">
       <label>食べたもの・飲んだもの<select id="ml">${MG.map(([g,fl])=>`<optgroup label="${g}">${Object.keys(FOODS).filter(fl).map(k=>`<option value="${k}">${FOODS[k].name}</option>`).join('')}</optgroup>`).join('')}</select></label>
       <div style="display:flex;align-items:center;gap:10px"><canvas class="food" id="mc" style="width:64px;height:64px;flex:none"></canvas><div class="muted" id="me2" style="font-size:13px"></div></div>
@@ -1352,7 +1365,12 @@ $('#who').onchange=e=>{S.current=e.target.value;save();render()};
 $('#kensaBtn').onclick=()=>{S.kensa=!KS();save();render();toast(KS()?'検査モード：ぜんぶ表示します':'ふつうの表示にもどしました')};
 $('#modeBtn').onclick=()=>{S.trainerMode=!S.trainerMode;if(S.trainerMode)tab='guild';save();render()};
 render();
-</script><script>(()=>{const f=()=>document.querySelectorAll('h2:not([data-t])').forEach(h=>{h.dataset.t=1;const t=h.firstChild;if(t&&t.nodeType===3&&t.textContent.trim()){const s=document.createElement('span');s.className='tb';s.textContent=t.textContent;h.replaceChild(s,t)}});new MutationObserver(f).observe(document.documentElement,{childList:true,subtree:true});f();})();// ホーム画面アプリ用：オフラインでも開けるようにする
+</script><script>(()=>{const f=()=>document.querySelectorAll('h2:not([data-t])').forEach(h=>{h.dataset.t=1;const t=h.firstChild;if(t&&t.nodeType===3&&t.textContent.trim()){const s=document.createElement('span');s.className='tb';s.textContent=t.textContent;h.replaceChild(s,t)}});new MutationObserver(f).observe(document.documentElement,{childList:true,subtree:true});f();})();</script><script>(()=>{let zi=0;const f=()=>{const t=document.getElementById('zktabs');if(!t||t.dataset.d)return;t.dataset.d=1;const secs=[...document.querySelectorAll('.zkb .zsec')];
+t.innerHTML=secs.map((x,i)=>`<button type="button" data-zt="${i}">${x.dataset.lab}<small>${x.dataset.n}</small></button>`).join('');
+const show=i=>{zi=i;secs.forEach((x,j)=>x.classList.toggle('on',j===i));t.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('on',j===i))};
+t.onclick=e=>{const b=e.target.closest('[data-zt]');if(b)show(+b.dataset.zt)};show(Math.min(zi,secs.length-1));
+const z=document.querySelector(".zkb");if(z&&!z.nextElementSibling?.classList?.contains('zkhint'))z.insertAdjacentHTML('afterend','<p class="zkhint">← 横にスクロールして全部見られます →</p>')};
+new MutationObserver(f).observe(document.documentElement,{childList:true,subtree:true});f();})();// ホーム画面アプリ用：オフラインでも開けるようにする
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').then(r=>r.update()).catch(()=>{});let rl=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(rl)return;rl=true;location.reload()})});}
 </script>
 </body>
