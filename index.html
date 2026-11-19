@@ -50,11 +50,11 @@ header::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:6px
 .pc.none b{color:var(--muted)}
 .pc.rare{background:linear-gradient(160deg,#fffbe0,#ffe9f2 60%,#e9f7ff);border-color:#f5c518}
 .heroes{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
-.hero{overflow:hidden;background:#fff;border:2px solid var(--line);border-radius:12px;padding:4px 2px 5px;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0;font-family:inherit;color:var(--ink);cursor:pointer}
-.hero.on{border-color:#f5c518;background:linear-gradient(160deg,#fffbe0,#fff);box-shadow:0 0 0 2px #f5c518}
-.hero canvas{width:100%;max-width:64px;aspect-ratio:27/22;image-rendering:pixelated}
-.hero b{font-size:9.5px;line-height:1.2;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;max-width:100%}
-.hero span{font-size:8px;color:var(--muted);line-height:1.2;text-align:center}
+.vhero{overflow:hidden;background:#fff;border:2px solid var(--line);border-radius:12px;padding:4px 2px 5px;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0;font-family:inherit;color:var(--ink);cursor:pointer}
+.vhero.on{border-color:#f5c518;background:linear-gradient(160deg,#fffbe0,#fff);box-shadow:0 0 0 2px #f5c518}
+.vhero canvas{width:100%;max-width:64px;aspect-ratio:27/22;image-rendering:pixelated}
+.vhero b{font-size:9.5px;line-height:1.2;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;max-width:100%}
+.vhero span{font-size:8px;color:var(--muted);line-height:1.2;text-align:center}
 .buddy{position:absolute;right:9%;bottom:16%;width:86px;aspect-ratio:27/22;image-rendering:pixelated;animation:bob 2.4s ease-in-out infinite}
 @keyframes bob{50%{transform:translateY(-4px)}}
 body.kensa header::after{content:'検査モード：すべてのページと項目を表示中';display:block;margin-top:6px;background:var(--tomato);color:#fff;font-size:11px;font-weight:800;text-align:center;border-radius:6px;padding:2px 0}
@@ -185,10 +185,14 @@ tr.me td{color:var(--tomato);font-weight:700}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* つぶつぶ見出し：深緑のリボンに、野菜色のつぶが入った白い丸文字 */
-h2{display:table;border-left:0;padding:4px 16px 5px;margin:24px 0 12px;font-size:19px;letter-spacing:.06em;color:#e9f5c4;
+h2{display:table;border-left:0;padding:4px 16px 5px;margin:24px 0 12px;font-size:19px;letter-spacing:.06em;color:#fff;
   background:var(--ink);border-radius:12px 4px 12px 4px;box-shadow:3px 3px 0 var(--lemon)}
-h2 small{color:#d6ec6e!important;font-size:12px!important;white-space:nowrap}
-h2 .tb{background:radial-gradient(circle at 3px 3px,#e8452c 1.6px,transparent 2.2px) 0 0/13px 11px,radial-gradient(circle at 9px 7px,#f39a1e 1.5px,transparent 2.1px) 0 0/15px 12px,radial-gradient(circle at 6px 9px,#9ccc3c 1.6px,transparent 2.2px) 0 0/17px 13px,radial-gradient(circle at 12px 4px,#c8447e 1.3px,transparent 1.9px) 0 0/19px 14px,#fff;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+h2 small{color:#fff!important;font-size:12px!important;white-space:nowrap}
+h2 .tb{color:#fff;-webkit-text-fill-color:#fff}
+.heroes{gap:4px!important}
+.vhero{padding:4px 1px 5px!important;justify-content:flex-start}
+.vhero b{font-size:9px!important;white-space:normal!important;overflow:visible!important;text-align:center;line-height:1.15!important;word-break:break-all;min-height:2.3em;display:flex;align-items:center;justify-content:center;width:100%;letter-spacing:-.04em!important}
+.vhero span{font-size:8px!important;white-space:nowrap!important;letter-spacing:-.03em}
 .shelf{background:var(--ink)!important;box-shadow:2px 2px 0 var(--lemon)}
 </style>
 
@@ -1109,7 +1113,7 @@ function vHero(){
   ${m.titles.length?`<div class="titles">${m.titles.map(t=>`<span class="chip gold">${esc(t)}</span>`).join('')}</div>`:''}
   <h2>お野菜十勇士</h2>
   <p class="muted" style="margin:-4px 2px 8px;font-size:12px">タップして相棒をえらぶと、島にいっしょに立ちます。相棒の得意な能力は、EXPが1.1倍。</p>
-  <div class="heroes">${HEROES.map(h=>`<button type="button" class="hero ${m.buddy===h.key?'on':''}" data-buddy="${h.key}"><canvas data-hero="${h.key}"></canvas><b>${h.name}</b><span>${h.role}・${h.stat}</span></button>`).join('')}</div>
+  <div class="heroes">${HEROES.map(h=>`<button type="button" class="vhero ${m.buddy===h.key?'on':''}" data-buddy="${h.key}"><canvas data-hero="${h.key}"></canvas><b>${h.name}</b><span>${h.role}・${h.stat}</span></button>`).join('')}</div>
   <h2>ごはん＆パワー図鑑 <small style="font-size:13px;color:var(--muted)">${Object.keys(FOODS).filter(k=>((m.foods||{})[k]||0)>0).length} / ${Object.keys(FOODS).length} しゅるい</small></h2>
   ${[['たべもの',k=>!FOODS[k].cat],['うみのさち',k=>FOODS[k].cat==='sea'],['のみもの',k=>FOODS[k].cat==='drink'],['パワースポット',k=>FOODS[k].cat==='power'],['こころのパワー',k=>FOODS[k].cat==='heart'],['ひっさつわざ',k=>FOODS[k].cat==='move'],['ヨガのアーサナ',k=>FOODS[k].cat==='yoga'],['エネルギー！',k=>FOODS[k].cat==='energy'],['きれい＆つよく',k=>FOODS[k].cat==='beauty'],['ラッキー',k=>FOODS[k].cat==='luck'],['サプリ＆くすり',k=>FOODS[k].cat==='care']].map(([lab,fl])=>`<div class="shelf">${lab}</div><div class="pantry">${Object.keys(FOODS).filter(fl).map(k=>{const f=FOODS[k],n=(m.foods||{})[k]||0;return `<div class="pc ${n||KS()?'':'none'} ${f.rare?'rare':''}"><canvas class="food" data-food="${k}"></canvas><b class="${(n||KS())&&f.name.length>6?'ln':''}">${n||KS()?f.name:'？？？'}</b><div class="ct">${n}<small>こ</small></div><div class="ef"><span class="st" style="background:${STAT[f.stat].c}">${STAT[f.stat].name}</span>+${fxp(f)}</div>${n>=10?`<div class="tt got">★${f.title}</div>`:''}</div>`}).join('')}</div>`).join('')}
   <p class="muted" style="margin:6px 2px 0">毎日のごはんと、宿題のスタンプでもらえます。キラキラのカードはめったに出ないレアです。お酒はEXP控えめです。</p>
