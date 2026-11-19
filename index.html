@@ -268,7 +268,7 @@ function seed(){
   const now=Date.now();
   const m=(id,name,team,s,titles,streak)=>({id,name,team,stats:s,titles,streak,weekXp:0,checkins:[]});
   const members=[
-    m('me','あなた','am',{str:180,end:90,tec:60,grit:120},[],[1,0,0,1,0,0,0]),
+    m('me','ゲスト会員','am',{str:180,end:90,tec:60,grit:120},[],[1,0,0,1,0,0,0]),
     m('k','ケンタ','pm',{str:820,end:160,tec:200,grit:300},['スクワットの申し子'],[1,1,1,0,1,1,0]),
     m('y','ユイ','am',{str:240,end:640,tec:180,grit:360},['朝活マスター','有酸素の旅人'],[1,1,1,1,1,0,1]),
     m('t','タカシ','pm',{str:420,end:300,tec:320,grit:220},['フォームの達人'],[0,1,0,1,0,1,0]),
@@ -312,6 +312,7 @@ function seed(){
 let S;
 try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 if(!S||!S.members)S=seed();
+S.members.forEach(x=>{if(x.id==='me'&&x.name==='あなた')x.name='ゲスト会員'});
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 
 // ---------- rules ----------
