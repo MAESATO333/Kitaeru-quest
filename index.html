@@ -1302,16 +1302,17 @@ function vLog(){
   }else if(logType==='yoga'){
     const YK=Object.keys(FOODS).filter(k=>FOODS[k].cat==='yoga');
     f.innerHTML=`<div class="stack">
-      <label>アーサナ（${YK.length}種）<select id="ya">${YG.map(([gk,gl])=>`<optgroup label="${gl}">${YK.filter(k=>yg(k)===gk).map(k=>`<option value="${k}">${FOODS[k].name}</option>`).join('')}</optgroup>`).join('')}</select></label>
+      <label>アーサナ（${YK.length+CX('yoga').length}種）<select id="ya">${YG.map(([gk,gl])=>`<optgroup label="${gl}">${YK.filter(k=>yg(k)===gk).map(k=>`<option value="${k}">${FOODS[k].name}</option>`).join('')}</optgroup>`).join('')}${CX('yoga').length?`<optgroup label="追加したアーサナ">${CX('yoga').map(n=>`<option value="cx:${esc(n)}">${esc(n)}</option>`).join('')}</optgroup>`:''}</select></label>${addRow('yan')}
       <div class="fd" style="display:flex;align-items:center;gap:10px"><canvas class="food" id="yc" style="width:64px;height:64px"></canvas><div class="muted" id="ye" style="font-size:13px"></div></div>
       <div class="row"><label>時間（分）<input id="ymin" type="number" inputmode="numeric" value="10" min="0"></label><label>セット<input id="yset" type="number" inputmode="numeric" value="1" min="1"></label><label>週に何回<select id="yweek">${['—','週1回','週2回','週3回','週4回','週5回','週6回','毎日'].map(v=>`<option>${v}</option>`).join('')}</select></label></div>
       <div><div class="muted" style="font-size:13px;margin-bottom:4px">朝・昼・晩（いくつでも）</div><div class="ytime">${['朝','昼','晩'].map(v=>`<label><input type="checkbox" value="${v}">${v}</label>`).join('')}</div></div>
+      <label class="mmemo">アーサナのメニュー・メモ（自由に書けます）<textarea id="ymemo" rows="4" maxlength="500" placeholder="例：太陽礼拝 → 三角のポーズ → 戦士のポーズII → 鳩のポーズ。左右30秒ずつ、呼吸は5回。"></textarea></label>
       <div class="preview" id="pv"></div>
       <button class="btn-main" id="go" type="button">記録してEXPをもらう</button></div>`;
     const calc=()=>Math.min(120,Math.max(5,Math.round((+$('#ymin').value||0)*Math.max(1,+$('#yset').value||1)*2)));const yx=()=>{const w=$('#yweek').value,t=[...document.querySelectorAll('.ytime input:checked')].map(x=>x.value).join('・');const a=[w==='—'?'':w,t].filter(Boolean).join('・');return `×${Math.max(1,+$('#yset').value||1)}セット`+(a?`（${a}）`:'')};
-    const upd=()=>{const k=$('#ya').value,y=FOODS[k];paintFood($('#yc'),k);$('#ye').textContent=y.eff;$('#pv').innerHTML=`${STAT[y.stat].name} <b>+${calc()}</b> EXP ／ 図鑑にも1こ入ります`};
-    $('#ya').onchange=upd;$('#ymin').oninput=upd;$('#yset').oninput=upd;upd();
-    $('#go').onclick=()=>{const k=$('#ya').value,y=FOODS[k];giveFood(m,k);gain(m,y.stat,calc(),`YOGA ${y.name} ${$('#ymin').value}分${yx()}`);tab='hero';render()};
+    const YC=k=>k.startsWith('cx:')?{name:k.slice(3),eff:'オリジナルのアーサナ（自由に追加したメニュー）',stat:'end',cx:1}:FOODS[k];const upd=()=>{const k=$('#ya').value,y=YC(k);paintFood($('#yc'),y.cx?YK[0]:k);$('#ye').textContent=y.eff;$('#pv').innerHTML=`${STAT[y.stat].name} <b>+${calc()}</b> EXP`+(y.cx?'':' ／ 図鑑にも1こ入ります')};
+    $('#ya').onchange=upd;$('#ymin').oninput=upd;$('#yset').oninput=upd;upd();bindAdd('yan','yoga');if(window._pick){const o=[...$('#ya').options].find(o=>o.textContent===window._pick);window._pick=null;if(o){$('#ya').value=o.value;upd()}}
+    $('#go').onclick=()=>{const k=$('#ya').value,y=YC(k);if(!y.cx)giveFood(m,k);const ym=$('#ymemo').value.trim();gain(m,y.stat,calc(),`YOGA ${y.name} ${$('#ymin').value}分${yx()}`+(ym?`／メモ：${ym}`:''));tab='hero';render()};
   }else if(logType==='meal'){
     const MG=[['野菜',k=>FSUB(k)==='veg'],['果物',k=>FSUB(k)==='fruit'],['食品',k=>FSUB(k)==='shoku'],['食事メニュー',k=>FSUB(k)==='menu'],['海の幸',k=>FOODS[k].cat==='sea'],['飲み物',k=>FOODS[k].cat==='drink']];
     f.innerHTML=`<div class="stack">
@@ -1441,7 +1442,7 @@ function mealTask(){if(logType!=='meal')return;const f=$('#form');if(!f)return;w
 function CX(k){S.custom=S.custom||{};return S.custom[k]=S.custom[k]||[]}
 function EXGALL(){migMeal();const c=CX('ex');return c.length?[...EXG,['追加した種目',c]]:EXG}
 function addRow(id){return `<div class="addx"><input id="${id}" placeholder="リストにない種目を入力して追加" maxlength="30"><button type="button" id="${id}b">＋追加</button></div>`}
-function bindAdd(id,k){const go=()=>{const v=$('#'+id).value.trim();if(!v){toast('種目名を入れてください');return}if(k==='ex'&&MEALRE.test(v)){const mt=CX('mealt');if(!MEALT.includes(v)&&!mt.includes(v))mt.push(v);save();logType='meal';window._mm='task';window._pick=v;vLog();toast(`「${v}」は食事トレの種目に入れました`);return}const all=k==='mealt'?[...MEALT,...CX('mealt')]:k==='ex'?EXGALL().flatMap(g=>g[1]):k==='kapala'?[...KAPALA,...CX('kapala')]:[...CARDIO,...CX('cardio')];if(!all.includes(v))CX(k).push(v);save();window._pick=v;vLog();toast(`「${v}」を追加しました。次からリストに出ます`)};$('#'+id+'b').onclick=go;$('#'+id).onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing)go()}}
+function bindAdd(id,k){const go=()=>{const v=$('#'+id).value.trim();if(!v){toast('種目名を入れてください');return}if(k==='ex'&&MEALRE.test(v)){const mt=CX('mealt');if(!MEALT.includes(v)&&!mt.includes(v))mt.push(v);save();logType='meal';window._mm='task';window._pick=v;vLog();toast(`「${v}」は食事トレの種目に入れました`);return}const all=k==='yoga'?[...Object.keys(FOODS).filter(x=>FOODS[x].cat==='yoga').map(x=>FOODS[x].name),...CX('yoga')]:k==='mealt'?[...MEALT,...CX('mealt')]:k==='ex'?EXGALL().flatMap(g=>g[1]):k==='kapala'?[...KAPALA,...CX('kapala')]:[...CARDIO,...CX('cardio')];if(!all.includes(v))CX(k).push(v);save();window._pick=v;vLog();toast(`「${v}」を追加しました。次からリストに出ます`)};$('#'+id+'b').onclick=go;$('#'+id).onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing)go()}}
 function HWGROUPS(){return [['おうちの宿題','fix',HOMEWORK],...EXGALL().map(([g,xs])=>['加圧トレ・'+g,'ex',xs]),...YG.map(([gk,gl])=>['YOGA・'+gl,'yoga',Object.keys(FOODS).filter(k=>FOODS[k].cat==='yoga'&&yg(k)===gk).map(k=>FOODS[k].name)]),...(CX('yoga').length?[['YOGA・追加した種目','yoga',CX('yoga')]]:[]),['食事トレ','mealt',(migMeal(),[...MEALT,...CX('mealt')])],['有酸素','cardio',[...CARDIO,...CX('cardio')]],['カパラバティ・呼吸法','kapala',[...KAPALA,...CX('kapala')]],...(CX('other').length?[['その他（トレーナー登録）','fix',CX('other')]]:[])]}
 function ymd(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
 let calYM=null;
