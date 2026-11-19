@@ -254,6 +254,15 @@ body.kensa header{height:auto!important;flex-wrap:wrap}
 .dcloud::before{content:'';position:absolute;left:24px;top:-18px;width:52px;height:44px;background:#fff;border-radius:50%}
 }
 @media (prefers-reduced-motion:reduce){.dk canvas,.dk.run{animation:none!important}}
+
+nav .in{gap:4px!important;padding:6px 4px}
+nav button{font-size:14px!important;font-weight:800!important;color:#fff!important;background:color-mix(in srgb,var(--hc) 38%,transparent)!important;border-radius:14px!important;padding:4px 2px 5px!important;gap:1px!important;border:2px solid transparent!important;opacity:.92}
+nav button .nh{width:36px;height:29px;image-rendering:pixelated;display:block}
+nav button .nl{letter-spacing:-.02em;white-space:nowrap;text-shadow:0 1px 0 rgba(0,0,0,.25)}
+nav button.on{background:var(--hc)!important;border-color:#fff!important;opacity:1;box-shadow:0 3px 0 rgba(0,0,0,.25);transform:translateY(-3px)}
+nav button.on .nh{animation:dbob 1s ease-in-out infinite}
+@keyframes dbob{50%{transform:translateY(-4px)}}
+@media (max-width:400px){nav button{font-size:12.5px!important}nav button .nh{width:30px;height:24px}}
 </style>
 
 </head>
@@ -1140,11 +1149,12 @@ function gain(m,stat,xp,text,extra={}){
 
 // ---------- views ----------
 let tab='hero', logType='lift';
+const NAVH={hero:['carrot','#f08a12'],log:['piman','#3f9a3a'],feed:['tomato','#e8452c'],rank:['broccoli','#2f7d32'],boss:['onion','#c99a00'],guild:['imo','#9b2f5e']};
 const TABS=[['hero','冒険者','◆'],['log','記録','＋'],['feed','キタ酒場','≡'],['rank','番付','▲'],['boss','ボス','✦']];
 function renderTabs(){
   const list=(S.trainerMode||KS())?[...TABS,['guild','評価','★']]:TABS;
   if(tab!=='zukan'&&!list.find(x=>x[0]===tab))tab='hero';
-  $('#tabs').innerHTML=list.map(([k,l,i])=>`<button type="button" data-t="${k}" class="${k===tab?'on':''}"><span class="ic">${i}</span>${l}</button>`).join('');
+  $('#tabs').innerHTML=list.map(([k,l,i])=>{const nh=NAVH[k]||NAVH.hero;return `<button type="button" data-t="${k}" class="${k===tab?'on':''}" style="--hc:${nh[1]}"><canvas class="nh" data-hero="${nh[0]}"></canvas><span class="nl">${l}</span></button>`}).join('');
   $('#tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;render();window.scrollTo(0,0)});
 }
 function render(){
