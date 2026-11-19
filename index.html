@@ -1499,7 +1499,7 @@ const POS=[[28,5],[70,14],[30,23],[72,32],[26,41],[70,50],[32,59],[68,68],[30,76
  d.innerHTML=si?'<div class="dcloud" style="left:12%;top:9%"></div><div class="dsun" style="right:8%;top:2%"></div>':'<div class="dcloud" style="left:46%;top:3%"></div><div class="dcloud" style="left:6%;top:58%;transform:scale(.7)"></div>';
  L.slice(si*10,si*10+10).forEach(([k,sc],i)=>{let cv=scene(fix(k),sc);if(!cv)return;if((si+i)%3===1&&sc!=='lift')cv=flip(cv);const w=document.createElement('div');const [x,y]=POS[i];w.className='dk '+AN[sc];
   w.style.left=(si?100-x:x)+'%';w.style.top=y+'%';w.style.animationDelay=w.style.animationDelay=(-i*0.37)+'s';
-  if(i%2===0){const b=document.createElement('div');b.className='bb';b.textContent=SC[sc];w.appendChild(b)}
+  if(i%2===0){const b=document.createElement('div');b.className='bb';b.textContent=si?({0:'上腕三頭筋',2:'スクワット！',4:'吸って〜吐いて〜',6:'タンパク質大好き❤',8:'イェーイ！'}[i]||SC[sc]):SC[sc];w.appendChild(b)}
   cv.style.animationDelay=(-i*0.29)+'s';w.appendChild(cv);d.appendChild(w)});
  document.body.appendChild(d)});
 })();</script><script>(()=>{let yi=0;const f=()=>{const sec=[...document.querySelectorAll('.zkb .zsec')].find(x=>x.dataset.lab==='ヨガのアーサナ');if(!sec||sec.dataset.y)return;sec.dataset.y=1;const pan=sec.querySelector('.pantry');const cards=[...pan.children];
