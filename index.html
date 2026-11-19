@@ -1322,16 +1322,17 @@ function vLog(){
     $('#go').onclick=()=>{const k=$('#ml').value,y=FOODS[k];giveFood(m,k);gain(m,y.stat,fxp(y),`食事トレ ${y.name}`);tab='hero';render()};
   }else if(logType==='kapala'){
     f.innerHTML=`<div class="stack">
-      <div style="display:flex;align-items:center;gap:10px"><canvas class="food" id="kc" style="width:64px;height:64px;flex:none"></canvas><div class="muted" style="font-size:13px">火の呼吸。おなかで短く強く吐きます。</div></div>
+      <label>種目（${KAPALA.length+CX('kapala').length}種）<select id="kx">${[...KAPALA,...CX('kapala')].map(e=>`<option>${e}</option>`).join('')}</select></label>${addRow('kxn')}
+      <div style="display:flex;align-items:center;gap:10px"><canvas class="food" id="kc" style="width:64px;height:64px;flex:none"></canvas><div class="muted" style="font-size:13px" id="kd"></div></div>
       <div class="row"><label>回数<input id="kr" type="number" inputmode="numeric" value="60" min="0"></label><label>ラウンド<input id="kn" type="number" inputmode="numeric" value="3" min="0"></label></div>
       <label>最後のクンバク（息止め）<select id="kk"><option value="">なし</option><option value="kumbhaka1">1分</option><option value="kumbhaka15">1分半</option><option value="kumbhaka2">2分</option></select></label>
       <div class="preview" id="pv"></div>
       <button class="btn-main" id="go" type="button">記録してEXPをもらう</button></div>`;
     paintFood($('#kc'),'kapala');
     const calc=()=>{const n=(+$('#kr').value||0)*(+$('#kn').value||0);const e=Math.min(120,Math.max(5,Math.round(n/3)));const k=$('#kk').value;return{n,e,g:k?{kumbhaka1:20,kumbhaka15:30,kumbhaka2:40}[k]:0,k}};
-    const upd=()=>{const c=calc();$('#pv').innerHTML=`合計 ${c.n}回 → 持久 <b>+${c.e}</b> EXP${c.g?` ＋ 根性 <b>+${c.g}</b>`:''}`};
-    f.querySelectorAll('input,select').forEach(i=>i.oninput=i.onchange=upd);upd();
-    $('#go').onclick=()=>{const c=calc();giveFood(m,'kapala');gain(m,'end',c.e,`カパラバティ ${$('#kr').value}回×${$('#kn').value}ラウンド`);if(c.k){giveFood(m,c.k);gain(m,'grit',c.g,`クンバク ${FOODS[c.k].name.replace('クンバク','')}`)}tab='hero';render()};
+    const upd=()=>{const c=calc();$('#kd').textContent=KDESC[$('#kx').value]||'呼吸を整えるトレーニング。';$('#pv').innerHTML=`合計 ${c.n}回 → 持久 <b>+${c.e}</b> EXP${c.g?` ＋ 根性 <b>+${c.g}</b>`:''}`};
+    f.querySelectorAll('input,select').forEach(i=>i.oninput=i.onchange=upd);upd();bindAdd('kxn','kapala');if(window._pick){$('#kx').value=window._pick;window._pick=null;upd()}
+    $('#go').onclick=()=>{const c=calc();giveFood(m,'kapala');gain(m,'end',c.e,`${$('#kx').value} ${$('#kr').value}回×${$('#kn').value}ラウンド`);if(c.k){giveFood(m,c.k);gain(m,'grit',c.g,`クンバク ${FOODS[c.k].name.replace('クンバク','')}`)}tab='hero';render()};
   }else if(logType==='cardio'){
     f.innerHTML=`<div class="stack">
       <label>メニュー<select id="ma">${[...CARDIO,...CX('cardio')].map(e=>`<option>${e}</option>`).join('')}</select></label>${addRow('man')}
@@ -1413,11 +1414,13 @@ function vZukan(){
   $('#back').onclick=()=>{tab='hero';render()};
 }
 
+const KDESC={'カパラバティ':'火の呼吸。おなかで短く強く吐きます。','バストリカ（ふいごの呼吸）':'吸う・吐くを力強く速く。体が温まります。','ナーディショーダナ（片鼻交互呼吸）':'左右の鼻で交互に呼吸。心が落ち着きます。','アヌロマ・ヴィロマ':'片鼻ずつ吸って吐く、バランスの呼吸。','ウジャイ呼吸':'のどを少しせばめて、波の音のように呼吸。','ブラーマリー（蜂の呼吸）':'ハミングしながら吐く。リラックス効果。','シータリー（冷却の呼吸）':'丸めた舌から吸って、体をクールダウン。','シータカーリー':'歯のすき間から吸う、冷却の呼吸。','スーリヤベーダナ（右鼻呼吸）':'右鼻から吸って、体を元気に。','チャンドラベーダナ（左鼻呼吸）':'左鼻から吸って、心を静かに。','ライオンの呼吸':'舌を出して「ハーッ」と吐く。顔と喉のストレッチ。','腹式呼吸':'おなかをふくらませて、ゆっくり深く。','完全呼吸（三段呼吸）':'おなか→胸→鎖骨の順に満たす呼吸。','ボックス呼吸（4-4-4-4）':'吸う・止める・吐く・止めるを4秒ずつ。','4-7-8呼吸':'4秒吸って7秒止め、8秒で吐く。眠りの前に。','火の呼吸 × クンバク':'カパラバティのあとに息止めを組み合わせます。'};
+const KAPALA=Object.keys(KDESC);
 function CX(k){S.custom=S.custom||{};return S.custom[k]=S.custom[k]||[]}
 function EXGALL(){const c=CX('ex');return c.length?[...EXG,['追加した種目',c]]:EXG}
 function addRow(id){return `<div class="addx"><input id="${id}" placeholder="リストにない種目を入力して追加" maxlength="30"><button type="button" id="${id}b">＋追加</button></div>`}
-function bindAdd(id,k){const go=()=>{const v=$('#'+id).value.trim();if(!v){toast('種目名を入れてください');return}const all=k==='ex'?EXGALL().flatMap(g=>g[1]):[...CARDIO,...CX('cardio')];if(!all.includes(v))CX(k).push(v);save();window._pick=v;vLog();toast(`「${v}」を追加しました。次からリストに出ます`)};$('#'+id+'b').onclick=go;$('#'+id).onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing)go()}}
-function HWGROUPS(){return [['おうちの宿題','fix',HOMEWORK],...EXGALL().map(([g,xs])=>['加圧トレ・'+g,'ex',xs]),...YG.map(([gk,gl])=>['YOGA・'+gl,'yoga',Object.keys(FOODS).filter(k=>FOODS[k].cat==='yoga'&&yg(k)===gk).map(k=>FOODS[k].name)]),['有酸素','cardio',[...CARDIO,...CX('cardio')]],['カパラバティ','kapala',['カパラバティ']]]}
+function bindAdd(id,k){const go=()=>{const v=$('#'+id).value.trim();if(!v){toast('種目名を入れてください');return}const all=k==='ex'?EXGALL().flatMap(g=>g[1]):k==='kapala'?[...KAPALA,...CX('kapala')]:[...CARDIO,...CX('cardio')];if(!all.includes(v))CX(k).push(v);save();window._pick=v;vLog();toast(`「${v}」を追加しました。次からリストに出ます`)};$('#'+id+'b').onclick=go;$('#'+id).onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing)go()}}
+function HWGROUPS(){return [['おうちの宿題','fix',HOMEWORK],...EXGALL().map(([g,xs])=>['加圧トレ・'+g,'ex',xs]),...YG.map(([gk,gl])=>['YOGA・'+gl,'yoga',Object.keys(FOODS).filter(k=>FOODS[k].cat==='yoga'&&yg(k)===gk).map(k=>FOODS[k].name)]),['有酸素','cardio',[...CARDIO,...CX('cardio')]],['カパラバティ・呼吸法','kapala',[...KAPALA,...CX('kapala')]]]}
 function ymd(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
 let calYM=null;
 const hm=x=>String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0');
