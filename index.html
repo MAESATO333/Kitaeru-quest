@@ -300,7 +300,7 @@ header .dd{display:inline-block}
   <header>
     <div class="logo"><div class="vlogo" role="img" aria-label="キタエル・クエスト"><b>キタエル・クエスト</b><span>KITAERU <i>●</i> QUEST</span></div><small style="color:var(--leaf);font-weight:700">試作版</small></div>
     <select id="who" aria-label="表示する会員"></select>
-    <button id="modeBtn" class="mode" type="button">トレーナー</button><button id="kensaBtn" class="mode" type="button">検査</button>
+    <button id="modeBtn" class="mode" type="button">トレーナー</button><button id="hwBtn" class="mode" type="button">宿題</button>
   </header>
   <main id="view"></main>
 </div>
@@ -1191,7 +1191,7 @@ function renderTabs(){
 }
 function render(){
   $('#who').innerHTML=visibleMembers().map(m=>`<option value="${m.id}" ${m.id===S.current?'selected':''}>${esc(m.name)}</option>`).join('');
-  $('#modeBtn').classList.toggle('on',S.trainerMode);$('#kensaBtn').classList.toggle('on',KS());document.body.classList.toggle('kensa',KS());
+  $('#modeBtn').classList.toggle('on',S.trainerMode);document.body.classList.toggle('kensa',KS());
   renderTabs();
   ({hero:vHero,log:vLog,feed:vFeed,rank:vRank,boss:vBoss,guild:vGuild,zukan:vZukan})[tab]();
 }
@@ -1241,7 +1241,7 @@ function vHero(){
     <div class="bar" style="margin:8px 0 4px"><i style="width:${Math.min(1,visits/S.quest.goal)*100}%;background:var(--green)"></i></div>
     <div class="muted">${Math.min(visits,S.quest.goal)} / ${S.quest.goal} 回　達成で 称号チャンス＋100 EXP</div>
   </div>
-  <div class="demo">試作版です。 <button type="button" id="nextDay" style="font-size:12px;padding:3px 8px">翌日の顔ぶれを見る</button><br>会員データはデモ用で、このブラウザの中にだけ保存されます。上のメニューで会員を切り替えると、他の人の画面も見られます。 <button type="button" id="reset" style="font-size:12px;padding:3px 8px;margin-left:4px">初期化</button></div>`;
+  <div class="demo">試作版です。 <button type="button" id="nextDay" style="font-size:12px;padding:3px 8px">翌日の顔ぶれを見る</button><br>会員データはデモ用で、このブラウザの中にだけ保存されます。上のメニューで会員を切り替えると、他の人の画面も見られます。 <button type="button" id="reset" style="font-size:12px;padding:3px 8px;margin-left:4px">初期化</button> <button type="button" id="kensaBtn" style="font-size:12px;padding:3px 8px;margin-left:4px">${KS()?'検査モードを終える':'検査モード（全表示）'}</button></div>`;
   drawScene($('#sp'),m);
   document.querySelectorAll('canvas[data-food]').forEach(c=>paintFood(c,c.dataset.food));
   const bb=$('#bonus');if(bb)bb.onclick=()=>{const fk=foodOfDay(),f=FOODS[fk];S.bonusDay=dayKey();const t=giveFood(m,fk);gain(m,f.stat,fxp(f),`今日のごはん「${f.name}」を食べた`);if(t)overlay('称号ゲット！',`${f.name}を10こ集めて「${t}」になりました`);vHero();};
@@ -1249,6 +1249,7 @@ function vHero(){
   $('#lk').onchange=e=>{m.look=e.target.value;save();vHero()};
   document.querySelectorAll('[data-hw]').forEach(b=>b.onclick=()=>{const h=m.homework.find(x=>x.id==b.dataset.hw);h.status='done';h.doneAt=Date.now();save();toast('報告しました！ トレーナーのスタンプを待とう');vHero()});
   $('#nextDay').onclick=()=>{S.dayShift=(S.dayShift||0)+1;save();render();toast('顔ぶれが入れ替わりました')};
+  $('#kensaBtn').onclick=()=>window.kensaToggle();
   $('#reset').onclick=()=>{S=seed();save();render();toast('デモを最初の状態に戻しました')};
 }
 
@@ -1479,7 +1480,8 @@ function vGuild(){
 }
 
 $('#who').onchange=e=>{S.current=e.target.value;save();render()};
-$('#kensaBtn').onclick=()=>{S.kensa=!KS();save();render();toast(KS()?'検査モード：ぜんぶ表示します':'ふつうの表示にもどしました')};
+window.kensaToggle=()=>{S.kensa=!KS();save();render();toast(KS()?'検査モード：ぜんぶ表示します':'ふつうの表示にもどしました')};
+$('#hwBtn').onclick=()=>{const tr=S.trainerMode;tab=tr?'guild':'hero';render();setTimeout(()=>{const h=[...document.querySelectorAll('#view h2')].find(x=>x.textContent.includes(tr?'宿題を出す':'トレーナーからの宿題'));if(h)h.scrollIntoView({behavior:'smooth',block:'start'})},80)};
 $('#modeBtn').onclick=()=>{S.trainerMode=!S.trainerMode;if(S.trainerMode)tab='guild';save();render()};
 render();
 </script><script>(()=>{const f=()=>document.querySelectorAll('h2:not([data-t])').forEach(h=>{h.dataset.t=1;const t=h.firstChild;if(t&&t.nodeType===3&&t.textContent.trim()){const s=document.createElement('span');s.className='tb';s.textContent=t.textContent;h.replaceChild(s,t)}});new MutationObserver(f).observe(document.documentElement,{childList:true,subtree:true});f();})();</script><script>(()=>{let zi=0;const f=()=>{const t=document.getElementById('zktabs');if(!t||t.dataset.d)return;t.dataset.d=1;const secs=[...document.querySelectorAll('.zkb .zsec')];
