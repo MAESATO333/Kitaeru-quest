@@ -116,7 +116,7 @@ h2{font-family:var(--display);font-weight:800;color:var(--ink);border-left:6px s
 .streak i.on{background:var(--green);border-color:var(--green)}
 
 /* log */
-.seg{display:flex;gap:6px}
+.seg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
 .seg button{flex:1;font-size:13px}
 .seg button.on{background:var(--leaf);color:#fff;border-color:var(--leaf);font-weight:700}
 .row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -940,7 +940,8 @@ function vLog(){
   <h2>今日のトレーニングを記録</h2>
   <div class="card stack">
     <div class="seg">
-      <button type="button" data-k="lift" class="${logType==='lift'?'on':''}">筋トレ</button>
+      <button type="button" data-k="lift" class="${logType==='lift'?'on':''}">加圧筋トレ</button>
+      <button type="button" data-k="yoga" class="${logType==='yoga'?'on':''}">YOGA</button>
       <button type="button" data-k="cardio" class="${logType==='cardio'?'on':''}">有酸素</button>
       <button type="button" data-k="in" class="${logType==='in'?'on':''}">チェックイン</button>
     </div>
@@ -964,6 +965,18 @@ function vLog(){
     const upd=()=>{const c=calc();$('#pv').innerHTML=`${BW.has($('#ex').value)?'自重(30kg分)＋':''}総挙上量 ${c.v.toLocaleString()} kg → 力 <b>+${c.xp}</b> EXP`};
     f.querySelectorAll('input').forEach(i=>i.oninput=upd);$('#ex').onchange=()=>{if(BW.has($('#ex').value))$('#kg').value=0;upd()};upd();
     $('#go').onclick=()=>{const c=calc();gain(m,'str',c.xp,`${$('#ex').value} ${$('#kg').value}kg × ${$('#rep').value}回 × ${$('#set').value}セット`,{pb:$('#pb').checked});tab='hero';render()};
+  }else if(logType==='yoga'){
+    const YK=Object.keys(FOODS).filter(k=>FOODS[k].cat==='yoga');
+    f.innerHTML=`<div class="stack">
+      <label>アーサナ（${YK.length}種）<select id="ya">${YK.map(k=>`<option value="${k}">${FOODS[k].name}</option>`).join('')}</select></label>
+      <div class="fd" style="display:flex;align-items:center;gap:10px"><canvas class="food" id="yc" style="width:64px;height:64px"></canvas><div class="muted" id="ye" style="font-size:13px"></div></div>
+      <label>時間（分）<input id="ymin" type="number" inputmode="numeric" value="10" min="0"></label>
+      <div class="preview" id="pv"></div>
+      <button class="btn-main" id="go" type="button">記録してEXPをもらう</button></div>`;
+    const calc=()=>Math.min(120,Math.max(5,Math.round((+$('#ymin').value||0)*2)));
+    const upd=()=>{const k=$('#ya').value,y=FOODS[k];paintFood($('#yc'),k);$('#ye').textContent=y.eff;$('#pv').innerHTML=`${STAT[y.stat].name} <b>+${calc()}</b> EXP ／ 図鑑にも1こ入ります`};
+    $('#ya').onchange=upd;$('#ymin').oninput=upd;upd();
+    $('#go').onclick=()=>{const k=$('#ya').value,y=FOODS[k];giveFood(m,k);gain(m,y.stat,calc(),`YOGA ${y.name} ${$('#ymin').value}分`);tab='hero';render()};
   }else if(logType==='cardio'){
     f.innerHTML=`<div class="stack">
       <label>メニュー<select id="ma">${CARDIO.map(e=>`<option>${e}</option>`).join('')}</select></label>
@@ -1093,7 +1106,7 @@ $('#who').onchange=e=>{S.current=e.target.value;save();render()};
 $('#modeBtn').onclick=()=>{S.trainerMode=!S.trainerMode;if(S.trainerMode)tab='guild';save();render()};
 render();
 // ホーム画面アプリ用：オフラインでも開けるようにする
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').then(r=>r.update()).catch(()=>{});let rl=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(rl)return;rl=true;location.reload()})});}
 </script>
 </body>
 </html>
