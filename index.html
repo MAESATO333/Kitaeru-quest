@@ -274,7 +274,7 @@ function seed(){
   ];
   const w={me:520,k:1680,y:1420,t:980,h:1210,s:310};
   members.forEach(x=>x.weekXp=w[x.id]);
-  // デモ用の追加会員（実際の会員数は画面に出さない）
+  // デモ用の追加会員
   const NAMES='アオイ,リク,ミサキ,ダイチ,サクラ,ハルト,メイ,ソウタ,ナナ,レン,アヤ,ユウキ,マオ,カイト,リナ,ツバサ,エマ,ヒロ,ミオ,タクミ,ノア,コウ,ユナ,ジュン,サキ,ケイ,モモ,ショウタ,アカリ,ユウト,ヒナ,ソラ,マユ,ダイキ,チカ,リョウ,アン,ナオキ,カホ,ヨウ,ミク,ゴウ,ルナ,イツキ,シオリ,テツ,ユズ,マサキ,コハル,ヒカル,ナツ,セナ,トモ,ワカ,キョウ,アユ,ハヤト,ミズキ,ユキ,ガク,カナ,ジン,レイ,スミレ,タイガ,ノゾミ,コウキ,エリ,シン,ミホ,ケンジ,ハル,ユリ,オウガ'.split(',');
   let r=12345;const rnd=()=>(r=(r*1103515245+12345)%2147483648)/2147483648;
   const ex=['スクワット','ベンチプレス','デッドリフト','ラットプルダウン'],car=['トレッドミル','バイク','ローイング'];
@@ -1140,7 +1140,7 @@ function vHero(){
     <div class="bar" style="margin:8px 0 4px"><i style="width:${Math.min(1,visits/S.quest.goal)*100}%;background:var(--green)"></i></div>
     <div class="muted">${Math.min(visits,S.quest.goal)} / ${S.quest.goal} 回　達成で 称号チャンス＋100 EXP</div>
   </div>
-  <div class="demo">試作版です。他の会員は毎日ランダムに30人だけ表示され、ジムの会員数は分からないようになっています。 <button type="button" id="nextDay" style="font-size:12px;padding:3px 8px">翌日の顔ぶれを見る</button><br>会員データはデモ用で、このブラウザの中にだけ保存されます。上のメニューで会員を切り替えると、他の人の画面も見られます。 <button type="button" id="reset" style="font-size:12px;padding:3px 8px;margin-left:4px">初期化</button></div>`;
+  <div class="demo">試作版です。 <button type="button" id="nextDay" style="font-size:12px;padding:3px 8px">翌日の顔ぶれを見る</button><br>会員データはデモ用で、このブラウザの中にだけ保存されます。上のメニューで会員を切り替えると、他の人の画面も見られます。 <button type="button" id="reset" style="font-size:12px;padding:3px 8px;margin-left:4px">初期化</button></div>`;
   drawScene($('#sp'),m);
   document.querySelectorAll('canvas[data-food]').forEach(c=>paintFood(c,c.dataset.food));
   const bb=$('#bonus');if(bb)bb.onclick=()=>{const fk=foodOfDay(),f=FOODS[fk];S.bonusDay=dayKey();const t=giveFood(m,fk);gain(m,f.stat,fxp(f),`今日のごはん「${f.name}」を食べた`);if(t)overlay('称号ゲット！',`${f.name}を10こ集めて「${t}」になりました`);vHero();};
