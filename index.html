@@ -237,8 +237,8 @@ body.kensa header{height:auto!important;flex-wrap:wrap}
 .deco.l{left:0}.deco.r{right:0}
 .app{position:relative;z-index:1}
 .dk{position:absolute;display:flex;flex-direction:column;align-items:center;transform:translate(-50%,0)}
-.dk canvas{width:clamp(84px,9vw,132px);image-rendering:pixelated;filter:drop-shadow(0 4px 0 rgba(60,90,20,.12))}
-.dk .bb{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:2px 9px;font-size:clamp(11px,1vw,14px);font-weight:800;color:var(--ink);white-space:nowrap;margin-bottom:4px;position:relative;box-shadow:2px 2px 0 var(--lemon)}
+.dk canvas{width:min(clamp(84px,9vw,132px),12.5vh);image-rendering:pixelated;filter:drop-shadow(0 4px 0 rgba(60,90,20,.12))}
+.dk .bb{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:2px 9px;font-size:clamp(11px,1vw,14px);font-weight:800;color:var(--ink);white-space:nowrap;margin-bottom:-20px;z-index:2;position:relative;box-shadow:2px 2px 0 var(--lemon)}
 .dk .bb::after{content:'';position:absolute;left:50%;bottom:-7px;margin-left:-5px;border:5px solid transparent;border-top-color:var(--ink);border-bottom:0}
 .dk.bob canvas{animation:dbob 1.6s ease-in-out infinite}
 .dk.hop canvas{animation:dhop 1s cubic-bezier(.3,0,.5,1) infinite}
@@ -1498,7 +1498,7 @@ const POS=[[28,4],[70,9],[30,21],[72,26],[26,38],[70,43],[32,55],[68,60],[30,71]
 ['l','r'].forEach((side,si)=>{const d=document.createElement('div');d.className='deco '+side;d.setAttribute('aria-hidden','true');
  d.innerHTML=si?'<div class="dcloud" style="left:12%;top:9%"></div><div class="dsun" style="right:8%;top:2%"></div>':'<div class="dcloud" style="left:46%;top:3%"></div><div class="dcloud" style="left:6%;top:58%;transform:scale(.7)"></div>';
  L.slice(si*10,si*10+10).forEach(([k,sc],i)=>{let cv=scene(fix(k),sc);if(!cv)return;if((si+i)%3===1&&sc!=='lift')cv=flip(cv);const w=document.createElement('div');const [x,y]=POS[i];w.className='dk '+AN[sc];
-  w.style.left=(si?100-x:x)+'%';w.style.top=y+'%';w.style.animationDelay=w.style.animationDelay=(-i*0.37)+'s';
+  w.style.left=(si?100-x:x)+'%';w.style.top=(i===0?1:y)+'%';w.style.animationDelay=w.style.animationDelay=(-i*0.37)+'s';
   if(i%2===0){const b=document.createElement('div');b.className='bb';b.textContent=si?({0:'上腕三頭筋',2:'スクワット！',4:'吸って〜吐いて〜',6:'タンパク質大好き❤',8:'イェーイ！'}[i]||SC[sc]):SC[sc];w.appendChild(b)}
   cv.style.animationDelay=(-i*0.29)+'s';w.appendChild(cv);d.appendChild(w)});
  document.body.appendChild(d)});
