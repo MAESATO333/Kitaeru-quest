@@ -302,6 +302,7 @@ canvas.buddy{position:absolute!important;inset:auto 0% 2% auto!important;width:2
 .cadd{width:100%;padding:12px;border-radius:14px;border:3px solid var(--tomato,#e8452c);background:#fff;color:var(--tomato,#e8452c);font-weight:800;font-size:15px;cursor:pointer}
 .hfree{border:2px dashed #e8a33c;border-radius:12px;padding:8px 10px;background:#fff8ec;display:flex;flex-direction:column;gap:6px}.hfree .hft{font-weight:800;font-size:13px;color:#b5651d}.hfree textarea{width:100%;box-sizing:border-box;font-size:15px;border-radius:10px;border:2px solid #f0d6a8;padding:8px;font-family:inherit;resize:vertical}
 .mmemo textarea,.hfree textarea{min-height:96px;line-height:1.6}.mmemo textarea{width:100%;box-sizing:border-box;font-size:15px;border-radius:10px;border:2px solid #d9ecb8;padding:8px;font-family:inherit;resize:vertical}
+.mmode{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0}.mmode button{padding:10px 6px;border-radius:12px;border:2px solid #e8a33c;background:#fff;color:#b5651d;font-weight:800;font-size:14px;cursor:pointer}.mmode button.on{background:#e8a33c;color:#fff}
 </style>
 
 </head>
@@ -1419,11 +1420,26 @@ function vZukan(){
 
 const KDESC={'カパラバティ':'火の呼吸。おなかで短く強く吐きます。','バストリカ（ふいごの呼吸）':'吸う・吐くを力強く速く。体が温まります。','ナーディショーダナ（片鼻交互呼吸）':'左右の鼻で交互に呼吸。心が落ち着きます。','アヌロマ・ヴィロマ':'片鼻ずつ吸って吐く、バランスの呼吸。','ウジャイ呼吸':'のどを少しせばめて、波の音のように呼吸。','ブラーマリー（蜂の呼吸）':'ハミングしながら吐く。リラックス効果。','シータリー（冷却の呼吸）':'丸めた舌から吸って、体をクールダウン。','シータカーリー':'歯のすき間から吸う、冷却の呼吸。','スーリヤベーダナ（右鼻呼吸）':'右鼻から吸って、体を元気に。','チャンドラベーダナ（左鼻呼吸）':'左鼻から吸って、心を静かに。','ライオンの呼吸':'舌を出して「ハーッ」と吐く。顔と喉のストレッチ。','腹式呼吸':'おなかをふくらませて、ゆっくり深く。','完全呼吸（三段呼吸）':'おなか→胸→鎖骨の順に満たす呼吸。','ボックス呼吸（4-4-4-4）':'吸う・止める・吐く・止めるを4秒ずつ。','4-7-8呼吸':'4秒吸って7秒止め、8秒で吐く。眠りの前に。','火の呼吸 × クンバク':'カパラバティのあとに息止めを組み合わせます。'};
 const KAPALA=Object.keys(KDESC);
+const MEALT=['断食','16時間断食','半日断食（朝食抜き）','ファスティング（酵素ドリンク）','糖質オフ','白米を玄米に','腹八分目','よく噛む（ひと口30回）','野菜から先に食べる','間食なし','夜8時以降は食べない','タンパク質を毎食とる','水を1日2L飲む','発酵食品をとる','揚げ物なし','甘い飲み物なし','お酒なし','ベジタリアンデー','塩分ひかえめ','朝ごはんをしっかり'];
+const MEALRE=/断食|ファスティング|糖質|食べ|食事|間食|腹八分|玄米|ベジ|塩分/;
+function migMeal(){const e=CX('ex'),mt=CX('mealt');for(let i=e.length-1;i>=0;i--)if(MEALRE.test(e[i])){if(!MEALT.includes(e[i])&&!mt.includes(e[i]))mt.push(e[i]);e.splice(i,1)}}
+function mealTask(){if(logType!=='meal')return;const f=$('#form');if(!f)return;window._mm=window._mm||'task';
+  const tg=document.createElement('div');tg.className='mmode';tg.innerHTML=`<button type="button" data-mm="task" class="${_mm==='task'?'on':''}">食事トレの種目・課題</button><button type="button" data-mm="food" class="${_mm==='food'?'on':''}">食べたもの</button>`;
+  f.before(tg);tg.onclick=e=>{const b=e.target.closest('[data-mm]');if(b){window._mm=b.dataset.mm;vLog()}};
+  if(_mm!=='task')return;
+  const m=me();migMeal();const L=[...MEALT,...CX('mealt')];
+  f.innerHTML=`<div class="stack"><label>種目（${L.length}種）<select id="mt">${L.map(e=>`<option>${esc(e)}</option>`).join('')}</select></label>${addRow('mtn')}
+    <label class="mmemo">課題・内容（自由に書けます）<textarea id="mtx" rows="5" maxlength="500" placeholder="例：夜8時から翌日のお昼12時まで、水とお茶だけで過ごせた。お腹がすいた時はカパラバティでがまん！"></textarea></label>
+    <div class="preview" id="pv">根性 <b>+30</b> EXP</div>
+    <button class="btn-main" id="go" type="button">記録してEXPをもらう</button></div>`;
+  bindAdd('mtn','mealt');if(window._pick){$('#mt').value=window._pick;window._pick=null}
+  $('#go').onclick=()=>{const t=$('#mtx').value.trim();gain(m,'grit',30,`食事トレ ${$('#mt').value}`+(t?`／${t}`:''));tab='hero';render()};
+}
 function CX(k){S.custom=S.custom||{};return S.custom[k]=S.custom[k]||[]}
-function EXGALL(){const c=CX('ex');return c.length?[...EXG,['追加した種目',c]]:EXG}
+function EXGALL(){migMeal();const c=CX('ex');return c.length?[...EXG,['追加した種目',c]]:EXG}
 function addRow(id){return `<div class="addx"><input id="${id}" placeholder="リストにない種目を入力して追加" maxlength="30"><button type="button" id="${id}b">＋追加</button></div>`}
-function bindAdd(id,k){const go=()=>{const v=$('#'+id).value.trim();if(!v){toast('種目名を入れてください');return}const all=k==='ex'?EXGALL().flatMap(g=>g[1]):k==='kapala'?[...KAPALA,...CX('kapala')]:[...CARDIO,...CX('cardio')];if(!all.includes(v))CX(k).push(v);save();window._pick=v;vLog();toast(`「${v}」を追加しました。次からリストに出ます`)};$('#'+id+'b').onclick=go;$('#'+id).onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing)go()}}
-function HWGROUPS(){return [['おうちの宿題','fix',HOMEWORK],...EXGALL().map(([g,xs])=>['加圧トレ・'+g,'ex',xs]),...YG.map(([gk,gl])=>['YOGA・'+gl,'yoga',Object.keys(FOODS).filter(k=>FOODS[k].cat==='yoga'&&yg(k)===gk).map(k=>FOODS[k].name)]),['有酸素','cardio',[...CARDIO,...CX('cardio')]],['カパラバティ・呼吸法','kapala',[...KAPALA,...CX('kapala')]]]}
+function bindAdd(id,k){const go=()=>{const v=$('#'+id).value.trim();if(!v){toast('種目名を入れてください');return}if(k==='ex'&&MEALRE.test(v)){const mt=CX('mealt');if(!MEALT.includes(v)&&!mt.includes(v))mt.push(v);save();logType='meal';window._mm='task';window._pick=v;vLog();toast(`「${v}」は食事トレの種目に入れました`);return}const all=k==='mealt'?[...MEALT,...CX('mealt')]:k==='ex'?EXGALL().flatMap(g=>g[1]):k==='kapala'?[...KAPALA,...CX('kapala')]:[...CARDIO,...CX('cardio')];if(!all.includes(v))CX(k).push(v);save();window._pick=v;vLog();toast(`「${v}」を追加しました。次からリストに出ます`)};$('#'+id+'b').onclick=go;$('#'+id).onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing)go()}}
+function HWGROUPS(){return [['おうちの宿題','fix',HOMEWORK],...EXGALL().map(([g,xs])=>['加圧トレ・'+g,'ex',xs]),...YG.map(([gk,gl])=>['YOGA・'+gl,'yoga',Object.keys(FOODS).filter(k=>FOODS[k].cat==='yoga'&&yg(k)===gk).map(k=>FOODS[k].name)]),['食事トレ','mealt',(migMeal(),[...MEALT,...CX('mealt')])],['有酸素','cardio',[...CARDIO,...CX('cardio')]],['カパラバティ・呼吸法','kapala',[...KAPALA,...CX('kapala')]]]}
 function ymd(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
 let calYM=null;
 const hm=x=>String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0');
@@ -1443,8 +1459,8 @@ document.addEventListener('click',e=>{const c=e.target.closest('#calbox [data-cd
 function vGuild(){
   setTimeout(()=>{const L=$('#htl');if(!L)return;let base=HOMEWORK[0],kind='fix';const O=$('#hopt');
     const sel=(id,arr,def,unit)=>`<label>${unit}<select id="${id}">${arr.map(v=>`<option ${v===def?'selected':''}>${v}</option>`).join('')}</select></label>`;
-    const comp=()=>{let t=base;if(kind==='ex')t=`${base} ${$('#hr').value}回×${$('#hs').value}セット`;else if(kind==='yoga')t=`${base} ${$('#hy').value}分`;else if(kind==='kapala'){const k=$('#hk').value;t=`カパラバティ ${$('#hn').value}回×${$('#hrd').value}ラウンド${k==='なし'?'':`（最後にクンバク${k}）`}`}else if(kind==='cardio'&&!/\d+(分|時間)/.test(base))t=`${base} ${$('#hc').value}分`;$('#ht').value=t;$('#hpv').textContent=t};
-    const opts=()=>{O.innerHTML=kind==='kapala'?sel('hn',[30,50,60,80,100,108,150,200],100,'回数')+sel('hrd',[1,2,3,4,5],3,'ラウンド')+sel('hk',['なし','1分','1分半','2分'],'1分','クンバク'):kind==='ex'?sel('hr',[5,8,10,12,15,20,25,30,50],10,'回数')+sel('hs',[1,2,3,4,5],3,'セット'):kind==='yoga'?sel('hy',[1,3,5,10,15,20,30],5,'時間（分）'):kind==='cardio'&&!/\d+(分|時間)/.test(base)?sel('hc',[10,15,20,30,45,60,90],30,'時間（分）'):'';O.querySelectorAll('select').forEach(x=>x.onchange=comp);comp()};
+    const comp=()=>{let t=base;if(kind==='ex')t=`${base} ${$('#hr').value}回×${$('#hs').value}セット`;else if(kind==='yoga')t=`${base} ${$('#hy').value}分`;else if(kind==='kapala'){const k=$('#hk').value;t=`${base} ${$('#hn').value}回×${$('#hrd').value}ラウンド${k==='なし'?'':`（最後にクンバク${k}）`}`}else if(kind==='cardio'&&!/\d+(分|時間)/.test(base))t=`${base} ${$('#hc').value}分`;else if(kind==='mealt'){const x=($('#hmt')||{value:''}).value.trim();t=`食事トレ：${base}`+(x?`（${x}）`:'')}$('#ht').value=t;$('#hpv').textContent=t};
+    const opts=()=>{O.innerHTML=kind==='mealt'?`<label class="mmemo" style="grid-column:1/-1">課題・内容（トレーナーが自由に書く）<textarea id="hmt" rows="5" maxlength="500" placeholder="例：夜8時から翌日お昼まで食べない。水とお茶はOK。つらい時はカパラバティ30回。"></textarea></label>`:kind==='kapala'?sel('hn',[30,50,60,80,100,108,150,200],100,'回数')+sel('hrd',[1,2,3,4,5],3,'ラウンド')+sel('hk',['なし','1分','1分半','2分'],'1分','クンバク'):kind==='ex'?sel('hr',[5,8,10,12,15,20,25,30,50],10,'回数')+sel('hs',[1,2,3,4,5],3,'セット'):kind==='yoga'?sel('hy',[1,3,5,10,15,20,30],5,'時間（分）'):kind==='cardio'&&!/\d+(分|時間)/.test(base)?sel('hc',[10,15,20,30,45,60,90],30,'時間（分）'):'';O.querySelectorAll('select').forEach(x=>x.onchange=comp);O.querySelectorAll('textarea').forEach(x=>x.oninput=comp);comp()};
     L.onclick=e=>{const b=e.target.closest('[data-hv]');if(!b)return;L.querySelectorAll('.on').forEach(x=>x.classList.remove('on'));b.classList.add('on');base=b.dataset.hv;kind=b.dataset.hk;opts()};
     L.querySelector('[data-hv]').classList.add('on');
     const G=$('#gtl');G.onclick=e=>{const b=e.target.closest('[data-tv]');if(!b)return;G.querySelectorAll('.on').forEach(x=>x.classList.remove('on'));b.classList.add('on');$('#gt').value=b.dataset.tv;$('#gpv').textContent=b.dataset.tv};
@@ -1513,7 +1529,7 @@ render=function(){if(_cap)return;return _render0.apply(this,arguments)};
 toast=function(){if(_cap)return;return _toast0.apply(this,arguments)};
 const SN={str:'力',end:'持久',grit:'根性',tech:'技'};
 vLog=function(){
-  _vLog0.apply(this,arguments);
+  _vLog0.apply(this,arguments);mealTask();
   S.cart=S.cart||[];const cart=S.cart;
   const seg=document.querySelector('#view .seg');
   if(seg){const d=document.createElement('div');d.className='cart';
