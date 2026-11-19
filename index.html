@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>キタエル・クエスト</title>
+<meta name="theme-color" content="#1f222a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="キタエル">
+<style>html{-webkit-text-size-adjust:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}button{-webkit-tap-highlight-color:transparent}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap">
+<style>
+/* Layout: one-column phone app. Rubber gym floor background; the four stats wear Olympic bumper-plate colors (25kg red, 20kg blue, 15kg yellow, 10kg green). */
+:root{
+  --floor:#16181d; --floor-2:#1f222a; --panel:#262a33; --line:#363b47;
+  --chalk:#eef0f4; --muted:#9aa1b0;
+  --red:#e2483d; --blue:#3a7bea; --yellow:#f2c230; --green:#3fae5a;
+  --gold:#f2c230;
+  --display:"DotGothic16","Zen Kaku Gothic New",system-ui,sans-serif;
+  --body:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--floor);color:var(--chalk)}
+body{font-family:var(--body);font-size:15px;line-height:1.6;
+  background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);background-size:6px 6px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--floor-2)}
+.app{max-width:520px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 96px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--floor-2);border-bottom:1px solid var(--line);
+  margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-left,0px));display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.logo{font-family:var(--display);font-size:18px;white-space:nowrap;letter-spacing:.04em;flex:1;min-width:0}
+.logo small{display:block;font-family:var(--body);font-size:11px;color:var(--muted);letter-spacing:.08em}
+select,input,button{font:inherit;color:inherit}
+select,input{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:7px 9px;min-width:0}
+button{cursor:pointer;border:0;border-radius:6px;padding:9px 14px;background:var(--panel);border:1px solid var(--line)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--yellow);outline-offset:2px}
+.btn-main{background:var(--yellow);color:#1a1a1a;border-color:var(--yellow);font-weight:900}
+.btn-main:active{transform:translateY(1px)}
+.mode{font-size:12px;padding:6px 10px}
+.mode.on{background:var(--blue);border-color:var(--blue)}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--floor-2);border-top:1px solid var(--line);
+  display:flex;justify-content:center;padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+nav .in{display:flex;max-width:520px;width:100%;gap:2px}
+nav button{flex:1;background:none;border:0;padding:6px 2px;font-size:11px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button .ic{font-family:var(--display);font-size:17px;line-height:1}
+nav button.on{color:var(--chalk)}
+nav button.on .ic{color:var(--yellow)}
+h2{font-family:var(--display);font-weight:400;font-size:18px;margin:22px 0 10px;letter-spacing:.04em}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+.stack{display:flex;flex-direction:column;gap:10px}
+.muted{color:var(--muted);font-size:13px}
+.demo{font-size:12px;color:var(--muted);border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin-top:12px}
+
+/* hero */
+.hero{display:grid;grid-template-columns:120px 1fr;gap:14px;align-items:center;margin-top:14px}
+.sprite{width:120px;height:120px;image-rendering:pixelated;background:var(--floor-2);border:1px solid var(--line);border-radius:10px}
+.name{font-weight:900;font-size:18px;line-height:1.3}
+.cls{font-family:var(--display);color:var(--yellow);font-size:14px}
+.lv{font-family:var(--display);font-size:30px;line-height:1}
+.bar{height:10px;background:var(--floor);border-radius:5px;overflow:hidden;border:1px solid var(--line)}
+.bar i{display:block;height:100%;background:var(--yellow);transition:width .6s}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.stat{display:flex;align-items:center;gap:10px;background:var(--floor-2);border-radius:8px;padding:8px 10px;min-width:0}
+.plate{width:30px;height:30px;border-radius:50%;flex:none;display:grid;place-items:center;font-family:var(--display);font-size:11px;color:#fff;
+  box-shadow:inset 0 0 0 4px rgba(0,0,0,.25),inset 0 0 0 9px rgba(255,255,255,.12)}
+.stat b{font-family:var(--display);font-weight:400;font-size:18px;display:block;line-height:1.1}
+.stat span{font-size:11px;color:var(--muted)}
+.titles{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font-size:12px;padding:3px 9px;border-radius:999px;background:var(--floor-2);border:1px solid var(--line)}
+.chip.gold{border-color:var(--gold);color:var(--gold)}
+.streak{display:flex;gap:4px;margin-top:6px}
+.streak i{flex:1;height:18px;border-radius:3px;background:var(--floor-2);border:1px solid var(--line)}
+.streak i.on{background:var(--green);border-color:var(--green)}
+
+/* log */
+.seg{display:flex;gap:6px}
+.seg button{flex:1;font-size:13px}
+.seg button.on{background:var(--chalk);color:var(--floor);border-color:var(--chalk);font-weight:700}
+.row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+label{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:4px;min-width:0}
+.preview{font-size:13px;color:var(--muted)}
+.preview b{color:var(--yellow);font-family:var(--display);font-weight:400;font-size:16px}
+
+/* feed */
+.post{display:grid;grid-template-columns:40px 1fr;gap:10px}
+.av{width:40px;height:40px;border-radius:8px;background:var(--floor-2);image-rendering:pixelated}
+.post .who{font-weight:700;font-size:14px}
+.post .what{font-size:14px;margin-top:2px}
+.post .meta{display:flex;justify-content:space-between;align-items:center;margin-top:6px;gap:8px}
+.cheer{font-size:12px;padding:4px 10px}
+.cheer.done{border-color:var(--red);color:var(--red)}
+.tag{font-size:11px;font-weight:700;padding:1px 6px;border-radius:4px;color:#111}
+
+/* rank */
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:8px 4px;border-bottom:1px solid var(--line);font-size:14px}
+td.n{font-family:var(--display);width:30px;color:var(--muted)}
+td.r{text-align:right;font-family:var(--display)}
+tr.me td{color:var(--yellow)}
+.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;text-align:center}
+.vs .big{font-family:var(--display);font-size:24px}
+
+/* boss */
+.boss{text-align:center}
+.boss canvas{width:180px;height:180px;image-rendering:pixelated;display:block;margin:8px auto}
+.hp{height:16px;background:var(--floor);border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.hp i{display:block;height:100%;background:var(--red);transition:width .8s}
+.contrib{display:flex;flex-direction:column;gap:6px;text-align:left;margin-top:12px}
+.contrib div{display:grid;grid-template-columns:5.5em 1fr 4em;gap:8px;align-items:center;font-size:13px}
+.contrib s{display:block;height:8px;background:var(--blue);border-radius:4px;text-decoration:none}
+
+/* overlay */
+.ov{position:fixed;inset:0;z-index:20;background:rgba(10,11,14,.82);display:grid;place-items:center;padding:24px}
+.ov .box{text-align:center;max-width:320px}
+.ov .t{font-family:var(--display);font-size:36px;color:var(--yellow);animation:pop .5s ease-out}
+.ov .s{margin:8px 0 18px}
+@keyframes pop{0%{transform:scale(.4);opacity:0}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+.hw{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.hw .btn-main{flex:none;padding:8px 12px}
+.stampmark{flex:none;width:44px;height:44px;border-radius:50%;border:3px solid var(--red);color:var(--red);display:grid;place-items:center;font-weight:900;font-size:18px;transform:rotate(-12deg)}
+@media (max-width:440px){.logo{flex-basis:100%}}
+.zk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.zc{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center;min-width:0}
+.zc canvas{width:100%;max-width:96px;aspect-ratio:1;image-rendering:pixelated;background:var(--floor-2);border-radius:6px;display:block;margin:0 auto}
+.zc.lock canvas{opacity:.7}
+.zc.now{border-color:var(--yellow)}
+.zl{font-family:var(--display);color:var(--yellow);font-size:13px;margin-top:4px}
+.zy{font-size:10px;color:var(--muted);line-height:1.3;word-break:break-all}
+.zn{font-weight:700;font-size:13px;line-height:1.3}
+.za{font-size:11px;color:var(--muted);line-height:1.4}
+.zt{font-size:11px;font-weight:900;color:#111;background:var(--yellow);border-radius:4px;margin-top:4px}
+.toast{position:fixed;left:50%;bottom:calc(80px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:15;background:var(--chalk);color:var(--floor);font-weight:700;padding:8px 14px;border-radius:8px;font-size:14px;max-width:90vw}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">キタエル・クエスト<small>GYM × ADVENTURE ／ 試作版</small></div>
+    <select id="who" aria-label="表示する会員"></select>
+    <button id="modeBtn" class="mode" type="button">トレーナー</button>
+  </header>
+  <main id="view"></main>
+</div>
+<nav><div class="in" id="tabs"></div></nav>
+<div id="ov" class="ov" hidden></div>
+<div id="toast" class="toast" hidden></div>
+
+<script>
+// ---------- data ----------
+const KEY='kq-proto-v7';
+const LOOKS=[['m','男性'],['f','女性'],['dog','犬'],['cat','猫'],['sheep','ひつじ'],['giraffe','キリン'],['hamster','ハムスター'],['g','八百万の神']];
+// 文字の絵で顔を描く（.は透明）
+function GRID(R,rows,pal){rows.forEach((r,y)=>[...r].forEach((ch,x)=>{if(ch!=='.'){let col=pal[ch];if(typeof col==='function')col=col(x,y);R(x,y,1,1,col);}}));}
+const SHEEP=[
+'.....ww..ww.....',
+'....wwwwwwww....',
+'...wwwwwwwwww...',
+'..eewwffffwwee..',
+'...ewfkffkfwe...',
+'....wffnnffw....',
+'.....wffffw.....',
+'......wwww......'];
+const SHEEP_PAL={w:(x,y)=>(x+2*y)%4===0?'#e2ddd3':'#ffffff',f:'#f6e2cf',k:'#1a1a1a',e:'#d9c2b0',n:'#e59aa0'};
+const HAM=[
+'....oo....oo....',
+'...oppo..oppo...',
+'...oooooooooo...',
+'..oooooooooooo..',
+'..ookoowwookoo..',
+'..ocwwwnnwwwco..',
+'...wwwwwwwwww...',
+'....wwwmmwww....'];
+const HAM_PAL={o:'#e8a254',p:'#f4a6b0',k:'#1a1a1a',w:'#fff8ee',c:'#f7b6b0',n:'#f08a9a',m:'#d98a8a'};
+// 動物の顔（16x16の上半分）。fur=毛の色（腕もこの色）
+const ANIMALS={
+ dog:{fur:'#d98e3e',dark:'#a8662a',head:(R,P,f,d)=>{R(5,2,6,5,f);R(6,7,4,1,f);R(6,5,4,2,'#f6e3c4');P([[7,5],[8,5]],'#1a1a1a');P([[6,4],[9,4]],'#1a1a1a');P([[7,6],[8,6]],'#e8b9a0');},ears:(R,P,f,d)=>{P([[5,0],[5,1],[6,1],[10,0],[10,1],[9,1]],f);P([[5,1],[10,1]],d);}},
+ cat:{fur:'#fbf8f2',dark:'#e08a3c',head:(R,P,f,d)=>{R(5,2,6,5,f);R(6,7,4,1,f);P([[5,2],[6,2],[5,3]],'#e08a3c');P([[9,2],[10,2],[10,3]],'#2b2b2b');P([[6,4],[9,4]],'#1a1a1a');P([[7,5],[8,5]],'#f29aa8');P([[3,5],[4,6],[12,5],[11,6]],'#b8bcc4');},ears:(R,P,f,d)=>{P([[5,0],[5,1],[6,1]],'#e08a3c');P([[10,0],[10,1],[9,1]],'#2b2b2b');P([[5,1],[10,1]],'#f29aa8');}},
+ sheep:{fur:'#f4f1ea',dark:'#d9c2b0',head:(R,P)=>GRID(R,SHEEP,SHEEP_PAL),ears:(R,P)=>{P([[2,3],[3,3],[3,4]],'#d9c2b0');P([[12,3],[13,3],[12,4]],'#d9c2b0');P([[3,3],[12,3]],'#f2b8b8');}},
+ giraffe:{fur:'#e9b84a',dark:'#9a5a22',head:(R,P,f,d)=>{R(5,2,6,4,f);R(6,6,4,2,'#f3d58e');P([[6,2],[9,3],[5,5],[10,5]],d);P([[6,4],[9,4]],'#1a1a1a');P([[7,7],[8,7]],d);},ears:(R,P,f,d)=>{P([[6,0],[9,0]],d);P([[6,1],[9,1]],f);P([[4,3],[11,3]],f);}},
+ hamster:{fur:'#e8a254',dark:'#c27f38',head:(R,P)=>GRID(R,HAM,HAM_PAL),ears:(R,P)=>{P([[4,0],[5,0],[3,1],[6,1],[10,0],[11,0],[9,1],[12,1]],'#e8a254');P([[4,1],[5,1],[10,1],[11,1]],'#f4a6b0');}},
+};
+const FEMALE=new Set('ユイ,ハナ,ミサキ,サクラ,メイ,ナナ,アヤ,マオ,リナ,エマ,ミオ,ユナ,サキ,モモ,アカリ,ヒナ,マユ,チカ,アン,カホ,ミク,ルナ,シオリ,ユズ,コハル,ナツ,セナ,ワカ,アユ,ミズキ,ユキ,カナ,スミレ,ノゾミ,エリ,ミホ,ユリ'.split(','));
+const SHOW=30; // 1日に見える他の会員の人数
+const TEAMS={am:{name:'朝焼け団',color:'var(--yellow)',hex:'#f2c230'},pm:{name:'月夜団',color:'var(--blue)',hex:'#3a7bea'}};
+const STAMPS=[
+  {id:'form',label:'ナイスフォーム！',stat:'tec',xp:40},
+  {id:'pb',label:'自己ベスト更新！',stat:'str',xp:50},
+  {id:'keep',label:'継続えらい！',stat:'grit',xp:40},
+  {id:'push',label:'最後まで粘った！',stat:'end',xp:40},
+];
+const TITLES=['スクワットの申し子','朝活マスター','皆勤の守護者','笑顔のムードメーカー','フォームの達人','有酸素の旅人'];
+const EXERCISES=['スクワット','ベンチプレス','デッドリフト','ラットプルダウン','ショルダープレス','レッグプレス'];
+const CARDIO=['トレッドミル','バイク','クロストレーナー','ローイング'];
+const day=864e5;
+const HOMEWORK=['自宅でスクワット 20回×3セット','お風呂上がりにストレッチ 10分','1日8,000歩 歩く','プランク 1分×3セット','タンパク質を毎食とる','寝る前に腹筋 15回×2セット'];
+function seed(){
+  const now=Date.now();
+  const m=(id,name,team,s,titles,streak)=>({id,name,team,stats:s,titles,streak,weekXp:0,checkins:[]});
+  const members=[
+    m('me','あなた','am',{str:180,end:90,tec:60,grit:120},[],[1,0,0,1,0,0,0]),
+    m('k','ケンタ','pm',{str:820,end:160,tec:200,grit:300},['スクワットの申し子'],[1,1,1,0,1,1,0]),
+    m('y','ユイ','am',{str:240,end:640,tec:180,grit:360},['朝活マスター','有酸素の旅人'],[1,1,1,1,1,0,1]),
+    m('t','タカシ','pm',{str:420,end:300,tec:320,grit:220},['フォームの達人'],[0,1,0,1,0,1,0]),
+    m('h','ハナ','am',{str:130,end:220,tec:110,grit:420},['皆勤の守護者'],[1,1,1,1,1,1,0]),
+    m('s','ショウ','pm',{str:90,end:80,tec:40,grit:60},[],[0,0,1,0,0,1,0]),
+  ];
+  const w={me:520,k:1680,y:1420,t:980,h:1210,s:310};
+  members.forEach(x=>x.weekXp=w[x.id]);
+  // デモ用の追加会員（実際の会員数は画面に出さない）
+  const NAMES='アオイ,リク,ミサキ,ダイチ,サクラ,ハルト,メイ,ソウタ,ナナ,レン,アヤ,ユウキ,マオ,カイト,リナ,ツバサ,エマ,ヒロ,ミオ,タクミ,ノア,コウ,ユナ,ジュン,サキ,ケイ,モモ,ショウタ,アカリ,ユウト,ヒナ,ソラ,マユ,ダイキ,チカ,リョウ,アン,ナオキ,カホ,ヨウ,ミク,ゴウ,ルナ,イツキ,シオリ,テツ,ユズ,マサキ,コハル,ヒカル,ナツ,セナ,トモ,ワカ,キョウ,アユ,ハヤト,ミズキ,ユキ,ガク,カナ,ジン,レイ,スミレ,タイガ,ノゾミ,コウキ,エリ,シン,ミホ,ケンジ,ハル,ユリ,オウガ'.split(',');
+  let r=12345;const rnd=()=>(r=(r*1103515245+12345)%2147483648)/2147483648;
+  const ex=['スクワット','ベンチプレス','デッドリフト','ラットプルダウン'],car=['トレッドミル','バイク','ローイング'];
+  const extraFeed=[];
+  NAMES.forEach((n,i)=>{
+    const id='g'+i,x=m(id,n,i%2?'pm':'am',{str:Math.round(60+rnd()*700),end:Math.round(40+rnd()*600),tec:Math.round(20+rnd()*300),grit:Math.round(40+rnd()*400)},
+      rnd()<.15?[TITLES[Math.floor(rnd()*TITLES.length)]]:[],Array.from({length:7},()=>rnd()<.45?1:0));
+    x.weekXp=Math.round(80+rnd()*1500);members.push(x);
+    if(rnd()<.35){const f=2+rnd()*40;for(const k in x.stats)x.stats[k]=Math.round(x.stats[k]*f);}
+    if(rnd()<.8){const lift=rnd()<.55;extraFeed.push(lift?
+      {who:id,text:`${ex[Math.floor(rnd()*ex.length)]} ${20+Math.floor(rnd()*16)*5}kg × ${5+Math.floor(rnd()*8)}回 × 3セット`,xp:Math.round(20+rnd()*60),stat:'str',t:now-rnd()*1.8*day,cheers:[],pb:rnd()<.15}:
+      {who:id,text:`${car[Math.floor(rnd()*car.length)]} ${10+Math.floor(rnd()*7)*5}分`,xp:Math.round(20+rnd()*80),stat:'end',t:now-rnd()*1.8*day,cheers:[]});}
+  });
+  const feed=[
+    {id:1,who:'y',text:'トレッドミル 40分',xp:80,stat:'end',t:now-0.4*3600e3,cheers:['h','k']},
+    {id:2,who:'k',text:'スクワット 100kg × 5回 × 5セット',xp:50,stat:'str',t:now-1.5*3600e3,cheers:['t'],pb:true},
+    {id:3,who:'trainer',to:'h',text:'ハナさんに「継続えらい！」スタンプ',xp:40,stat:'grit',t:now-3*3600e3,cheers:['y','me']},
+    {id:4,who:'t',text:'デッドリフト 80kg × 8回 × 3セット',xp:38,stat:'str',t:now-5*3600e3,cheers:[]},
+    {id:5,who:'s',text:'今日もチェックイン',xp:20,stat:'grit',t:now-day,cheers:['k']},
+  ];
+  extraFeed.forEach((f,i)=>{f.id=100+i;feed.push(f)});
+  members.forEach(x=>{x.homework=[];x.boost=0;x.look=FEMALE.has(x.name)?'f':'m'});
+  const ak=Object.keys(ANIMALS);
+  members.forEach((x,i)=>{if(i>5&&i%4===1)x.look=ak[i%5];if(i>5&&i%9===6)x.look='g';});
+  members[0].homework=[{id:1,text:'お風呂上がりにストレッチ 10分',status:'open',t:now-day},{id:2,text:'自宅でスクワット 20回×3セット',status:'done',t:now-2*day}];
+  members[1].homework=[{id:3,text:'プランク 1分×3セット',status:'done',t:now-day}];
+  members[2].homework=[{id:4,text:'1日8,000歩 歩く',status:'done',t:now-day}];
+  members[4].homework=[{id:5,text:'寝る前に腹筋 15回×2セット',status:'stamped',t:now-3*day}];
+  feed.sort((a,b)=>b.t-a.t);
+  return {members,feed,boss:{name:'鉄塊ゴーレム',max:75000},quest:{text:'今週3回来館しよう',goal:3},myVisits:2,trainerMode:false,current:'me',nextId:1000,hwId:10,dayShift:0};
+}
+let S;
+try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!S||!S.members)S=seed();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+// ---------- rules ----------
+const total=m=>m.stats.str+m.stats.end+m.stats.tec+m.stats.grit;
+// Lv100までの累計は約7万EXP（週500EXPペースで約3年）。Lv100以降も上限なし
+function levelOf(xp){let lv=1,need=63,acc=0;while(xp>=acc+need){acc+=need;lv++;need=50+13*lv;}return{lv,into:xp-acc,need};}
+function classOf(m){
+  const s=m.stats,arr=[['str','重戦士'],['end','旅人'],['tec','剣術師'],['grit','守護騎士']].sort((a,b)=>s[b[0]]-s[a[0]]);
+  const top=s[arr[0][0]],sec=s[arr[1][0]];
+  if(levelOf(total(m)).lv<3)return'見習い冒険者';
+  if(sec>top*0.8)return'勇者';
+  return arr[0][1];
+}
+const STAT={str:{name:'力',kg:25,c:'var(--red)',hex:'#e2483d',hint:'筋トレ量'},end:{name:'持久',kg:20,c:'var(--blue)',hex:'#3a7bea',hint:'有酸素'},tec:{name:'技',kg:15,c:'var(--yellow)',hex:'#f2c230',hint:'トレーナー評価'},grit:{name:'根性',kg:10,c:'var(--green)',hex:'#3fae5a',hint:'来館・継続'}};
+const byId=id=>S.members.find(m=>m.id===id);
+const me=()=>byId(S.current);
+// ---------- 今日の顔ぶれ：日付と本人で決まる乱数で毎日入れ替え ----------
+function dayKey(){const d=new Date(Date.now()+(S.dayShift||0)*day);return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;}
+function hashStr(t){let h=2166136261;for(const c of t){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0;}
+function seeded(a){return()=>{a=(a+0x6D2B79F5)|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
+let visCache={};
+function visibleIds(){
+  const k=dayKey()+'|'+S.current;if(visCache.k===k)return visCache.set;
+  const r=seeded(hashStr(k)),others=S.members.filter(m=>m.id!==S.current).map(m=>m.id);
+  for(let i=others.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[others[i],others[j]]=[others[j],others[i]];}
+  const set=new Set(others.slice(0,SHOW));set.add(S.current);visCache={k,set};return set;
+}
+const visibleMembers=()=>{const v=visibleIds();return S.members.filter(m=>v.has(m.id));};
+
+// ---------- pixel sprites ----------
+// ---------- pixel sprites：Lv1から5レベルごとに進化（全21段階＝20回進化）----------
+const EVO=[
+ {lv:1,name:'見習い',add:'Tシャツ姿でスタート'},
+ {lv:5,name:'はちまき',add:'はちまきを締めた'},
+ {lv:10,name:'職業デビュー',add:'シャツが職業の色に'},
+ {lv:15,name:'リストバンド',add:'手首にリストバンド'},
+ {lv:20,name:'トレーニングベルト',add:'腰にベルト'},
+ {lv:25,name:'専用シューズ',add:'足元が職業カラーに'},
+ {lv:30,name:'筋肉アップ',add:'腕と肩が太くなる'},
+ {lv:35,name:'グローブ',add:'トレーニンググローブ'},
+ {lv:40,name:'肩当て',add:'銀の肩当て'},
+ {lv:45,name:'ダンベル装備',add:'相棒のダンベルを持つ'},
+ {lv:50,name:'マント',add:'背中にマント'},
+ {lv:55,name:'胸当て',add:'銀の胸当て'},
+ {lv:60,name:'ヘッドギア',add:'銀のヘッドギア'},
+ {lv:65,name:'すね当て',add:'脚も銀の装甲に'},
+ {lv:70,name:'青のオーラ',add:'体から青いオーラ'},
+ {lv:75,name:'金の装飾',add:'ベルトと肩当てが金に'},
+ {lv:80,name:'翼',add:'背中に白い翼'},
+ {lv:85,name:'黄金の鎧',add:'鎧が黄金に'},
+ {lv:90,name:'黄金のオーラ',add:'オーラが金色に'},
+ {lv:95,name:'王冠',add:'頭に王冠'},
+ {lv:100,name:'伝説',add:'星をまとった伝説の姿'},
+];
+const stageOfLv=lv=>{let s=0;EVO.forEach((e,i)=>{if(lv>=e.lv)s=i});return s;};
+function topStat(m){return Object.entries(m.stats).sort((a,b)=>b[1]-a[1])[0][0];}
+function hairOf(m){if(m.look==='g')return'#141414';if(m.look==='f'&&m.id==='me')return'#3a2a20';return m.id==='me'?'#4a3426':['#2b2b2b','#6b3d1f','#c58b3a','#3a2a4a'][m.name.length%4];}
+function paintHero(cv,stage,cls,hair,look){
+  const N=16;cv.width=N;cv.height=N;const c=cv.getContext('2d');c.clearRect(0,0,N,N);
+  const g=Array.from({length:N},()=>Array(N).fill(null));
+  const R=(x,y,w,h,col)=>{for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++)if(i>=0&&i<N&&j>=0&&j<N)g[j][i]=col;};
+  const P=(pts,col)=>pts.forEach(([x,y])=>R(x,y,1,1,col));
+  const has=s=>stage>=s, AN=ANIMALS[look],SK=AN?AN.fur:look==='a'?'#c9d0da':'#f0c8a0',SKD=AN?AN.dark:look==='a'?'#949eae':'#d9a87e',SIL='#c3cad6',GOLD='#f2c230',GOLDD='#c8961a';
+  const metal=has(17)?GOLD:SIL, trim=has(15)?GOLD:SIL;
+  // 後ろ側：翼、マント
+  if(has(16)){P([[1,5],[2,5],[0,6],[1,6],[2,6],[3,6],[0,7],[1,7],[2,7],[3,7],[1,8],[2,8],[3,8],[2,9],[3,9]],'#ffffff');
+              P([[14,5],[13,5],[15,6],[14,6],[13,6],[12,6],[15,7],[14,7],[13,7],[12,7],[14,8],[13,8],[12,8],[13,9],[12,9]],'#ffffff');}
+  if(has(10))R(4,8,8,7,'#b8322b');
+  if(look==='g')for(let y=0;y<10;y++)for(let x=0;x<N;x++){if(Math.abs(Math.hypot(x-7.5,y-4.5)-5.3)<0.6)R(x,y,1,1,'rgba(242,194,48,.85)');}
+  // 体
+  const shirt=has(2)?cls:'#8a909c';
+  R(6,1,4,1,hair);R(5,2,6,1,hair);R(5,3,1,1,hair);R(10,3,1,1,hair);R(6,3,4,1,SK);
+  R(5,4,6,3,SK);P([[6,4],[9,4]],'#1a1a1a');R(7,6,2,1,SKD);R(6,7,4,1,SK);
+  R(4,8,8,3,shirt);R(3,9,1,3,SK);R(12,9,1,3,SK);
+  if(has(6)){R(2,9,1,2,SK);R(13,9,1,2,SK);R(3,8,1,1,shirt);R(12,8,1,1,shirt);P([[7,9],[8,9]],'rgba(0,0,0,.25)');}
+  if(look==='f'){R(5,1,6,1,hair);R(4,3,1,6,hair);R(11,3,1,6,hair);R(4,2,1,1,hair);R(11,2,1,1,hair);R(7,6,2,1,'#e07f86');}
+  if(look==='a'){ // グレイ型：大きな頭、つり上がった大きな黒い目、小さな口
+    R(4,0,8,8,null);R(6,0,4,1,SK);R(5,1,6,1,SK);R(4,2,8,3,SK);R(5,5,6,1,SK);R(6,6,4,1,SK);R(7,7,2,1,SK);
+    P([[5,3],[6,3],[6,4],[10,3],[9,3],[9,4],[5,2],[10,2]],'#0b0d14');P([[5,3],[10,3]],'#3c4466');P([[7,6],[8,6]],SKD);
+  }
+  if(AN){R(4,0,8,8,null);AN.head(R,P,SK,SKD);AN.ears(R,P,SK,SKD);}
+  if(look==='g'){R(4,4,1,3,hair);R(11,4,1,3,hair);P([[6,5],[9,5]],'#e2483d');P([[7,1],[8,1]],'#f2c230');}
+  R(5,11,6,1,shirt);R(5,12,6,1,'#3a3f4d');R(5,13,2,2,'#3a3f4d');R(9,13,2,2,'#3a3f4d');
+  R(5,15,2,1,has(5)?cls:'#222');R(9,15,2,1,has(5)?cls:'#222');
+  // 装備
+  if(has(1)){if(look==='a')R(4,1,8,1,'#e2483d'),P([[3,1],[3,2]],'#e2483d');else R(5,3,6,1,'#e2483d'),P([[4,3],[4,4]],'#e2483d');}
+  if(has(3))P([[3,10],[12,10]],'#ffffff'),has(6)&&P([[2,10],[13,10]],'#ffffff');
+  if(has(4))R(5,11,6,1,has(15)?GOLDD:'#6b4a2b'),R(7,11,2,1,trim);
+  if(has(7))P([[3,11],[12,11]],'#2b2b2b'),has(6)&&P([[2,11],[13,11]],'#2b2b2b');
+  if(has(8))R(3,8,2,1,trim),R(11,8,2,1,trim),has(6)&&P([[2,8],[13,8]],trim);
+  if(has(9)){R(14,10,1,4,'#555b66');R(13,11,3,1,'#555b66');P([[14,9],[14,14]],'#2b2b2b');R(13,9,3,1,'#2b2b2b');R(13,14,3,1,'#2b2b2b');}
+  if(has(11))R(5,8,6,3,metal),P([[7,9],[8,9]],has(17)?GOLDD:'#8f97a6');
+  if(has(12)){if(look==='a')R(6,0,4,1,metal),R(5,1,6,1,metal),P([[4,1],[11,1]],metal);else R(5,1,6,2,metal),R(6,0,4,1,metal),P([[5,3],[10,3]],metal);if(AN&&!has(19))AN.ears(R,P,SK,SKD);}
+  if(has(13))R(5,13,2,2,metal),R(9,13,2,2,metal);
+  if(has(19)){R(5,0,6,1,null);P([[5,0],[7,0],[8,0],[10,0]],'#ffe27a');R(5,1,6,1,'#ffe27a');P([[7,1],[8,1]],'#e2483d');}
+  // 宇宙人：キラキラのシルバー（斜めの光沢＋虹色の反射＋きらめき）
+  if(look==='a'){
+    const sheen=['#ffffff','#f1f5fc','#dde5f2','#ece4fb','#dff4fb'];
+    for(let y=0;y<N;y++)for(let x=0;x<N;x++){if(g[y][x]===SK)g[y][x]=sheen[((x-y)%5+5)%5];else if(g[y][x]===SKD)g[y][x]='#b4bfd3';}
+    [[1,2],[14,4],[2,12],[13,14]].forEach(([x,y])=>{if(!g[y][x]){g[y][x]='#ffffff';[[1,0],[-1,0],[0,1],[0,-1]].forEach(([a,b])=>{if(g[y+b]&&!g[y+b][x+a]&&x+a>=0&&x+a<N)g[y+b][x+a]='rgba(180,230,255,.75)'});}});
+  }
+  // オーラ
+  if(has(14)){
+    const aura=has(18)?'rgba(242,194,48,.55)':'rgba(58,123,234,.5)',add=[];
+    for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(!g[y][x]&&[[1,0],[-1,0],[0,1],[0,-1]].some(([a,b])=>g[y+b]&&g[y+b][x+a]))add.push([x,y]);
+    add.forEach(([x,y])=>g[y][x]=aura);
+  }
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(g[y][x]){c.fillStyle=g[y][x];c.fillRect(x,y,1,1);}
+  if(has(20)){c.fillStyle='#ffffff';[[0,1],[15,2],[1,13],[14,12],[0,9]].forEach(([x,y])=>c.fillRect(x,y,1,1));c.fillStyle=GOLD;[[2,0],[13,0],[15,15],[0,15]].forEach(([x,y])=>c.fillRect(x,y,1,1));}
+}
+// ---------- 八百万の神ルート：Lv5から5レベルごとに別の神様へ（20柱、最後は天照大神）----------
+const KAMI=[
+ {name:'名もなき小さな神',add:'ここから神への道が始まる'},
+ {name:'少彦名命',yomi:'すくなびこなのみこと',add:'小さな薬と知恵の神'},
+ {name:'宇迦之御魂神',yomi:'うかのみたまのかみ',add:'お稲荷さま。狐の耳'},
+ {name:'恵比寿',yomi:'えびす',add:'福の神。釣竿と鯛'},
+ {name:'大国主命',yomi:'おおくにぬしのみこと',add:'縁結びの神。大きな袋'},
+ {name:'木花咲耶姫',yomi:'このはなさくやひめ',add:'桜の女神'},
+ {name:'天鈿女命',yomi:'あめのうずめのみこと',add:'舞と芸能の女神。羽衣'},
+ {name:'猿田彦命',yomi:'さるたひこのみこと',add:'道案内の神。赤い鼻と矛'},
+ {name:'綿津見神',yomi:'わたつみのかみ',add:'海の神。波と宝珠'},
+ {name:'志那都比古神',yomi:'しなつひこのかみ',add:'風の神。風袋'},
+ {name:'八幡神',yomi:'はちまんしん',add:'武運の神。弓'},
+ {name:'経津主神',yomi:'ふつぬしのかみ',add:'剣の神'},
+ {name:'建御雷神',yomi:'たけみかづちのかみ',add:'雷の神。稲妻'},
+ {name:'大山祇神',yomi:'おおやまつみのかみ',add:'山の神。白いひげ'},
+ {name:'天手力男命',yomi:'あめのたぢからおのみこと',add:'力の神。大岩を持ち上げる'},
+ {name:'月読命',yomi:'つくよみのみこと',add:'月の神。三日月'},
+ {name:'素戔嗚尊',yomi:'すさのおのみこと',add:'嵐の神。草薙の剣'},
+ {name:'伊邪那美命',yomi:'いざなみのみこと',add:'国生みの女神'},
+ {name:'伊邪那岐命',yomi:'いざなぎのみこと',add:'国生みの神。天沼矛'},
+ {name:'天之御中主神',yomi:'あめのみなかぬしのかみ',add:'宇宙の中心の神。星々'},
+ {name:'天照大神',yomi:'あまてらすおおみかみ',add:'太陽の女神。八咫鏡と日輪'},
+];
+function nameHtml(e){return e.yomi?`${e.name}（${e.yomi}）`:e.name;}
+function evoInfo(look,stage){return look==='g'?KAMI[stage]:EVO[stage];}
+function paintKami(cv,stage,cls){
+  const N=16;cv.width=N;cv.height=N;const c=cv.getContext('2d');c.clearRect(0,0,N,N);
+  const g=Array.from({length:N},()=>Array(N).fill(null));
+  const R=(x,y,w,h,col)=>{for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++)if(i>=0&&i<N&&j>=0&&j<N)g[j][i]=col;};
+  const P=(pts,col)=>pts.forEach(([x,y])=>R(x,y,1,1,col));
+  const ring=(cx,cy,r,col,w=.6,maxY=99)=>{for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(y<=maxY&&Math.abs(Math.hypot(x-cx,y-cy)-r)<w)R(x,y,1,1,col);};
+  const disk=(cx,cy,r,col)=>{for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(Math.hypot(x-cx,y-cy)<=r)R(x,y,1,1,col);};
+  const SK='#f0c8a0',BK='#141414',GOLD='#f2c230',SIL='#c3cad6',WH='#f4f4f0',RED='#e2483d';
+  const K=[
+   {robe:WH,hair:BK,st:'mizura'},{robe:'#8fbf6a',hair:BK,st:'mizura'},{robe:WH,hair:WH,st:'long'},{robe:'#3a7bea',hair:BK,st:'none'},
+   {robe:'#c58b3a',hair:BK,st:'mizura'},{robe:'#f2a7c3',hair:BK,st:'long'},{robe:'#f6d6e0',hair:BK,st:'long'},{robe:'#d9c27a',hair:BK,st:'mizura'},
+   {robe:'#2f6fb0',hair:'#1d4f7a',st:'long'},{robe:'#4fa070',hair:BK,st:'wild'},{robe:'#a8452f',hair:BK,st:'mizura'},{robe:'#7d8494',hair:BK,st:'mizura'},
+   {robe:'#4a3f8f',hair:BK,st:'wild'},{robe:'#5a7d3a',hair:WH,st:'mizura'},{robe:'#b8322b',hair:BK,st:'wild'},{robe:'#2b3566',hair:SIL,st:'long'},
+   {robe:'#4b2f5e',hair:BK,st:'wild'},{robe:'#8a5fa8',hair:BK,st:'long'},{robe:WH,hair:BK,st:'mizura'},{robe:'#1b2347',hair:WH,st:'long'},{robe:WH,hair:BK,st:'long'},
+  ][stage];
+  // 背景（後光・持ち物の後ろ側）
+  if(stage===20){disk(7.5,5,6.6,'#f28a30');disk(7.5,5,5.4,'#ffd84a');[[7,0],[8,0],[0,5],[15,5],[2,1],[13,1],[1,10],[14,10]].forEach(([x,y])=>R(x,y,1,1,'#ffe27a'));}
+  else if(stage===19){[[1,1],[14,2],[0,7],[15,8],[2,12],[13,13],[4,0],[11,0]].forEach(([x,y])=>R(x,y,1,1,'#ffffff'));ring(7.5,4.5,5.3,'rgba(160,190,255,.8)',.5,9);}
+  else if(stage===15){disk(3,3,3,'#e8ecf4');disk(4.3,2.2,2.6,null);}
+  else if(stage===13){P([[0,15],[1,14],[2,13],[3,12],[1,15],[2,15],[2,14],[3,13],[3,14],[3,15],[13,12],[14,13],[15,14],[12,13],[12,14],[12,15],[13,13],[13,14],[13,15],[14,14],[14,15],[15,15]],'#4f7a3a');}
+  else if(stage>=1)ring(7.5,4.5,5.3,stage>=16?GOLD:'rgba(242,194,48,.55)',.6,9);
+  if(stage===4)R(1,6,3,5,'#efe6d0'),P([[2,5]],'#c58b3a');
+  if(stage===9){for(let x=2;x<=13;x++){const y=x<4||x>11?2:x<6||x>9?1:0;R(x,y,1,1,'#3fae5a');}P([[2,3],[13,3]],'#3fae5a');}
+  // 体（衣）
+  R(4,8,8,4,K.robe);R(3,9,1,3,K.robe);R(12,9,1,3,K.robe);R(2,10,1,2,K.robe);R(13,10,1,2,K.robe);
+  R(5,12,6,3,cls);R(5,15,2,1,WH);R(9,15,2,1,WH);P([[7,8],[8,9]],'rgba(0,0,0,.18)');
+  if(stage===14){R(3,8,1,1,SK);R(12,8,1,1,SK);R(4,8,8,1,K.robe);P([[6,9],[9,9]],'rgba(0,0,0,.25)');}
+  // 頭
+  R(5,3,6,4,SK);R(6,7,4,1,SK);P([[6,4],[9,4]],'#1a1a1a');R(7,6,2,1,'#d9a87e');
+  if(K.st!=='none'){R(6,1,4,1,K.hair);R(5,2,6,1,K.hair);P([[5,3],[10,3]],K.hair);}
+  if(K.st==='mizura')R(4,4,1,3,K.hair),R(11,4,1,3,K.hair),P([[4,4],[11,4]],RED);
+  if(K.st==='long')R(4,3,1,6,K.hair),R(11,3,1,6,K.hair),R(5,1,6,1,K.hair);
+  if(K.st==='wild')P([[4,1],[11,1],[5,0],[10,0],[7,0],[4,3],[11,3],[4,4],[11,4]],K.hair),R(5,1,6,1,K.hair);
+  // 神ごとの持ち物
+  ({
+   0:()=>{},
+   1:()=>{R(5,0,6,1,'#5fae4a');P([[7,-1],[4,1],[11,1]],'#5fae4a');R(13,10,1,2,'#c58b3a');P([[13,9]],'#8a5a2b');},
+   2:()=>{P([[5,0],[5,1],[10,0],[10,1]],WH);P([[5,1],[10,1]],RED);P([[13,6],[13,7],[14,7],[13,8],[13,9],[13,10],[13,11]],GOLD);R(4,8,8,1,RED);},
+   3:()=>{R(6,0,4,2,BK);R(5,2,6,1,BK);R(14,1,1,9,'#8a5a2b');R(12,10,3,2,RED);P([[15,11],[11,10]],RED);P([[13,10]],WH);},
+   4:()=>{R(4,3,1,0,K.hair);},
+   5:()=>{P([[5,2],[10,2],[11,5]],'#ffb3cf');P([[6,2]],'#ffffff');R(13,7,1,1,'#ffb3cf');P([[14,6],[14,8],[13,9]],'#ffb3cf');},
+   6:()=>{P([[1,7],[2,8],[1,9],[2,10],[1,11],[14,7],[13,8],[14,9],[13,10],[14,11]],'#bfe3ff');P([[13,6],[14,5]],'#3fae5a');},
+   7:()=>{P([[7,5],[8,5]],RED);P([[7,4]],'#c0392b');R(14,1,1,13,'#8a5a2b');P([[14,0],[13,1],[15,1]],SIL);},
+   8:()=>{for(let x=4;x<12;x+=2){P([[x,13],[x+1,14]],'#bfe3ff');}disk(13.5,10.5,1,'#ffffff');},
+   9:()=>{},
+   10:()=>{for(let y=3;y<=13;y++){const x=y<5||y>11?13:14;R(x,y,1,1,'#8a5a2b');}R(12,3,1,11,'rgba(255,255,255,.5)');R(4,8,8,2,'#7d8494');},
+   11:()=>{R(13,1,1,9,SIL);P([[13,0]],'#ffffff');R(12,10,3,1,GOLD);R(13,11,1,1,GOLD);},
+   12:()=>{P([[14,1],[13,2],[14,3],[13,4],[12,5],[13,6],[14,6],[13,7],[12,8]],GOLD);P([[1,2],[2,3],[1,4],[2,5]],GOLD);},
+   13:()=>{R(5,6,6,3,WH);R(6,9,4,1,WH);P([[6,4],[9,4]],'#1a1a1a');R(13,5,1,10,'#8a5a2b');},
+   14:()=>{R(3,0,10,2,'#9aa0aa');P([[4,0],[9,1],[11,0]],'#6b707a');R(3,2,1,6,SK);R(12,2,1,6,SK);},
+   15:()=>{R(13,8,1,1,SIL);},
+   16:()=>{R(13,0,2,10,SIL);P([[13,0]],'#ffffff');R(12,10,4,1,GOLD);R(13,11,2,2,'#5a3a2a');R(0,0,4,1,'#6b707a');R(12,0,1,1,'#6b707a');P([[1,1],[2,2]],GOLD);},
+   17:()=>{P([[5,2],[10,2]],'#c9a8e8');R(6,0,4,1,'#c9a8e8');P([[7,0],[8,0]],GOLD);},
+   18:()=>{R(14,0,1,15,SIL);P([[14,0],[14,4],[14,8]],'#7fe0ff');R(13,1,3,1,GOLD);},
+   19:()=>{P([[5,9],[9,10],[6,11],[10,9]],'#ffffff');R(6,0,4,1,'#bcd0ff');P([[7,-1]],'#ffffff');},
+   20:()=>{R(5,0,6,1,GOLD);P([[5,-1],[7,-1],[8,-1],[10,-1]],GOLD);P([[7,0],[8,0]],RED);disk(7.5,9.5,1.3,SIL);P([[7,9]],'#ffffff');R(4,8,1,4,RED);R(11,8,1,4,RED);},
+  })[stage]();
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(g[y][x]){c.fillStyle=g[y][x];c.fillRect(x,y,1,1);}
+}
+function drawSprite(cv,m){const st=stageOfLv(levelOf(total(m)).lv);if(m.look==='g')return paintKami(cv,st,STAT[topStat(m)].hex);paintHero(cv,st,STAT[topStat(m)].hex,hairOf(m),m.look);}
+function drawBoss(cv,ratio){
+  const art=`....rrrrrr....
+...rrrrrrrr...
+..rrryrryrrr..
+..rrrrrrrrrr..
+.rrrrdddddrrr.
+rrr.rrrrrr.rrr
+rr..rrrrrr..rr
+rr..rrrrrr..rr
+....rrrrrr....
+....rr..rr....
+...rrr..rrr...
+..rrrr..rrrr..`;
+  const n=14;cv.width=n;cv.height=12;const c=cv.getContext('2d');c.clearRect(0,0,n,12);
+  const col=ratio<=0?'#4a4f5c':'#7d8494';
+  art.split('\n').forEach((r,y)=>[...r].forEach((ch,x)=>{const p={r:col,y:ratio<=0?'#222':'#f2c230',d:'#2a2d35'}[ch];if(p){c.fillStyle=p;c.fillRect(x,y,1,1)}}));
+}
+
+// ---------- ui helpers ----------
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function ago(t){const d=(Date.now()-t)/60000;if(d<1)return'たった今';if(d<60)return Math.floor(d)+'分前';if(d<1440)return Math.floor(d/60)+'時間前';return Math.floor(d/1440)+'日前';}
+let toastT;function toast(msg){const t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2200);}
+function overlay(title,sub){const o=$('#ov');o.innerHTML=`<div class="box"><div class="t">${esc(title)}</div><div class="s">${esc(sub)}</div><button class="btn-main" id="ovClose" type="button">つづける</button></div>`;o.hidden=false;$('#ovClose').onclick=()=>o.hidden=true;$('#ovClose').focus();}
+
+function gain(m,stat,xp,text,extra={}){
+  let boosted=false;
+  if(!extra.by&&m.boost>0&&(stat==='str'||stat==='end')){xp=Math.round(xp*1.5);m.boost--;boosted=true;text+='（気合ブースト×1.5）';}
+  const before=levelOf(total(m)).lv, cb=classOf(m);
+  m.stats[stat]+=xp;m.weekXp+=xp;
+  S.feed.unshift({id:S.nextId++,who:extra.by||m.id,to:extra.by?m.id:undefined,text,xp,stat,t:Date.now(),cheers:[],pb:extra.pb});
+  const after=levelOf(total(m)).lv, ca=classOf(m);
+  save();
+  if(m.id===S.current&&after>before){
+    const evo=stageOfLv(after)>stageOfLv(before);
+    overlay(`LEVEL ${after}!`,evo?`進化！「${evoInfo(m.look,stageOfLv(after)).name}${evoInfo(m.look,stageOfLv(after)).yomi?`（${evoInfo(m.look,stageOfLv(after)).yomi}）`:''}」 ${evoInfo(m.look,stageOfLv(after)).add}`:ca!==cb?`職業が「${ca}」になりました！`:`${STAT[stat].name}が上がった！ この調子！`);
+  }else toast(`${STAT[stat].name} +${xp} EXP${boosted?'　ブースト発動！':''}`);
+}
+
+// ---------- views ----------
+let tab='hero', logType='lift';
+const TABS=[['hero','冒険者','◆'],['log','記録','＋'],['feed','酒場','≡'],['rank','番付','▲'],['boss','ボス','✦']];
+function renderTabs(){
+  const list=S.trainerMode?[...TABS,['guild','評価','★']]:TABS;
+  if(tab!=='zukan'&&!list.find(x=>x[0]===tab))tab='hero';
+  $('#tabs').innerHTML=list.map(([k,l,i])=>`<button type="button" data-t="${k}" class="${k===tab?'on':''}"><span class="ic">${i}</span>${l}</button>`).join('');
+  $('#tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;render();window.scrollTo(0,0)});
+}
+function render(){
+  $('#who').innerHTML=visibleMembers().map(m=>`<option value="${m.id}" ${m.id===S.current?'selected':''}>${esc(m.name)}</option>`).join('');
+  $('#modeBtn').classList.toggle('on',S.trainerMode);
+  renderTabs();
+  ({hero:vHero,log:vLog,feed:vFeed,rank:vRank,boss:vBoss,guild:vGuild,zukan:vZukan})[tab]();
+}
+
+function vHero(){
+  const m=me(),L=levelOf(total(m)),days=['月','火','水','木','金','土','日'];
+  const visits=m.streak.filter(Boolean).length;
+  $('#view').innerHTML=`
+  <div class="hero">
+    <canvas class="sprite" id="sp" aria-label="冒険者の姿"></canvas>
+    <div class="stack" style="gap:6px;min-width:0">
+      <div class="name">${esc(m.name)}${L.lv>=100?` <span style="color:var(--yellow)">${'★'.repeat(1+Math.floor((L.lv-100)/10))}</span>`:''}</div>
+      <div class="muted" style="font-size:12px">姿：${nameHtml(evoInfo(m.look,stageOfLv(L.lv)))}</div>
+      <div class="cls">${classOf(m)} ／ <span style="color:${TEAMS[m.team].color}">${TEAMS[m.team].name}</span></div>
+      <div style="display:flex;align-items:baseline;gap:8px"><span class="muted">Lv</span><span class="lv">${L.lv}</span></div>
+      <div class="bar" aria-label="次のレベルまで"><i style="width:${L.into/L.need*100}%"></i></div>
+      <div class="muted">次のレベルまで ${L.need-L.into} EXP</div>
+      <label>見た目<select id="lk">${LOOKS.map(([k,l])=>`<option value="${k}" ${(m.look||'m')===k?'selected':''}>${l}</option>`).join('')}</select></label>
+      <button type="button" id="zk" style="font-size:12px;padding:5px 10px;align-self:flex-start">進化図鑑（${stageOfLv(L.lv)+1}/21）</button>
+    </div>
+  </div>
+  <div class="stats">${Object.entries(STAT).map(([k,v])=>`
+    <div class="stat"><div class="plate" style="background:${v.c}">${v.kg}</div><div><b>${m.stats[k]}</b><span>${v.name}・${v.hint}</span></div></div>`).join('')}
+  </div>
+  ${m.titles.length?`<div class="titles">${m.titles.map(t=>`<span class="chip gold">${esc(t)}</span>`).join('')}</div>`:''}
+  <h2>今週の来館</h2>
+  <div class="card">
+    <div class="streak">${m.streak.map(v=>`<i class="${v?'on':''}"></i>`).join('')}</div>
+    <div style="display:flex;gap:4px">${days.map(d=>`<span class="muted" style="flex:1;text-align:center">${d}</span>`).join('')}</div>
+    <div class="muted" style="margin-top:6px">今週 ${visits} 日来館。来るだけで「根性」が上がります。</div>
+  </div>
+  <h2>トレーナーからの宿題</h2>
+  <div class="stack">${m.homework.length?m.homework.slice().reverse().map(h=>`
+    <div class="card hw"><div style="min-width:0"><div style="font-weight:700">${esc(h.text)}</div>
+      <div class="muted">${h.status==='open'?'ジムの外でやってみよう':h.status==='done'?'トレーナーのスタンプ待ち':'スタンプ獲得！ パワーアップ済み'}</div></div>
+      ${h.status==='open'?`<button type="button" class="btn-main" data-hw="${h.id}">やった！</button>`:h.status==='done'?'<span class="chip">確認待ち</span>':'<span class="stampmark">済</span>'}
+    </div>`).join(''):'<div class="card muted">今は宿題はありません。</div>'}</div>
+  ${m.boost>0?`<div class="card" style="margin-top:10px;border-color:var(--yellow)"><b style="color:var(--yellow)">気合ブースト中</b>　次の筋トレ・有酸素 ${m.boost}回分のEXPが1.5倍</div>`:''}
+  <h2>トレーナーからのクエスト</h2>
+  <div class="card">
+    <div style="font-weight:700">${esc(S.quest.text)}</div>
+    <div class="bar" style="margin:8px 0 4px"><i style="width:${Math.min(1,visits/S.quest.goal)*100}%;background:var(--green)"></i></div>
+    <div class="muted">${Math.min(visits,S.quest.goal)} / ${S.quest.goal} 回　達成で 称号チャンス＋100 EXP</div>
+  </div>
+  <div class="demo">試作版です。他の会員は毎日ランダムに30人だけ表示され、ジムの会員数は分からないようになっています。 <button type="button" id="nextDay" style="font-size:12px;padding:3px 8px">翌日の顔ぶれを見る</button><br>会員データはデモ用で、このブラウザの中にだけ保存されます。上のメニューで会員を切り替えると、他の人の画面も見られます。 <button type="button" id="reset" style="font-size:12px;padding:3px 8px;margin-left:4px">初期化</button></div>`;
+  drawSprite($('#sp'),m);
+  $('#zk').onclick=()=>{tab='zukan';zLook=m.look||'m';render();window.scrollTo(0,0)};
+  $('#lk').onchange=e=>{m.look=e.target.value;save();vHero()};
+  document.querySelectorAll('[data-hw]').forEach(b=>b.onclick=()=>{const h=m.homework.find(x=>x.id==b.dataset.hw);h.status='done';h.doneAt=Date.now();save();toast('報告しました！ トレーナーのスタンプを待とう');vHero()});
+  $('#nextDay').onclick=()=>{S.dayShift=(S.dayShift||0)+1;save();render();toast('顔ぶれが入れ替わりました')};
+  $('#reset').onclick=()=>{S=seed();save();render();toast('デモを最初の状態に戻しました')};
+}
+
+function vLog(){
+  const m=me();
+  $('#view').innerHTML=`
+  <h2>今日のトレーニングを記録</h2>
+  <div class="card stack">
+    <div class="seg">
+      <button type="button" data-k="lift" class="${logType==='lift'?'on':''}">筋トレ</button>
+      <button type="button" data-k="cardio" class="${logType==='cardio'?'on':''}">有酸素</button>
+      <button type="button" data-k="in" class="${logType==='in'?'on':''}">チェックイン</button>
+    </div>
+    <div id="form"></div>
+  </div>
+  <p class="muted">本番では、トレーナーが確認ボタンを押すとEXPが確定する流れにできます（不正防止と、声かけのきっかけになります）。</p>`;
+  document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{logType=b.dataset.k;vLog()});
+  const f=$('#form');
+  if(logType==='lift'){
+    f.innerHTML=`<div class="stack">
+      <label>種目<select id="ex">${EXERCISES.map(e=>`<option>${e}</option>`).join('')}</select></label>
+      <div class="row">
+        <label>重量 kg<input id="kg" type="number" inputmode="decimal" value="40" min="0"></label>
+        <label>回数<input id="rep" type="number" inputmode="numeric" value="10" min="0"></label>
+        <label>セット<input id="set" type="number" inputmode="numeric" value="3" min="0"></label>
+      </div>
+      <label style="flex-direction:row;align-items:center;gap:8px;color:var(--chalk)"><input id="pb" type="checkbox" style="width:auto"> 自己ベスト！（ボーナス×1.5）</label>
+      <div class="preview" id="pv"></div>
+      <button class="btn-main" id="go" type="button">記録してEXPをもらう</button></div>`;
+    const calc=()=>{const v=(+$('#kg').value||0)*(+$('#rep').value||0)*(+$('#set').value||0);let xp=Math.max(5,Math.round(v/30));if($('#pb').checked)xp=Math.round(xp*1.5);return{v,xp:Math.min(xp,150)}};
+    const upd=()=>{const c=calc();$('#pv').innerHTML=`総挙上量 ${c.v.toLocaleString()} kg → 力 <b>+${c.xp}</b> EXP`};
+    f.querySelectorAll('input').forEach(i=>i.oninput=upd);upd();
+    $('#go').onclick=()=>{const c=calc();gain(m,'str',c.xp,`${$('#ex').value} ${$('#kg').value}kg × ${$('#rep').value}回 × ${$('#set').value}セット`,{pb:$('#pb').checked});tab='hero';render()};
+  }else if(logType==='cardio'){
+    f.innerHTML=`<div class="stack">
+      <label>マシン<select id="ma">${CARDIO.map(e=>`<option>${e}</option>`).join('')}</select></label>
+      <label>時間（分）<input id="min" type="number" inputmode="numeric" value="20" min="0"></label>
+      <div class="preview" id="pv"></div>
+      <button class="btn-main" id="go" type="button">記録してEXPをもらう</button></div>`;
+    const calc=()=>Math.min(150,Math.max(5,Math.round((+$('#min').value||0)*2)));
+    const upd=()=>$('#pv').innerHTML=`持久 <b>+${calc()}</b> EXP`;
+    $('#min').oninput=upd;upd();
+    $('#go').onclick=()=>{gain(m,'end',calc(),`${$('#ma').value} ${$('#min').value}分`);tab='hero';render()};
+  }else{
+    const today=(new Date().getDay()+6)%7, done=m.streak[today];
+    f.innerHTML=`<div class="stack"><div class="muted">ジムに来たらタップ。本番では受付のQRコードを読む形を想定しています。</div>
+      <div class="preview">根性 <b>+20</b> EXP ／ 週3回でクエスト達成</div>
+      <button class="btn-main" id="go" type="button" ${done?'disabled style="opacity:.5"':''}>${done?'今日はチェックイン済み':'チェックインする'}</button></div>`;
+    if(!done)$('#go').onclick=()=>{m.streak[today]=1;gain(m,'grit',20,'ジムにチェックイン');tab='hero';render()};
+  }
+}
+
+function vFeed(){
+  const m=me();
+  const v=visibleIds(),posts=S.feed.filter(p=>v.has(p.who==='trainer'?p.to:p.who)).slice(0,40);
+  $('#view').innerHTML=`<h2>酒場（今日の顔ぶれ）</h2><p class="muted" style="margin-top:-6px">表示される仲間は毎日入れ替わります。エールを送ると、送った人も受け取った人も「根性」+2。</p>
+  <div class="stack">${posts.map(p=>{
+    const isT=p.who==='trainer', w=isT?null:byId(p.who), cheered=p.cheers.includes(m.id);
+    return `<div class="card post"><canvas class="av" data-av="${isT?'':p.who}"></canvas><div style="min-width:0">
+      <div class="who">${isT?'トレーナー':esc(w.name)} ${p.pb?'<span class="tag" style="background:var(--yellow)">自己ベスト</span>':''}</div>
+      <div class="what">${esc(p.text)}</div>
+      <div class="meta"><span class="muted"><span class="tag" style="background:${STAT[p.stat].c}">${STAT[p.stat].name}+${p.xp}</span> ${ago(p.t)}</span>
+      <button type="button" class="cheer ${cheered?'done':''}" data-c="${p.id}" ${p.who===m.id?'disabled':''}>エール ${p.cheers.length}</button></div></div></div>`}).join('')}</div>`;
+  document.querySelectorAll('canvas[data-av]').forEach(c=>{const w=byId(c.dataset.av);if(w)drawSprite(c,w);else{c.width=1;c.height=1;const x=c.getContext('2d');x.fillStyle='#3a7bea';x.fillRect(0,0,1,1)}});
+  document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{
+    const p=S.feed.find(x=>x.id==b.dataset.c);if(p.cheers.includes(m.id))return;
+    p.cheers.push(m.id);m.stats.grit+=2;const tgt=byId(p.to||p.who);if(tgt){tgt.stats.grit+=2}save();toast('エールを送りました！ 根性+2');vFeed()});
+}
+
+function vRank(){
+  const list=visibleMembers().sort((a,b)=>b.weekXp-a.weekXp);
+  const tsum=k=>S.members.filter(m=>m.team===k).reduce((a,m)=>a+m.weekXp,0);
+  const a=tsum('am'),p=tsum('pm');
+  $('#view').innerHTML=`<h2>チーム対抗戦（今週）</h2>
+  <div class="card"><div class="vs">
+    <div><div class="big" style="color:${TEAMS.am.color}">${Math.round(a/(a+p)*100)}%</div><div class="muted">${TEAMS.am.name}</div></div>
+    <div class="muted">VS</div>
+    <div><div class="big" style="color:${TEAMS.pm.color}">${100-Math.round(a/(a+p)*100)}%</div><div class="muted">${TEAMS.pm.name}</div></div></div>
+    <div class="bar" style="margin-top:10px;background:${TEAMS.pm.hex}"><i style="width:${a/(a+p)*100}%;background:${TEAMS.am.hex}"></i></div>
+  </div>
+  <h2>今日の顔ぶれ番付（今週のEXP）</h2>
+  <div class="card"><table>${list.map((m,i)=>`<tr class="${m.id===S.current?'me':''}"><td class="n">${i+1}</td><td>${esc(m.name)} <span class="muted">Lv${levelOf(total(m)).lv}</span></td><td class="r">${m.weekXp.toLocaleString()}</td></tr>`).join('')}</table>
+  <p class="muted" style="margin:8px 0 0">顔ぶれは毎日入れ替わり、番付は毎週月曜にリセット。ベテランも初心者も、毎週横一線から。</p></div>`;
+}
+
+function vBoss(){
+  const dmg=S.members.reduce((a,m)=>a+m.weekXp,0),hp=Math.max(0,S.boss.max-dmg),r=hp/S.boss.max;
+  const list=visibleMembers().sort((a,b)=>b.weekXp-a.weekXp).slice(0,10);if(!list.find(m=>m.id===S.current))list.push(me());const mx=list[0].weekXp||1;
+  $('#view').innerHTML=`<h2>今週のボス</h2>
+  <div class="card boss">
+    <div style="font-family:var(--display);font-size:20px">${esc(S.boss.name)}</div>
+    <canvas id="bc" aria-label="ボスの姿"></canvas>
+    <div class="hp"><i style="width:${r*100}%"></i></div>
+    <div class="muted" style="margin-top:6px">${r>0?`残りHP ${Math.round(r*100)}%　あと少し！`:'討伐成功！ 全員に報酬 +100 EXP'}</div>
+    <div class="muted" style="text-align:left;margin-top:12px">今日の顔ぶれの活躍</div><div class="contrib" style="margin-top:6px">${list.map(m=>`<div><span>${esc(m.name)}</span><s style="width:${m.weekXp/mx*100}%"></s><span class="muted" style="text-align:right">${m.weekXp}</span></div>`).join('')}</div>
+  </div>
+  <p class="muted">ジム全員の今週のEXP合計がボスへのダメージになります。1回のトレーニングが、みんなの力になります。</p>`;
+  drawBoss($('#bc'),r);
+}
+
+let zLook='m';
+function vZukan(){
+  const m=me(),lv=levelOf(total(m)).lv,cur=stageOfLv(lv),cls=STAT[topStat(m)].hex;
+  $('#view').innerHTML=`<h2>進化図鑑</h2>
+  <p class="muted" style="margin-top:-6px">${zLook==='g'?'5レベルごとに別の神様へ姿を変えます。Lv5の少彦名命から20柱を巡り、Lv100で天照大神に。':'5レベルごとに見た目が進化します。Lv100の「伝説」まで全21段階。'}Lv100からは10レベルごとに名前の横に★が増え、上限はありません。色は一番伸びている能力の色になります。</p>
+  <label style="margin-bottom:10px">見た目を選ぶ<select id="zlk">${LOOKS.map(([k,l])=>`<option value="${k}" ${zLook===k?'selected':''}>${l}</option>`).join('')}</select></label>
+  <div class="zk">${(zLook==='g'?KAMI.map((k,i)=>({...k,lv:EVO[i].lv})):EVO).map((e,i)=>`<div class="zc ${i===cur?'now':''} ${i>cur?'lock':''}"><canvas data-zs="${i}"></canvas>
+    <div class="zl">Lv${e.lv}</div>${e.yomi?`<div class="zy">${e.yomi}</div>`:''}<div class="zn">${e.name}</div><div class="za">${e.add}</div>${i===cur?'<div class="zt">いまここ</div>':''}</div>`).join('')}</div>
+  <button type="button" id="back" style="margin-top:14px">冒険者に戻る</button>`;
+  document.querySelectorAll('[data-zs]').forEach(c=>zLook==='g'?paintKami(c,+c.dataset.zs,cls):paintHero(c,+c.dataset.zs,cls,hairOf({id:'me',name:'',look:zLook}),zLook));
+  $('#zlk').onchange=e=>{zLook=e.target.value;vZukan()};
+  $('#back').onclick=()=>{tab='hero';render()};
+}
+
+function vGuild(){
+  const waiting=S.members.flatMap(m=>m.homework.filter(h=>h.status==='done').map(h=>({m,h})));
+  $('#view').innerHTML=`<h2>宿題のスタンプ待ち（${waiting.length}件）</h2>
+  <div class="stack">${waiting.length?waiting.map(({m,h})=>`<div class="card hw"><div style="min-width:0"><div style="font-weight:700">${esc(m.name)}</div><div class="muted">${esc(h.text)}</div></div>
+    <button type="button" class="btn-main" data-st="${m.id}:${h.id}">スタンプを押す</button></div>`).join(''):'<div class="card muted">スタンプ待ちの宿題はありません。</div>'}</div>
+  <h2>宿題を出す</h2>
+  <div class="card stack">
+    <label>会員<select id="hm">${S.members.map(m=>`<option value="${m.id}">${esc(m.name)}</option>`).join('')}</select></label>
+    <label>宿題<select id="ht">${HOMEWORK.map(t=>`<option>${t}</option>`).join('')}</select></label>
+    <button class="btn-main" id="hgive" type="button">宿題を出す</button>
+  </div>
+  <h2>トレーナー：会員を評価する</h2>
+  <div class="card stack">
+    <label>会員<select id="gm">${S.members.map(m=>`<option value="${m.id}">${esc(m.name)}（Lv${levelOf(total(m)).lv}）</option>`).join('')}</select></label>
+    <div class="muted">スタンプを押す</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${STAMPS.map(s=>`<button type="button" data-s="${s.id}" style="border-color:${STAT[s.stat].c}">${s.label}<br><span class="muted">${STAT[s.stat].name}+${s.xp}</span></button>`).join('')}</div>
+  </div>
+  <h2>称号を授ける</h2>
+  <div class="card stack">
+    <label>称号<select id="gt">${TITLES.map(t=>`<option>${t}</option>`).join('')}</select></label>
+    <button class="btn-main" id="give" type="button">この会員に授ける</button>
+  </div>
+  <h2>今週のクエストを出す</h2>
+  <div class="card stack">
+    <label>内容<input id="qt" value="${esc(S.quest.text)}"></label>
+    <button id="qset" type="button">クエストを更新</button>
+  </div>`;
+  document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{const s=STAMPS.find(x=>x.id===b.dataset.s),m=byId($('#gm').value);
+    gain(m,s.stat,s.xp,`${m.name}さんに「${s.label}」スタンプ`,{by:'trainer'});});
+  $('#give').onclick=()=>{const m=byId($('#gm').value),t=$('#gt').value;if(m.titles.includes(t)){toast('すでに持っている称号です');return}
+    m.titles.push(t);S.feed.unshift({id:S.nextId++,who:'trainer',to:m.id,text:`${m.name}さんに称号「${t}」を授与`,xp:0,stat:'tec',t:Date.now(),cheers:[]});save();toast(`称号「${t}」を授けました`)};
+  document.querySelectorAll('[data-st]').forEach(b=>b.onclick=()=>{
+    const [mid,hid]=b.dataset.st.split(':'),m=byId(mid),h=m.homework.find(x=>x.id==hid);
+    h.status='stamped';m.boost=(m.boost||0)+2;
+    const before=levelOf(total(m)).lv;['str','end','tec','grit'].forEach(k=>m.stats[k]+=15);m.weekXp+=60;
+    S.feed.unshift({id:S.nextId++,who:'trainer',to:m.id,text:`${m.name}さんの宿題「${h.text}」にスタンプ！ パワーアップ`,xp:60,stat:'grit',t:Date.now(),cheers:[]});save();
+    const after=levelOf(total(m)).lv;
+    if(m.id===S.current)overlay('POWER UP!',`全能力+15${after>before?`、レベル${after}に！`:''}　次の2回のトレーニングはEXP1.5倍`);
+    else toast(`${m.name}さんがパワーアップしました`);
+    vGuild()});
+  $('#hgive').onclick=()=>{const m=byId($('#hm').value);m.homework.push({id:S.hwId++,text:$('#ht').value,status:'open',t:Date.now()});save();toast(`${m.name}さんに宿題を出しました`)};
+  $('#qset').onclick=()=>{S.quest.text=$('#qt').value||S.quest.text;save();toast('クエストを更新しました')};
+}
+
+$('#who').onchange=e=>{S.current=e.target.value;save();render()};
+$('#modeBtn').onclick=()=>{S.trainerMode=!S.trainerMode;if(S.trainerMode)tab='guild';save();render()};
+render();
+// ホーム画面アプリ用：オフラインでも開けるようにする
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
+</script>
+</body>
+</html>
