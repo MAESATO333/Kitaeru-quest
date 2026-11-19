@@ -293,6 +293,7 @@ header .dd{display:inline-block}
 .ddp .o{display:block;width:100%;text-align:left;font:inherit;font-size:14px;background:none;border:0;border-radius:8px;padding:8px 10px;color:var(--ink);cursor:pointer;min-height:0;box-shadow:none;white-space:nowrap}
 .ddp .o:hover{background:var(--floor-2)}.ddp .o.on{background:var(--tomato);color:#fff;font-weight:700}
 canvas.buddy{position:absolute!important;inset:auto 0% 2% auto!important;width:29%!important;max-width:150px!important;min-width:70px!important;height:auto!important;aspect-ratio:27/22!important;z-index:2}
+.addx{display:flex;gap:6px;margin-top:-2px}.addx input{flex:1;min-width:0;font-size:14px}.addx button{flex:none;padding:6px 12px;border-radius:10px;border:2px solid var(--leaf,#3f9a3a);background:#fff;color:var(--leaf,#3f9a3a);font-weight:700;cursor:pointer}
 </style>
 
 </head>
@@ -1274,7 +1275,7 @@ function vLog(){
   const f=$('#form');
   if(logType==='lift'){
     f.innerHTML=`<div class="stack">
-      <label>種目（${EXERCISES.length}種）<select id="ex">${EXG.map(([g,xs])=>`<optgroup label="${g}">${xs.map(e=>`<option>${e}</option>`).join('')}</optgroup>`).join('')}</select></label>
+      <label>種目（${EXGALL().flatMap(g=>g[1]).length}種）<select id="ex">${EXGALL().map(([g,xs])=>`<optgroup label="${g}">${xs.map(e=>`<option>${e}</option>`).join('')}</optgroup>`).join('')}</select></label>${addRow('exn')}
       <div class="row">
         <label>重量 kg<input id="kg" type="number" inputmode="decimal" value="40" min="0"></label>
         <label>回数<input id="rep" type="number" inputmode="numeric" value="10" min="0"></label>
@@ -1285,7 +1286,7 @@ function vLog(){
       <button class="btn-main" id="go" type="button">記録してEXPをもらう</button></div>`;
     const calc=()=>{const bw=BW.has($('#ex').value);const v=((+$('#kg').value||0)+(bw?30:0))*(+$('#rep').value||0)*(+$('#set').value||0);let xp=Math.max(5,Math.round(v/30));if($('#pb').checked)xp=Math.round(xp*1.5);return{v,xp:Math.min(xp,150)}};
     const upd=()=>{const c=calc();$('#pv').innerHTML=`${BW.has($('#ex').value)?'自重(30kg分)＋':''}総挙上量 ${c.v.toLocaleString()} kg → 力 <b>+${c.xp}</b> EXP`};
-    f.querySelectorAll('input').forEach(i=>i.oninput=upd);$('#ex').onchange=()=>{if(BW.has($('#ex').value))$('#kg').value=0;upd()};upd();
+    f.querySelectorAll('input').forEach(i=>i.oninput=upd);$('#ex').onchange=()=>{if(BW.has($('#ex').value))$('#kg').value=0;upd()};upd();bindAdd('exn','ex');if(window._pick){$('#ex').value=window._pick;window._pick=null;$('#ex').onchange()}
     $('#go').onclick=()=>{const c=calc();gain(m,'str',c.xp,`${$('#ex').value} ${$('#kg').value}kg × ${$('#rep').value}回 × ${$('#set').value}セット`,{pb:$('#pb').checked});tab='hero';render()};
   }else if(logType==='yoga'){
     const YK=Object.keys(FOODS).filter(k=>FOODS[k].cat==='yoga');
@@ -1327,13 +1328,13 @@ function vLog(){
     $('#go').onclick=()=>{const c=calc();giveFood(m,'kapala');gain(m,'end',c.e,`カパラバティ ${$('#kr').value}回×${$('#kn').value}ラウンド`);if(c.k){giveFood(m,c.k);gain(m,'grit',c.g,`クンバク ${FOODS[c.k].name.replace('クンバク','')}`)}tab='hero';render()};
   }else if(logType==='cardio'){
     f.innerHTML=`<div class="stack">
-      <label>メニュー<select id="ma">${CARDIO.map(e=>`<option>${e}</option>`).join('')}</select></label>
+      <label>メニュー<select id="ma">${[...CARDIO,...CX('cardio')].map(e=>`<option>${e}</option>`).join('')}</select></label>${addRow('man')}
       <label>時間（分）<input id="min" type="number" inputmode="numeric" value="20" min="0"></label>
       <div class="preview" id="pv"></div>
       <button class="btn-main" id="go" type="button">記録してEXPをもらう</button></div>`;
     const calc=()=>Math.min(240,Math.max(5,Math.round((+$('#min').value||0)*2)));
     const upd=()=>$('#pv').innerHTML=`持久 <b>+${calc()}</b> EXP`;
-    $('#min').oninput=upd;$('#ma').onchange=()=>{const v=CMIN[$('#ma').value];if(v)$('#min').value=v;upd()};upd();
+    $('#min').oninput=upd;$('#ma').onchange=()=>{const v=CMIN[$('#ma').value];if(v)$('#min').value=v;upd()};upd();bindAdd('man','cardio');if(window._pick){$('#ma').value=window._pick;window._pick=null;upd()}
     $('#go').onclick=()=>{gain(m,'end',calc(),CMIN[$('#ma').value]?$('#ma').value:`${$('#ma').value} ${$('#min').value}分`);tab='hero';render()};
   }else{
     const today=(new Date().getDay()+6)%7, done=m.streak[today];
@@ -1406,7 +1407,11 @@ function vZukan(){
   $('#back').onclick=()=>{tab='hero';render()};
 }
 
-function HWGROUPS(){return [['おうちの宿題','fix',HOMEWORK],...EXG.map(([g,xs])=>['加圧トレ・'+g,'ex',xs]),...YG.map(([gk,gl])=>['YOGA・'+gl,'yoga',Object.keys(FOODS).filter(k=>FOODS[k].cat==='yoga'&&yg(k)===gk).map(k=>FOODS[k].name)]),['有酸素','cardio',CARDIO],['カパラバティ','kapala',['カパラバティ']]]}
+function CX(k){S.custom=S.custom||{};return S.custom[k]=S.custom[k]||[]}
+function EXGALL(){const c=CX('ex');return c.length?[...EXG,['追加した種目',c]]:EXG}
+function addRow(id){return `<div class="addx"><input id="${id}" placeholder="リストにない種目を入力して追加" maxlength="30"><button type="button" id="${id}b">＋追加</button></div>`}
+function bindAdd(id,k){const go=()=>{const v=$('#'+id).value.trim();if(!v){toast('種目名を入れてください');return}const all=k==='ex'?EXGALL().flatMap(g=>g[1]):[...CARDIO,...CX('cardio')];if(!all.includes(v))CX(k).push(v);save();window._pick=v;vLog();toast(`「${v}」を追加しました。次からリストに出ます`)};$('#'+id+'b').onclick=go;$('#'+id).onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing)go()}}
+function HWGROUPS(){return [['おうちの宿題','fix',HOMEWORK],...EXGALL().map(([g,xs])=>['加圧トレ・'+g,'ex',xs]),...YG.map(([gk,gl])=>['YOGA・'+gl,'yoga',Object.keys(FOODS).filter(k=>FOODS[k].cat==='yoga'&&yg(k)===gk).map(k=>FOODS[k].name)]),['有酸素','cardio',[...CARDIO,...CX('cardio')]],['カパラバティ','kapala',['カパラバティ']]]}
 function ymd(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
 let calYM=null;
 const hm=x=>String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0');
