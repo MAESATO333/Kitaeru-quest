@@ -1438,10 +1438,13 @@ function mealTask(){if(logType!=='meal')return;const f=$('#form');if(!f)return;w
   bindAdd('mtn','mealt');if(window._pick){$('#mt').value=window._pick;window._pick=null}
   $('#go').onclick=()=>{const t=$('#mtx').value.trim();gain(m,'grit',30,`食事トレ ${$('#mt').value}`+(t?`／${t}`:''));tab='hero';render()};
 }
+const FA={exn:['ex','#ex'],man:['cardio','#ma'],kxn:['kapala','#kx'],mtn:['mealt','#mt']};
+function putOpt(k,sel,v){const S2=$(sel);if(!S2)return false;let o=[...S2.options].find(o=>o.value===v||o.textContent===v);if(!o){o=new Option(v,v);S2.appendChild(o);if(!CX(k).includes(v))CX(k).push(v);save()}S2.value=o.value;S2.dispatchEvent(new Event('change',{bubbles:true}));return true}
+function preFree(){for(const id in FA){const i=$('#'+id);if(!i||!i.value.trim())continue;const [k,sel]=FA[id];putOpt(k,sel,i.value.trim());i.value=''}}
 function CX(k){S.custom=S.custom||{};return S.custom[k]=S.custom[k]||[]}
 function EXGALL(){migMeal();const c=CX('ex');return c.length?[...EXG,['追加した種目',c]]:EXG}
 function addRow(id){return `<div class="addx"><input id="${id}" placeholder="リストにない種目を入力して追加" maxlength="30"><button type="button" id="${id}b">＋追加</button></div>`}
-function bindAdd(id,k){const go=()=>{const v=$('#'+id).value.trim();if(!v){toast('種目名を入れてください');return}if(k==='ex'&&MEALRE.test(v)){const mt=CX('mealt');if(!MEALT.includes(v)&&!mt.includes(v))mt.push(v);save();logType='meal';window._mm='task';window._pick=v;vLog();toast(`「${v}」は食事トレの種目に入れました`);return}const all=k==='mealt'?[...MEALT,...CX('mealt')]:k==='ex'?EXGALL().flatMap(g=>g[1]):k==='kapala'?[...KAPALA,...CX('kapala')]:[...CARDIO,...CX('cardio')];if(!all.includes(v))CX(k).push(v);save();window._pick=v;vLog();toast(`「${v}」を追加しました。次からリストに出ます`)};$('#'+id+'b').onclick=go;$('#'+id).onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing)go()}}
+function bindAdd(id,k){const go=()=>{const v=$('#'+id).value.trim();if(!v){toast('種目名を入れてください');return}if(k==='ex'&&MEALRE.test(v)){const mt=CX('mealt');if(!MEALT.includes(v)&&!mt.includes(v))mt.push(v);save();logType='meal';window._mm='task';window._pick=v;vLog();toast(`「${v}」は食事トレの種目に入れました`);return}const all=k==='mealt'?[...MEALT,...CX('mealt')]:k==='ex'?EXGALL().flatMap(g=>g[1]):k==='kapala'?[...KAPALA,...CX('kapala')]:[...CARDIO,...CX('cardio')];if(!all.includes(v))CX(k).push(v);const fa=FA[id];if(fa&&putOpt(fa[0],fa[1],v)){$('#'+id).value='';toast(`「${v}」を追加しました。続けて内容を書いて、下のボタンで記録できます`);return}save();window._pick=v;vLog();toast(`「${v}」を追加しました。次からリストに出ます`)};$('#'+id+'b').onclick=go;$('#'+id).onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing)go()}}
 function HWGROUPS(){return [['おうちの宿題','fix',HOMEWORK],...EXGALL().map(([g,xs])=>['加圧トレ・'+g,'ex',xs]),...YG.map(([gk,gl])=>['YOGA・'+gl,'yoga',Object.keys(FOODS).filter(k=>FOODS[k].cat==='yoga'&&yg(k)===gk).map(k=>FOODS[k].name)]),...(CX('yoga').length?[['YOGA・追加した種目','yoga',CX('yoga')]]:[]),['食事トレ','mealt',(migMeal(),[...MEALT,...CX('mealt')])],['有酸素','cardio',[...CARDIO,...CX('cardio')]],['カパラバティ・呼吸法','kapala',[...KAPALA,...CX('kapala')]],...(CX('other').length?[['その他（トレーナー登録）','fix',CX('other')]]:[])]}
 function ymd(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
 let calYM=null;
@@ -1554,6 +1557,7 @@ vLog=function(){
     const cg=d.querySelector('#cgo');if(cg)cg.onclick=()=>{const m=me();const n=cart.length;cart.forEach(c=>{c.f.forEach(k=>_give0(m,k));c.g.forEach(([st,xp,tx,ex])=>_gain0(m,st,xp,tx,ex))});S.cart=[];save();tab='hero';render();toast(`${n}種目をまとめて記録しました！`)};
     const cc=d.querySelector('#cclr');if(cc)cc.onclick=()=>{S.cart=[];save();vLog()};
   }
+  const go0=$('#go');if(go0&&go0.onclick){const og=go0.onclick;go0.onclick=()=>{preFree();return og()}}
   const go=$('#go');
   if(go&&logType!=='in'&&!go.disabled){const a=document.createElement('button');a.type='button';a.className='cadd';a.id='cadd';a.textContent='＋メニューに追加（あとでまとめて記録）';go.before(a);
     a.onclick=()=>{const t=tab;_cap={f:[],g:[]};try{go.onclick()}finally{const c=_cap;_cap=null;tab=t;if(c.g.length){S.cart=S.cart||[];S.cart.push(c);save();vLog();_toast0(`メニューに追加しました（${S.cart.length}種目）`);const v=document.querySelector('#view .cart');if(v)v.scrollIntoView({behavior:'smooth',block:'nearest'})}}};
