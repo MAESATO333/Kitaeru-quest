@@ -294,6 +294,12 @@ header .dd{display:inline-block}
 .ddp .o:hover{background:var(--floor-2)}.ddp .o.on{background:var(--tomato);color:#fff;font-weight:700}
 canvas.buddy{position:absolute!important;inset:auto 0% 2% auto!important;width:29%!important;max-width:150px!important;min-width:70px!important;height:auto!important;aspect-ratio:27/22!important;z-index:2}
 .addx{display:flex;gap:6px;margin-top:-2px}.addx input{flex:1;min-width:0;font-size:14px}.addx button{flex:none;padding:6px 12px;border-radius:10px;border:2px solid var(--leaf,#3f9a3a);background:#fff;color:var(--leaf,#3f9a3a);font-weight:700;cursor:pointer}
+.cart{background:#fffbe6;border:2px dashed #f0b400;border-radius:14px;padding:10px 12px;margin:10px 0 4px}
+.cart .ch{font-weight:800;color:var(--ink,#234);margin-bottom:6px}.cart .ch small{font-weight:600;color:var(--muted)}
+.cart ol{margin:0 0 8px;padding-left:20px;max-height:220px;overflow:auto}.cart li{display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid #f3e6b0;font-size:14px}
+.cart li span{flex:1;min-width:0}.cart li b{color:var(--tomato,#e8452c);white-space:nowrap}.cart li button{border:0;background:#eee;border-radius:8px;padding:2px 8px;cursor:pointer}
+.cart .cnote{font-size:12px;color:var(--muted);line-height:1.6}.cart .cclr{display:block;margin:6px auto 0;border:0;background:none;color:var(--muted);font-size:12px;text-decoration:underline;cursor:pointer}
+.cadd{width:100%;padding:12px;border-radius:14px;border:3px solid var(--tomato,#e8452c);background:#fff;color:var(--tomato,#e8452c);font-weight:800;font-size:15px;cursor:pointer}
 </style>
 
 </head>
@@ -1490,6 +1496,33 @@ window.kensaToggle=()=>{S.kensa=!KS();save();render();toast(KS()?'検査モー�
 $('#hwBtn').onclick=()=>{const tr=S.trainerMode;tab=tr?'guild':'hero';render();setTimeout(()=>{const h=[...document.querySelectorAll('#view h2')].find(x=>x.textContent.includes(tr?'宿題を出す':'トレーナーからの宿題'));if(h)h.scrollIntoView({behavior:'smooth',block:'start'})},80)};
 $('#modeBtn').onclick=()=>{S.trainerMode=!S.trainerMode;if(S.trainerMode)tab='guild';save();render()};
 render();
+
+// ===== まとめて記録（1回のトレーニングで複数種目） =====
+let _cap=null;
+const _gain0=gain,_give0=giveFood,_render0=render,_vLog0=vLog,_toast0=toast;
+gain=function(m,stat,xp,text,extra){if(_cap){_cap.g.push([stat,xp,text,extra||{}]);return}return _gain0.apply(this,arguments)};
+giveFood=function(m,k){if(_cap){_cap.f.push(k);return}return _give0.apply(this,arguments)};
+render=function(){if(_cap)return;return _render0.apply(this,arguments)};
+toast=function(){if(_cap)return;return _toast0.apply(this,arguments)};
+const SN={str:'力',end:'持久',grit:'根性',tech:'技'};
+vLog=function(){
+  _vLog0.apply(this,arguments);
+  S.cart=S.cart||[];const cart=S.cart;
+  const seg=document.querySelector('#view .seg');
+  if(seg){const d=document.createElement('div');d.className='cart';
+    const tot=cart.reduce((a,c)=>a+c.g.reduce((b,x)=>b+x[1],0),0);
+    d.innerHTML=cart.length?`<div class="ch">今日のメニュー <small>${cart.length}種目</small></div><ol>${cart.map((c,i)=>`<li><span>${esc(c.g.map(x=>x[2]).join('／'))}</span><b>+${c.g.reduce((b,x)=>b+x[1],0)}</b><button type="button" data-cx="${i}" aria-label="削除">✕</button></li>`).join('')}</ol><button type="button" class="btn-main" id="cgo">まとめて記録する（合計 +${tot} EXP）</button><button type="button" id="cclr" class="cclr">メニューを空にする</button>`
+      :`<div class="cnote">1回で何種目もやる日は、種目ごとに「＋メニューに追加」を押して、最後に「まとめて記録する」を押してください。タブをまたいで混ぜられます。</div>`;
+    seg.after(d);
+    d.querySelectorAll('[data-cx]').forEach(b=>b.onclick=()=>{cart.splice(+b.dataset.cx,1);save();vLog()});
+    const cg=d.querySelector('#cgo');if(cg)cg.onclick=()=>{const m=me();const n=cart.length;cart.forEach(c=>{c.f.forEach(k=>_give0(m,k));c.g.forEach(([st,xp,tx,ex])=>_gain0(m,st,xp,tx,ex))});S.cart=[];save();tab='hero';render();toast(`${n}種目をまとめて記録しました！`)};
+    const cc=d.querySelector('#cclr');if(cc)cc.onclick=()=>{S.cart=[];save();vLog()};
+  }
+  const go=$('#go');
+  if(go&&logType!=='in'&&!go.disabled){const a=document.createElement('button');a.type='button';a.className='cadd';a.id='cadd';a.textContent='＋メニューに追加（あとでまとめて記録）';go.before(a);
+    a.onclick=()=>{const t=tab;_cap={f:[],g:[]};try{go.onclick()}finally{const c=_cap;_cap=null;tab=t;if(c.g.length){S.cart=S.cart||[];S.cart.push(c);save();vLog();_toast0(`メニューに追加しました（${S.cart.length}種目）`);const v=document.querySelector('#view .cart');if(v)v.scrollIntoView({behavior:'smooth',block:'nearest'})}}};
+    go.textContent='この種目だけ記録する';}
+};
 </script><script>(()=>{const f=()=>document.querySelectorAll('h2:not([data-t])').forEach(h=>{h.dataset.t=1;const t=h.firstChild;if(t&&t.nodeType===3&&t.textContent.trim()){const s=document.createElement('span');s.className='tb';s.textContent=t.textContent;h.replaceChild(s,t)}});new MutationObserver(f).observe(document.documentElement,{childList:true,subtree:true});f();})();</script><script>(()=>{let zi=0;const f=()=>{const t=document.getElementById('zktabs');if(!t||t.dataset.d)return;t.dataset.d=1;const secs=[...document.querySelectorAll('.zkb .zsec')];
 t.innerHTML=secs.map((x,i)=>`<button type="button" data-zt="${i}">${x.dataset.lab}<small>${x.dataset.n}</small></button>`).join('');
 const show=i=>{zi=i;secs.forEach((x,j)=>x.classList.toggle('on',j===i));t.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('on',j===i))};
