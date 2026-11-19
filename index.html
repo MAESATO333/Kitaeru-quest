@@ -233,7 +233,7 @@ body.kensa header{height:auto!important;flex-wrap:wrap}
 
 .deco{display:none}
 @media (min-width:900px){
-.deco{display:block;position:fixed;top:0;bottom:70px;width:calc((100vw - 520px)/2);pointer-events:none;z-index:0;overflow:hidden}
+.deco{display:block;position:fixed;top:0;bottom:120px;width:calc((100vw - 520px)/2);pointer-events:none;z-index:0;overflow:hidden}
 .deco.l{left:0}.deco.r{right:0}
 .app{position:relative;z-index:1}
 .dk{position:absolute;display:flex;flex-direction:column;align-items:center;transform:translate(-50%,0)}
@@ -1494,7 +1494,7 @@ function flip(cv){const f=document.createElement('canvas');f.width=cv.width;f.he
 const L=[['carrot','lift'],['piman','run'],['onion','yoga'],['cabbage','eat'],['daikon','jump'],['tomato','dumb'],['pumpkin','sleep'],['broccoli','cheer'],['shoga','run'],['imo','cheer'],
  ['carrot','yoga'],['piman','eat'],['onion','jump'],['cabbage','sleep'],['daikon','water'],['tomato','lift'],['pumpkin','flower'],['broccoli','dumb'],['shoga','jump'],['imo','eat']];
 const keys=HEROES.map(h=>h.key);const fix=k=>keys.includes(k)?k:keys.find(x=>x.startsWith(k.slice(0,3)))||keys[0];
-const POS=[[28,5],[70,14],[30,23],[72,32],[26,41],[70,50],[32,59],[68,68],[30,76],[70,84]];
+const POS=[[28,4],[70,9],[30,21],[72,26],[26,38],[70,43],[32,55],[68,60],[30,71],[70,76]];
 ['l','r'].forEach((side,si)=>{const d=document.createElement('div');d.className='deco '+side;d.setAttribute('aria-hidden','true');
  d.innerHTML=si?'<div class="dcloud" style="left:12%;top:9%"></div><div class="dsun" style="right:8%;top:2%"></div>':'<div class="dcloud" style="left:46%;top:3%"></div><div class="dcloud" style="left:6%;top:58%;transform:scale(.7)"></div>';
  L.slice(si*10,si*10+10).forEach(([k,sc],i)=>{let cv=scene(fix(k),sc);if(!cv)return;if((si+i)%3===1&&sc!=='lift')cv=flip(cv);const w=document.createElement('div');const [x,y]=POS[i];w.className='dk '+AN[sc];
