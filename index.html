@@ -300,6 +300,7 @@ canvas.buddy{position:absolute!important;inset:auto 0% 2% auto!important;width:2
 .cart li span{flex:1;min-width:0}.cart li b{color:var(--tomato,#e8452c);white-space:nowrap}.cart li button{border:0;background:#eee;border-radius:8px;padding:2px 8px;cursor:pointer}
 .cart .cnote{font-size:12px;color:var(--muted);line-height:1.6}.cart .cclr{display:block;margin:6px auto 0;border:0;background:none;color:var(--muted);font-size:12px;text-decoration:underline;cursor:pointer}
 .cadd{width:100%;padding:12px;border-radius:14px;border:3px solid var(--tomato,#e8452c);background:#fff;color:var(--tomato,#e8452c);font-weight:800;font-size:15px;cursor:pointer}
+.hfree{border:2px dashed #e8a33c;border-radius:12px;padding:8px 10px;background:#fff8ec;display:flex;flex-direction:column;gap:6px}.hfree .hft{font-weight:800;font-size:13px;color:#b5651d}.hfree textarea{width:100%;box-sizing:border-box;font-size:15px;border-radius:10px;border:2px solid #f0d6a8;padding:8px;font-family:inherit;resize:vertical}
 </style>
 
 </head>
@@ -1456,7 +1457,7 @@ function vGuild(){
     <label>会員<select id="hm">${S.members.map(m=>`<option value="${m.id}">${esc(m.name)}</option>`).join('')}</select></label>
     <div><div class="muted" style="font-size:13px;margin-bottom:4px">宿題をえらぶ（スクロールできます）</div><input type="hidden" id="ht" value="${esc(HOMEWORK[0])}"><div class="slist" id="htl">${HWGROUPS().map(([g,k,xs])=>`<div class="sg">${g} <small>${xs.length}</small></div><div class="sopts">${xs.map(x=>`<button type="button" data-hk="${k}" data-hv="${esc(x)}">${esc(x)}</button>`).join('')}</div>`).join('')}</div>
     <div id="hopt" class="hopt"></div><div class="hpv">宿題：<b id="hpv">${esc(HOMEWORK[0])}</b></div></div>
-    <button id="hadd" type="button" class="hadd">＋ この項目を宿題に追加</button><div class="hbox"><div class="hbh">送る宿題 <b id="hcnt">0</b> こ</div><ol id="hlist" class="hlist"><li class="emp">まだ項目がありません。上でえらんで「追加」を押してください。</li></ol></div><button class="btn-main" id="hgive" type="button">まとめて宿題を送る</button>
+    <button id="hadd" type="button" class="hadd">＋ この項目を宿題に追加</button><div class="hfree"><div class="hft">食事トレ（トレーナーが自由に書く）</div><textarea id="hfm" rows="2" maxlength="120" placeholder="例：朝ごはんにタンパク質（卵・納豆・豆腐）を足す"></textarea><button id="hfadd" type="button" class="hadd">＋ 食事トレを宿題に追加</button></div><div class="hbox"><div class="hbh">送る宿題 <b id="hcnt">0</b> こ</div><ol id="hlist" class="hlist"><li class="emp">まだ項目がありません。上でえらんで「追加」を押してください。</li></ol></div><button class="btn-main" id="hgive" type="button">まとめて宿題を送る</button>
   </div>
   <h2>トレーナー：会員を評価する</h2>
   <div class="card stack">
@@ -1489,6 +1490,7 @@ function vGuild(){
     vGuild()});
   let HQ=[];const hdraw=()=>{$('#hcnt').textContent=HQ.length;$('#hlist').innerHTML=HQ.length?HQ.map((t,i)=>`<li><span>${esc(t)}</span><button type="button" data-hu="${i}" aria-label="上へ" ${i?'':'disabled'}>▲</button><button type="button" data-hd="${i}" aria-label="下へ" ${i<HQ.length-1?'':'disabled'}>▼</button><button type="button" data-hx="${i}" aria-label="消す" class="x">✕</button></li>`).join(''):'<li class="emp">まだ項目がありません。上でえらんで「追加」を押してください。</li>'};
   $('#hadd').onclick=()=>{HQ.push($('#ht').value);hdraw();toast('宿題に追加しました')};
+  $('#hfadd').onclick=()=>{const v=$('#hfm').value.trim();if(!v){toast('食事トレの内容を書いてください');return}HQ.push('食事トレ：'+v);$('#hfm').value='';hdraw();toast('食事トレを宿題に追加しました')};
   $('#hlist').onclick=e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;if(d.hx!=null)HQ.splice(+d.hx,1);else if(d.hu!=null){const i=+d.hu;[HQ[i-1],HQ[i]]=[HQ[i],HQ[i-1]]}else if(d.hd!=null){const i=+d.hd;[HQ[i+1],HQ[i]]=[HQ[i],HQ[i+1]]}hdraw()};
   $('#hgive').onclick=()=>{if(!HQ.length){toast('先に項目を追加してください');return}const m=byId($('#hm').value);m.homework.push({id:S.hwId++,text:HQ.map((t,i)=>HQ.length>1?`${i+1}. ${t}`:t).join('\n'),items:HQ.slice(),status:'open',t:Date.now()});save();toast(`${m.name}さんに宿題（${HQ.length}こ）を送りました`);HQ=[];hdraw()};
   $('#qset').onclick=()=>{S.quest.text=$('#qt').value||S.quest.text;save();toast('クエストを更新しました')};
