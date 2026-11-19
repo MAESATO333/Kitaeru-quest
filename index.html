@@ -278,6 +278,7 @@ nav button{background:#fff!important;color:var(--hc)!important;border:2.5px soli
 nav button .nl{text-shadow:none!important}
 nav button.on{background:var(--hc)!important;color:#fff!important;border-color:#fff!important}
 nav button.on .nh{background:#fff;border-radius:8px;padding:1px 3px;box-sizing:content-box}
+.mcat{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}.mcat button{font:inherit;font-size:13px;font-weight:700;border:2px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:5px 11px;min-height:0;width:auto;box-shadow:none;cursor:pointer}.mcat button small{font-size:10px;opacity:.7;margin-left:3px}.mcat button.on{background:var(--ink);border-color:var(--ink);color:#fff}
 </style>
 
 </head>
@@ -1286,12 +1287,16 @@ function vLog(){
   }else if(logType==='meal'){
     const MG=[['野菜',k=>FSUB(k)==='veg'],['果物',k=>FSUB(k)==='fruit'],['食品',k=>FSUB(k)==='shoku'],['食事メニュー',k=>FSUB(k)==='menu'],['海の幸',k=>FOODS[k].cat==='sea'],['飲み物',k=>FOODS[k].cat==='drink']];
     f.innerHTML=`<div class="stack">
-      <label>食べたもの・飲んだもの<select id="ml">${MG.map(([g,fl])=>`<optgroup label="${g}">${Object.keys(FOODS).filter(fl).map(k=>`<option value="${k}">${FOODS[k].name}</option>`).join('')}</optgroup>`).join('')}</select></label>
+      <div><div class="muted" style="font-size:13px;margin-bottom:4px">食べたもの・飲んだもの</div><input type="hidden" id="ml" value="${Object.keys(FOODS).filter(MG[0][1])[0]}"><div class="mcat" id="mcat">${MG.map(([g,fl],i)=>`<button type="button" data-mc="${i}" class="${i?'':'on'}">${g}<small>${Object.keys(FOODS).filter(fl).length}</small></button>`).join('')}</div><div class="slist short" id="mlist"></div></div>
       <div style="display:flex;align-items:center;gap:10px"><canvas class="food" id="mc" style="width:64px;height:64px;flex:none"></canvas><div class="muted" id="me2" style="font-size:13px"></div></div>
       <div class="preview" id="pv"></div>
       <button class="btn-main" id="go" type="button">記録してEXPをもらう</button></div>`;
     const upd=()=>{const k=$('#ml').value,y=FOODS[k];paintFood($('#mc'),k);$('#me2').textContent=y.eff;$('#pv').innerHTML=`${STAT[y.stat].name} <b>+${fxp(y)}</b> EXP ／ 図鑑にも1こ入ります`};
-    $('#ml').onchange=upd;upd();
+    $('#ml').onchange=upd;
+    const ML=$('#mlist'),mshow=i=>{ML.innerHTML=`<div class="sopts">${Object.keys(FOODS).filter(MG[i][1]).map(k=>`<button type="button" data-mk="${k}" class="${$('#ml').value===k?'on':''}">${FOODS[k].name}</button>`).join('')}</div>`;ML.scrollTop=0;document.querySelectorAll('#mcat button').forEach(b=>b.classList.toggle('on',+b.dataset.mc===i))};
+    $('#mcat').onclick=e=>{const b=e.target.closest('[data-mc]');if(b)mshow(+b.dataset.mc)};
+    ML.onclick=e=>{const b=e.target.closest('[data-mk]');if(!b)return;ML.querySelectorAll('.on').forEach(x=>x.classList.remove('on'));b.classList.add('on');$('#ml').value=b.dataset.mk;upd()};
+    mshow(0);upd();
     $('#go').onclick=()=>{const k=$('#ml').value,y=FOODS[k];giveFood(m,k);gain(m,y.stat,fxp(y),`食事トレ ${y.name}`);tab='hero';render()};
   }else if(logType==='kapala'){
     f.innerHTML=`<div class="stack">
@@ -1499,7 +1504,7 @@ const POS=[[28,4],[70,9],[30,21],[72,26],[26,38],[70,43],[32,55],[68,60],[30,71]
  d.innerHTML=si?'<div class="dcloud" style="left:12%;top:9%"></div><div class="dsun" style="right:8%;top:2%"></div>':'<div class="dcloud" style="left:46%;top:3%"></div><div class="dcloud" style="left:6%;top:58%;transform:scale(.7)"></div>';
  L.slice(si*10,si*10+6).forEach(([k,sc],i)=>{let cv=scene(fix(k),sc);if(!cv)return;if((si+i)%3===1&&sc!=='lift')cv=flip(cv);const w=document.createElement('div');const [x,y]=POS[i];w.className='dk '+AN[sc];
   w.style.left=(si?100-x:x)+'%';w.style.top=(i===0?1:y)+'%';w.style.animationDelay=w.style.animationDelay=(-i*0.37)+'s';
-  if(true){const b=document.createElement('div');b.className='bb';b.textContent=si?({0:'上腕三頭筋',1:'スクワット！',2:'吸って〜吐いて〜',3:'タンパク質大好き❤',4:'イェーイ！'}[i]||SC[sc]):SC[sc];w.appendChild(b)}
+  if(!(si&&(i===1||i===4))){const b=document.createElement('div');b.className='bb';b.textContent=si?({0:'上腕三頭筋',1:'スクワット！',2:'吸って〜吐いて〜',3:'タンパク質大好き❤',4:'イェーイ！'}[i]||SC[sc]):SC[sc];w.appendChild(b)}
   cv.style.animationDelay=(-i*0.29)+'s';w.appendChild(cv);d.appendChild(w)});
  document.body.appendChild(d)});
 function lay(){document.querySelectorAll('.deco').forEach(d=>{const H=d.clientHeight,W=d.clientWidth;if(!H)return;const it=[...d.querySelectorAll('.dk')];const slot=H/3.5;
