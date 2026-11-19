@@ -194,6 +194,9 @@ h2 .tb{color:#fff;-webkit-text-fill-color:#fff}
 .vhero b{font-size:9px!important;white-space:normal!important;overflow:visible!important;text-align:center;line-height:1.15!important;word-break:break-all;min-height:2.3em;display:flex;align-items:center;justify-content:center;width:100%;letter-spacing:-.04em!important}
 .vhero span{font-size:8px!important;white-space:nowrap!important;letter-spacing:-.03em}
 .shelf{background:var(--ink)!important;box-shadow:2px 2px 0 var(--lemon)}
+body.kensa header::after{margin:12px 0 4px;padding:5px 8px;line-height:1.5;flex-basis:100%;width:100%;grid-column:1/-1;box-sizing:border-box;height:auto;position:static;left:auto;right:auto;bottom:auto}
+body.kensa header{height:auto!important;flex-wrap:wrap}
+#view>:first-child{margin-top:16px}
 </style>
 
 </head>
@@ -1302,7 +1305,7 @@ function vZukan(){
 function vGuild(){
   setTimeout(()=>{const x=$('#tnm');if(x)x.onchange=e=>{S.tname=e.target.value;save();toast(`${S.tname}さんとして操作します`)}},0);
   const waiting=S.members.flatMap(m=>m.homework.filter(h=>h.status==='done').map(h=>({m,h})));
-  $('#view').innerHTML=`<label style="margin-bottom:6px">担当トレーナー<select id="tnm">${TRAINERS.map(t=>`<option ${TN()===t?'selected':''}>${t}</option>`).join('')}</select></label><h2>宿題のスタンプ待ち（${waiting.length}件）</h2>
+  $('#view').innerHTML=`<label style="margin:18px 0 6px;display:block">担当トレーナー<select id="tnm">${TRAINERS.map(t=>`<option ${TN()===t?'selected':''}>${t}</option>`).join('')}</select></label><h2>宿題のスタンプ待ち（${waiting.length}件）</h2>
   <div class="stack">${waiting.length?waiting.map(({m,h})=>`<div class="card hw"><div style="min-width:0"><div style="font-weight:700">${esc(m.name)}</div><div class="muted">${esc(h.text)}</div></div>
     <button type="button" class="btn-main" data-st="${m.id}:${h.id}">スタンプを押す</button></div>`).join(''):'<div class="card muted">スタンプ待ちの宿題はありません。</div>'}</div>
   <h2>宿題を出す</h2>
