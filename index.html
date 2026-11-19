@@ -428,7 +428,7 @@ const FOODS={
  natto:{name:'納豆',stat:'str',eff:'ねばねばパワー',title:'納豆マッチョ',pal:{w:'#d8d0b8',b:'#b8863a',B:'#8a5a2b',s:'#fff6d0'},art:['............', '............', '.wwwwwwwwww.', '.wbbbbbbbbw.', '.wbBbBbbBbw.', '.wbbsbbsbbw.', '.wBbbBbbbBw.', '.wbbbbsbbbw.', '.wwwwwwwwww.']},
  kimchi:{name:'キムチ',stat:'grit',eff:'ピリ辛で燃える',title:'キムチ大王',pal:{r:'#e8452c',R:'#b8321c',c:'#fff3e0',w:'#b8b8a6',W:'#ffffff'},art:['............', '............', '...rrRrr....', '..rRrrRrRr..', '.rRcrRrcRrr.', '.rrRrrRrrRr.', 'wwwwwwwwwwww', '.wWWWWWWWWw.', '..wwwwwwww..']},
  mozuku:{name:'もずく',stat:'tec',eff:'海のミネラル',title:'もずく隊長',cat:'sea',pal:{m:'#3f5a1a',M:'#2a3a12',b:'#4a6a9a',B:'#6a8ac0'},art:['............', '............', '..m.m..m.m..', '.mMmMmmMmMm.', '.MmMmMMmMmM.', 'bbbbbbbbbbbb', '.bBBBBBBBBb.', '..bBBBBBBb..', '...bbbbbb...']},
- turnover:{name:'ターンオーバーパワー',stat:'tec',eff:'生まれ変わる肌',title:'うまれかわりの達人',cat:'beauty',pal:{a:'#e8456a',k:'#f5d63d'},art:['....aaaa....', '..aa....aa..', '.a........a.', 'a..........a', 'a....kk....a', 'a....kk....a', '.a........a.', '..a.....aa..', '....aaa.aaa.', '.........a..']}
+ yasainabe:{name:'野菜鍋',stat:'end',eff:'野菜たっぷりぽかぽか',title:'鍋奉行',pal:{s:'#c9d6e0',b:'#4a3a2a',B:'#7a5a3a',g:'#7fbf2a',O:'#f39a1e',r:'#e8452c',w:'#fff6e0'},art:['....s..s....','.....s..s...','....s..s....','.bbbbbbbbbb.','bgOrgwgOrgwb','bBBBBBBBBBBb','.bBBBBBBBBb.','..bBBBBBBb..','...bbbbbb...']}
 };
 function paintFood(cv,key){const f=FOODS[key];cv.width=12;cv.height=12;const c=cv.getContext('2d');c.clearRect(0,0,12,12);
   const off=Math.floor((12-f.art.length)/2);
