@@ -234,8 +234,11 @@ const STAMPS=[
   {id:'push',label:'最後まで粘った！',stat:'end',xp:40},
 ];
 const TITLES=['発酵の賢者','ヨガ行者','呼吸マスター','マッスルスター','スクワット女王','スクワット王','腕立て女王','腕立て王','美肌スター','皆勤賞の鬼','神楽坂の人','とても素敵な人','良い人','ベジタリアンの家元','カレー狂い人間','サラダの女王','サラダの神様'];
-const EXERCISES=['スクワット','ベンチプレス','デッドリフト','ラットプルダウン','ショルダープレス','レッグプレス'];
-const CARDIO=['トレッドミル','バイク','クロストレーナー','ローイング'];
+const EXG=[["脚・お尻", ["スクワット", "ブルガリアンスクワット", "フロントスクワット", "ゴブレットスクワット", "スミスマシンスクワット", "ハックスクワット", "ワイドスクワット", "ジャンピングスクワット", "ピストルスクワット", "空気椅子", "ランジ", "ウォーキングランジ", "リバースランジ", "サイドランジ", "ステップアップ", "レッグプレス", "レッグエクステンション", "レッグカール", "シーテッドレッグカール", "ルーマニアンデッドリフト", "ヒップスラスト", "グルートブリッジ", "ヒップアブダクション", "ヒップアダクション", "ケーブルキックバック", "ドンキーキック", "カーフレイズ", "シーテッドカーフレイズ"]], ["胸", ["ベンチプレス", "インクラインベンチプレス", "デクラインベンチプレス", "ダンベルプレス", "インクラインダンベルプレス", "ダンベルフライ", "チェストプレス", "ペックフライ", "ケーブルクロスオーバー", "ディップス", "腕立て伏せ", "膝つき腕立て伏せ", "ワイド腕立て伏せ", "ダイヤモンド腕立て伏せ", "デクライン腕立て伏せ"]], ["背中", ["デッドリフト", "ラットプルダウン", "懸垂", "斜め懸垂", "ベントオーバーロウ", "ワンハンドロウ", "シーテッドロウ", "Tバーロウ", "ストレートアームプルダウン", "バックエクステンション", "グッドモーニング", "シュラッグ", "フェイスプル", "スーパーマン"]], ["肩", ["ショルダープレス", "ダンベルショルダープレス", "アーノルドプレス", "サイドレイズ", "フロントレイズ", "リアレイズ", "アップライトロウ", "ケーブルサイドレイズ", "リアデルトフライ", "パイクプッシュアップ"]], ["腕", ["バーベルカール", "ダンベルカール", "ハンマーカール", "プリーチャーカール", "コンセントレーションカール", "ケーブルカール", "トライセプスプレスダウン", "フレンチプレス", "スカルクラッシャー", "キックバック", "ナローベンチプレス", "ベンチディップス", "リストカール"]], ["おなか・体幹", ["クランチ", "シットアップ", "レッグレイズ", "ハンギングレッグレイズ", "プランク", "サイドプランク", "ロシアンツイスト", "バイシクルクランチ", "アブローラー", "マウンテンクライマー", "ドラゴンフラッグ", "ケーブルクランチ", "デッドバグ", "バードドッグ"]], ["全身", ["クリーン", "スナッチ", "スラスター", "ケトルベルスイング", "バーピー", "ファーマーズウォーク", "メディシンボールスラム", "ターキッシュゲットアップ", "タイヤフリップ", "バトルロープ"]]];
+const BW=new Set(["ジャンピングスクワット", "ピストルスクワット", "空気椅子", "グルートブリッジ", "ドンキーキック", "ディップス", "腕立て伏せ", "膝つき腕立て伏せ", "ワイド腕立て伏せ", "ダイヤモンド腕立て伏せ", "デクライン腕立て伏せ", "懸垂", "斜め懸垂", "バックエクステンション", "スーパーマン", "パイクプッシュアップ", "ベンチディップス", "クランチ", "シットアップ", "レッグレイズ", "ハンギングレッグレイズ", "プランク", "サイドプランク", "ロシアンツイスト", "バイシクルクランチ", "アブローラー", "マウンテンクライマー", "ドラゴンフラッグ", "デッドバグ", "バードドッグ", "バーピー"]);
+const EXERCISES=EXG.flatMap(g=>g[1]);
+const CARDIO=["ウォーキング30分", "ウォーキング1時間", "ウォーキング1時間半", "ウォーキング2時間", "昇降踏み台運動", "バイク漕ぎ", "トレッドミル", "ジョギング", "ランニング", "クロストレーナー", "ローイング", "ステアクライマー", "階段のぼり", "なわとび", "水泳", "水中ウォーキング", "サイクリング", "ハイキング", "エアロビクス", "ダンス", "ボクササイズ", "HIIT", "サーキットトレーニング", "ラジオ体操", "ヨガクラス", "ピラティス", "ストレッチ"];
+const CMIN={"ウォーキング30分":30,"ウォーキング1時間":60,"ウォーキング1時間半":90,"ウォーキング2時間":120};
 const day=864e5;
 const HOMEWORK=['自宅でスクワット 20回×3セット','お風呂上がりにストレッチ 10分','1日8,000歩 歩く','プランク 1分×3セット','タンパク質を毎食とる','寝る前に腹筋 15回×2セット'];
 function seed(){
@@ -899,7 +902,7 @@ function vLog(){
   const f=$('#form');
   if(logType==='lift'){
     f.innerHTML=`<div class="stack">
-      <label>種目<select id="ex">${EXERCISES.map(e=>`<option>${e}</option>`).join('')}</select></label>
+      <label>種目（${EXERCISES.length}種）<select id="ex">${EXG.map(([g,xs])=>`<optgroup label="${g}">${xs.map(e=>`<option>${e}</option>`).join('')}</optgroup>`).join('')}</select></label>
       <div class="row">
         <label>重量 kg<input id="kg" type="number" inputmode="decimal" value="40" min="0"></label>
         <label>回数<input id="rep" type="number" inputmode="numeric" value="10" min="0"></label>
@@ -908,20 +911,20 @@ function vLog(){
       <label style="flex-direction:row;align-items:center;gap:8px;color:var(--chalk)"><input id="pb" type="checkbox" style="width:auto"> 自己ベスト！（ボーナス×1.5）</label>
       <div class="preview" id="pv"></div>
       <button class="btn-main" id="go" type="button">記録してEXPをもらう</button></div>`;
-    const calc=()=>{const v=(+$('#kg').value||0)*(+$('#rep').value||0)*(+$('#set').value||0);let xp=Math.max(5,Math.round(v/30));if($('#pb').checked)xp=Math.round(xp*1.5);return{v,xp:Math.min(xp,150)}};
-    const upd=()=>{const c=calc();$('#pv').innerHTML=`総挙上量 ${c.v.toLocaleString()} kg → 力 <b>+${c.xp}</b> EXP`};
-    f.querySelectorAll('input').forEach(i=>i.oninput=upd);upd();
+    const calc=()=>{const bw=BW.has($('#ex').value);const v=((+$('#kg').value||0)+(bw?30:0))*(+$('#rep').value||0)*(+$('#set').value||0);let xp=Math.max(5,Math.round(v/30));if($('#pb').checked)xp=Math.round(xp*1.5);return{v,xp:Math.min(xp,150)}};
+    const upd=()=>{const c=calc();$('#pv').innerHTML=`${BW.has($('#ex').value)?'自重(30kg分)＋':''}総挙上量 ${c.v.toLocaleString()} kg → 力 <b>+${c.xp}</b> EXP`};
+    f.querySelectorAll('input').forEach(i=>i.oninput=upd);$('#ex').onchange=()=>{if(BW.has($('#ex').value))$('#kg').value=0;upd()};upd();
     $('#go').onclick=()=>{const c=calc();gain(m,'str',c.xp,`${$('#ex').value} ${$('#kg').value}kg × ${$('#rep').value}回 × ${$('#set').value}セット`,{pb:$('#pb').checked});tab='hero';render()};
   }else if(logType==='cardio'){
     f.innerHTML=`<div class="stack">
-      <label>マシン<select id="ma">${CARDIO.map(e=>`<option>${e}</option>`).join('')}</select></label>
+      <label>メニュー<select id="ma">${CARDIO.map(e=>`<option>${e}</option>`).join('')}</select></label>
       <label>時間（分）<input id="min" type="number" inputmode="numeric" value="20" min="0"></label>
       <div class="preview" id="pv"></div>
       <button class="btn-main" id="go" type="button">記録してEXPをもらう</button></div>`;
-    const calc=()=>Math.min(150,Math.max(5,Math.round((+$('#min').value||0)*2)));
+    const calc=()=>Math.min(240,Math.max(5,Math.round((+$('#min').value||0)*2)));
     const upd=()=>$('#pv').innerHTML=`持久 <b>+${calc()}</b> EXP`;
-    $('#min').oninput=upd;upd();
-    $('#go').onclick=()=>{gain(m,'end',calc(),`${$('#ma').value} ${$('#min').value}分`);tab='hero';render()};
+    $('#min').oninput=upd;$('#ma').onchange=()=>{const v=CMIN[$('#ma').value];if(v)$('#min').value=v;upd()};upd();
+    $('#go').onclick=()=>{gain(m,'end',calc(),CMIN[$('#ma').value]?$('#ma').value:`${$('#ma').value} ${$('#min').value}分`);tab='hero';render()};
   }else{
     const today=(new Date().getDay()+6)%7, done=m.streak[today];
     f.innerHTML=`<div class="stack"><div class="muted">ジムに来たらタップ。本番では受付のQRコードを読む形を想定しています。</div>
