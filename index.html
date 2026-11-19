@@ -279,6 +279,19 @@ nav button .nl{text-shadow:none!important}
 nav button.on{background:var(--hc)!important;color:#fff!important;border-color:#fff!important}
 nav button.on .nh{background:#fff;border-radius:8px;padding:1px 3px;box-sizing:content-box}
 .mcat{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}.mcat button{font:inherit;font-size:13px;font-weight:700;border:2px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:5px 11px;min-height:0;width:auto;box-shadow:none;cursor:pointer}.mcat button small{font-size:10px;opacity:.7;margin-left:3px}.mcat button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+
+.dd{position:relative;display:block;min-width:0}
+header .dd{display:inline-block}
+.dd>select.ddn{position:absolute!important;opacity:0!important;pointer-events:none!important;width:1px!important;height:1px!important;inset:0}
+.ddb{font:inherit;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:9px 34px 9px 12px;color:var(--ink);font-weight:700;cursor:pointer;position:relative;min-height:0;box-shadow:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ddb::after{content:'';position:absolute;right:13px;top:50%;margin-top:-6px;width:7px;height:7px;border-right:2.5px solid var(--ink);border-bottom:2.5px solid var(--ink);transform:rotate(45deg)}
+.dd.open .ddb::after{transform:rotate(-135deg);margin-top:-2px}
+.ddp{position:absolute;left:0;top:calc(100% + 4px);min-width:100%;max-width:min(92vw,420px);max-height:min(300px,55vh);overflow-y:auto;background:#fff;border:2px solid var(--ink);border-radius:12px;box-shadow:0 8px 24px rgba(40,60,20,.25);z-index:1000;padding:4px;display:none;-webkit-overflow-scrolling:touch}
+.dd.open .ddp{display:block}
+.dd.up .ddp{top:auto;bottom:calc(100% + 4px)}
+.ddp .g{position:sticky;top:-4px;background:var(--ink);color:#fff;font-size:11px;font-weight:800;padding:3px 10px;border-radius:7px;margin:4px 0 2px}
+.ddp .o{display:block;width:100%;text-align:left;font:inherit;font-size:14px;background:none;border:0;border-radius:8px;padding:8px 10px;color:var(--ink);cursor:pointer;min-height:0;box-shadow:none;white-space:nowrap}
+.ddp .o:hover{background:var(--floor-2)}.ddp .o.on{background:var(--tomato);color:#fff;font-weight:700}
 </style>
 
 </head>
@@ -1517,7 +1530,22 @@ lay();addEventListener('resize',lay);
  const sub=document.createElement('div');sub.className='ysub';sub.innerHTML=YG.filter(([gk])=>by[gk]).map(([gk,gl],i)=>`<button type="button" data-yg="${gk}">${gl}<small>${by[gk].length}</small></button>`).join('');pan.before(sub);
  const show=gk=>{pan.innerHTML='';by[gk].forEach(c=>pan.appendChild(c));pan.scrollLeft=0;sub.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.yg===gk));yi=gk};
  sub.onclick=e=>{const b=e.target.closest('[data-yg]');if(b)show(b.dataset.yg)};show(by[yi]?yi:YG.find(([gk])=>by[gk])[0])};
- new MutationObserver(f).observe(document.documentElement,{childList:true,subtree:true});f();})();// ホーム画面アプリ用：オフラインでも開けるようにする
+ new MutationObserver(f).observe(document.documentElement,{childList:true,subtree:true});f();})();</script><script>(()=>{const MIN=9;
+function txt(sel){const o=sel.options[sel.selectedIndex];return o?o.textContent:''}
+function build(sel){if(sel.dataset.dd||sel.options.length<MIN)return;sel.dataset.dd=1;const w=document.createElement('span');w.className='dd';sel.parentNode.insertBefore(w,sel);w.appendChild(sel);sel.classList.add('ddn');sel.tabIndex=-1;
+ const b=document.createElement('button');b.type='button';b.className='ddb';b.textContent=txt(sel);if(sel.getAttribute('aria-label'))b.setAttribute('aria-label',sel.getAttribute('aria-label'));w.appendChild(b);
+ const pnl=document.createElement('div');pnl.className='ddp';pnl.setAttribute('role','listbox');w.appendChild(pnl);
+ const fill=()=>{let h='';[...sel.children].forEach(c=>{if(c.tagName==='OPTGROUP'){h+=`<div class="g">${c.label}</div>`;[...c.children].forEach(o=>h+=`<button type="button" class="o ${o.selected?'on':''}" data-v="${o.value.replace(/"/g,'&quot;')}">${o.textContent}</button>`)}else h+=`<button type="button" class="o ${c.selected?'on':''}" data-v="${c.value.replace(/"/g,'&quot;')}">${c.textContent}</button>`});pnl.innerHTML=h};
+ b.onclick=e=>{e.stopPropagation();const op=w.classList.contains('open');document.querySelectorAll('.dd.open').forEach(x=>x.classList.remove('open'));if(op)return;fill();
+  const r=b.getBoundingClientRect(),nav=document.querySelector('nav'),bot=nav?nav.getBoundingClientRect().top:innerHeight;w.classList.toggle('up',bot-r.bottom<200&&r.top>bot-r.bottom);w.classList.add('open');const on=pnl.querySelector('.on');if(on)pnl.scrollTop=on.offsetTop-pnl.clientHeight/2};
+ pnl.onclick=e=>{const o=e.target.closest('.o');if(!o)return;sel.value=o.dataset.v;b.textContent=txt(sel);w.classList.remove('open');sel.dispatchEvent(new Event('change',{bubbles:true}))};
+ sel.addEventListener('change',()=>{b.textContent=txt(sel)});
+ new MutationObserver(()=>{b.textContent=txt(sel)}).observe(sel,{childList:true,subtree:true,attributes:true});
+}
+document.addEventListener('click',e=>{if(!e.target.closest('.dd'))document.querySelectorAll('.dd.open').forEach(x=>x.classList.remove('open'))});
+const scan=()=>document.querySelectorAll('select:not([data-dd])').forEach(build);
+new MutationObserver(scan).observe(document.documentElement,{childList:true,subtree:true});scan();
+})();// ホーム画面アプリ用：オフラインでも開けるようにする
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').then(r=>r.update()).catch(()=>{});let rl=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(rl)return;rl=true;location.reload()})});}
 </script>
 </body>
