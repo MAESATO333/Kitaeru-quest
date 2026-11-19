@@ -49,6 +49,15 @@ header::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:6px
 .pc.none .food{filter:brightness(0) opacity(.18)}
 .pc.none b{color:var(--muted)}
 .pc.rare{background:linear-gradient(160deg,#fffbe0,#ffe9f2 60%,#e9f7ff);border-color:#f5c518}
+.heroes{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.hero{overflow:hidden;background:#fff;border:2px solid var(--line);border-radius:12px;padding:4px 2px 5px;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0;font-family:inherit;color:var(--ink);cursor:pointer}
+.hero.on{border-color:#f5c518;background:linear-gradient(160deg,#fffbe0,#fff);box-shadow:0 0 0 2px #f5c518}
+.hero canvas{width:100%;max-width:64px;aspect-ratio:27/22;image-rendering:pixelated}
+.hero b{font-size:9.5px;line-height:1.2;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;max-width:100%}
+.hero span{font-size:8px;color:var(--muted);line-height:1.2;text-align:center}
+.buddy{position:absolute;right:9%;bottom:16%;width:86px;aspect-ratio:27/22;image-rendering:pixelated;animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-4px)}}
+body.kensa header::after{content:'検査モード：すべてのページと項目を表示中';display:block;margin-top:6px;background:var(--tomato);color:#fff;font-size:11px;font-weight:800;text-align:center;border-radius:6px;padding:2px 0}
 .shelf{display:inline-block;margin:10px 0 6px;background:var(--leaf);color:#fff;font-weight:900;font-size:12px;padding:2px 12px;border-radius:999px;letter-spacing:.1em}
 .pc .st{color:#fff;border-radius:4px;padding:0 4px;margin-right:2px;font-weight:900}
 .pc b.ln{font-size:9.5px;letter-spacing:-.02em;word-break:normal}.pc b{display:block;font-size:11px;line-height:1.25;color:var(--ink);min-height:2.5em;display:grid;place-items:center;word-break:break-all}
@@ -174,6 +183,13 @@ tr.me td{color:var(--tomato);font-weight:700}
 .zt{font-size:11px;font-weight:900;color:#111;background:var(--yellow);border-radius:4px;margin-top:4px}
 .toast{position:fixed;left:50%;bottom:calc(80px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:15;background:var(--chalk);color:var(--floor);font-weight:700;padding:8px 14px;border-radius:8px;font-size:14px;max-width:90vw}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* つぶつぶ見出し：深緑のリボンに、野菜色のつぶが入った白い丸文字 */
+h2{display:table;border-left:0;padding:4px 16px 5px;margin:24px 0 12px;font-size:19px;letter-spacing:.06em;color:#e9f5c4;
+  background:var(--ink);border-radius:12px 4px 12px 4px;box-shadow:3px 3px 0 var(--lemon)}
+h2 small{color:#d6ec6e!important;font-size:12px!important;white-space:nowrap}
+h2 .tb{background:radial-gradient(circle at 3px 3px,#e8452c 1.6px,transparent 2.2px) 0 0/13px 11px,radial-gradient(circle at 9px 7px,#f39a1e 1.5px,transparent 2.1px) 0 0/15px 12px,radial-gradient(circle at 6px 9px,#9ccc3c 1.6px,transparent 2.2px) 0 0/17px 13px,radial-gradient(circle at 12px 4px,#c8447e 1.3px,transparent 1.9px) 0 0/19px 14px,#fff;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.shelf{background:var(--ink)!important;box-shadow:2px 2px 0 var(--lemon)}
 </style>
 
 </head>
@@ -182,7 +198,7 @@ tr.me td{color:var(--tomato);font-weight:700}
   <header>
     <div class="logo"><div class="vlogo" role="img" aria-label="キタエル・クエスト"><b>キタエル・クエスト</b><span>KITAERU <i>●</i> QUEST</span></div><small style="color:var(--leaf);font-weight:700">試作版</small></div>
     <select id="who" aria-label="表示する会員"></select>
-    <button id="modeBtn" class="mode" type="button">トレーナー</button>
+    <button id="modeBtn" class="mode" type="button">トレーナー</button><button id="kensaBtn" class="mode" type="button">検査</button>
   </header>
   <main id="view"></main>
 </div>
@@ -724,7 +740,11 @@ function giveFood(m,key,n=1){m.foods=m.foods||{};m.foods[key]=(m.foods[key]||0)+
   return null;}
 function seeded(a){return()=>{a=(a+0x6D2B79F5)|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
 let visCache={};
+const TRAINERS=['川満由希夫','石井麻美','佐々木美香','垣花 豊','佐藤みやこ','團野有花'];
+function TN(){return S.tname&&TRAINERS.includes(S.tname)?S.tname:TRAINERS[0]}
+function KS(){return S.kensa!==false}
 function visibleIds(){
+  if(KS())return new Set(S.members.map(m=>m.id));
   const k=dayKey()+'|'+S.current;if(visCache.k===k)return visCache.set;
   const r=seeded(hashStr(k)),others=S.members.filter(m=>m.id!==S.current).map(m=>m.id);
   for(let i=others.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[others[i],others[j]]=[others[j],others[i]];}
@@ -959,12 +979,86 @@ function ago(t){const d=(Date.now()-t)/60000;if(d<1)return'たった今';if(d<60
 let toastT;function toast(msg){const t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2200);}
 function overlay(title,sub){const o=$('#ov');o.innerHTML=`<div class="box"><div class="t">${esc(title)}</div><div class="s">${esc(sub)}</div><button class="btn-main" id="ovClose" type="button">つづける</button></div>`;o.hidden=false;$('#ovClose').onclick=()=>o.hidden=true;$('#ovClose').focus();}
 
+const {HEROES,drawHero}=(()=>{// お野菜七戦士：ドット絵キャラ（24x26）
+const HEROES = [
+ {key:'carrot', name:'キャロット', veg:'にんじん', role:'剣士', stat:'力', color:'#f39a1e', weapon:'sword', face:[8,7],
+  pal:{o:'#a8520e',C:'#f39a1e',h:'#ffc070',g:'#3f8a2a',G:'#7fbf2a'},
+  body:['......g..g......','.....gGggGg.....','......gGGg......','....oooooooo....','...oCCCCCCCCo...','...oChCCCCCCo...','...oChCCCCCCo...','...oCCCCCCCCo...','....oCCCCCCo....','....oCCCCCCo....','.....oCCCCo.....','.....oCCCCo.....','......oCCo......','.......oo.......'], arm:8},
+ {key:'piman', name:'ピッピマン', veg:'ピーマン', role:'盾の騎士', stat:'根性', color:'#4f8a2a', weapon:'shield', face:[8,6],
+  pal:{o:'#1f5a14',G:'#4f9a2a',h:'#9ccc3c',s:'#33501a'},
+  body:['.......ss.......','......ss........','...oooooooooo...','..oGGGGGGGGGGo..','.oGGhGGGGGGGGGo.','.oGhGGGGGGGGGGo.','.oGhGGGGGGGGGGo.','.oGGGGGGGGGGGGo.','.oGGGGGGGGGGGGo.','.oGGGGGGGGGGGGo.','..oGGGGooGGGGo..','...oooo..oooo...'], arm:7},
+ {key:'onion', name:'玉ちゃん', veg:'玉ねぎ', role:'まほう使い', stat:'技', color:'#c88a3a', weapon:'wand', face:[8,8],
+  pal:{o:'#8a5a1e',Y:'#f0c070',h:'#fff0c0',y:'#c8a050',w:'#e8dcc0'},
+  body:['.......y........','.......yy.......','......oYYo......','.....oYYYYo.....','....oYYYYYYo....','...oYYhYYYYYo...','..oYYhYYYYYYYo..','..oYhYYYYYYYYo..','..oYYYYYYYYYYo..','..oYYYYYYYYYYo..','...oYYYYYYYYo...','....oYYYYYYo....','.....oooooo.....'], arm:9},
+ {key:'cabbage', name:'キャベリン', veg:'キャベツ', role:'いやし手', stat:'根性', color:'#9ccc3c', weapon:'heart', face:[8,6],
+  pal:{o:'#4f8a2a',L:'#c8ec8a',l:'#8ac85a',h:'#effad8'},
+  body:['.....oooooo.....','...ooLLLLLLoo...','..oLLlLLLLlLLo..','.oLlLhLlLLLLlLo.','.oLLhLLLLLLLLLo.','oLLlLLLLLLLLlLLo','oLLLLLLLLLLLLLLo','oLLLLLLLLLLLLLLo','oLlLLLLLLLLLLlLo','.oLLlLLLLLLLlLo.','..oLLLLLLLLLLo..','...oooooooooo...'], arm:7},
+ {key:'daikon', name:'ダイコンタ', veg:'大根', role:'弓使い', stat:'技', color:'#e8e4d8', weapon:'bow', face:[8,7],
+  pal:{o:'#a89f8a',W:'#fbf8ee',h:'#ffffff',g:'#3f8a2a',G:'#7fbf2a',p:'#e8e0c8'},
+  body:['.....g.gg.g.....','....gGgGGgGg....','.....gGGGGg.....','......gGGg......','....oooooooo....','...oWWWWWWWWo...','...oWhWWWWWWo...','...oWhWWWWWWo...','...oWWWWWWWWo...','...oWWWWWWWWo...','....oWWWWWWo....','....oWWWWWWo....','.....oWWWWo.....','......oWWo......','.......oo.......'], arm:8},
+ {key:'tomato', name:'リコピンちゃん', veg:'トマト', role:'格闘家', stat:'力', color:'#e8452c', weapon:'glove', face:[8,7],
+  pal:{o:'#a8221c',R:'#e8452c',h:'#ff9a80',g:'#3f8a2a',G:'#7fbf2a'},
+  body:['.....g.gg.g.....','......gGGg......','....oooggooo....','..ooRRRRRRRRoo..','.oRRhhRRRRRRRRo.','.oRhRRRRRRRRRRo.','oRRhRRRRRRRRRRRo','oRRRRRRRRRRRRRRo','oRRRRRRRRRRRRRRo','.oRRRRRRRRRRRRo.','..ooRRRRRRRRoo..','....oooooooo....'], arm:7},
+ {key:'pumpkin', name:'カボッチャ', veg:'かぼちゃ', role:'重戦士', stat:'持久', color:'#2f6a3a', weapon:'hammer', face:[8,6],
+  pal:{o:'#1f3a1a',P:'#4f8a3a',p:'#33661f',h:'#9ccc6a',s:'#8a6a3a',Y:'#f39a1e'},
+  body:['.......ss.......','.......s........','...oooooooooo...','.ooPPpPPPPpPPoo.','oPPhpPPPPPpPPPPo','oPhPpPPPPPpPPPPo','oPPPpPPPPPpPPPPo','oPPPpPPPPPpPPPPo','oPPPpPPPPPpPPPPo','.oPPpPPPPPpPPPo.','..ooooooooooo...'], arm:6},
+ {key:'broccoli', name:'ブロッコ将軍', veg:'ブロッコリー', role:'槍使い', stat:'力', color:'#2f6a1e', weapon:'spear', face:[8,9],
+  pal:{g:'#1f5a14',G:'#3f8a2a',h:'#8fcf3a',d:'#2a6a1e',o:'#5f8a2a',S:'#c8e48a',s:'#a8c868'},
+  body:['...gg..gg..gg...','..gGhggGhggGhg..','.gGhGGgGhGgGhGg.','gGGGdGGGGdGGGdGg','gGhGGGdGhGGGdGGg','.gGGdGGGGGdGGGg.','..gggsgggsgggg..','....osSSsSSo....','...oSSSSSSSSo...','...oSSSSSSSSo...','...oSSSSSSSSo...','...osSSSSSSso...','....oSSSSSSo....','.....oooooo.....'], arm:9},
+ {key:'shoga', name:'ジンジャー忍者', veg:'生姜', role:'忍者', stat:'技', color:'#c8a060', weapon:'shuriken', face:[8,5],
+  pal:{t:'#a8804a',T:'#e8c27a',y:'#fff0c0',r:'#e8452c'},
+  body:['.......tt.......','..tt..tTTt..tt..','.tTTttTTTTttTTt.','..trrrrrrrrrrt..','.tTyTTTTTTTTTt..','.tTyTTTTTTTTTTt.','.tTTTTTTTTTTTTt.','..tTTTTTTTTTTt..','...ttTTTTTTtt...','.....tttttt.....'], arm:6},
+ {key:'imo', name:'イモ吉', veg:'さつまいも', role:'応援団長', stat:'根性', color:'#a8346a', weapon:'flag', face:[8,5],
+  pal:{o:'#5a1e3a',P:'#b03c74',h:'#e080b0',y:'#f5d63d'},
+  body:['......oooo......','....ooPPPPoo....','...oPPhPPPPPo...','..oPPhPPPPPPPo..','..oPPPPPPPPPPo..','..oPPPPPPPPPPo..','..oPPPPPPPPPPo..','..oPPPPPPPPPPo..','...oPPPPPPPPo...','....ooPPPPoo....','......oyyo......','.......yy.......'], arm:6},
+];
+const W=27,H=22,OX=5,OY=5;
+const LIMB='#33501a';
+function drawHero(cv,h){
+  cv.width=W;cv.height=H;const x=cv.getContext('2d');x.imageSmoothingEnabled=false;
+  const px=(a,b,c)=>{x.fillStyle=c;x.fillRect(a,b,1,1)};
+  const body=h.body;
+  // 脚
+  const by=OY+body.length; const cx=OX+8;
+  [[cx-3,cx-2],[cx+1,cx+2]].forEach(([a,b],i)=>{px(a+1,by-1,LIMB);px(a+1,by,LIMB);px(a,by+1,LIMB);px(a+1,by+1,LIMB);px(i?b+1:a-1,by+1,LIMB);});
+  // 体
+  body.forEach((r,y)=>[...r].forEach((c,xx)=>{if(c!=='.')px(OX+xx,OY+y,h.pal[c])}));
+  // 腕
+  const r=body[h.arm],L=r.search(/[^.]/),R=r.length-1-[...r].reverse().join('').search(/[^.]/),ay=OY+h.arm;
+  px(OX+L-1,ay,LIMB);px(OX+L-2,ay+1,LIMB);px(OX+L-3,ay+1,LIMB);px(OX+L-3,ay+2,LIMB);px(OX+L-2,ay+2,LIMB);
+  px(OX+R+1,ay,LIMB);px(OX+R+2,ay-1,LIMB);px(OX+R+3,ay-1,LIMB);px(OX+R+3,ay-2,LIMB);px(OX+R+2,ay-2,LIMB);
+  // 顔
+  const [fx,fy]=[OX+h.face[0],OY+h.face[1]];
+  ['#1f1a14'].forEach(k=>{px(fx-3,fy,k);px(fx-3,fy+1,k);px(fx+2,fy,k);px(fx+2,fy+1,k)});
+    px(fx-5,fy+2,'#ff8fa8');px(fx-4,fy+2,'#ff8fa8');px(fx+3,fy+2,'#ff8fa8');px(fx+4,fy+2,'#ff8fa8');
+  px(fx-1,fy+2,'#1f1a14');px(fx,fy+2,'#1f1a14');px(fx-1,fy+3,'#e8456a');px(fx,fy+3,'#e8456a');
+  // 武器（右手 = OX+R+3, ay-2 あたり）
+  const hx=OX+R+3,hy=ay-2;const W2={
+    spear:()=>{for(let i=-1;i<=7;i++)px(hx,hy-i,'#8a6a3a');px(hx,hy-8,'#dfe8f0');px(hx,hy-9,'#ffffff');px(hx-1,hy-8,'#a8b4c4');px(hx+1,hy-8,'#a8b4c4');px(hx-1,hy-7,'#e8452c');px(hx+1,hy-7,'#e8452c')},
+    shuriken:()=>{const sx=hx+1,sy=hy-3;[[0,0],[0,-1],[0,1],[-1,0],[1,0],[-1,-2],[1,2],[2,-1],[-2,1]].forEach(([a,b])=>px(sx+a,sy+b,'#7a8494'));px(sx,sy,'#dfe8f0')},
+    flag:()=>{for(let i=1;i<=9;i++)px(hx,hy-i,'#8a6a3a');for(let a=1;a<=5;a++)for(let b=-9;b<=-6;b++)px(hx+a,hy+b,(a+b)%2?'#f5d63d':'#e8452c')},
+    sword:()=>{for(let i=1;i<=6;i++)px(hx,hy-i,'#dfe8f0');px(hx,hy-7,'#ffffff');px(hx-1,hy-1,'#f5d63d');px(hx+1,hy-1,'#f5d63d');for(let i=2;i<=6;i++)px(hx+1,hy-i,'#9fb4c8')},
+    wand:()=>{for(let i=1;i<=5;i++)px(hx,hy-i,'#8a5a1e');px(hx,hy-6,'#f5d63d');px(hx-1,hy-7,'#f5d63d');px(hx,hy-7,'#fff3a0');px(hx+1,hy-7,'#f5d63d');px(hx,hy-8,'#f5d63d');px(hx-1,hy-6,'#f5d63d');px(hx+1,hy-6,'#f5d63d');px(hx+2,hy-9,'#ffec80');px(hx-2,hy-9,'#ffec80')},
+    heart:()=>{for(let i=1;i<=5;i++)px(hx,hy-i,'#ff8fb0');px(hx-2,hy-9,'#ffffff');[[-1,-9],[1,-9],[-2,-8],[-1,-8],[0,-8],[1,-8],[2,-8],[-1,-7],[0,-7],[1,-7],[0,-6]].forEach(([a,b])=>px(hx+a,hy+b,'#e8456a'))},
+    bow:()=>{[[1,-5],[2,-4],[2,-3],[2,-2],[2,-1],[2,0],[2,1],[1,2]].forEach(([a,b])=>px(hx+a,hy+b,'#8a5a1e'));for(let b=-4;b<=1;b++)px(hx,hy+b,'#e8dcc0');px(hx-1,hy-2,'#e8452c');px(hx+3,hy-2,'#e8452c');},
+    glove:()=>{[[0,0],[1,0],[0,-1],[1,-1],[-1,-1],[0,-2],[1,-2],[-1,0]].forEach(([a,b])=>px(hx+a,hy+b,'#f5d63d'));px(hx+1,hy+1,'#d9ad1c');px(hx,hy+1,'#d9ad1c');const lx=OX+L-3,ly=ay+2;[[0,0],[-1,0],[0,-1],[-1,-1],[1,-1],[0,1],[-1,1]].forEach(([a,b])=>px(lx+a,ly+b,'#f5d63d'))},
+    hammer:()=>{for(let i=1;i<=5;i++)px(hx,hy-i,'#8a6a3a');for(let a=-2;a<=2;a++)for(let b=-8;b<=-6;b++)px(hx+a,hy+b,a===-2||a===2?'#7a8494':'#a8b4c4');px(hx,hy-7,'#f39a1e')},
+    shield:()=>{const lx=OX+L-4,ly=ay-1;for(let a=-2;a<=2;a++)for(let b=0;b<=5;b++){if(b===5&&Math.abs(a)>0)continue;if(b===4&&Math.abs(a)>1)continue;px(lx+a,ly+b,(Math.abs(a)===2||b===0)?'#a8b4c4':'#dfe8f0')}px(lx,ly+2,'#4f9a2a');px(lx-1,ly+2,'#4f9a2a');px(lx+1,ly+2,'#4f9a2a');px(lx,ly+1,'#4f9a2a');px(lx,ly+3,'#4f9a2a');
+      for(let i=1;i<=6;i++)px(hx,hy-i,'#dfe8f0');px(hx-1,hy-1,'#f5d63d');px(hx+1,hy-1,'#f5d63d')},
+  };W2[h.weapon]();
+}
+
+;return {HEROES,drawHero};})();
+const BUDDY_ST={'力':'str','持久':'end','技':'tec','根性':'grit'};
+new MutationObserver(()=>document.querySelectorAll('canvas[data-hero]:not([data-d])').forEach(c=>{c.dataset.d=1;const h=HEROES.find(h=>h.key===c.dataset.hero);if(h)drawHero(c,h)})).observe(document.documentElement,{childList:true,subtree:true});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-buddy]');if(!b)return;const m=me(),k=b.dataset.buddy,h=HEROES.find(x=>x.key===k);if(m.buddy===k){m.buddy=null;toast('相棒をはずしました')}else{m.buddy=k;toast(`${h.name}が相棒になりました！`)}save();render();});
 function gain(m,stat,xp,text,extra={}){
   let boosted=false;
+  if(!extra.by&&m.buddy){const h=HEROES.find(h=>h.key===m.buddy);if(h&&BUDDY_ST[h.stat]===stat){xp=Math.round(xp*1.1);text+=`（相棒${h.name}×1.1）`;}}
   if(!extra.by&&m.boost>0&&(stat==='str'||stat==='end')){xp=Math.round(xp*1.5);m.boost--;boosted=true;text+='（気合ブースト×1.5）';}
   const before=levelOf(total(m)).lv, cb=classOf(m);
   m.stats[stat]+=xp;m.weekXp+=xp;
-  S.feed.unshift({id:S.nextId++,who:extra.by||m.id,to:extra.by?m.id:undefined,text,xp,stat,t:Date.now(),cheers:[],pb:extra.pb});
+  S.feed.unshift({id:S.nextId++,who:extra.by||m.id,tn:extra.by?TN():undefined,to:extra.by?m.id:undefined,text,xp,stat,t:Date.now(),cheers:[],pb:extra.pb});
   const after=levelOf(total(m)).lv, ca=classOf(m);
   save();
   if(m.id===S.current&&after>before){
@@ -977,14 +1071,14 @@ function gain(m,stat,xp,text,extra={}){
 let tab='hero', logType='lift';
 const TABS=[['hero','冒険者','◆'],['log','記録','＋'],['feed','キタ酒場','≡'],['rank','番付','▲'],['boss','ボス','✦']];
 function renderTabs(){
-  const list=S.trainerMode?[...TABS,['guild','評価','★']]:TABS;
+  const list=(S.trainerMode||KS())?[...TABS,['guild','評価','★']]:TABS;
   if(tab!=='zukan'&&!list.find(x=>x[0]===tab))tab='hero';
   $('#tabs').innerHTML=list.map(([k,l,i])=>`<button type="button" data-t="${k}" class="${k===tab?'on':''}"><span class="ic">${i}</span>${l}</button>`).join('');
   $('#tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;render();window.scrollTo(0,0)});
 }
 function render(){
   $('#who').innerHTML=visibleMembers().map(m=>`<option value="${m.id}" ${m.id===S.current?'selected':''}>${esc(m.name)}</option>`).join('');
-  $('#modeBtn').classList.toggle('on',S.trainerMode);
+  $('#modeBtn').classList.toggle('on',S.trainerMode);$('#kensaBtn').classList.toggle('on',KS());document.body.classList.toggle('kensa',KS());
   renderTabs();
   ({hero:vHero,log:vLog,feed:vFeed,rank:vRank,boss:vBoss,guild:vGuild,zukan:vZukan})[tab]();
 }
@@ -995,7 +1089,7 @@ function vHero(){
   $('#view').innerHTML=`
   <div class="scene"><span class="cloud" style="left:8%;top:12%;width:64px;height:18px"></span><span class="cloud" style="right:10%;top:26%;width:46px;height:14px;animation-duration:24s"></span>
     <canvas id="sp" width="320" height="200" aria-label="冒険者の姿"></canvas>
-    <div class="nametag">${esc(m.name)}<small>Lv${L.lv}</small></div></div>
+    <div class="nametag">${esc(m.name)}<small>Lv${L.lv}</small></div>${m.buddy?`<canvas class="buddy" data-hero="${m.buddy}"></canvas>`:''}</div>
   ${S.bonusDay!==dayKey()?(()=>{const fk=foodOfDay(),f=FOODS[fk];return `<div class="bonus"><div class="bt">今日の${f.cat==="drink"?"のみもの":f.cat==="power"||f.cat==="heart"?"パワー":f.cat==="move"?"ひっさつわざ":f.cat==="yoga"?"アーサナ":f.cat==="energy"||f.cat==="luck"||f.cat==="beauty"||f.cat==="care"?"パワー":"ごはん"}が とどきました</div><div class="fd"><canvas class="food" data-food="${fk}"></canvas><div class="fn">${f.name}<small>${f.eff}</small></div><div class="bv">+${fxp(f)} <small>${STAT[f.stat].name}</small></div></div><button type="button" class="btn-main" id="bonus" style="width:100%">${f.cat==="drink"?"飲む！":f.cat==="power"?"お参りする！":f.cat==="heart"?"受けとる！":f.cat==="move"?"くり出す！":f.cat==="yoga"?"ポーズをとる！":f.cat==="energy"?"チャージ！":f.cat==="beauty"||f.cat==="luck"||f.cat==="care"?"受けとる！":"食べる！"}</button></div>`})():''}
   <div class="card" style="margin-top:12px">
     <div class="stack" style="gap:6px;min-width:0">
@@ -1013,8 +1107,11 @@ function vHero(){
     <div class="stat"><div class="plate" style="background:${v.c}">${v.kg}</div><div><b>${m.stats[k]}</b><span>${v.name}・${v.hint}</span></div></div>`).join('')}
   </div>
   ${m.titles.length?`<div class="titles">${m.titles.map(t=>`<span class="chip gold">${esc(t)}</span>`).join('')}</div>`:''}
+  <h2>お野菜十勇士</h2>
+  <p class="muted" style="margin:-4px 2px 8px;font-size:12px">タップして相棒をえらぶと、島にいっしょに立ちます。相棒の得意な能力は、EXPが1.1倍。</p>
+  <div class="heroes">${HEROES.map(h=>`<button type="button" class="hero ${m.buddy===h.key?'on':''}" data-buddy="${h.key}"><canvas data-hero="${h.key}"></canvas><b>${h.name}</b><span>${h.role}・${h.stat}</span></button>`).join('')}</div>
   <h2>ごはん＆パワー図鑑 <small style="font-size:13px;color:var(--muted)">${Object.keys(FOODS).filter(k=>((m.foods||{})[k]||0)>0).length} / ${Object.keys(FOODS).length} しゅるい</small></h2>
-  ${[['たべもの',k=>!FOODS[k].cat],['うみのさち',k=>FOODS[k].cat==='sea'],['のみもの',k=>FOODS[k].cat==='drink'],['パワースポット',k=>FOODS[k].cat==='power'],['こころのパワー',k=>FOODS[k].cat==='heart'],['ひっさつわざ',k=>FOODS[k].cat==='move'],['ヨガのアーサナ',k=>FOODS[k].cat==='yoga'],['エネルギー！',k=>FOODS[k].cat==='energy'],['きれい＆つよく',k=>FOODS[k].cat==='beauty'],['ラッキー',k=>FOODS[k].cat==='luck'],['サプリ＆くすり',k=>FOODS[k].cat==='care']].map(([lab,fl])=>`<div class="shelf">${lab}</div><div class="pantry">${Object.keys(FOODS).filter(fl).map(k=>{const f=FOODS[k],n=(m.foods||{})[k]||0;return `<div class="pc ${n?'':'none'} ${f.rare?'rare':''}"><canvas class="food" data-food="${k}"></canvas><b class="${n&&f.name.length>6?'ln':''}">${n?f.name:'？？？'}</b><div class="ct">${n}<small>こ</small></div><div class="ef"><span class="st" style="background:${STAT[f.stat].c}">${STAT[f.stat].name}</span>+${fxp(f)}</div>${n>=10?`<div class="tt got">★${f.title}</div>`:''}</div>`}).join('')}</div>`).join('')}
+  ${[['たべもの',k=>!FOODS[k].cat],['うみのさち',k=>FOODS[k].cat==='sea'],['のみもの',k=>FOODS[k].cat==='drink'],['パワースポット',k=>FOODS[k].cat==='power'],['こころのパワー',k=>FOODS[k].cat==='heart'],['ひっさつわざ',k=>FOODS[k].cat==='move'],['ヨガのアーサナ',k=>FOODS[k].cat==='yoga'],['エネルギー！',k=>FOODS[k].cat==='energy'],['きれい＆つよく',k=>FOODS[k].cat==='beauty'],['ラッキー',k=>FOODS[k].cat==='luck'],['サプリ＆くすり',k=>FOODS[k].cat==='care']].map(([lab,fl])=>`<div class="shelf">${lab}</div><div class="pantry">${Object.keys(FOODS).filter(fl).map(k=>{const f=FOODS[k],n=(m.foods||{})[k]||0;return `<div class="pc ${n||KS()?'':'none'} ${f.rare?'rare':''}"><canvas class="food" data-food="${k}"></canvas><b class="${(n||KS())&&f.name.length>6?'ln':''}">${n||KS()?f.name:'？？？'}</b><div class="ct">${n}<small>こ</small></div><div class="ef"><span class="st" style="background:${STAT[f.stat].c}">${STAT[f.stat].name}</span>+${fxp(f)}</div>${n>=10?`<div class="tt got">★${f.title}</div>`:''}</div>`}).join('')}</div>`).join('')}
   <p class="muted" style="margin:6px 2px 0">毎日のごはんと、宿題のスタンプでもらえます。キラキラのカードはめったに出ないレアです。お酒はEXP控えめです。</p>
   <h2>今週の来館</h2>
   <div class="card">
@@ -1139,7 +1236,7 @@ function vFeed(){
   <div class="stack">${posts.map(p=>{
     const isT=p.who==='trainer', w=isT?null:byId(p.who), cheered=p.cheers.includes(m.id);
     return `<div class="card post"><canvas class="av" data-av="${isT?'':p.who}"></canvas><div style="min-width:0">
-      <div class="who">${isT?'トレーナー':esc(w.name)} ${p.pb?'<span class="tag" style="background:var(--yellow)">自己ベスト</span>':''}</div>
+      <div class="who">${isT?'トレーナー '+(p.tn||TRAINERS[p.id%TRAINERS.length]):esc(w.name)} ${p.pb?'<span class="tag" style="background:var(--yellow)">自己ベスト</span>':''}</div>
       <div class="what">${esc(p.text)}</div>
       <div class="meta"><span class="muted"><span class="tag" style="background:${STAT[p.stat].c}">${STAT[p.stat].name}+${p.xp}</span> ${ago(p.t)}</span>
       <button type="button" class="cheer ${cheered?'done':''}" data-c="${p.id}" ${p.who===m.id?'disabled':''}>エール ${p.cheers.length}</button></div></div></div>`}).join('')}</div>`;
@@ -1186,7 +1283,7 @@ function vZukan(){
   $('#view').innerHTML=`<h2>進化図鑑</h2>
   <p class="muted" style="margin-top:-6px">${zLook==='g'?'5レベルごとに別の神様へ姿を変えます。Lv5の少彦名命から20柱を巡り、Lv100で天照大神に。':'5レベルごとに見た目が進化します。Lv100の「伝説」まで全21段階。'}Lv100からは10レベルごとに名前の横に★が増え、上限はありません。色は一番伸びている能力の色になります。</p>
   <label style="margin-bottom:10px">見た目を選ぶ<select id="zlk">${LOOKS.map(([k,l])=>`<option value="${k}" ${zLook===k?'selected':''}>${l}</option>`).join('')}</select></label>
-  <div class="zk">${(zLook==='g'?KAMI.map((k,i)=>({...k,lv:EVO[i].lv})):EVO).map((e,i)=>`<div class="zc ${i===cur?'now':''} ${i>cur?'lock':''}"><canvas data-zs="${i}"></canvas>
+  <div class="zk">${(zLook==='g'?KAMI.map((k,i)=>({...k,lv:EVO[i].lv})):EVO).map((e,i)=>`<div class="zc ${i===cur?'now':''} ${i>cur&&!KS()?'lock':''}"><canvas data-zs="${i}"></canvas>
     <div class="zl">Lv${e.lv}</div>${e.yomi?`<div class="zy">${e.yomi}</div>`:''}<div class="zn">${e.name}</div><div class="za">${e.add}</div>${i===cur?'<div class="zt">いまここ</div>':''}</div>`).join('')}</div>
   <button type="button" id="back" style="margin-top:14px">冒険者に戻る</button>`;
   document.querySelectorAll('[data-zs]').forEach(c=>zLook==='g'?paintKami(c,+c.dataset.zs,cls):paintHero(c,+c.dataset.zs,cls,hairOf({id:'me',name:'',look:zLook}),zLook));
@@ -1195,8 +1292,9 @@ function vZukan(){
 }
 
 function vGuild(){
+  setTimeout(()=>{const x=$('#tnm');if(x)x.onchange=e=>{S.tname=e.target.value;save();toast(`${S.tname}さんとして操作します`)}},0);
   const waiting=S.members.flatMap(m=>m.homework.filter(h=>h.status==='done').map(h=>({m,h})));
-  $('#view').innerHTML=`<h2>宿題のスタンプ待ち（${waiting.length}件）</h2>
+  $('#view').innerHTML=`<label style="margin-bottom:6px">担当トレーナー<select id="tnm">${TRAINERS.map(t=>`<option ${TN()===t?'selected':''}>${t}</option>`).join('')}</select></label><h2>宿題のスタンプ待ち（${waiting.length}件）</h2>
   <div class="stack">${waiting.length?waiting.map(({m,h})=>`<div class="card hw"><div style="min-width:0"><div style="font-weight:700">${esc(m.name)}</div><div class="muted">${esc(h.text)}</div></div>
     <button type="button" class="btn-main" data-st="${m.id}:${h.id}">スタンプを押す</button></div>`).join(''):'<div class="card muted">スタンプ待ちの宿題はありません。</div>'}</div>
   <h2>宿題を出す</h2>
@@ -1224,12 +1322,12 @@ function vGuild(){
   document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{const s=STAMPS.find(x=>x.id===b.dataset.s),m=byId($('#gm').value);
     gain(m,s.stat,s.xp,`${m.name}さんに「${s.label}」スタンプ`,{by:'trainer'});});
   $('#give').onclick=()=>{const m=byId($('#gm').value),t=$('#gt').value;if(m.titles.includes(t)){toast('すでに持っている称号です');return}
-    m.titles.push(t);S.feed.unshift({id:S.nextId++,who:'trainer',to:m.id,text:`${m.name}さんに称号「${t}」を授与`,xp:0,stat:'tec',t:Date.now(),cheers:[]});save();toast(`称号「${t}」を授けました`)};
+    m.titles.push(t);S.feed.unshift({id:S.nextId++,who:'trainer',tn:TN(),to:m.id,text:`${m.name}さんに称号「${t}」を授与`,xp:0,stat:'tec',t:Date.now(),cheers:[]});save();toast(`称号「${t}」を授けました`)};
   document.querySelectorAll('[data-st]').forEach(b=>b.onclick=()=>{
     const [mid,hid]=b.dataset.st.split(':'),m=byId(mid),h=m.homework.find(x=>x.id==hid);
     h.status='stamped';m.boost=(m.boost||0)+2;const hf=Object.keys(FOODS)[hashStr(String(h.id)+m.id)%Object.keys(FOODS).length];giveFood(m,hf);
     const before=levelOf(total(m)).lv;['str','end','tec','grit'].forEach(k=>m.stats[k]+=15);m.weekXp+=60;
-    S.feed.unshift({id:S.nextId++,who:'trainer',to:m.id,text:`${m.name}さんの宿題「${h.text}」にスタンプ！ パワーアップ`,xp:60,stat:'grit',t:Date.now(),cheers:[]});save();
+    S.feed.unshift({id:S.nextId++,who:'trainer',tn:TN(),to:m.id,text:`${m.name}さんの宿題「${h.text}」にスタンプ！ パワーアップ`,xp:60,stat:'grit',t:Date.now(),cheers:[]});save();
     const after=levelOf(total(m)).lv;
     if(m.id===S.current)overlay('POWER UP!',`全能力+15${after>before?`、レベル${after}に！`:''}　次の2回のトレーニングはEXP1.5倍　ごほうびに「${FOODS[hf].name}」も1こ`);
     else toast(`${m.name}さんがパワーアップしました`);
@@ -1239,9 +1337,10 @@ function vGuild(){
 }
 
 $('#who').onchange=e=>{S.current=e.target.value;save();render()};
+$('#kensaBtn').onclick=()=>{S.kensa=!KS();save();render();toast(KS()?'検査モード：ぜんぶ表示します':'ふつうの表示にもどしました')};
 $('#modeBtn').onclick=()=>{S.trainerMode=!S.trainerMode;if(S.trainerMode)tab='guild';save();render()};
 render();
-// ホーム画面アプリ用：オフラインでも開けるようにする
+</script><script>(()=>{const f=()=>document.querySelectorAll('h2:not([data-t])').forEach(h=>{h.dataset.t=1;const t=h.firstChild;if(t&&t.nodeType===3&&t.textContent.trim()){const s=document.createElement('span');s.className='tb';s.textContent=t.textContent;h.replaceChild(s,t)}});new MutationObserver(f).observe(document.documentElement,{childList:true,subtree:true});f();})();// ホーム画面アプリ用：オフラインでも開けるようにする
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').then(r=>r.update()).catch(()=>{});let rl=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(rl)return;rl=true;location.reload()})});}
 </script>
 </body>
