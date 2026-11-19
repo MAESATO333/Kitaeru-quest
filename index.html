@@ -19,7 +19,7 @@
 /* Layout: one-column phone app. Soft pastel look for a mostly-female membership; the four stats keep bumper-plate hues (red, blue, yellow, green), softened. */
 :root{
   --floor:#f3f9dc; --floor-2:#f6fbe4; --panel:#ffffff; --line:#dcebaa; --stage:#f1f8d2;
-  --chalk:#2f3a1c; --muted:#7a8460; --ink:#33501a; --leaf:#4f7d2a; --lime:#bcdc3c; --lemon:#ffe600; --tomato:#e8452c; --carrot:#f39a1e; --beet:#9b2f5e;
+  --chalk:#2f3a1c; --muted:#7a8460; --ink:#33501a; --leaf:#4f7d2a; --lime:#bcdc3c; --lemon:#ffe600; --tomato:#e8452c; --carrot:#f39a1e; --beet:#9b2f5e; --banana:#f5d63d; --kiwi:#9ccc3c; --kiwi-skin:#8a6a3a; --soy:#efdca6;
   --red:#f06b7e; --blue:#6aa8f0; --yellow:#f7c948; --green:#5cc98a;
   --gold:#e08a00; --accent:#e8452c;
   --display:"M PLUS Rounded 1c","Zen Maru Gothic","Hiragino Maru Gothic ProN",system-ui,sans-serif;
@@ -37,13 +37,31 @@ body{font-family:var(--body);font-size:15px;line-height:1.6;min-height:100%;
   -webkit-text-stroke:2.5px var(--ink);paint-order:stroke fill;text-shadow:0 3px 0 var(--ink)}
 .vlogo span{background:var(--leaf);color:#fff;font-size:11px;font-weight:700;letter-spacing:.14em;padding:1px 10px;border-radius:3px}
 .vlogo span i{font-style:normal;color:var(--lemon)}
-header::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:6px;background:repeating-linear-gradient(90deg,#e8452c 0 10px,#f39a1e 10px 20px,#ffe600 20px 30px,#7fbf2a 30px 40px,#4f7d2a 40px 50px,#9b2f5e 50px 60px)}
+header::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:6px;background:repeating-linear-gradient(90deg,#e8452c 0 10px,#f39a1e 10px 20px,#f5d63d 20px 30px,#efdca6 30px 40px,#9ccc3c 40px 50px,#4f7d2a 50px 60px,#8a6a3a 60px 70px,#9b2f5e 70px 80px)}
+/* たべもの */
+.food{width:48px;height:48px;image-rendering:pixelated;flex:none}
+.bonus .fd{display:flex;align-items:center;justify-content:center;gap:10px;margin:2px 0 4px}
+.bonus .fn{font-weight:900;color:var(--ink);font-size:15px;text-align:left;line-height:1.3}
+.bonus .fn small{display:block;font-weight:700;font-size:11px;color:var(--muted)}
+.pantry{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.pc{background:#fff;border:2px solid var(--line);border-radius:14px;padding:6px 3px;text-align:center;min-width:0;box-shadow:0 3px 0 #c9df82}
+.pc .food{width:40px;height:40px;display:block;margin:0 auto}
+.pc.none .food{filter:brightness(0) opacity(.18)}
+.pc.none b{color:var(--muted)}
+.pc.rare{background:linear-gradient(160deg,#fffbe0,#ffe9f2 60%,#e9f7ff);border-color:#f5c518}
+.shelf{display:inline-block;margin:10px 0 6px;background:var(--leaf);color:#fff;font-weight:900;font-size:12px;padding:2px 12px;border-radius:999px;letter-spacing:.1em}
+.pc .st{color:#fff;border-radius:4px;padding:0 4px;margin-right:2px;font-weight:900}
+.pc b{display:block;font-size:11px;line-height:1.25;color:var(--ink);min-height:2.5em;display:grid;place-items:center;word-break:break-all}
+.pc .ct small{font-size:10px}.pc .ct{font-family:var(--display);font-weight:800;font-size:17px;color:var(--ink);line-height:1.1}
+.pc .ef{font-size:10.5px;color:var(--muted);line-height:1.35}
+.pc .tt{font-size:9.5px;line-height:1.3;margin-top:4px;border-radius:8px;padding:1px 3px;background:var(--floor-2);color:var(--muted)}
+.pc .tt.got{background:var(--lemon);color:var(--ink);font-weight:900}
 /* 浮島のステージ */
 .scene{position:relative;margin-top:14px;border-radius:24px;overflow:hidden;background:linear-gradient(180deg,#d6ec7a,#eef7c4 65%,#fff6cc);border:3px solid var(--leaf);box-shadow:0 5px 0 var(--ink)}
 .scene canvas{display:block;width:100%;height:auto;image-rendering:pixelated}
 .nametag{position:absolute;left:50%;transform:translateX(-50%);top:8%;background:#fff;border:2px solid var(--ink);color:var(--ink);border-radius:999px;padding:2px 12px;font-weight:900;font-size:13px;white-space:nowrap;box-shadow:0 2px 0 var(--ink)}
 .nametag small{color:var(--muted);font-weight:700;margin-left:6px}
-.bonus{margin-top:12px;background:#fff;border-radius:20px;padding:14px;text-align:center;border:3px solid var(--carrot);box-shadow:0 4px 0 #c77300}
+.bonus{margin-top:12px;background:linear-gradient(180deg,#fffbea,#fbf1cf);border-radius:20px;padding:14px;text-align:center;border:3px solid var(--carrot);box-shadow:0 4px 0 #c77300}
 .bonus .bt{font-size:13px;color:var(--muted)}
 .bonus .bv{font-family:var(--display);font-weight:800;font-size:34px;color:var(--lemon);-webkit-text-stroke:2.5px var(--ink);paint-order:stroke fill;text-shadow:0 3px 0 var(--ink);line-height:1.3}
 .bonus .bv small{font-size:15px;-webkit-text-stroke:0;color:var(--ink);text-shadow:none}
@@ -63,7 +81,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
 .btn-main:active{transform:translateY(1px)}
 .mode{font-size:12px;padding:6px 10px}
 .mode.on{background:var(--leaf);border-color:var(--leaf);color:var(--lemon)}
-nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--leaf);border-top:6px solid transparent;border-image:repeating-linear-gradient(90deg,#e8452c 0 10px,#f39a1e 10px 20px,#ffe600 20px 30px,#7fbf2a 30px 40px,#4f7d2a 40px 50px,#9b2f5e 50px 60px) 1;
+nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--leaf);border-top:6px solid transparent;border-image:repeating-linear-gradient(90deg,#e8452c 0 10px,#f39a1e 10px 20px,#f5d63d 20px 30px,#efdca6 30px 40px,#9ccc3c 40px 50px,#4f7d2a 50px 60px,#8a6a3a 60px 70px,#9b2f5e 70px 80px) 1;
   display:flex;justify-content:center;padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
 nav .in{display:flex;max-width:520px;width:100%;gap:2px}
 nav button{flex:1;background:none;border:0;padding:6px 2px;font-size:11px;color:#d9ebb0;display:flex;flex-direction:column;align-items:center;gap:2px}
@@ -287,6 +305,106 @@ const me=()=>byId(S.current);
 // ---------- 今日の顔ぶれ：日付と本人で決まる乱数で毎日入れ替え ----------
 function dayKey(){const d=new Date(Date.now()+(S.dayShift||0)*day);return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;}
 function hashStr(t){let h=2166136261;for(const c of t){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0;}
+// ---------- たべもの（バナナ・キウイ・大豆） ----------
+const FOODS={
+ banana:{name:'バナナ',stat:'end',eff:'エネルギー補給',title:'バナナ番長',pal:{B:'#f5d63d',b:'#d9ad1c',h:'#fff3a0',k:'#4a3418',g:'#9ccc3c'},art:['..........gk','.........gB.','........BBb.','.......hBBb.','......hBBBb.','.....hBBBb..','...hBBBBbb..','.hBBBBBbb...','kBBBBbbb....','.bbbbb......']},
+ kiwi:{name:'キウイ',stat:'tec',eff:'ビタミンでキレUP',title:'キウイ姫',pal:{r:'#8a6a3a',R:'#6b4f28',g:'#9ccc3c',G:'#7fb52a',c:'#f6f2c8',k:'#1f1a14'},art:['...rrrrrr...','..rgggGggr..','.rggkgkgGgr.','rgGkgccgkggr','rggkccccgkgr','rgkgccccgkGr','rggkccccgkgr','rgGkgccgkggr','.rggkgkgGgr.','..rgggggGR..','...RRRRRR...']},
+ soy:{name:'大豆',stat:'str',eff:'たんぱく質でパワー',title:'大豆マッチョ',pal:{o:'#b98d4a',S:'#efdca6',h:'#fff8dc',d:'#d8bd7c',e:'#8a6a3a'},art:['....oooo....','...ohSSSo...','...oSSSdo...','...oSeSdo...','.oooodddoo..','ohSSSo.ohSSo','oSSSdo.oSSdo','oSeSdo.oeSdo','oSSddo.oSddo','.oooo...ooo.']},
+ soymilk:{name:'豆乳',stat:'str',eff:'飲むたんぱく質',title:'豆乳ナイト',pal:{o:'#8f9a6a',w:'#ffffff',g:'#9ccc3c',S:'#efdca6',e:'#8a6a3a'},art:['....oooo....','...owwwwo...','..owwwwwwo..','..owwwwwwo..','..oggggggo..','..ogSSSSgo..','..ogSeSSgo..','..ogSSSSgo..','..oggggggo..','..owwwwwwo..','..oooooooo..']},
+ tofu1:{name:'豆腐 1丁',stat:'str',eff:'やさしいたんぱく質',title:'豆腐職人',pal:{H:'#d8d4c4',W:'#fbfaf3',w:'#f1efe4',d:'#d6d2c0',o:'#a8a28c'},art:['............','............','...HHHHHHH..','..HWWWWWWHd.','.HWWWWWWHdd.','.wwwwwwwwdd.','.wwwwwwwwdd.','.wwwwwwwwd..','.wwwwwwwwd..','.oooooooo...']},
+ tofu2:{name:'豆腐 2丁',stat:'str',eff:'たんぱく質たっぷり',title:'豆腐親方',xp:30,pal:{H:'#d8d4c4',W:'#fbfaf3',w:'#f1efe4',d:'#d6d2c0',o:'#a8a28c'},art:['............','............','..HHHH.HHHH.','.HWWWdHWWWd.','.wwwwdwwwwd.','.wwwwdwwwwd.','.wwwwdwwwwd.','.wwwwdwwwwd.','.ooooooooo..']},
+ cabbage:{name:'キャベツ',stat:'tec',eff:'おなかを整える',title:'キャベツ王子',pal:{L:'#c7e58a',l:'#9ccc3c',g:'#6fa83a'},art:['....gggg....','..ggLLLLgg..','.gLLlLLlLLg.','.gLlLLLLlLg.','gLLLlLLlLLLg','gLlLLllLLlLg','gLLLlLLlLLLg','.gLlLLLLlLg.','.gLLlLLlLLg.','..ggLLLLgg..','....gggg....']},
+ komatsuna:{name:'小松菜',stat:'tec',eff:'カルシウムで骨つよく',title:'小松菜ヒーロー',pal:{G:'#3f8a2a',g:'#6fbf3a',w:'#d8eeb0'},art:['..G.G..G....','.GGGGGGGG...','GGgGGgGGGG..','GGGgGGgGGG..','.GGGGgGGG...','..GGGGGG....','...gwwg.....','...wwww.....','...wwww.....','....ww......']},
+ lettuce:{name:'レタス',stat:'tec',eff:'シャキシャキ水分',title:'シャキシャキ姫',pal:{L:'#d6f08a',l:'#9ccc3c',w:'#f6fbe4'},art:['............','...l.ll.l...','..lLLLLLLl..','.lLLlLLlLLl.','lLLLLlLLLLLl','lLlLLLLLlLLl','lLLLLLLLLLLl','.lLLlLLlLLl.','..lLLLLLLl..','....wwww....']},
+ hakusai:{name:'白菜',stat:'tec',eff:'体ぽかぽか鍋',title:'白菜大将',pal:{G:'#7fbf2a',g:'#b6dd6a',w:'#f7f7ec',W:'#e2e6cc'},art:['....GGGG....','...GGgGGG...','..GGGgGGGG..','..GgGGGgGG..','..wwwwwwww..','..wwWwwWww..','..wwWwwWww..','..wwWwwWww..','...wwWWww...','....wwww....']},
+ genmai:{name:'玄米',stat:'end',eff:'長もちエネルギー',title:'玄米仙人',pal:{r:'#d9b27a',R:'#b98d4a',b:'#a8452f',B:'#e8452c'},art:['............','............','...rrrrrr...','..rRrRrRrr..','.rRrRrRrRrr.','bbbbbbbbbbbb','.bBBBBBBBBb.','..bBBBBBBb..','...bbbbbb...','....bbbb....']},
+ soyprotein:{name:'ソイプロテイン',stat:'str',eff:'筋肉のごはん',title:'プロテイン魔人',xp:30,pal:{k:'#33501a',K:'#4f7d2a',w:'#ffffff',g:'#f5d63d',S:'#efdca6',P:'#e8452c',o:'#c9c9b8'},art:['...kkkkkk...','..kKKKKKKk..','..wwwwwwww..','..wggggggw..','..wgSSSSgw..','..wgSPPSgw..','..wgSSSSgw..','..wggggggw..','..wwwwwwww..','..wwwwwwww..','...oooooo...']},
+ carrot:{name:'ニンジン',stat:'tec',eff:'目と肌にいい',title:'ニンジン騎士',pal:{O:'#f39a1e',o:'#c96f10',g:'#7fbf2a'},art:['.......g.g..','........gg..','.......gg.g.','......OO....','.....OOo....','....OOOo....','...OOoO.....','..OOOo......','.OOo........','Oo..........']},
+ onion:{name:'玉ねぎ',stat:'grit',eff:'血液サラサラ',title:'たまねぎ戦士',pal:{y:'#e8b45a',Y:'#c98a2e',b:'#8a6a3a',r:'#d8c8a0'},art:['.....b......','.....bb.....','....yyyy....','...yYyyYy...','..yYyyyyYy..','..yYyyyyYy..','..yyYyyYyy..','...yyyyyy...','....yyyy....','.....rr.....']},
+ apple:{name:'リンゴ',stat:'grit',eff:'1日1こで元気',title:'りんご姫',pal:{R:'#e8452c',r:'#b8321c',h:'#ffb0a0',b:'#6b4f28',g:'#7fbf2a'},art:['.....b.g....','.....bgg....','..rrrbrrr...','.rRRRRRhRr..','rRRRRRRRhRr.','rRRRRRRRRRr.','rRRRRRRRRRr.','rRRRRRRRRRr.','.rRRRRRRRr..','..rrr.rrr...']},
+ grape:{name:'ぶどう',stat:'grit',eff:'すぐ元気チャージ',title:'ぶどう侯爵',pal:{P:'#7a3a8a',p:'#a865c0',b:'#6b4f28',g:'#7fbf2a'},art:['.....bg.....','.....bgg....','...PpPpP....','..pPpPpPp...','..PpPpPpP...','...pPpPp....','...PpPpP....','....pPp.....','....PpP.....','.....p......']},
+ nashi:{name:'梨',stat:'end',eff:'みずみずしい水分',title:'梨の旅人',pal:{y:'#e6c66a',Y:'#fff0b0',d:'#b8923a',b:'#6b4f28'},art:['.....b......','.....b......','...yyyyyy...','..yYyyyyyy..','.yYyydyyyyy.','.yydyyyydyy.','.yyyyyyyyyy.','.yyyydyydyy.','..yyyyyyyy..','...yyyyyy...']},
+ peach:{name:'もも',stat:'grit',eff:'ほっとする甘さ',title:'もも姫',pal:{P:'#ffb3c1',p:'#f07f95',h:'#fff0f2',g:'#7fbf2a',b:'#6b4f28'},art:['......gg....','.....bg.....','...pppPpp...','..pPPPpPPp..','.pPPhPpPPPp.','.pPhPPpPPPp.','.pPPPPpPPPp.','.pPPPPPPPPp.','..pPPPPPPp..','...pppppp...']},
+ muscat:{name:'マスカット',stat:'tec',eff:'ぜいたくビタミン',title:'マスカット貴族',pal:{P:'#8cc63f',p:'#c7e58a',b:'#6b4f28',g:'#4f7d2a'},art:['.....bg.....','.....bgg....','...PpPpP....','..pPpPpPp...','..PpPpPpP...','...pPpPp....','...PpPpP....','....pPp.....','....PpP.....','.....p......']},
+ chikuwa:{name:'ちくわ',stat:'str',eff:'手軽なたんぱく質',title:'ちくわ忍者',pal:{b:'#b8763a',B:'#e0a050',w:'#f6e6c0'},art:['.........bb.','........bBwb','.......bBBwb','......bBBbb.','.....bBBb...','....bBBb....','...bBBb.....','..bBBb......','.bwBb.......','.bbb........']},
+ ganmo:{name:'野菜がんも',stat:'str',eff:'豆と野菜のちから',title:'がんも親分',pal:{b:'#a8692c',B:'#d9a050',o:'#f39a1e',g:'#7fbf2a'},art:['............','...bbbbbb...','..bBBBBBBb..','.bBoBBgBBBb.','.bBBBBBBoBb.','.bBgBBoBBBb.','.bBBBBBBgBb.','..bBBoBBBb..','...bbbbbb...']},
+ tomato:{name:'トマト',stat:'tec',eff:'リコピンでキラキラ',title:'トマト隊長',pal:{R:'#e8452c',r:'#b8321c',h:'#ffb0a0',g:'#4f7d2a'},art:['.....g.g....','....ggggg...','..rrRgRgrr..','.rRRRRRRhRr.','rRRRRRRRRhRr','rRRRRRRRRRRr','rRRRRRRRRRRr','.rRRRRRRRRr.','..rRRRRRRr..','...rrrrrr...']},
+ strawberry:{name:'いちご',stat:'grit',eff:'ごきげんビタミン',title:'いちごプリンセス',pal:{R:'#f0405a',r:'#c02840',y:'#fff3a0',g:'#4f7d2a',G:'#7fbf2a'},art:['...gGgGg....','....gGg.....','..rRRRRRr...','.rRyRRRyRr..','.rRRRyRRRr..','.rRyRRRyRr..','..rRRyRRr...','...rRRRr....','....rRr.....','.....r......']},
+ salad:{name:'サラダ',stat:'tec',eff:'まずは野菜から',title:'サラダ見習い',pal:{l:'#7fbf2a',L:'#b6dd6a',r:'#e8452c',w:'#b8b8a6',W:'#ffffff'},art:['............','............','...lLlLlL...','..LlLrLlLl..','.lLLrrLlLLl.','wwwwwwwwwwww','.wWWWWWWWWw.','..wWWWWWWw..','...wwwwww...']},
+ sp_salad:{name:'スペシャルサラダ',stat:'tec',eff:'たまご入りでパワーUP',title:'サラダ名人',xp:40,rare:1,pal:{l:'#7fbf2a',L:'#b6dd6a',r:'#e8452c',e:'#fffbe6',Y:'#f5c518',y:'#e0a400',W:'#ffffff'},art:['............','.....rr.....','..lLeYeLl...','.LlrLeeLrlL.','lLLlLLlLLlLl','yyyyyyyyyyyy','.yWWWWWWWWy.','..yWWWWWWy..','...yyyyyy...']},
+ usp_salad:{name:'うんとスペシャルサラダ',stat:'tec',eff:'めったに出ない！',title:'サラダの神',xp:80,rare:2,pal:{l:'#7fbf2a',L:'#b6dd6a',r:'#e8452c',e:'#fffbe6',Y:'#f5c518',c:'#f5c518',y:'#e0a400',W:'#ffffff',s:'#ffb3c1'},art:['s...cYc...s.','...cYcYc....','..lLeYeLl...','.LlrLeeLrlL.','lLLlLLlLLlLl','yyyyyyyyyyyy','.yWWWWWWWWy.','..yWWWWWWy..','s..yyyyyy..s']},
+ satsuma:{name:'さつま芋',stat:'end',eff:'ほくほくエネルギー',title:'おいも番長',pal:{P:'#9b2f5e',p:'#6b1f42',y:'#f5d63d',g:'#7fbf2a'},art:['............','........gg..','......ppPg..','....pPPPPp..','...pPPyPPp..','..pPPPPPp...','.pPPyPPp....','.pPPPPp.....','..ppp.......']},
+ indiancurry:{name:'インドカレー',stat:'grit',eff:'スパイスで燃える',title:'カレー大魔王',xp:30,pal:{c:'#8a3f14',C:'#c8641e',o:'#f39a1e',n:'#c98a2e',N:'#f6dca0',w:'#b8b8a6',W:'#ffffff'},art:['............','......nnnnn.','.....nNNNNnn','.cccccNNnNnn','cCCCCCCnNNn.','cCoCCCoCCc..','wwwwwwwwwww.','.wWWWWWWWw..','..wwwwwww...']},
+ vegcurry:{name:'野菜カレー',stat:'end',eff:'野菜ごろごろ',title:'やさいカレー勇者',xp:30,pal:{R:'#fffaf0',C:'#c98a2e',o:'#f39a1e',g:'#7fbf2a',w:'#b8b8a6'},art:['............','............','............','.wwwwwwwwww.','wRRRRCCCCCCw','wRRRCCoCgCCw','wRRRCgCCCoCw','wRRRRCCCCCCw','.wwwwwwwwww.']},
+ sainocurry:{name:'サイノカレー',stat:'grit',eff:'ごちそうカレー',title:'サイノカレー王',xp:30,pal:{R:'#fffaf0',C:'#a8552a',c:'#c8742e',Y:'#f5c518',e:'#ffffff',w:'#b8b8a6'},art:['............','............','.....eee....','....eYYe....','.wwwwwewwww.','wRRRRCCcCCCw','wRRRCCcCCcCw','wRRRRCCCcCCw','.wwwwwwwwww.']},
+ fries:{name:'ポテトフライ',stat:'end',eff:'たまのごほうび',title:'ポテト男爵',pal:{y:'#f5d63d',Y:'#e0a400',R:'#e8452c',r:'#b8321c',w:'#ffffff'},art:['..y.y.yy.y..','..yYyYyyYy..','..yyYyyYyy..','.rRRRRRRRRr.','.rRRwRRwRRr.','.rRRRwwRRRr.','..rRRRRRRr..','..rRRRRRRr..','...rrrrrr...']},
+ miso:{name:'みそ汁',stat:'grit',eff:'ほっとする一杯',title:'みそ汁名人',pal:{M:'#d9a060',m:'#b8763a',w:'#ffffff',g:'#7fbf2a',b:'#6b2f1c',B:'#a8452f'},art:['............','............','...g...g....','..mmgmmmgm..','.mMMMwMMwMm.','bbbbbbbbbbbb','.bBBBBBBBBb.','..bBBBBBBb..','...bbbbbb...']},
+ daikon:{name:'大根',stat:'tec',eff:'消化を助ける',title:'だいこん将軍',pal:{w:'#f7f7ec',W:'#d8dcc4',g:'#7fbf2a',G:'#4f7d2a'},art:['..g.G.g.....','..GgGgG.....','...GgG......','...wWw......','...wWww.....','....wWw.....','....wWw.....','.....wW.....','.....ww.....','......w.....']},
+ corn:{name:'とうもろこし',stat:'end',eff:'つぶつぶエネルギー',title:'コーン大臣',pal:{y:'#f5d63d',Y:'#e0a400',g:'#7fbf2a',G:'#4f7d2a'},art:['.....yY.....','....yYyY....','....YyYy..G.','...GyYyYgG..','..GgYyYyGg..','..GgyYyYgG..','..GgYyYyGg..','...GyYyGg...','....GgGg....','.....GG.....']},
+ pumpkin:{name:'かぼちゃ',stat:'end',eff:'ほくほくビタミン',title:'かぼちゃ大王',pal:{G:'#3f6a2a',g:'#5f8f3a',o:'#f39a1e',b:'#6b4f28'},art:['............','.....bb.....','......b.....','..GGgGGgGG..','.GgGGgGGgGG.','GGgGGgGGgGGG','GgGGgoogGGgG','GGgGGgGGgGGG','.GgGGgGGgGG.','..GGgGGgGG..']},
+ vegsoup:{name:'ベジタリアンスープ',stat:'tec',eff:'野菜まるごとスープ',title:'スープの賢者',pal:{S:'#f3a64a',s:'#e08a2a',g:'#7fbf2a',r:'#e8452c',y:'#f5d63d',w:'#b8b8a6',W:'#ffffff'},art:['............','....w..w....','.....w..w...','..SsgSrSyS..','.SrSSySsSgS.','wwwwwwwwwwww','.wWWWWWWWWw.','..wWWWWWWw..','...wwwwww...']},
+ chai:{name:'シナモンチャイ',stat:'grit',eff:'スパイスでぽかぽか',title:'チャイ旅人',cat:'drink',pal:{m:'#e8452c',M:'#b8321c',c:'#c99a6a',C:'#e6c49a',k:'#8a4a1c',w:'#f2ead8'},art:['.......k....','..w.w..k....','...w..wk....','.mmmmmmkmm..','.mCCCCCkCm..','.mccccccmmm.','.mccccccm.m.','.mccccccmmm.','.MmmmmmmM...','..MMMMMM....']},
+ herbtea:{name:'ハーブティー',stat:'tec',eff:'心もからだもリラックス',title:'ハーブの魔女',cat:'drink',pal:{g:'#7fbf2a',G:'#4f7d2a',t:'#e9e78a',o:'#b8c8a0',w:'#ffffff'},art:['......gG....','.....gGg....','...w..g.....','.oooooooo...','.otttgtto...','.otttttto...','.ottttttooo.','..otttto..o.','..otttto.oo.','...oooo.....']},
+ earlgrey:{name:'アールグレイ',stat:'grit',eff:'香りでひと休み',title:'午後の紅茶伯爵',cat:'drink',pal:{t:'#c8641e',T:'#e08a3a',c:'#ffffff',b:'#7aa0c8',w:'#e8eef6'},art:['............','...w..w.....','....w..w....','.ccccccccc..','.cTTTTTTTcbb','.cttttttcb.b','..ctttttcbb.','...ccccc....','.bbbbbbbbbb.','..bbbbbbbb..']},
+ ryokucha:{name:'緑茶',stat:'tec',eff:'すっきりカテキン',title:'お茶の師範',cat:'drink',pal:{g:'#9ccc3c',G:'#6fa83a',y:'#e6e0c8',Y:'#c8bfa0',w:'#ffffff'},art:['....w..w....','.....w..w...','............','..yyyyyyyy..','..yGGgGGGy..','..yYyyyyYy..','..yYyyyyYy..','..yYyyyyYy..','...yYyyYy...','....yyyy....']},
+ sencha:{name:'煎茶',stat:'tec',eff:'うまみの一杯',title:'煎茶名人',cat:'drink',pal:{k:'#3f6a2a',K:'#4f7d2a',g:'#c7d86a',w:'#ffffff',b:'#8a6a3a'},art:['.....bb.....','....kkkk....','.kkkkkkkkk..','kKKKKKKKKKkk','kKgKKgKKKKk.k','kKKKKKKgKKk..','kKKgKKKKKKk.','.kKKKKKKKk..','..kkkkkkk...']},
+ matcha:{name:'抹茶',stat:'tec',eff:'集中力アップ',title:'抹茶の達人',cat:'drink',pal:{f:'#b6dd6a',F:'#8cc63f',d:'#4a3a2a',D:'#6b5440'},art:['............','............','..FfFfFfFF..','.FfFFfFFfFF.','dddddddddddd','dDDDDDDDDDDd','dDDDDDDDDDDd','.dDDDDDDDDd.','..dddddddd..','....dddd....']},
+ owine:{name:'オーガニックワイン',stat:'grit',eff:'週末のごほうび',title:'ワイン貴族',cat:'drink',xp:10,pal:{o:'#c9c9b8',r:'#8a1f3a',R:'#b8324a',g:'#7fbf2a'},art:['.........gg.','..oooooo.g..','..oRRRRo....','..orrrro....','...orro.....','....oo......','.....o......','.....o......','.....o......','...ooooo....']},
+ highball:{name:'ハイボール',stat:'grit',eff:'さっぱり一杯',title:'ハイボール番長',cat:'drink',xp:10,pal:{o:'#b8c8d0',a:'#f0c25a',A:'#e0a400',i:'#ffffff',l:'#c7e58a'},art:['...l........','..llo.oooo..','...oaaaaao..','...oaiaiao..','...oAaaaao..','...oaaiaao..','...oaaaaAo..','...oaAaaao..','...oaaaaao..','...oooooo...']},
+ beer:{name:'ビール',stat:'grit',eff:'がんばった日に',title:'乾杯隊長',cat:'drink',xp:10,pal:{f:'#ffffff',F:'#efe8d8',a:'#f0b52a',A:'#d99a10',o:'#b8c8d0'},art:['..ffff.f....','.fFfffffF...','.fffFfffo...','.oaaaaaaooo.','.oaAaaAao.o.','.oaaaaaao.o.','.oaAaaaaoo..','.oaaaAaao...','.oaaaaaao...','.oooooooo...']},
+ budweiser:{name:'バドワイザー',stat:'grit',eff:'アメリカンな気分',title:'キング・オブ・乾杯',cat:'drink',xp:10,pal:{b:'#6b3a1a',B:'#8a4f22',r:'#c8202a',w:'#ffffff',s:'#c9c9b8'},art:['.....ss.....','.....bb.....','.....bb.....','....bBBb....','...bBBBBb...','...wwwwww...','...wrrrrw...','...wwwwww...','...bBBBBb...','...bbbbbb...']},
+ maguro:{name:'マグロの刺身',stat:'str',eff:'赤身でたんぱく質',title:'マグロ大将',cat:'sea',pal:{R:'#c8202a',r:'#e8455a',w:'#b8b8a6',W:'#ffffff',g:'#7fbf2a'},art:['............', '............', '..RrRrRr....', '.RRrRRrRRg..', '.RrRRrRRrgg.', 'wwwwwwwwwwww', '.wWWWWWWWWw.', '..wwwwwwww..']},
+ katsuo:{name:'カツオの刺身',stat:'str',eff:'鉄分で持久力も',title:'カツオ番長',cat:'sea',pal:{R:'#8a1f2a',r:'#b8324a',w:'#b8b8a6',W:'#ffffff',g:'#7fbf2a'},art:['............', '............', '..RrRrRr....', '.RRrRRrRRg..', '.RrRRrRRrgg.', 'wwwwwwwwwwww', '.wWWWWWWWWw.', '..wwwwwwww..']},
+ tai:{name:'鯛',stat:'grit',eff:'めでたい！',title:'めで鯛王',cat:'sea',pal:{P:'#f07f95',p:'#c8506a',h:'#ffd0d8',k:'#1a1a1a'},art:['............', '....ppp.....', '..ppPPPpp..p', '.pkPPPPPPppP', 'pPPPPhPPPPPp', '.pPPPPPPPppP', '..ppPPPpp..p', '....ppp.....']},
+ salmon:{name:'サーモン',stat:'str',eff:'アスタキサンチン',title:'サーモン姫',cat:'sea',pal:{R:'#f39a6a',r:'#ffd8c0',w:'#b8b8a6',W:'#ffffff',g:'#7fbf2a'},art:['............', '............', '..RrRrRr....', '.RRrRRrRRg..', '.RrRRrRRrgg.', 'wwwwwwwwwwww', '.wWWWWWWWWw.', '..wwwwwwww..']},
+ shake:{name:'シャケ',stat:'str',eff:'朝ごはんの主役',title:'シャケ将軍',cat:'sea',pal:{s:'#8a8a8a',O:'#f08a5a',c:'#c8642a',d:'#c9c9b8'},art:['............', '............', '..ssssssss..', '.sOOOOOOOOs.', '.sOcOOcOOOs.', '.sOOOOOOcOs.', '..ssssssss..', '.dddddddddd.']},
+ kani:{name:'蟹',stat:'str',eff:'ごちそうたんぱく質',title:'カニ大名',cat:'sea',xp:30,pal:{R:'#e8452c',r:'#b8321c',k:'#1a1a1a'},art:['.rr......rr.', 'r.r......r.r', '.rr.RRRR.rr.', '...RRRRRR...', '.rRRkRRkRRr.', 'r.RRRRRRRR.r', '.r.RRRRRR.r.', '..r......r..']},
+ ebi:{name:'海老',stat:'str',eff:'低脂肪たんぱく質',title:'エビ侍',cat:'sea',pal:{P:'#ff8a6a',p:'#ffd0b0',a:'#e0583a',k:'#1a1a1a',t:'#e8452c',T:'#ff6a4a'},art:['....aaa.....', '..aPPPPa....', '.aPPpPPPa...', 'aPkPPpPPPa..', '.aaa.aPpPPa.', '......aPPPa.', '.....aPpPa..', '....tTTa....', '...tT.T.....']},
+ akaebi:{name:'赤えび',stat:'str',eff:'とろける甘さ',title:'赤えび姫',cat:'sea',pal:{P:'#e8352c',p:'#ff9a8a',a:'#a8221c',k:'#1a1a1a',t:'#a8221c',T:'#e8352c'},art:['....aaa.....', '..aPPPPa....', '.aPPpPPPa...', 'aPkPPpPPPa..', '.aaa.aPpPPa.', '......aPPPa.', '.....aPpPa..', '....tTTa....', '...tT.T.....']},
+ iseebi:{name:'伊勢海老',stat:'str',eff:'めったに出ない！',title:'伊勢海老殿',cat:'sea',xp:40,rare:1,pal:{R:'#c8202a',r:'#8a1414',a:'#e8452c',k:'#1a1a1a',T:'#e8452c'},art:['a...........','.a..........','..aa........','...RRRR.....','..RkRRRRR...','.RRRRRRrRRr.','..a.a.RRrRRr','.......RrRRR','........RRTT','.........TTT']},
+ shirasu:{name:'しらす',stat:'str',eff:'カルシウムまるごと',title:'しらす隊長',cat:'sea',pal:{s:'#f6f2e4',S:'#e6e0cc',k:'#1a1a1a',b:'#4a6a9a',B:'#6a8ac0'},art:['............','..s.s.s.s...','.sSksSsSkSs.','.SsSsSkSsSs.','bbbbbbbbbbbb','.bBBBBBBBBb.','..bBBBBBBb..','...bbbbbb...']},
+ kanpachi:{name:'カンパチ',stat:'str',eff:'ぷりぷり白身',title:'カンパチ親分',cat:'sea',pal:{R:'#f6d2bc',r:'#f8ead0',w:'#b8b8a6',W:'#ffffff',g:'#7fbf2a'},art:['............', '............', '..RrRrRr....', '.RRrRRrRRg..', '.RrRRrRRrgg.', 'wwwwwwwwwwww', '.wWWWWWWWWw.', '..wwwwwwww..']},
+ sayu:{name:'白湯',stat:'grit',eff:'からだの中からぽかぽか',title:'白湯仙人',cat:'drink',pal:{w:'#e6ecf2',c:'#f6f2e8',C:'#d8d2c0',s:'#ffffff'},art:['...w..w.....','....w..w....','...w..w.....','..CCCCCCCC..','..CwwwwwwC..','..CccccccC..','..CccccccC..','..CccccccC..','...CcccC....','....CCCC....']},
+ coffee:{name:'コーヒー',stat:'tec',eff:'集中スイッチON',title:'コーヒー探偵',cat:'drink',pal:{c:'#4a2a1a',m:'#f2ead8',M:'#c9bfa8',w:'#e6ecf2'},art:['...w..w.....','....w..w....','............','.MMMMMMMM...','.MccccccMMM.','.MmmmmmmM.M.','.MmmmmmmM.M.','.MmmmmmmMMM.','..MmmmmM....','...MMMMM....']},
+ copain:{name:'コパン',stat:'grit',eff:'ほっとひと息',title:'コパンの常連',cat:'drink',pal:{l:'#6b4f28',L:'#8a6a3a',c:'#e9dcc0',g:'#9ccc3c',G:'#7fb52a'},art:['..LLLLLLLL..','..llllllll..','...cccccc...','...cccccc...','...gGggGg...','...gggGgg...','...cccccc...','....cccc....','....cccc....','....cccc....']},
+ kohikan:{name:'珈琲館',stat:'tec',eff:'こだわりの一杯',title:'珈琲館の紳士',cat:'drink',pal:{c:'#3a1f12',C:'#6b3a1a',w:'#e9dcc0',y:'#d9ad1c',s:'#b8a888'},art:['....w..w....','.....w..w...','............','.yyyyyyyyy..','.wcccccccwww','.wwwwwwwww.w','..wwwwwwwwww','...wwwww....','.sssssssss..','..sssssss...']},
+ veloce:{name:'ベローチェ',stat:'end',eff:'お手軽エネルギー',title:'ベローチェ番長',cat:'drink',pal:{l:'#2b2b2b',L:'#4a4a4a',c:'#e9dcc0',b:'#3a7bea',B:'#2a5fc0'},art:['..LLLLLLLL..','..llllllll..','...cccccc...','...cccccc...','...bBbbBb...','...bbBbbb...','...cccccc...','....cccc....','....cccc....','....cccc....']},
+ akagi:{name:'赤城神社パワー',stat:'grit',eff:'お参りで心が整う',title:'赤城の守り人',cat:'power',xp:30,rare:1,pal:{r:'#e8452c',R:'#b8321c',k:'#2b2b2b',g:'#f5d63d'},art:['kkkkkkkkkkkk','.RrrrrrrrrR.','..r..g...r..','.rrrrrrrrrr.','..r......r..','..r......r..','..r......r..','..r......r..','..R......R..','.kk......kk.']},
+ bishamon:{name:'毘沙門天パワー',stat:'str',eff:'勝負運と強さ',title:'毘沙門天の戦士',cat:'power',xp:30,rare:1,pal:{k:'#2b2b2b',r:'#e8452c',R:'#b8321c',y:'#f5d63d',w:'#ffffff'},art:['.....kk.....','....kkkk....','...rRRRRr...','..rrrrrrrr..','..rrwwwwrr..','..rrwkkwrr..','..rrwwwwrr..','..rrrrrrrr..','...RRRRRR...','....kkkk....','.....yy.....']},
+ inori:{name:'祈りパワー',stat:'grit',eff:'心がしずかに強くなる',title:'祈りの使い手',cat:'heart',xp:30,pal:{s:'#d9a87e',S:'#f0c8a0',c:'#9b2f5e',y:'#f5d63d'},art:['.y...ss...y.', '....sSSs....', '..y.sSSs.y..', '...sSSSSs...', '...sSSSSs...', '..sSSSSSSs..', '..sSSSSSSs..', '..ssSSSSss..', '...cccccc...', '...cccccc...']},
+ h333:{name:'333ヒーリング',stat:'grit',eff:'いやしのサイン',title:'ヒーラー',cat:'heart',xp:30,rare:1,pal:{p:'#3fb8a8',y:'#f5d63d'},art:['.y........y.', '............', '.ppp.ppp.ppp', '...p...p...p', '.ppp.ppp.ppp', '...p...p...p', '.ppp.ppp.ppp', '............', '..y.....y...']},
+ egao:{name:'笑顔',stat:'grit',eff:'まわりも元気に',title:'スマイル大使',cat:'heart',pal:{y:'#f5d63d',k:'#4a3418',p:'#ffb3c1'},art:['...yyyyyy...', '..yyyyyyyy..', '.yyyyyyyyyy.', '.yykyyyykyy.', '.yyyyyyyyyy.', '.yppyyyyppy.', '.yykyyyykyy.', '.yyykkkkyyy.', '..yyyyyyyy..', '...yyyyyy...']},
+ nagekiss:{name:'投げキッス',stat:'grit',eff:'ハートを届ける',title:'投げキッス姫',cat:'heart',pal:{R:'#e8456a',r:'#a8224a'},art:['.........rr.', '........rrrr', '.........rr.', '............', '..RRR..RRR..', '.RRRRRRRRRR.', '.RRrrrrrrRR.', '..RRRRRRRR..', '....RRRR....']},
+ hug:{name:'ハグ',stat:'grit',eff:'ぎゅっと安心',title:'ハグの達人',cat:'heart',pal:{P:'#ff8fb0',p:'#e8456a',h:'#ffffff'},art:['..pp....pp..', '.pPPp..pPPp.', 'pPhPPppPPPPp', 'pPPPPPPPPPPp', 'pPPPPPPPPPPp', '.pPPPPPPPPp.', '..pPPPPPPp..', '...pPPPPp...', '....pPPp....', '.....pp.....']},
+ taiyo:{name:'太陽礼拝',stat:'end',eff:'全身めざめのヨガ',title:'太陽の子',cat:'heart',pal:{O:'#f39a1e',Y:'#f5d63d',y:'#f5d63d'},art:['.y...y...y..', '..y..y..y...', '....OOOO....', 'yy.OOYYOO.yy', '...OYYYYO...', 'yy.OOYYOO.yy', '....OOOO....', '..y..y..y...', '.y...y...y..']},
+ meiso:{name:'瞑想',stat:'tec',eff:'集中力が研ぎすまされる',title:'瞑想マスター',cat:'heart',pal:{h:'#4a3426',f:'#f0c8a0',s:'#f0c8a0',T:'#9b2f5e',P:'#3a3f4d',a:'#c7a8ff'},art:['.....hh.....', '....hffh....', '....ffff....', '.a..TTTT..a.', 'a..sTTTTs..a', '...sTTTTs...', '..ssPPPPss..', '.PPPPPPPPPP.', '.a........a.']},
+ kokyu:{name:'呼吸パワー',stat:'end',eff:'深い呼吸でスタミナUP',title:'呼吸の達人',cat:'heart',pal:{b:'#7fc8e8'},art:['............', '.bbbbbb.....', '.......b....', '.bbbbbbb.b..', '...........b', '.bbbbbbbbbb.', '............', '..bbbbb.....', '.......b....', '......b.....']},
+ wink:{name:'ウインク',stat:'grit',eff:'ドキッとさせる',title:'ウインク王子',cat:'heart',pal:{y:'#f5d63d',k:'#4a3418',p:'#ffb3c1'},art:['...yyyyyy...', '..yyyyyyyy..', '.yyyyyyyyyy.', '.yykyyykkky.', '.yyyyyyyyyy.', '.yppyyyyppy.', '.yykyyyykyy.', '.yyykkkkyyy.', '..yyyyyyyy..', '...yyyyyy...']},
+ kakato:{name:'踵落とし',stat:'str',eff:'上から一撃！',title:'踵落としの鬼',cat:'move',xp:30,pal:{S:'#3a3f4d',K:'#e8452c',y:'#f5d63d',w:'#9fb4c8'},art:['....SS......', '....SS......', '....SS....w.', '....SS...w..', '....SS......', '...SSS....w.', '..SSSS...w..', '..KKKK......', '.y..y..y....', '..yyyyy.....']},
+ lariat:{name:'ラリアット',stat:'str',eff:'太い腕でなぎ倒す',title:'ラリアット番長',cat:'move',xp:30,pal:{S:'#f0c8a0',s:'#d9a87e',r:'#e8452c',y:'#f5d63d',w:'#9fb4c8'},art:['............', 'w...........', '.w..........', 'y.rSSSSSSSs.', 'yyrSSSSSSSss', 'y.rssssssss.', '.w..........', 'w...........']},
+ bakuten:{name:'バック転',stat:'tec',eff:'くるっと一回転',title:'バク転マスター',cat:'move',pal:{a:'#3a7bea',k:'#e8452c'},art:['....aaaa....', '..aa....aa..', '.a........a.', 'a..........a', 'a....kk....a', 'a....kk....a', '.a........a.', '..a.....aa..', '....aaa.aaa.', '.........a..']},
+ headstand:{name:'ヘッドスタンド',stat:'tec',eff:'さかさで体幹きたえる',title:'さかだち名人',cat:'move',pal:{P:'#3a3f4d',T:'#e8452c',s:'#f0c8a0',h:'#4a3426',f:'#f0c8a0',G:'#9ccc3c',k:'#2b2b2b'},art:['....k..k....', '....P..P....', '....P..P....', '....PPPP....', '....TTTT....', '...sTTTTs...', '...sTTTTs...', '....hhhh....', '....hffh....', '...ss..ss...', 'GGGGGGGGGGGG']},
+ kenko:{name:'健康管理室の優しさ',stat:'grit',eff:'やさしさで元気回復',title:'やさしさの申し子',cat:'energy',xp:30,pal:{o:'#e8456a',r:'#ff8fb0',p:'#e8456a'},art:['....oooo....', '....orro....', '....orro....', 'oooooorroooo', 'orrrrrrrrrro', 'orrrrrrrrrro', 'oooooorroooo', '....orro.pp.', '....orropppp', '....oooo.pp.']},
+ yuki_p:{name:'ゆきぃパワー',stat:'grit',eff:'ゆきぃさんから元気をもらう',title:'ゆきぃの弟子',cat:'energy',xp:30,pal:{c:'#bf5f7e',C:'#ff7fa8',y:'#fff27a'},art:['...cccccc...', '..cCCCCCCc..', '.cCCCyyCCCc.', 'cCCCyyCCCCCc', 'cCCyyyyyyCCc', 'cCCCCCyyCCCc', 'cCCCCyyCCCCc', '.cCCyyCCCCc.', '..cCCCCCCc..', '...cccccc...']},
+ yutaka_p:{name:'豊パワー',stat:'grit',eff:'豊さんから元気をもらう',title:'豊の弟子',cat:'energy',xp:30,pal:{c:'#2b5caf',C:'#3a7bea',y:'#fff27a'},art:['...cccccc...', '..cCCCCCCc..', '.cCCCyyCCCc.', 'cCCCyyCCCCCc', 'cCCyyyyyyCCc', 'cCCCCCyyCCCc', 'cCCCCyyCCCCc', '.cCCyyCCCCc.', '..cCCCCCCc..', '...cccccc...']},
+ asami_p:{name:'麻美パワー',stat:'grit',eff:'麻美さんから元気をもらう',title:'麻美の弟子',cat:'energy',xp:30,pal:{c:'#744384',C:'#9b5ab0',y:'#fff27a'},art:['...cccccc...', '..cCCCCCCc..', '.cCCCyyCCCc.', 'cCCCyyCCCCCc', 'cCCyyyyyyCCc', 'cCCCCCyyCCCc', 'cCCCCyyCCCCc', '.cCCyyCCCCc.', '..cCCCCCCc..', '...cccccc...']},
+ miyako_p:{name:'みやこパワー',stat:'grit',eff:'みやこさんから元気をもらう',title:'みやこの弟子',cat:'energy',xp:30,pal:{c:'#237e72',C:'#2fa898',y:'#fff27a'},art:['...cccccc...', '..cCCCCCCc..', '.cCCCyyCCCc.', 'cCCCyyCCCCCc', 'cCCyyyyyyCCc', 'cCCCCCyyCCCc', 'cCCCCyyCCCCc', '.cCCyyCCCCc.', '..cCCCCCCc..', '...cccccc...']},
+ mika_p:{name:'美香パワー',stat:'grit',eff:'美香さんから元気をもらう',title:'美香の弟子',cat:'energy',xp:30,pal:{c:'#b67316',C:'#f39a1e',y:'#fff27a'},art:['...cccccc...', '..cCCCCCCc..', '.cCCCyyCCCc.', 'cCCCyyCCCCCc', 'cCCyyyyyyCCc', 'cCCCCCyyCCCc', 'cCCCCyyCCCCc', '.cCCyyCCCCc.', '..cCCCCCCc..', '...cccccc...']},
+ yuka_p:{name:'有花パワー',stat:'grit',eff:'有花さんから元気をもらう',title:'有花の弟子',cat:'energy',xp:30,pal:{c:'#ae3321',C:'#e8452c',y:'#fff27a'},art:['...cccccc...', '..cCCCCCCc..', '.cCCCyyCCCc.', 'cCCCyyCCCCCc', 'cCCyyyyyyCCc', 'cCCCCCyyCCCc', 'cCCCCyyCCCCc', '.cCCyyCCCCc.', '..cCCCCCCc..', '...cccccc...']},
+ maeda_d:{name:'前田悟ダンス',stat:'end',eff:'前田悟さんとノリノリ',title:'前田悟ダンサーズ',cat:'energy',xp:30,pal:{n:'#4f7d2a',h:'#4a3426',f:'#f0c8a0',s:'#f0c8a0',T:'#4f7d2a',P:'#3a3f4d',k:'#2b2b2b'},art:['.n.....hh...', 'nn....hffh..', 'n.....hffh.n', '..s..TTTT.nn', '...sTTTTTsn.', '....TTTT..s.', '....PPPP....', '...PP..PP...', '..PP....PP..', '.kk......kk.']},
+ maeda_p:{name:'前田悟パワー',stat:'grit',eff:'前田悟さんから元気をもらう',title:'前田悟の弟子',cat:'energy',xp:30,pal:{c:'#3b5d1f',C:'#4f7d2a',y:'#fff27a'},art:['...cccccc...', '..cCCCCCCc..', '.cCCCyyCCCc.', 'cCCCyyCCCCCc', 'cCCyyyyyyCCc', 'cCCCCCyyCCCc', 'cCCCCyyCCCCc', '.cCCyyCCCCc.', '..cCCCCCCc..', '...cccccc...']},
+ yuki_d:{name:'ゆきぃダンス',stat:'end',eff:'ゆきぃさんとノリノリ',title:'ゆきぃダンサーズ',cat:'energy',xp:30,pal:{n:'#ff7fa8',h:'#4a3426',f:'#f0c8a0',s:'#f0c8a0',T:'#ff7fa8',P:'#3a3f4d',k:'#2b2b2b'},art:['.n.....hh...', 'nn....hffh..', 'n.....hffh.n', '..s..TTTT.nn', '...sTTTTTsn.', '....TTTT..s.', '....PPPP....', '...PP..PP...', '..PP....PP..', '.kk......kk.']},
+ asami_d:{name:'麻美ダンス',stat:'end',eff:'麻美さんとノリノリ',title:'麻美ダンサーズ',cat:'energy',xp:30,pal:{n:'#9b5ab0',h:'#4a3426',f:'#f0c8a0',s:'#f0c8a0',T:'#9b5ab0',P:'#3a3f4d',k:'#2b2b2b'},art:['.n.....hh...', 'nn....hffh..', 'n.....hffh.n', '..s..TTTT.nn', '...sTTTTTsn.', '....TTTT..s.', '....PPPP....', '...PP..PP...', '..PP....PP..', '.kk......kk.']},
+ mika_d:{name:'美香ダンス',stat:'end',eff:'美香さんとノリノリ',title:'美香ダンサーズ',cat:'energy',xp:30,pal:{n:'#f39a1e',h:'#4a3426',f:'#f0c8a0',s:'#f0c8a0',T:'#f39a1e',P:'#3a3f4d',k:'#2b2b2b'},art:['.n.....hh...', 'nn....hffh..', 'n.....hffh.n', '..s..TTTT.nn', '...sTTTTTsn.', '....TTTT..s.', '....PPPP....', '...PP..PP...', '..PP....PP..', '.kk......kk.']}
+};
+function paintFood(cv,key){const f=FOODS[key];cv.width=12;cv.height=12;const c=cv.getContext('2d');c.clearRect(0,0,12,12);
+  const off=Math.floor((12-f.art.length)/2);
+  f.art.forEach((r,y)=>[...r].forEach((ch,x)=>{const col=f.pal[ch];if(col){c.fillStyle=col;c.fillRect(x,y+off,1,1);}}));}
+function foodOfDay(){const ks=Object.keys(FOODS),w=ks.map(k=>FOODS[k].rare===2?1:FOODS[k].rare?3:10),sum=w.reduce((a,b)=>a+b,0);
+  let r=hashStr(dayKey()+S.current+'food')%sum;for(let i=0;i<ks.length;i++){if((r-=w[i])<0)return ks[i];}return ks[0];}
+function fxp(f){return f.xp||20;}
+function giveFood(m,key,n=1){m.foods=m.foods||{};m.foods[key]=(m.foods[key]||0)+n;const f=FOODS[key];
+  if(m.foods[key]>=10&&!m.titles.includes(f.title)){m.titles.push(f.title);return f.title;}return null;}
 function seeded(a){return()=>{a=(a+0x6D2B79F5)|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
 let visCache={};
 function visibleIds(){
@@ -486,7 +604,14 @@ function drawScene(cv,m){
   // ダンベル
   c.fillStyle='#7d8494';c.fillRect(218,128,24,3);c.fillStyle='#ec6a84';c.fillRect(214,123,6,13);c.fillRect(240,123,6,13);
   // 花
-  [[110,140,'#ff9cc0'],[196,150,'#ffe27a'],[250,118,'#c7a8ff'],[96,124,'#ffffff']].forEach(([x,y,col])=>{c.fillStyle=col;c.fillRect(x,y,4,4);});
+  [[110,140,'#ff9cc0'],[250,118,'#c7a8ff'],[96,124,'#ffffff']].forEach(([x,y,col])=>{c.fillStyle=col;c.fillRect(x,y,4,4);});
+  // たべもの（バナナ・キウイ・大豆）
+  [['banana',178,140],['kiwi',112,146],['soy',222,140]].forEach(([k,x,y])=>{const f=document.createElement('canvas');paintFood(f,k);c.drawImage(f,x,y,24,24);});
+  // バナナの木
+  c.fillStyle='#8a6a3a';c.fillRect(262,92,4,32);c.fillStyle='#6b4f28';c.fillRect(265,92,1,32);
+  c.fillStyle='#7fbf2a';[[244,86,20,6],[266,86,20,6],[250,80,32,6],[240,92,10,4],[278,92,10,4]].forEach(([x,y,w,h])=>c.fillRect(x,y,w,h));
+  c.fillStyle='#4f7d2a';c.fillRect(252,90,28,2);
+  c.fillStyle='#f5d63d';[[258,94],[262,96],[266,94],[260,99],[264,99]].forEach(([x,y])=>c.fillRect(x,y,3,5));
   // キャラクター（影つき）
   c.fillStyle='rgba(0,0,0,.12)';c.beginPath();c.ellipse(cx,cy+2,30,8,0,0,7);c.fill();
   const sp=document.createElement('canvas');drawSprite(sp,m);c.drawImage(sp,cx-48,cy-92,96,96);
@@ -554,7 +679,7 @@ function vHero(){
   <div class="scene"><span class="cloud" style="left:8%;top:12%;width:64px;height:18px"></span><span class="cloud" style="right:10%;top:26%;width:46px;height:14px;animation-duration:24s"></span>
     <canvas id="sp" width="320" height="200" aria-label="冒険者の姿"></canvas>
     <div class="nametag">${esc(m.name)}<small>Lv${L.lv}</small></div></div>
-  ${S.bonusDay!==dayKey()?`<div class="bonus"><div class="bt">⭐ ギルドから 今日のごほうびが とどきました</div><div class="bv">+20 <small>EXP</small></div><button type="button" class="btn-main" id="bonus" style="width:100%">受けとる</button></div>`:''}
+  ${S.bonusDay!==dayKey()?(()=>{const fk=foodOfDay(),f=FOODS[fk];return `<div class="bonus"><div class="bt">今日の${f.cat==="drink"?"のみもの":f.cat==="power"||f.cat==="heart"?"パワー":f.cat==="move"?"ひっさつわざ":f.cat==="energy"?"エネルギー":"ごはん"}が とどきました</div><div class="fd"><canvas class="food" data-food="${fk}"></canvas><div class="fn">${f.name}<small>${f.eff}</small></div><div class="bv">+${fxp(f)} <small>${STAT[f.stat].name}</small></div></div><button type="button" class="btn-main" id="bonus" style="width:100%">${f.cat==="drink"?"飲む！":f.cat==="power"?"お参りする！":f.cat==="heart"?"受けとる！":f.cat==="move"?"くり出す！":f.cat==="energy"?"チャージ！":"食べる！"}</button></div>`})():''}
   <div class="card" style="margin-top:12px">
     <div class="stack" style="gap:6px;min-width:0">
       <div class="name">${esc(m.name)}${L.lv>=100?` <span style="color:var(--accent)">${'★'.repeat(1+Math.floor((L.lv-100)/10))}</span>`:''}</div>
@@ -571,6 +696,9 @@ function vHero(){
     <div class="stat"><div class="plate" style="background:${v.c}">${v.kg}</div><div><b>${m.stats[k]}</b><span>${v.name}・${v.hint}</span></div></div>`).join('')}
   </div>
   ${m.titles.length?`<div class="titles">${m.titles.map(t=>`<span class="chip gold">${esc(t)}</span>`).join('')}</div>`:''}
+  <h2>ごはん＆パワー図鑑 <small style="font-size:13px;color:var(--muted)">${Object.keys(FOODS).filter(k=>((m.foods||{})[k]||0)>0).length} / ${Object.keys(FOODS).length} しゅるい</small></h2>
+  ${[['たべもの',k=>!FOODS[k].cat],['うみのさち',k=>FOODS[k].cat==='sea'],['のみもの',k=>FOODS[k].cat==='drink'],['パワースポット',k=>FOODS[k].cat==='power'],['こころのパワー',k=>FOODS[k].cat==='heart'],['ひっさつわざ',k=>FOODS[k].cat==='move'],['エネルギー！',k=>FOODS[k].cat==='energy']].map(([lab,fl])=>`<div class="shelf">${lab}</div><div class="pantry">${Object.keys(FOODS).filter(fl).map(k=>{const f=FOODS[k],n=(m.foods||{})[k]||0;return `<div class="pc ${n?'':'none'} ${f.rare?'rare':''}"><canvas class="food" data-food="${k}"></canvas><b>${n?f.name:'？？？'}</b><div class="ct">${n}<small>/10</small></div><div class="ef"><span class="st" style="background:${STAT[f.stat].c}">${STAT[f.stat].name}</span>+${fxp(f)}</div>${n>=10?`<div class="tt got">★${f.title}</div>`:''}</div>`}).join('')}</div>`).join('')}
+  <p class="muted" style="margin:6px 2px 0">毎日のごはんと、宿題のスタンプでもらえます。同じものを10こ集めると称号がもらえます。キラキラのカードはめったに出ないレアです。お酒はEXP控えめです。</p>
   <h2>今週の来館</h2>
   <div class="card">
     <div class="streak">${m.streak.map(v=>`<i class="${v?'on':''}"></i>`).join('')}</div>
@@ -592,7 +720,8 @@ function vHero(){
   </div>
   <div class="demo">試作版です。他の会員は毎日ランダムに30人だけ表示され、ジムの会員数は分からないようになっています。 <button type="button" id="nextDay" style="font-size:12px;padding:3px 8px">翌日の顔ぶれを見る</button><br>会員データはデモ用で、このブラウザの中にだけ保存されます。上のメニューで会員を切り替えると、他の人の画面も見られます。 <button type="button" id="reset" style="font-size:12px;padding:3px 8px;margin-left:4px">初期化</button></div>`;
   drawScene($('#sp'),m);
-  const bb=$('#bonus');if(bb)bb.onclick=()=>{S.bonusDay=dayKey();gain(m,'grit',20,'今日のごほうびを受けとった');vHero();};
+  document.querySelectorAll('canvas[data-food]').forEach(c=>paintFood(c,c.dataset.food));
+  const bb=$('#bonus');if(bb)bb.onclick=()=>{const fk=foodOfDay(),f=FOODS[fk];S.bonusDay=dayKey();const t=giveFood(m,fk);gain(m,f.stat,fxp(f),`今日のごはん「${f.name}」を食べた`);if(t)overlay('称号ゲット！',`${f.name}を10こ集めて「${t}」になりました`);vHero();};
   $('#zk').onclick=()=>{tab='zukan';zLook=m.look||'m';render();window.scrollTo(0,0)};
   $('#lk').onchange=e=>{m.look=e.target.value;save();vHero()};
   document.querySelectorAll('[data-hw]').forEach(b=>b.onclick=()=>{const h=m.homework.find(x=>x.id==b.dataset.hw);h.status='done';h.doneAt=Date.now();save();toast('報告しました！ トレーナーのスタンプを待とう');vHero()});
@@ -744,11 +873,11 @@ function vGuild(){
     m.titles.push(t);S.feed.unshift({id:S.nextId++,who:'trainer',to:m.id,text:`${m.name}さんに称号「${t}」を授与`,xp:0,stat:'tec',t:Date.now(),cheers:[]});save();toast(`称号「${t}」を授けました`)};
   document.querySelectorAll('[data-st]').forEach(b=>b.onclick=()=>{
     const [mid,hid]=b.dataset.st.split(':'),m=byId(mid),h=m.homework.find(x=>x.id==hid);
-    h.status='stamped';m.boost=(m.boost||0)+2;
+    h.status='stamped';m.boost=(m.boost||0)+2;const hf=Object.keys(FOODS)[hashStr(String(h.id)+m.id)%Object.keys(FOODS).length];giveFood(m,hf);
     const before=levelOf(total(m)).lv;['str','end','tec','grit'].forEach(k=>m.stats[k]+=15);m.weekXp+=60;
     S.feed.unshift({id:S.nextId++,who:'trainer',to:m.id,text:`${m.name}さんの宿題「${h.text}」にスタンプ！ パワーアップ`,xp:60,stat:'grit',t:Date.now(),cheers:[]});save();
     const after=levelOf(total(m)).lv;
-    if(m.id===S.current)overlay('POWER UP!',`全能力+15${after>before?`、レベル${after}に！`:''}　次の2回のトレーニングはEXP1.5倍`);
+    if(m.id===S.current)overlay('POWER UP!',`全能力+15${after>before?`、レベル${after}に！`:''}　次の2回のトレーニングはEXP1.5倍　ごほうびに「${FOODS[hf].name}」も1こ`);
     else toast(`${m.name}さんがパワーアップしました`);
     vGuild()});
   $('#hgive').onclick=()=>{const m=byId($('#hm').value);m.homework.push({id:S.hwId++,text:$('#ht').value,status:'open',t:Date.now()});save();toast(`${m.name}さんに宿題を出しました`)};
