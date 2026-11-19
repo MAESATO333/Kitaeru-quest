@@ -705,7 +705,7 @@ function gain(m,stat,xp,text,extra={}){
 
 // ---------- views ----------
 let tab='hero', logType='lift';
-const TABS=[['hero','冒険者','◆'],['log','記録','＋'],['feed','酒場','≡'],['rank','番付','▲'],['boss','ボス','✦']];
+const TABS=[['hero','冒険者','◆'],['log','記録','＋'],['feed','キタ酒場','≡'],['rank','番付','▲'],['boss','ボス','✦']];
 function renderTabs(){
   const list=S.trainerMode?[...TABS,['guild','評価','★']]:TABS;
   if(tab!=='zukan'&&!list.find(x=>x[0]===tab))tab='hero';
@@ -828,7 +828,7 @@ function vLog(){
 function vFeed(){
   const m=me();
   const v=visibleIds(),posts=S.feed.filter(p=>v.has(p.who==='trainer'?p.to:p.who)).slice(0,40);
-  $('#view').innerHTML=`<h2>酒場（今日の顔ぶれ）</h2><p class="muted" style="margin-top:-6px">表示される仲間は毎日入れ替わります。エールを送ると、送った人も受け取った人も「根性」+2。</p>
+  $('#view').innerHTML=`<h2>キタ酒場（今日の顔ぶれ）</h2><p class="muted" style="margin-top:-6px">表示される仲間は毎日入れ替わります。エールを送ると、送った人も受け取った人も「根性」+2。</p>
   <div class="stack">${posts.map(p=>{
     const isT=p.who==='trainer', w=isT?null:byId(p.who), cheered=p.cheers.includes(m.id);
     return `<div class="card post"><canvas class="av" data-av="${isT?'':p.who}"></canvas><div style="min-width:0">
