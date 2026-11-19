@@ -1476,7 +1476,7 @@ t.onclick=e=>{const b=e.target.closest('[data-zt]');if(b)show(+b.dataset.zt)};sh
 const z=document.querySelector(".zkb");if(z&&!z.nextElementSibling?.classList?.contains('zkhint'))z.insertAdjacentHTML('afterend','<p class="zkhint">← 横にスクロールして全部見られます →</p>')};
 new MutationObserver(f).observe(document.documentElement,{childList:true,subtree:true});f();})();</script><script>(()=>{if(typeof HEROES==='undefined')return;
 const SC={lift:'ファイト！',run:'走るぞ〜',yoga:'ナマステ',eat:'いただきます',sleep:'Zzz…',cheer:'がんばれ〜！',jump:'ジャンプ！',dumb:'もう1回！',water:'ゴクゴク',flower:'いい天気'};
-const AN={lift:'bob',run:'run',yoga:'bob',eat:'bob',sleep:'slp',cheer:'hop',jump:'hop',dumb:'bob',water:'sway',flower:'sway'};
+const AN={pose:'bob',lift:'bob',run:'run',yoga:'bob',eat:'bob',sleep:'slp',cheer:'hop',jump:'hop',dumb:'bob',water:'sway',flower:'sway'};
 function scene(k,sc){const H=HEROES.find(h=>h.key===k);if(!H)return null;const o=document.createElement('canvas');drawHero(o,H);
  const cv=document.createElement('canvas');cv.width=44;cv.height=38;const c=cv.getContext('2d');c.imageSmoothingEnabled=false;
  const R=(x,y,w,h,col)=>{c.fillStyle=col;c.fillRect(x,y,w,h)};
@@ -1497,7 +1497,7 @@ function scene(k,sc){const H=HEROES.find(h=>h.key===k);if(!H)return null;const o
  return cv}
 function flip(cv){const f=document.createElement('canvas');f.width=cv.width;f.height=cv.height;const c=f.getContext('2d');c.translate(cv.width,0);c.scale(-1,1);c.drawImage(cv,0,0);return f}
 const L=[['carrot','lift'],['piman','run'],['onion','yoga'],['cabbage','eat'],['daikon','jump'],['tomato','dumb'],['pumpkin','sleep'],['broccoli','cheer'],['shoga','run'],['imo','cheer'],
- ['pumpkin','dumb'],['broccoli','lift'],['shoga','yoga'],['imo','eat'],['tomato','jump'],['cabbage','sleep'],['pumpkin','flower'],['broccoli','dumb'],['shoga','jump'],['imo','eat']];
+ ['pumpkin','pose'],['broccoli','lift'],['shoga','yoga'],['imo','eat'],['tomato','jump'],['cabbage','sleep'],['pumpkin','flower'],['broccoli','dumb'],['shoga','jump'],['imo','eat']];
 const keys=HEROES.map(h=>h.key);const fix=k=>keys.includes(k)?k:keys.find(x=>x.startsWith(k.slice(0,3)))||keys[0];
 const POS=[[28,4],[70,9],[30,21],[72,26],[26,38],[70,43],[32,55],[68,60],[30,71],[70,76]];
 ['l','r'].forEach((side,si)=>{const d=document.createElement('div');d.className='deco '+side;d.setAttribute('aria-hidden','true');
