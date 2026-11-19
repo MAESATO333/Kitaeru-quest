@@ -38,7 +38,7 @@ body{font-family:var(--body);font-size:15px;line-height:1.6;min-height:100%;
 .vlogo span{background:var(--leaf);color:#fff;font-size:11px;font-weight:700;letter-spacing:.14em;padding:1px 10px;border-radius:3px}
 .vlogo span i{font-style:normal;color:var(--lemon)}
 header::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:6px;background:repeating-linear-gradient(90deg,#e8452c 0 10px,#f39a1e 10px 20px,#f5d63d 20px 30px,#efdca6 30px 40px,#9ccc3c 40px 50px,#4f7d2a 50px 60px,#8a6a3a 60px 70px,#9b2f5e 70px 80px)}
-/* たべもの */
+/* 食べ物 */
 .food{width:48px;height:48px;image-rendering:pixelated;flex:none}
 .bonus .fd{display:flex;align-items:center;justify-content:center;gap:10px;margin:2px 0 4px}
 .bonus .fn{font-weight:900;color:var(--ink);font-size:15px;text-align:left;line-height:1.3}
@@ -328,7 +328,7 @@ const me=()=>byId(S.current);
 // ---------- 今日の顔ぶれ：日付と本人で決まる乱数で毎日入れ替え ----------
 function dayKey(){const d=new Date(Date.now()+(S.dayShift||0)*day);return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;}
 function hashStr(t){let h=2166136261;for(const c of t){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0;}
-// ---------- たべもの（バナナ・キウイ・大豆） ----------
+// ---------- 食べ物（バナナ・キウイ・大豆） ----------
 const FOODS={
  banana:{name:'バナナ',stat:'end',eff:'エネルギー補給',title:'バナナ番長',pal:{B:'#f5d63d',b:'#d9ad1c',h:'#fff3a0',k:'#4a3418',g:'#9ccc3c'},art:['..........gk','.........gB.','........BBb.','.......hBBb.','......hBBBb.','.....hBBBb..','...hBBBBbb..','.hBBBBBbb...','kBBBBbbb....','.bbbbb......']},
  kiwi:{name:'キウイ',stat:'tec',eff:'ビタミンでキレUP',title:'キウイ姫',pal:{r:'#8a6a3a',R:'#6b4f28',g:'#9ccc3c',G:'#7fb52a',c:'#f6f2c8',k:'#1f1a14'},art:['...rrrrrr...','..rgggGggr..','.rggkgkgGgr.','rgGkgccgkggr','rggkccccgkgr','rgkgccccgkGr','rggkccccgkgr','rgGkgccgkggr','.rggkgkgGgr.','..rgggggGR..','...RRRRRR...']},
@@ -950,7 +950,7 @@ function drawScene(cv,m){
   c.fillStyle='#7d8494';c.fillRect(218,128,24,3);c.fillStyle='#ec6a84';c.fillRect(214,123,6,13);c.fillRect(240,123,6,13);
   // 花
   [[110,140,'#ff9cc0'],[250,118,'#c7a8ff'],[96,124,'#ffffff']].forEach(([x,y,col])=>{c.fillStyle=col;c.fillRect(x,y,4,4);});
-  // たべもの（バナナ・キウイ・大豆）
+  // 食べ物（バナナ・キウイ・大豆）
   [['banana',178,140],['kiwi',112,146],['soy',222,140]].forEach(([k,x,y])=>{const f=document.createElement('canvas');paintFood(f,k);c.drawImage(f,x,y,24,24);});
   // バナナの木
   c.fillStyle='#8a6a3a';c.fillRect(262,92,4,32);c.fillStyle='#6b4f28';c.fillRect(265,92,1,32);
@@ -1098,7 +1098,7 @@ function vHero(){
   <div class="scene"><span class="cloud" style="left:8%;top:12%;width:64px;height:18px"></span><span class="cloud" style="right:10%;top:26%;width:46px;height:14px;animation-duration:24s"></span>
     <canvas id="sp" width="320" height="200" aria-label="冒険者の姿"></canvas>
     <div class="nametag">${esc(m.name)}<small>Lv${L.lv}</small></div>${m.buddy?`<canvas class="buddy" data-hero="${m.buddy}"></canvas>`:''}</div>
-  ${S.bonusDay!==dayKey()?(()=>{const fk=foodOfDay(),f=FOODS[fk];return `<div class="bonus"><div class="bt">今日の${f.cat==="drink"?"のみもの":f.cat==="power"||f.cat==="heart"?"パワー":f.cat==="move"?"ひっさつわざ":f.cat==="yoga"?"アーサナ":f.cat==="energy"||f.cat==="luck"||f.cat==="beauty"||f.cat==="care"?"パワー":"ごはん"}が とどきました</div><div class="fd"><canvas class="food" data-food="${fk}"></canvas><div class="fn">${f.name}<small>${f.eff}</small></div><div class="bv">+${fxp(f)} <small>${STAT[f.stat].name}</small></div></div><button type="button" class="btn-main" id="bonus" style="width:100%">${f.cat==="drink"?"飲む！":f.cat==="power"?"お参りする！":f.cat==="heart"?"受けとる！":f.cat==="move"?"くり出す！":f.cat==="yoga"?"ポーズをとる！":f.cat==="energy"?"チャージ！":f.cat==="beauty"||f.cat==="luck"||f.cat==="care"?"受けとる！":"食べる！"}</button></div>`})():''}
+  ${S.bonusDay!==dayKey()?(()=>{const fk=foodOfDay(),f=FOODS[fk];return `<div class="bonus"><div class="bt">今日の${f.cat==="drink"?"飲み物":f.cat==="power"||f.cat==="heart"?"パワー":f.cat==="move"?"必殺技":f.cat==="yoga"?"アーサナ":f.cat==="energy"||f.cat==="luck"||f.cat==="beauty"||f.cat==="care"?"パワー":"ごはん"}が とどきました</div><div class="fd"><canvas class="food" data-food="${fk}"></canvas><div class="fn">${f.name}<small>${f.eff}</small></div><div class="bv">+${fxp(f)} <small>${STAT[f.stat].name}</small></div></div><button type="button" class="btn-main" id="bonus" style="width:100%">${f.cat==="drink"?"飲む！":f.cat==="power"?"お参りする！":f.cat==="heart"?"受けとる！":f.cat==="move"?"くり出す！":f.cat==="yoga"?"ポーズをとる！":f.cat==="energy"?"チャージ！":f.cat==="beauty"||f.cat==="luck"||f.cat==="care"?"受けとる！":"食べる！"}</button></div>`})():''}
   <div class="card" style="margin-top:12px">
     <div class="stack" style="gap:6px;min-width:0">
       <div class="name">${esc(m.name)}${L.lv>=100?` <span style="color:var(--accent)">${'★'.repeat(1+Math.floor((L.lv-100)/10))}</span>`:''}</div>
@@ -1119,7 +1119,7 @@ function vHero(){
   <p class="muted" style="margin:-4px 2px 8px;font-size:12px">タップして相棒をえらぶと、島にいっしょに立ちます。相棒の得意な能力は、EXPが1.1倍。</p>
   <div class="heroes">${HEROES.map(h=>`<button type="button" class="vhero ${m.buddy===h.key?'on':''}" data-buddy="${h.key}"><canvas data-hero="${h.key}"></canvas><b>${h.name}</b><span>${h.role}・${h.stat}</span></button>`).join('')}</div>
   <h2>ごはん＆パワー図鑑 <small style="font-size:13px;color:var(--muted)">${Object.keys(FOODS).filter(k=>((m.foods||{})[k]||0)>0).length} / ${Object.keys(FOODS).length} しゅるい</small></h2>
-  ${[['たべもの',k=>!FOODS[k].cat],['うみのさち',k=>FOODS[k].cat==='sea'],['のみもの',k=>FOODS[k].cat==='drink'],['パワースポット',k=>FOODS[k].cat==='power'],['こころのパワー',k=>FOODS[k].cat==='heart'],['ひっさつわざ',k=>FOODS[k].cat==='move'],['ヨガのアーサナ',k=>FOODS[k].cat==='yoga'],['エネルギー！',k=>FOODS[k].cat==='energy'],['きれい＆つよく',k=>FOODS[k].cat==='beauty'],['ラッキー',k=>FOODS[k].cat==='luck'],['サプリ＆くすり',k=>FOODS[k].cat==='care']].map(([lab,fl])=>`<div class="shelf">${lab}</div><div class="pantry">${Object.keys(FOODS).filter(fl).map(k=>{const f=FOODS[k],n=(m.foods||{})[k]||0;return `<div class="pc ${n||KS()?'':'none'} ${f.rare?'rare':''}"><canvas class="food" data-food="${k}"></canvas><b class="${(n||KS())&&f.name.length>6?'ln':''}">${n||KS()?f.name:'？？？'}</b><div class="ct">${n}<small>こ</small></div><div class="ef"><span class="st" style="background:${STAT[f.stat].c}">${STAT[f.stat].name}</span>+${fxp(f)}</div>${n>=10?`<div class="tt got">★${f.title}</div>`:''}</div>`}).join('')}</div>`).join('')}
+  ${[['食べ物',k=>!FOODS[k].cat],['海の幸',k=>FOODS[k].cat==='sea'],['飲み物',k=>FOODS[k].cat==='drink'],['パワースポット',k=>FOODS[k].cat==='power'],['こころのパワー',k=>FOODS[k].cat==='heart'],['必殺技',k=>FOODS[k].cat==='move'],['ヨガのアーサナ',k=>FOODS[k].cat==='yoga'],['エネルギー！',k=>FOODS[k].cat==='energy'],['キレイ＆強く',k=>FOODS[k].cat==='beauty'],['ラッキー',k=>FOODS[k].cat==='luck'],['サプリ＆くすり',k=>FOODS[k].cat==='care']].map(([lab,fl])=>`<div class="shelf">${lab}</div><div class="pantry">${Object.keys(FOODS).filter(fl).map(k=>{const f=FOODS[k],n=(m.foods||{})[k]||0;return `<div class="pc ${n||KS()?'':'none'} ${f.rare?'rare':''}"><canvas class="food" data-food="${k}"></canvas><b class="${(n||KS())&&f.name.length>6?'ln':''}">${n||KS()?f.name:'？？？'}</b><div class="ct">${n}<small>こ</small></div><div class="ef"><span class="st" style="background:${STAT[f.stat].c}">${STAT[f.stat].name}</span>+${fxp(f)}</div>${n>=10?`<div class="tt got">★${f.title}</div>`:''}</div>`}).join('')}</div>`).join('')}
   <p class="muted" style="margin:6px 2px 0">毎日のごはんと、宿題のスタンプでもらえます。キラキラのカードはめったに出ないレアです。お酒はEXP控えめです。</p>
   <h2>今週の来館</h2>
   <div class="card">
@@ -1197,7 +1197,7 @@ function vLog(){
     $('#ya').onchange=upd;$('#ymin').oninput=upd;upd();
     $('#go').onclick=()=>{const k=$('#ya').value,y=FOODS[k];giveFood(m,k);gain(m,y.stat,calc(),`YOGA ${y.name} ${$('#ymin').value}分`);tab='hero';render()};
   }else if(logType==='meal'){
-    const MG=[['たべもの',k=>!FOODS[k].cat],['うみのさち',k=>FOODS[k].cat==='sea'],['のみもの',k=>FOODS[k].cat==='drink']];
+    const MG=[['食べ物',k=>!FOODS[k].cat],['海の幸',k=>FOODS[k].cat==='sea'],['飲み物',k=>FOODS[k].cat==='drink']];
     f.innerHTML=`<div class="stack">
       <label>食べたもの・飲んだもの<select id="ml">${MG.map(([g,fl])=>`<optgroup label="${g}">${Object.keys(FOODS).filter(fl).map(k=>`<option value="${k}">${FOODS[k].name}</option>`).join('')}</optgroup>`).join('')}</select></label>
       <div style="display:flex;align-items:center;gap:10px"><canvas class="food" id="mc" style="width:64px;height:64px;flex:none"></canvas><div class="muted" id="me2" style="font-size:13px"></div></div>
