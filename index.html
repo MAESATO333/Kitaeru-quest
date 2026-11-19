@@ -225,6 +225,7 @@ body.kensa header{height:auto!important;flex-wrap:wrap}
 .cal i{font-style:normal;font-size:13px;font-weight:700;aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:8px;background:var(--floor-2);border:1px solid var(--line);color:var(--ink)}
 .cal i.e{background:none;border:0}.cal i.fu{opacity:.45}
 .cal i.on{background:var(--green);border-color:var(--green);color:#fff}
+ .cal i{aspect-ratio:auto!important;min-height:46px;flex-direction:column;gap:1px;padding:3px 0;line-height:1.1}.cal i small{font-size:8.5px;font-weight:700;letter-spacing:-.03em;line-height:1.15;opacity:.95}.cal i span{font-size:13px}
 .cal i.td{box-shadow:0 0 0 2px var(--tomato)}
 .cal i{cursor:pointer}.cal i.sel{outline:3px solid #f5c518;outline-offset:1px}
 #calm{width:auto;font-weight:800;font-size:15px;padding:6px 30px 6px 10px}
@@ -1267,7 +1268,7 @@ function vLog(){
     f.innerHTML=`<div class="stack"><div class="muted">ジムに来たらタップ。本番では受付のQRコードを読む形を想定しています。</div>
       <div class="preview">根性 <b>+20</b> EXP ／ 週3回でクエスト達成</div>
       <button class="btn-main" id="go" type="button" ${done?'disabled style="opacity:.5"':''}>${done?'今日はチェックイン済み':'チェックインする'}</button></div>`;
-    if(!done)$('#go').onclick=()=>{m.streak[today]=1;m.visits=m.visits||[];const vk=ymd(new Date());if(!m.visits.includes(vk))m.visits.push(vk);gain(m,'grit',20,'ジムにチェックイン');tab='hero';render()};
+    if(!done)$('#go').onclick=()=>{m.streak[today]=1;m.visits=m.visits||[];const vk=ymd(new Date());if(!m.visits.includes(vk))m.visits.push(vk);m.times=m.times||{};if(!m.times[vk]){const n=new Date(),st=n.getHours()*60+n.getMinutes();m.times[vk]=[hm(st),hm(Math.min(st+90,23*60+59))]}gain(m,'grit',20,'ジムにチェックイン');tab='hero';render()};
   }
 }
 
@@ -1336,16 +1337,18 @@ function vZukan(){
 function HWGROUPS(){return [['おうちの宿題','fix',HOMEWORK],...EXG.map(([g,xs])=>['加圧トレ・'+g,'ex',xs]),['YOGA','yoga',Object.keys(FOODS).filter(k=>FOODS[k].cat==='yoga').map(k=>FOODS[k].name)],['有酸素','cardio',CARDIO]]}
 function ymd(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
 let calYM=null;
+const hm=x=>String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0');
+function visitTime(m,dt){const k=ymd(dt);if(m.times&&m.times[k])return m.times[k];const h=hashStr(m.id+k+'t');const st=(7+h%14)*60+(h%2?30:0),du=[60,90,120][h%3];return [hm(st),hm(Math.min(st+du,23*60+30))]}
 function dayLog(m,dt){const k=ymd(dt);return S.feed.filter(f=>f.who===m.id&&ymd(new Date(f.t))===k).map(f=>f.text)}
 function monthCal(m){const now=new Date();if(!calYM)calYM=[now.getFullYear(),now.getMonth()];const [Y,M]=calYM,last=new Date(Y,M+1,0).getDate(),first=(new Date(Y,M,1).getDay()+6)%7,isCur=Y===now.getFullYear()&&M===now.getMonth(),td=isCur?now.getDate():(new Date(Y,M,1)<now?last:0);
   const dow=(now.getDay()+6)%7,mon=new Date(now.getFullYear(),now.getMonth(),now.getDate()-dow),vs=new Set(m.visits||[]);
   const on=d=>{const dt=new Date(Y,M,d);if(vs.has(ymd(dt))||dayLog(m,dt).length)return true;const diff=Math.round((dt-mon)/864e5);if(diff>=0&&diff<7)return !!m.streak[diff];if(dt<mon){const r=hashStr(m.id+ymd(dt))%7;return r<Math.max(1,m.streak.filter(Boolean).length)}return false};
   let cells='',cnt=0;for(let i=0;i<first;i++)cells+='<i class="e"></i>';
-  for(let d=1;d<=last;d++){const v=d<=td&&on(d);if(v)cnt++;const w=(first+d-1)%7;cells+=`<i data-cd="${d}" class="${v?'on':''} ${isCur&&d===now.getDate()?'td':''} ${d>td?'fu':''} ${w===5?'sa':w===6?'su':''}">${d}</i>`}
+  for(let d=1;d<=last;d++){const v=d<=td&&on(d);if(v)cnt++;const w=(first+d-1)%7;const tm=v?visitTime(m,new Date(Y,M,d)):null;cells+=`<i data-cd="${d}" class="${v?'on':''} ${isCur&&d===now.getDate()?'td':''} ${d>td?'fu':''} ${w===5?'sa':w===6?'su':''}">${tm?`<small>${tm[0]}<br>〜${tm[1]}</small>`:''}<span>${d}</span></i>`}
   const opts=[];for(let i=0;i<12;i++){const d=new Date(now.getFullYear(),now.getMonth()-i,1);opts.push(`<option value="${d.getFullYear()}-${d.getMonth()}" ${d.getFullYear()===Y&&d.getMonth()===M?'selected':''}>${d.getFullYear()}年${d.getMonth()+1}月</option>`)}
   return `<div class="card" id="calbox"><div class="calh"><select id="calm" aria-label="月をえらぶ">${opts.join('')}</select><span>来館 <b>${cnt}</b> 日</span></div><div class="cal">${['月','火','水','木','金','土','日'].map((x,i)=>`<em class="${i===5?'sa':i===6?'su':''}">${x}</em>`).join('')}${cells}</div><div class="calday" id="calday">日付をタップすると、その日に来た記録とトレーニング内容が見られます。</div></div>`}
 function calDay(m,d){const [Y,M]=calYM,dt=new Date(Y,M,d),log=dayLog(m,dt),c=document.querySelector(`#calbox [data-cd="${d}"]`),v=c&&c.classList.contains('on');
-  return `<b>${M+1}月${d}日（${'日月火水木金土'[dt.getDay()]}）</b> ${v?'<span class="ok">来館</span>':'<span class="no">お休み</span>'}`+(log.length?`<ul>${log.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`:v?'<div>ジムにチェックイン（トレーニング内容の記録なし）</div>':'')}
+  return `<b>${M+1}月${d}日（${'日月火水木金土'[dt.getDay()]}）</b> ${v?`<span class="ok">来館</span> <b>${visitTime(m,dt).join('〜')}</b>`:'<span class="no">お休み</span>'}`+(log.length?`<ul>${log.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`:v?'<div>ジムにチェックイン（トレーニング内容の記録なし）</div>':'')}
 document.addEventListener('change',e=>{if(e.target.id==='calm'){const [y,mm]=e.target.value.split('-').map(Number);calYM=[y,mm];const b=document.getElementById('calbox');if(b)b.outerHTML=monthCal(me())}});
 document.addEventListener('click',e=>{const c=e.target.closest('#calbox [data-cd]');if(!c)return;document.querySelectorAll('#calbox .sel').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');document.getElementById('calday').innerHTML=calDay(me(),+c.dataset.cd)});
 function vGuild(){
