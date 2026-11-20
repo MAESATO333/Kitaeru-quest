@@ -447,6 +447,8 @@ nav{flex-direction:column;align-items:center;gap:5px}
 .mytr{display:flex;flex-direction:column;gap:6px;margin:0 0 12px;padding:10px 12px;border-radius:14px;border:3px solid #a8346a;background:#fff4fa}.mytr span{font-size:12px;color:var(--muted)}
 .mytr button{border:0;border-radius:999px;padding:12px;font-weight:900;font-size:15px;background:#a8346a;color:#fff;box-shadow:0 3px 0 #6d1f45}.mytr.on{background:#fffbe0;border-color:#f39a1e}.mytr.on button{background:#fff;color:#a8346a;border:2px solid #a8346a;box-shadow:none;font-size:13px;padding:8px}
 .seg button.hkseg{color:#1f6fa8;border-color:#7fb8e0;background:#eef7ff}
+.mytr .mth{font-size:15px}.mtx{display:flex;flex-direction:column;gap:4px;font-size:12px;line-height:1.5}.mtx>div{padding:5px 8px;border-radius:8px;background:rgba(255,255,255,.7);color:#555}.mtx>div.cur{background:#fff;color:#222;outline:2px solid currentColor}.mytr.on .mtx>div.cur{color:#c26a00}.mytr:not(.on) .mtx>div.cur{color:#a8346a}
+body.trmode header{background:linear-gradient(180deg,#ffd27a,#ffe9b0)!important}body.trmode #admBadge::after{content:'・自分のトレーニング中'}
 </style>
 
 </head>
@@ -2125,8 +2127,10 @@ function sw(){const show=!AUTH.on||AUTH.role==='trainer';let d=document.getEleme
   d.innerHTML=`<span>${AUTH.on?'切替':'お試し'}</span><a href="${KQ_GUEST_URL}" class="${ADMIN?'':'on'}">ゲスト画面</a><a href="${byQ?P+'?admin=1':adminUrl}" class="${ADMIN?'on':''}">管理ページ</a>`}
 function myTrBtn(){if(!ADMIN)return;const v=document.getElementById('view');if(!v||document.getElementById('mytr'))return;const n=TN(),m=trMember(n),on=S.current===m.id,L=levelOf(total(m)),t=teamOf(m);
   const d=document.createElement('div');d.id='mytr';d.className='mytr'+(on?' on':'');
-  d.innerHTML=on?`<b>💪 いまは「${esc(n)}」の自分のトレーニング中</b><span>Lv${L.lv}・今週 ${m.weekXp} EXP${t?'・'+esc(tName(t)):''}</span><button type="button" id="mytrx">ゲストの管理にもどる</button>`
-   :`<button type="button" id="mytrgo">💪 自分のトレーニングをする（${esc(n)}）</button><span>記録するとEXPがたまり、チーム対抗戦で${t?'「'+esc(tName(t))+'」の':''}力になります。Lv${L.lv}・今週 ${m.weekXp} EXP</span>`;
+  const ex=`<div class="mtx"><div class="${on?'cur':''}"><b>💪 自分のトレーニング</b>：トレーナー本人（${esc(n)}）の記録をつけるモード。EXPは自分のレベルと、チーム対抗戦${t?'「'+esc(tName(t))+'」':''}の点数になります。</div><div class="${on?'':'cur'}"><b>👥 ゲストの管理</b>：お客さんを選んで、その人の記録・宿題・花マル🌸スタンプ・評価を見たり、つけたりするモード。</div></div>`;
+  d.innerHTML=on?`<b class="mth">💪 いまは「自分のトレーニング」中（${esc(n)}）</b><span>Lv${L.lv}・今週 ${m.weekXp} EXP${t?'・'+esc(tName(t)):''}</span>${ex}<button type="button" id="mytrx">👥 ゲストの管理にもどる</button>`
+   :`<b class="mth">👥 いまは「ゲストの管理」中</b>${ex}<button type="button" id="mytrgo">💪 自分のトレーニングをする（${esc(n)}）</button><span>Lv${L.lv}・今週 ${m.weekXp} EXP</span>`;
+  document.body.classList.toggle('trmode',on);
   v.insertBefore(d,v.firstChild);
   const g=document.getElementById('mytrgo');if(g)g.onclick=()=>{S.prevCur=S.current;S.current=m.id;tab='log';save();render();window.scrollTo(0,0)};
   const x=document.getElementById('mytrx');if(x)x.onclick=()=>{const b=S.prevCur&&S.members.find(y=>y.id===S.prevCur&&!y.tr);S.current=b?b.id:(S.members.find(y=>!y.tr)||{}).id;tab='guild';save();render();window.scrollTo(0,0)}}
