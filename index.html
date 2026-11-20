@@ -1439,9 +1439,12 @@ function vCourse(m){$('#view').innerHTML=`<h2>会員区別をえらぶ</h2><div 
   <div class="cgrid">${COURSES.map(([k,l,i])=>`<button type="button" data-cs="${k}"><b>${i}</b>${l}</button>`).join('')}</div>
   <p class="muted" style="font-size:12px;margin:0">あとから変えたいときは、トレーナーに伝えてください。</p></div>`;
   document.querySelectorAll('[data-cs]').forEach(b=>b.onclick=()=>{if(!confirm(`会員区別を「${cName(b.dataset.cs)}」にしますか？`))return;m.course=b.dataset.cs;logType=m.course;save();toast(`会員区別：${cName(m.course)}`);vLog()})}
+function checkedIn(m){return !!m.streak[(new Date().getDay()+6)%7]}
+function doCheckin(m){const today=(new Date().getDay()+6)%7;m.streak[today]=1;m.visits=m.visits||[];const vk=ymd(new Date());if(!m.visits.includes(vk))m.visits.push(vk);m.times=m.times||{};if(!m.times[vk]){const n=new Date(),st=n.getHours()*60+n.getMinutes();m.times[vk]=[hm(st),hm(Math.min(st+90,23*60+59))]}gain(m,'grit',20,'ジムにチェックイン')}
 function vLog(){
   const m=me();
   if(!ADMIN&&!m.course){vCourse(m);return}
+  if(logType==='in')logType=ADMIN?'lift':m.course;
   if(!canRec(m,logType))logType=m.course;
   const sb=(k,l)=>{const lk=!canRec(m,k);return `<button type="button" data-k="${k}" class="${logType===k?'on':''}${lk?' lock':''}" ${lk?'data-lock="1"':''}>${lk?'🔒 ':''}${l}</button>`};
   $('#view').innerHTML=`
@@ -1454,7 +1457,6 @@ function vLog(){
       ${sb('meal','食事セラピー')}
       ${sb('kapala','カパラバティ')}
       <button type="button" data-k="cardio" class="${logType==='cardio'?'on':''}">有酸素</button>
-      <button type="button" data-k="in" class="${logType==='in'?'on':''}">チェックイン</button>
     </div>
     <div id="form"></div>
   </div>
@@ -1534,7 +1536,7 @@ function vLog(){
     f.innerHTML=`<div class="stack"><div class="muted">ジムに来たらタップ。本番では受付のQRコードを読む形を想定しています。</div>
       <div class="preview">根性 <b>+20</b> EXP ／ 週3回でクエスト達成</div>
       <button class="btn-main" id="go" type="button" ${done?'disabled style="opacity:.5"':''}>${done?'今日はチェックイン済み':'チェックインする'}</button></div>`;
-    if(!done)$('#go').onclick=()=>{m.streak[today]=1;m.visits=m.visits||[];const vk=ymd(new Date());if(!m.visits.includes(vk))m.visits.push(vk);m.times=m.times||{};if(!m.times[vk]){const n=new Date(),st=n.getHours()*60+n.getMinutes();m.times[vk]=[hm(st),hm(Math.min(st+90,23*60+59))]}gain(m,'grit',20,'ジムにチェックイン');tab='hero';render()};
+    if(!done)$('#go').onclick=()=>{doCheckin(m);tab='hero';render()};
   }
 }
 
@@ -2045,6 +2047,15 @@ function tevPanel(){if(!ADMIN||tab!=='guild'||document.getElementById('tev'))ret
   document.getElementById('tevsave').onclick=()=>{const vals={};TEV.forEach(([k])=>{if(moved[k])vals[k]=+document.getElementById('tev_'+k).value});if(!Object.keys(vals).length){toast('スライダーを1つ以上動かしてください');return}
     const m=byId(document.getElementById('tevm').value);m.tEval=m.tEval||[];m.tEval.push({t:Date.now(),tn:TN(),v:vals,memo:document.getElementById('tevmemo').value.trim()});save();
     TEV.forEach(([k])=>{delete moved[k];document.getElementById('tev_'+k).value=50;document.getElementById('tev_'+k+'v').textContent='—'});document.getElementById('tevmemo').value='';draw();toast(`${m.name}さんの評価を保存しました`)}}
+function kenkoPanel(){if(!ADMIN||tab!=='guild'||document.getElementById('kenko'))return;const v=document.getElementById('view');const h=document.getElementById('cpan')||document.getElementById('tev')||[...v.querySelectorAll('h2')].find(x=>x.textContent.includes('宿題を出す'));if(!h)return;
+  const d=document.createElement('section');d.id='kenko';
+  d.innerHTML=`<h2>🩺 健康管理室</h2><div class="card stack"><p class="muted" style="font-size:12px;margin:0">ゲストが来館したら、トレーナーがここでチェックインを押します（根性 +20 EXP・週3回でクエスト達成）。</p>
+   <label>ゲスト<select id="kkm">${S.members.map(m=>`<option value="${m.id}" ${m.id===S.current?'selected':''}>${esc(m.name)}</option>`).join('')}</select></label><div id="kkb"></div></div>`;
+  v.insertBefore(d,h);
+  const draw=()=>{const m=byId(document.getElementById('kkm').value),dn=checkedIn(m);
+    document.getElementById('kkb').innerHTML=`<button type="button" class="btn-main" id="kkgo" ${dn?'disabled style="opacity:.5"':''}>${dn?`✅ ${esc(m.name)}さんは今日チェックイン済み`:`${esc(m.name)}さんをチェックインする`}</button>`;
+    if(!dn)document.getElementById('kkgo').onclick=()=>{const sc=S.current;doCheckin(m);S.current=sc;save();toast(`${m.name}さんをチェックインしました　根性+20`);draw()}};
+  document.getElementById('kkm').onchange=draw;draw()}
 function coursePanel(){if(!ADMIN||tab!=='guild'||document.getElementById('cpan'))return;const v=document.getElementById('view');const h=document.getElementById('tev')||[...v.querySelectorAll('h2')].find(x=>x.textContent.includes('宿題を出す'));if(!h)return;
   const d=document.createElement('section');d.id='cpan';
   d.innerHTML=`<h2>会員区別と記録の許可</h2><div class="card stack"><p class="muted" style="font-size:12px;margin:0">ゲストは、会員区別でえらんだ記録だけ使えます。ほかの記録を使ってほしいときは、ここで許可してください。</p>
@@ -2056,7 +2067,7 @@ function coursePanel(){if(!ADMIN||tab!=='guild'||document.getElementById('cpan')
     document.getElementById('cpc').onchange=e=>{m.course=e.target.value||undefined;m.allow=(m.allow||[]).filter(k=>k!==m.course);save();toast(`${m.name}さん：会員区別を${m.course?cName(m.course):'未設定'}にしました`);draw()};
     document.querySelectorAll('#cpb [data-al]').forEach(c=>c.onchange=()=>{const k=c.dataset.al;m.allow=(m.allow||[]).filter(x=>x!==k);if(c.checked)m.allow.push(k);save();toast(`${m.name}さん：「${cName(k)}」を${c.checked?'許可しました':'許可なしにしました'}`)})};
   document.getElementById('cpm').onchange=draw;draw()}
-const _r4=render;render=function(){const r=_r4.apply(this,arguments);try{tevPanel();coursePanel()}catch(e){console.warn(e)}return r};
+const _r4=render;render=function(){const r=_r4.apply(this,arguments);try{tevPanel();coursePanel();kenkoPanel()}catch(e){console.warn(e)}return r};
 // ===== 333GYMニュース（トレーナーが配信 → ゲスト全員に表示） =====
 function NEWS(){S.news=S.news||[];return S.news}
 function newsSorted(){return NEWS().slice().sort((a,b)=>(b.pin?1:0)-(a.pin?1:0)||b.t-a.t)}
