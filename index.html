@@ -416,6 +416,7 @@ nav{flex-direction:column;align-items:center;gap:5px}
 .bnew{display:inline-block;font-style:normal;background:#e8452c;color:#fff;font-size:11px;font-weight:900;border-radius:999px;padding:1px 7px;margin-left:4px;vertical-align:middle}
 .bgpost{position:relative}.bgpost>.bnew{position:absolute;top:10px;right:10px;z-index:1}.bgpost.focus{outline:3px solid #f39a1e}
 #tabs2 button{position:relative}
+.kamin{font-size:12px;line-height:1.7;background:#fff8d6;border:2px dashed #d9a800;border-radius:12px;padding:8px 10px;color:#5a4a00}
 </style>
 
 </head>
@@ -1126,6 +1127,7 @@ const KAMI=[
  {name:'天照大神',yomi:'あまてらすおおみかみ',add:'太陽の女神。八咫鏡と日輪'},
 ];
 function nameHtml(e){return e.yomi?`${e.name}（${e.yomi}）`:e.name;}
+const KAMI_LV=100;function stageFor(look,lv){return look==='g'?stageOfLv(Math.max(1,lv-(KAMI_LV-1))):stageOfLv(lv)}
 function evoInfo(look,stage){return look==='g'?KAMI[stage]:EVO[stage];}
 function paintKami(cv,stage,cls){
   const N=16;cv.width=N;cv.height=N;const c=cv.getContext('2d');c.clearRect(0,0,N,N);
@@ -1222,7 +1224,7 @@ function drawScene(cv,m){
   c.fillStyle='rgba(0,0,0,.12)';c.beginPath();c.ellipse(cx,cy+2,30,8,0,0,7);c.fill();
   const sp=document.createElement('canvas');drawSprite(sp,m);c.drawImage(sp,cx-48,cy-92,96,96);
 }
-function drawSprite(cv,m){const st=stageOfLv(levelOf(total(m)).lv);if(m.look==='g')return paintKami(cv,st,STAT[topStat(m)].hex);paintHero(cv,st,STAT[topStat(m)].hex,hairOf(m),m.look);}
+function drawSprite(cv,m){const st=stageFor(m.look,levelOf(total(m)).lv);if(m.look==='g')return paintKami(cv,st,STAT[topStat(m)].hex);paintHero(cv,st,STAT[topStat(m)].hex,hairOf(m),m.look);}
 function drawBoss(cv,ratio){
   const art=`....rrrrrr....
 ...rrrrrrrr...
@@ -1331,8 +1333,9 @@ function gain(m,stat,xp,text,extra={}){
   const after=levelOf(total(m)).lv, ca=classOf(m);
   save();
   if(m.id===S.current&&after>before){
-    const evo=stageOfLv(after)>stageOfLv(before);
-    overlay(`LEVEL ${after}!`,evo?`進化！「${evoInfo(m.look,stageOfLv(after)).name}${evoInfo(m.look,stageOfLv(after)).yomi?`（${evoInfo(m.look,stageOfLv(after)).yomi}）`:''}」 ${evoInfo(m.look,stageOfLv(after)).add}`:ca!==cb?`職業が「${ca}」になりました！`:`${STAT[stat].name}が上がった！ この調子！`);
+    const sa=stageFor(m.look,after),evo=sa>stageFor(m.look,before),ei=evoInfo(m.look,sa),kamiOpen=before<KAMI_LV&&after>=KAMI_LV;
+    if(kamiOpen){S.feed.unshift({id:S.nextId++,who:m.id,text:`⛩ Lv${KAMI_LV}到達！「八百万の神」になれるようになりました`,xp:0,stat:'grit',t:Date.now(),cheers:[]});save()}
+    overlay(`LEVEL ${after}!`,kamiOpen?`⛩ 八百万の神が解放されました！ 冒険者ページの「見た目」で神様をえらべます`:evo?`進化！「${ei.name}${ei.yomi?`（${ei.yomi}）`:''}」 ${ei.add}`:ca!==cb?`職業が「${ca}」になりました！`:`${STAT[stat].name}が上がった！ この調子！`);
   }else toast(`${STAT[stat].name} +${xp} EXP${boosted?'　ブースト発動！':''}`);
 }
 
@@ -1375,13 +1378,14 @@ function vHero(){
   <div class="card" style="margin-top:12px">
     <div class="stack" style="gap:6px;min-width:0">
       <div class="name">${esc(m.name)}${L.lv>=100?` <span style="color:var(--accent)">${'★'.repeat(1+Math.floor((L.lv-100)/10))}</span>`:''}</div>
-      <div class="muted" style="font-size:12px">姿：${nameHtml(evoInfo(m.look,stageOfLv(L.lv)))}</div>
+      <div class="muted" style="font-size:12px">姿：${nameHtml(evoInfo(m.look,stageFor(m.look,L.lv)))}</div>
       <div class="cls">${classOf(m)} ／ <span style="color:${tCol(teamOf(m))}">${tName(teamOf(m))}</span></div>
       <div style="display:flex;align-items:baseline;gap:8px"><span class="muted">Lv</span><span class="lv">${L.lv}</span></div>
       <div class="bar" aria-label="次のレベルまで"><i style="width:${L.into/L.need*100}%"></i></div>
       <div class="muted">次のレベルまで ${L.need-L.into} EXP</div>${EXPNOTE}
-      <label>見た目<select id="lk">${LOOKS.map(([k,l])=>`<option value="${k}" ${(m.look||'m')===k?'selected':''}>${l}</option>`).join('')}</select></label>
-      <button type="button" id="zk" class="btn-main" style="font-size:13px;padding:7px 16px;align-self:flex-start">進化図鑑を見る（${stageOfLv(L.lv)+1}/21）</button>
+      <label>見た目<select id="lk">${LOOKS.map(([k,l])=>{const lock=k==='g'&&L.lv<KAMI_LV&&m.look!=='g'&&!ADMIN;return `<option value="${k}" ${(m.look||'m')===k?'selected':''} ${lock?'disabled':''}>${lock?'🔒 '+l+'（Lv'+KAMI_LV+'から）':(k==='g'?'⛩ '+l:l)}</option>`}).join('')}</select></label>
+      <div class="kamin">${L.lv>=KAMI_LV?`⛩ <b>八百万の神</b>が解放されています！「見た目」で神様をえらべます。`:`🔒 <b>八百万の神</b>は、<b>Lv${KAMI_LV}</b>になった人だけがえらべる特別な姿です。まずは人や動物（ひつじ・犬など）からスタート！ Lv${KAMI_LV}になると神様になれて、そこから5レベルごとに別の神様へ。最後はLv${KAMI_LV+99}で天照大神（あまてらすおおみかみ）に。あと <b>${KAMI_LV-L.lv}</b> レベル！`}</div>
+      <button type="button" id="zk" class="btn-main" style="font-size:13px;padding:7px 16px;align-self:flex-start">進化図鑑を見る（${stageFor(m.look,L.lv)+1}/21）</button>
     </div>
   </div>
   <div class="stats">${Object.entries(STAT).map(([k,v])=>`
@@ -1601,11 +1605,11 @@ function vMy(){const m=me(),L=levelOf(total(m)),fd=new Date();
   document.querySelectorAll('[data-mf]').forEach(b=>b.onclick=()=>{myF=b.dataset.mf;vMy()});
 }
 function vZukan(){
-  const m=me(),lv=levelOf(total(m)).lv,cur=stageOfLv(lv),cls=STAT[topStat(m)].hex;
+  const m=me(),lv=levelOf(total(m)).lv,cur=stageFor(zLook,lv),cls=STAT[topStat(m)].hex;
   $('#view').innerHTML=`<h2>進化図鑑</h2>
-  <p class="muted" style="margin-top:-6px">${zLook==='g'?'5レベルごとに別の神様へ姿を変えます。Lv5の少彦名命から20柱を巡り、Lv100で天照大神に。':'5レベルごとに見た目が進化します。Lv100の「伝説」まで全21段階。'}Lv100からは10レベルごとに名前の横に★が増え、上限はありません。色は一番伸びている能力の色になります。</p>
+  <p class="muted" style="margin-top:-6px">${zLook==='g'?`⛩ 八百万の神はLv${KAMI_LV}になった人だけがえらべる特別な姿です。Lv${KAMI_LV}で「名もなき小さな神」になり、5レベルごとに別の神様へ。20柱を巡り、Lv${KAMI_LV+99}で天照大神に。`:'5レベルごとに見た目が進化します。Lv100の「伝説」まで全21段階。'}Lv100からは10レベルごとに名前の横に★が増え、上限はありません。色は一番伸びている能力の色になります。</p>
   <label style="margin-bottom:10px">見た目を選ぶ<select id="zlk">${LOOKS.map(([k,l])=>`<option value="${k}" ${zLook===k?'selected':''}>${l}</option>`).join('')}</select></label>
-  <div class="zk">${(zLook==='g'?KAMI.map((k,i)=>({...k,lv:EVO[i].lv})):EVO).map((e,i)=>`<div class="zc ${i===cur?'now':''} ${i>cur&&!KS()?'lock':''}"><canvas data-zs="${i}"></canvas>
+  <div class="zk">${(zLook==='g'?KAMI.map((k,i)=>({...k,lv:EVO[i].lv+KAMI_LV-1})):EVO).map((e,i)=>`<div class="zc ${i===cur?'now':''} ${i>cur&&!KS()?'lock':''}"><canvas data-zs="${i}"></canvas>
     <div class="zl">Lv${e.lv}</div>${e.yomi?`<div class="zy">${e.yomi}</div>`:''}<div class="zn">${e.name}</div><div class="za">${e.add}</div>${i===cur?'<div class="zt">いまここ</div>':''}</div>`).join('')}</div>
   <button type="button" id="back" style="margin-top:14px">冒険者に戻る</button>`;
   document.querySelectorAll('[data-zs]').forEach(c=>zLook==='g'?paintKami(c,+c.dataset.zs,cls):paintHero(c,+c.dataset.zs,cls,hairOf({id:'me',name:'',look:zLook}),zLook));
