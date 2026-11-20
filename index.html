@@ -1279,7 +1279,7 @@ function vLog(){
     <div class="seg">
       <button type="button" data-k="lift" class="${logType==='lift'?'on':''}">加圧トレ</button>
       <button type="button" data-k="yoga" class="${logType==='yoga'?'on':''}">YOGA</button>
-      <button type="button" data-k="meal" class="${logType==='meal'?'on':''}">食事トレ</button>
+      <button type="button" data-k="meal" class="${logType==='meal'?'on':''}">食事セラピー</button>
       <button type="button" data-k="kapala" class="${logType==='kapala'?'on':''}">カパラバティ</button>
       <button type="button" data-k="cardio" class="${logType==='cardio'?'on':''}">有酸素</button>
       <button type="button" data-k="in" class="${logType==='in'?'on':''}">チェックイン</button>
@@ -1332,7 +1332,7 @@ function vLog(){
     $('#mcat').onclick=e=>{const b=e.target.closest('[data-mc]');if(b)mshow(+b.dataset.mc)};
     ML.onclick=e=>{const b=e.target.closest('[data-mk]');if(!b)return;ML.querySelectorAll('.on').forEach(x=>x.classList.remove('on'));b.classList.add('on');$('#ml').value=b.dataset.mk;upd()};
     mshow(0);upd();
-    $('#go').onclick=()=>{const k=$('#ml').value,y=FOODS[k];giveFood(m,k);const mm=($('#mmemo')||{value:''}).value.trim();gain(m,y.stat,fxp(y),`食事トレ ${y.name}`+(mm?`／メモ：${mm}`:''));tab='hero';render()};
+    $('#go').onclick=()=>{const k=$('#ml').value,y=FOODS[k];giveFood(m,k);const mm=($('#mmemo')||{value:''}).value.trim();gain(m,y.stat,fxp(y),`食事セラピー ${y.name}`+(mm?`／メモ：${mm}`:''));tab='hero';render()};
   }else if(logType==='kapala'){
     f.innerHTML=`<div class="stack">
       <label>種目（${KAPALA.length+CX('kapala').length}種）<select id="kx">${[...KAPALA,...CX('kapala')].map(e=>`<option>${e}</option>`).join('')}</select></label>${addRow('kxn')}
@@ -1433,7 +1433,7 @@ const MEALT=['断食','16時間断食','半日断食（朝食抜き）','ファ�
 const MEALRE=/断食|ファスティング|糖質|食べ|食事|間食|腹八分|玄米|ベジ|塩分/;
 function migMeal(){const e=CX('ex'),mt=CX('mealt');for(let i=e.length-1;i>=0;i--)if(MEALRE.test(e[i])){if(!MEALT.includes(e[i])&&!mt.includes(e[i]))mt.push(e[i]);e.splice(i,1)}}
 function mealTask(){if(logType!=='meal')return;const f=$('#form');if(!f)return;window._mm=window._mm||'task';
-  const tg=document.createElement('div');tg.className='mmode';tg.innerHTML=`<button type="button" data-mm="task" class="${_mm==='task'?'on':''}">食事トレの種目・課題</button><button type="button" data-mm="food" class="${_mm==='food'?'on':''}">食べたもの</button>`;
+  const tg=document.createElement('div');tg.className='mmode';tg.innerHTML=`<button type="button" data-mm="task" class="${_mm==='task'?'on':''}">種目・課題</button><button type="button" data-mm="food" class="${_mm==='food'?'on':''}">食べたもの</button>`;
   f.before(tg);tg.onclick=e=>{const b=e.target.closest('[data-mm]');if(b){window._mm=b.dataset.mm;vLog()}};
   if(_mm!=='task')return;
   const m=me();migMeal();const L=[...MEALT,...CX('mealt')];
@@ -1442,16 +1442,17 @@ function mealTask(){if(logType!=='meal')return;const f=$('#form');if(!f)return;w
     <div class="preview" id="pv">根性 <b>+30</b> EXP</div>
     <button class="btn-main" id="go" type="button">記録してEXPをもらう</button></div>`;
   bindAdd('mtn','mealt');if(window._pick){$('#mt').value=window._pick;window._pick=null}
-  $('#go').onclick=()=>{const t=$('#mtx').value.trim();gain(m,'grit',30,`食事トレ ${$('#mt').value}`+(t?`／${t}`:''));tab='hero';render()};
+  $('#go').onclick=()=>{const t=$('#mtx').value.trim();gain(m,'grit',30,`食事セラピー ${$('#mt').value}`+(t?`／${t}`:''));tab='hero';render()};
 }
+try{if(typeof S!=='undefined'&&!S.mealRen){const r=t=>typeof t==='string'?t.split('食事'+'トレ').join('食事セラピー'):t;(S.feed||[]).forEach(f=>f.text=r(f.text));(S.members||[]).forEach(m=>(m.homework||[]).forEach(h=>{h.text=r(h.text);if(h.items)h.items=h.items.map(r)}));(S.cart||[]).forEach(c=>c.g.forEach(g=>g[2]=r(g[2])));S.mealRen=1;save()}}catch(e){}
 const FA={yan:['yoga','#ya'],exn:['ex','#ex'],man:['cardio','#ma'],kxn:['kapala','#kx'],mtn:['mealt','#mt']};
 function putOpt(k,sel,v){const S2=$(sel);if(!S2)return false;let o=[...S2.options].find(o=>o.value===v||o.textContent===v);if(!o){o=new Option(v,k==='yoga'?'cx:'+v:v);S2.appendChild(o);if(!CX(k).includes(v))CX(k).push(v);save()}S2.value=o.value;S2.dispatchEvent(new Event('change',{bubbles:true}));return true}
 function preFree(){for(const id in FA){const i=$('#'+id);if(!i||!i.value.trim())continue;const [k,sel]=FA[id];putOpt(k,sel,i.value.trim());i.value=''}}
 function CX(k){S.custom=S.custom||{};return S.custom[k]=S.custom[k]||[]}
 function EXGALL(){migMeal();const c=CX('ex');return c.length?[...EXG,['追加した種目',c]]:EXG}
 function addRow(id){return `<div class="cxdel" data-cxfor="${id}"></div><div class="addx"><input id="${id}" placeholder="リストにない種目を入力して追加" maxlength="30"><button type="button" id="${id}b">＋追加</button></div>`}
-function bindAdd(id,k){const go=()=>{const v=$('#'+id).value.trim();if(!v){toast('種目名を入れてください');return}if(k==='ex'&&MEALRE.test(v)){const mt=CX('mealt');if(!MEALT.includes(v)&&!mt.includes(v))mt.push(v);save();logType='meal';window._mm='task';window._pick=v;vLog();toast(`「${v}」は食事トレの種目に入れました`);return}const all=k==='yoga'?[...Object.keys(FOODS).filter(x=>FOODS[x].cat==='yoga').map(x=>FOODS[x].name),...CX('yoga')]:k==='mealt'?[...MEALT,...CX('mealt')]:k==='ex'?EXGALL().flatMap(g=>g[1]):k==='kapala'?[...KAPALA,...CX('kapala')]:[...CARDIO,...CX('cardio')];if(!all.includes(v))CX(k).push(v);const fa=FA[id];if(fa&&putOpt(fa[0],fa[1],v)){$('#'+id).value='';toast(`「${v}」を追加しました。続けて内容を書いて、下のボタンで記録できます`);return}save();window._pick=v;vLog();toast(`「${v}」を追加しました。次からリストに出ます`)};$('#'+id+'b').onclick=go;$('#'+id).onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing)go()}}
-function HWGROUPS(){return [['おうちの宿題','fix',HOMEWORK],...EXGALL().map(([g,xs])=>['加圧トレ・'+g,'ex',xs]),...YG.map(([gk,gl])=>['YOGA・'+gl,'yoga',Object.keys(FOODS).filter(k=>FOODS[k].cat==='yoga'&&yg(k)===gk).map(k=>FOODS[k].name)]),...(CX('yoga').length?[['YOGA・追加した種目','yoga',CX('yoga')]]:[]),['食事トレ','mealt',(migMeal(),[...MEALT,...CX('mealt')])],['有酸素','cardio',[...CARDIO,...CX('cardio')]],['カパラバティ・呼吸法','kapala',[...KAPALA,...CX('kapala')]],...(CX('other').length?[['その他（トレーナー登録）','fix',CX('other')]]:[])]}
+function bindAdd(id,k){const go=()=>{const v=$('#'+id).value.trim();if(!v){toast('種目名を入れてください');return}if(k==='ex'&&MEALRE.test(v)){const mt=CX('mealt');if(!MEALT.includes(v)&&!mt.includes(v))mt.push(v);save();logType='meal';window._mm='task';window._pick=v;vLog();toast(`「${v}」は食事セラピーの種目に入れました`);return}const all=k==='yoga'?[...Object.keys(FOODS).filter(x=>FOODS[x].cat==='yoga').map(x=>FOODS[x].name),...CX('yoga')]:k==='mealt'?[...MEALT,...CX('mealt')]:k==='ex'?EXGALL().flatMap(g=>g[1]):k==='kapala'?[...KAPALA,...CX('kapala')]:[...CARDIO,...CX('cardio')];if(!all.includes(v))CX(k).push(v);const fa=FA[id];if(fa&&putOpt(fa[0],fa[1],v)){$('#'+id).value='';toast(`「${v}」を追加しました。続けて内容を書いて、下のボタンで記録できます`);return}save();window._pick=v;vLog();toast(`「${v}」を追加しました。次からリストに出ます`)};$('#'+id+'b').onclick=go;$('#'+id).onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing)go()}}
+function HWGROUPS(){return [['おうちの宿題','fix',HOMEWORK],...EXGALL().map(([g,xs])=>['加圧トレ・'+g,'ex',xs]),...YG.map(([gk,gl])=>['YOGA・'+gl,'yoga',Object.keys(FOODS).filter(k=>FOODS[k].cat==='yoga'&&yg(k)===gk).map(k=>FOODS[k].name)]),...(CX('yoga').length?[['YOGA・追加した種目','yoga',CX('yoga')]]:[]),['食事セラピー','mealt',(migMeal(),[...MEALT,...CX('mealt')])],['有酸素','cardio',[...CARDIO,...CX('cardio')]],['カパラバティ・呼吸法','kapala',[...KAPALA,...CX('kapala')]],...(CX('other').length?[['その他（トレーナー登録）','fix',CX('other')]]:[])]}
 function ymd(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
 let calYM=null;
 const hm=x=>String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0');
@@ -1480,7 +1481,7 @@ document.addEventListener('click',e=>{const c=e.target.closest('#calbox [data-cd
 function vGuild(){
   setTimeout(()=>{const L=$('#htl');if(!L)return;let base=HOMEWORK[0],kind='fix';const O=$('#hopt');
     const sel=(id,arr,def,unit)=>`<label>${unit}<select id="${id}">${arr.map(v=>`<option ${v===def?'selected':''}>${v}</option>`).join('')}</select></label>`;
-    const comp=()=>{let t=base;if(kind==='ex')t=`${base} ${$('#hr').value}回×${$('#hs').value}セット`;else if(kind==='yoga')t=`${base} ${$('#hy').value}分×${$('#hys').value}セット（${[$('#hyw').value,$('#hyt').value].filter(v=>v!=='—').join('・')||'いつでも'}）`;else if(kind==='kapala'){const k=$('#hk').value;t=`${base} ${$('#hn').value}回×${$('#hrd').value}ラウンド${k==='なし'?'':`（最後にクンバク${k}）`}`}else if(kind==='cardio'&&!/\d+(分|時間)/.test(base))t=`${base} ${$('#hc').value}分`;else if(kind==='mealt'){const x=($('#hmt')||{value:''}).value.trim();t=`食事トレ：${base}`+(x?`（${x}）`:'')}$('#ht').value=t;$('#hpv').textContent=t};
+    const comp=()=>{let t=base;if(kind==='ex')t=`${base} ${$('#hr').value}回×${$('#hs').value}セット`;else if(kind==='yoga')t=`${base} ${$('#hy').value}分×${$('#hys').value}セット（${[$('#hyw').value,$('#hyt').value].filter(v=>v!=='—').join('・')||'いつでも'}）`;else if(kind==='kapala'){const k=$('#hk').value;t=`${base} ${$('#hn').value}回×${$('#hrd').value}ラウンド${k==='なし'?'':`（最後にクンバク${k}）`}`}else if(kind==='cardio'&&!/\d+(分|時間)/.test(base))t=`${base} ${$('#hc').value}分`;else if(kind==='mealt'){const x=($('#hmt')||{value:''}).value.trim();t=`食事セラピー：${base}`+(x?`（${x}）`:'')}$('#ht').value=t;$('#hpv').textContent=t};
     const opts=()=>{O.innerHTML=kind==='mealt'?`<label class="mmemo" style="grid-column:1/-1">課題・内容（トレーナーが自由に書く）<textarea id="hmt" rows="5" maxlength="500" placeholder="例：夜8時から翌日お昼まで食べない。水とお茶はOK。つらい時はカパラバティ30回。"></textarea></label>`:kind==='kapala'?sel('hn',[30,50,60,80,100,108,150,200],100,'回数')+sel('hrd',[1,2,3,4,5],3,'ラウンド')+sel('hk',['なし','1分','1分半','2分'],'1分','クンバク'):kind==='ex'?sel('hr',[5,8,10,12,15,20,25,30,50],10,'回数')+sel('hs',[1,2,3,4,5],3,'セット'):kind==='yoga'?sel('hy',[1,3,5,10,15,20,30],5,'時間（分）')+sel('hys',[1,2,3,4,5],1,'セット')+sel('hyw',['—','週1回','週2回','週3回','週4回','週5回','週6回','毎日'],'週3回','週に何回')+sel('hyt',['—','朝','昼','晩','朝・昼','朝・晩','昼・晩','朝・昼・晩'],'朝','朝・昼・晩'):kind==='cardio'&&!/\d+(分|時間)/.test(base)?sel('hc',[10,15,20,30,45,60,90],30,'時間（分）'):'';O.querySelectorAll('select').forEach(x=>x.onchange=comp);O.querySelectorAll('textarea').forEach(x=>x.oninput=comp);comp()};
     L.onclick=e=>{const b=e.target.closest('[data-hv]');if(!b)return;L.querySelectorAll('.on').forEach(x=>x.classList.remove('on'));b.classList.add('on');base=b.dataset.hv;kind=b.dataset.hk;opts()};
     L.querySelector('[data-hv]').classList.add('on');
@@ -1497,11 +1498,11 @@ function vGuild(){
     <div><div class="muted" style="font-size:13px;margin-bottom:4px">宿題をえらぶ（スクロールできます）</div><input type="hidden" id="ht" value="${esc(HOMEWORK[0])}"><div class="slist" id="htl">${HWGROUPS().map(([g,k,xs])=>`<div class="sg">${g} <small>${xs.length}</small></div><div class="sopts">${xs.map(x=>`<button type="button" data-hk="${k}" data-hv="${esc(x)}">${esc(x)}</button>`).join('')}</div>`).join('')}</div>
     <div id="hopt" class="hopt"></div><div class="hpv">宿題：<b id="hpv">${esc(HOMEWORK[0])}</b></div></div>
     <button id="hadd" type="button" class="hadd">＋ この項目を宿題に追加</button><div class="hfree"><div class="hft">トレーナーが自由に書く宿題メニュー</div>
-      <div class="hfrow"><label>分類<select id="hfc">${[['ex','加圧トレ'],['yoga','YOGA'],['kapala','カパラバティ・呼吸法'],['cardio','有酸素'],['mealt','食事トレ'],['other','その他']].map(([k,l])=>`<option value="${k}" ${k==='mealt'?'selected':''}>${l}</option>`).join('')}</select></label><label>種目名<input id="hfn" maxlength="30" placeholder="例：タイヤ押し／16時間断食"></label></div>
+      <div class="hfrow"><label>分類<select id="hfc">${[['ex','加圧トレ'],['yoga','YOGA'],['kapala','カパラバティ・呼吸法'],['cardio','有酸素'],['mealt','食事セラピー'],['other','その他']].map(([k,l])=>`<option value="${k}" ${k==='mealt'?'selected':''}>${l}</option>`).join('')}</select></label><label>種目名<input id="hfn" maxlength="30" placeholder="例：タイヤ押し／16時間断食"></label></div>
       <textarea id="hfm" rows="5" maxlength="500" placeholder="内容・課題を自由に書けます。例：20mを3往復。休憩は1分。フォームを意識して、無理はしないこと。"></textarea>
       <label class="hfreg"><input type="checkbox" id="hfr" checked> この種目を一覧に登録する（次から宿題リストや記録で選べます）</label>
       <button id="hfadd" type="button" class="hadd">＋ 書いた内容を宿題に追加</button>
-      ${(()=>{const L={ex:'加圧トレ',yoga:'YOGA',kapala:'呼吸法',cardio:'有酸素',mealt:'食事トレ',other:'その他'};const a=Object.keys(L).flatMap(k=>CX(k).map(v=>[k,v]));return a.length?`<details class="hreg"><summary>登録した種目（${a.length}）を見る・消す</summary><ul>${a.map(([k,v])=>`<li><small>${L[k]}</small>${esc(v)}<button type="button" data-rk="${k}" data-rv="${esc(v)}" aria-label="消す">✕</button></li>`).join('')}</ul></details>`:''})()}</div><div class="hbox"><div class="hbh">送る宿題 <b id="hcnt">0</b> こ</div><ol id="hlist" class="hlist"><li class="emp">まだ項目がありません。上でえらんで「追加」を押してください。</li></ol></div><button class="btn-main" id="hgive" type="button">まとめて宿題を送る</button>
+      ${(()=>{const L={ex:'加圧トレ',yoga:'YOGA',kapala:'呼吸法',cardio:'有酸素',mealt:'食事セラピー',other:'その他'};const a=Object.keys(L).flatMap(k=>CX(k).map(v=>[k,v]));return a.length?`<details class="hreg"><summary>登録した種目（${a.length}）を見る・消す</summary><ul>${a.map(([k,v])=>`<li><small>${L[k]}</small>${esc(v)}<button type="button" data-rk="${k}" data-rv="${esc(v)}" aria-label="消す">✕</button></li>`).join('')}</ul></details>`:''})()}</div><div class="hbox"><div class="hbh">送る宿題 <b id="hcnt">0</b> こ</div><ol id="hlist" class="hlist"><li class="emp">まだ項目がありません。上でえらんで「追加」を押してください。</li></ol></div><button class="btn-main" id="hgive" type="button">まとめて宿題を送る</button>
   </div>
   <h2>トレーナー：会員を評価する</h2>
   <div class="card stack">
@@ -1535,7 +1536,7 @@ function vGuild(){
   let HQ=[];const hdraw=()=>{$('#hcnt').textContent=HQ.length;$('#hlist').innerHTML=HQ.length?HQ.map((t,i)=>`<li><span>${esc(t)}</span><button type="button" data-hu="${i}" aria-label="上へ" ${i?'':'disabled'}>▲</button><button type="button" data-hd="${i}" aria-label="下へ" ${i<HQ.length-1?'':'disabled'}>▼</button><button type="button" data-hx="${i}" aria-label="消す" class="x">✕</button></li>`).join(''):'<li class="emp">まだ項目がありません。上でえらんで「追加」を押してください。</li>'};
   $('#hadd').onclick=()=>{HQ.push($('#ht').value);hdraw();toast('宿題に追加しました')};
   $('#hfadd').onclick=()=>{const c=$('#hfc').value,n=$('#hfn').value.trim(),x=$('#hfm').value.trim();if(!n&&!x){toast('種目名か内容を書いてください');return}
-    const L={ex:'加圧トレ',yoga:'YOGA',kapala:'呼吸法',cardio:'有酸素',mealt:'食事トレ',other:''};
+    const L={ex:'加圧トレ',yoga:'YOGA',kapala:'呼吸法',cardio:'有酸素',mealt:'食事セラピー',other:''};
     HQ.push((L[c]?L[c]+'：':'')+(n||'')+(n&&x?`（${x}）`:x));
     let reg=false;if(n&&$('#hfr').checked){const all=c==='ex'?EXGALL().flatMap(g=>g[1]):c==='mealt'?[...MEALT,...CX('mealt')]:c==='kapala'?[...KAPALA,...CX('kapala')]:c==='cardio'?[...CARDIO,...CX('cardio')]:CX(c);if(!all.includes(n)){CX(c).push(n);save();reg=true}}
     $('#hfn').value='';$('#hfm').value='';hdraw();toast(reg?`宿題に追加し、「${n}」を一覧に登録しました`:'宿題に追加しました')};
