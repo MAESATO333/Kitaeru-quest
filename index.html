@@ -2544,7 +2544,7 @@ function newsAdmin(){if(!ADMIN||tab!=='guild'||document.getElementById('nwadm'))
   d.querySelector('#nwsend').onclick=()=>{const ti=d.querySelector('#nwti').value.trim();if(!ti){toast('タイトルを入れてください');return}const n={id:Date.now(),t:Date.now(),tn:TN(),title:ti,body:d.querySelector('#nwbo').value.trim(),pin:d.querySelector('#nwpin').checked};NEWS().push(n);
     S.feed.unshift({id:S.nextId++,who:'trainer',tn:TN(),text:`📣 333GYMニュース：${ti}`,xp:0,stat:'grit',t:Date.now(),cheers:[]});save();['#nwti','#nwbo'].forEach(q=>d.querySelector(q).value='');d.querySelector('#nwpin').checked=false;draw();toast('ゲスト全員に配信しました')};
   d.querySelector('#nwlist').onclick=e=>{const p=e.target.closest('[data-np]'),x=e.target.closest('[data-nd]');if(p){const n=NEWS().find(n=>n.id==p.dataset.np);n.pin=!n.pin;save();draw()}if(x){S.news=NEWS().filter(n=>n.id!=x.dataset.nd);save();draw();toast('ニュースを消しました')}}}
-// ===== キタエル・クエスト写真館 =====
+// ===== キタエル写真館 =====
 // 試作版：写真はこの端末に保存（小さくしてから）。動画はこの画面を開いている間だけ。本番はFirebase Storageに保存します。
 const PKEY='kq-photos';let PH=[];try{PH=JSON.parse(localStorage.getItem(PKEY))||[]}catch(e){PH=[]}PH.forEach(x=>{if(x.st==='pending')x.st='ok'});
 const PVID={};
@@ -2554,7 +2554,7 @@ function phMedia(x){if(x.kind==='video'){const u=PVID[x.id];return u?`<video src
 function phCard(x,adm){const mine=x.by===S.current&&!x.byT;return `<figure class="phc">${phMedia(x)}<figcaption><b>${esc(x.cap||'')}</b><small>${x.byT?'📷 '+esc(x.byT)+'トレーナー':esc(x.name||'')}・${newsDate(x.t)}${x.st==='pending'?' ・ <em>承認待ち</em>':''}</small>${x.st==='ok'?(()=>{const L=x.love||[],on=L.includes(S.current),own=x.by===S.current&&!x.byT;return `<button type="button" class="phlove ${on?'on':''}" data-pl="${x.id}" ${on||own||ADMIN?'disabled':''}>💗 愛だね！ <b>${L.length}</b></button>`})():''}
   ${adm&&x.st==='pending'?`<span class="phbtn"><button type="button" class="btn-main" data-pa="${x.id}">公開する</button><button type="button" data-pr="${x.id}">見送る</button></span>`:''}${(adm||mine)?`<button type="button" class="phdel" data-pdel="${x.id}">消す</button>`:''}</figcaption></figure>`}
 function vPhoto(){const m=me(),pub=PH.filter(x=>x.st==='ok').sort((a,b)=>b.t-a.t),mineP=PH.filter(x=>x.st==='pending'&&x.by===S.current&&!x.byT);
-  $('#view').innerHTML=`<h2>📷 キタエル・クエスト写真館</h2><p class="muted" style="margin:-4px 2px 8px;font-size:12px">トレーナーやゲストの写真、トレーニング中の動画をみんなで見られます。ゲストもトレーナーも、投稿するとすぐにみんなに公開されます。よくない投稿は、トレーナーが消せます。</p>
+  $('#view').innerHTML=`<h2>📷 キタエル写真館</h2><p class="muted" style="margin:-4px 2px 8px;font-size:12px">トレーナーやゲストの写真、トレーニング中の動画をみんなで見られます。ゲストもトレーナーも、投稿するとすぐにみんなに公開されます。よくない投稿は、トレーナーが消せます。</p>
   <div class="card stack phup"><div class="mbtn"><button type="button" data-pick="image">📷 写真を投稿</button><button type="button" data-pick="video">🎥 動画を投稿</button></div><input type="file" id="phf" accept="image/*,video/*" hidden><div id="phpv" class="phpv"></div>
    <label>ひとこと<input id="phcap" maxlength="60" placeholder="例：今日はじめてヘッドスタンドできた！"></label>
    <label class="nwchk"><input type="checkbox" id="phok"> 写っている人みんなの了解をとりました</label>
@@ -2578,14 +2578,14 @@ function phBind(){document.querySelectorAll('[data-pl]').forEach(b=>b.onclick=()
   document.querySelectorAll('[data-pa]').forEach(b=>b.onclick=()=>{const x=PH.find(x=>x.id==b.dataset.pa);x.st='ok';phSave();S.feed.unshift({id:S.nextId++,who:'trainer',tn:TN(),to:x.by,text:`📷 ${x.name}さんの${x.kind==='video'?'動画':'写真'}が写真館に公開されました：${x.cap||''}`,xp:0,stat:'grit',t:Date.now(),cheers:[]});save();toast('公開しました');render()});
   document.querySelectorAll('[data-pr]').forEach(b=>b.onclick=()=>{PH=PH.filter(x=>x.id!=b.dataset.pr);phSave();toast('見送りました（消しました）');render()})}
 function phEntry(){const v=document.getElementById('view');if(!v||document.getElementById('phent'))return;
-  if(tab==='feed'){const b=document.createElement('button');b.type='button';b.id='phent';b.className='phent';b.innerHTML='📷 キタエル・クエスト写真館を見る <small>写真・動画</small>';b.onclick=()=>{tab='photo';render();window.scrollTo(0,0)};const h=v.querySelector('h2');if(h)h.after(b)}
+  if(tab==='feed'){const b=document.createElement('button');b.type='button';b.id='phent';b.className='phent';b.innerHTML='📷 キタエル写真館を見る <small>写真・動画</small>';b.onclick=()=>{tab='photo';render();window.scrollTo(0,0)};const h=v.querySelector('h2');if(h)h.after(b)}
   if(ADMIN&&tab==='guild'){PH.forEach(x=>{if(x.st==='pending')x.st='ok'});const pend=PH.filter(x=>!x.byT).sort((a,b)=>b.t-a.t).slice(0,6);const d=document.createElement('section');d.id='phent';d.innerHTML=`<h2>📷 写真館：ゲストの新しい投稿</h2><p class="muted" style="margin:-4px 2px 8px;font-size:12px">ゲストの投稿はすぐ公開されます。よくないものは「消す」で消せます。</p>${pend.length?`<div class="phgrid">${pend.map(x=>phCard(x,true)).join('')}</div>`:'<div class="card muted">ゲストの投稿はまだありません。</div>'}<button type="button" class="nwall" id="phgo">📷 写真館をひらく（トレーナーとして投稿） ›</button>`;
     const h=[...v.querySelectorAll('h2')].find(x=>x.textContent.includes('宿題を出す'));v.insertBefore(d,h||null);d.querySelector('#phgo').onclick=()=>{tab='photo';render();window.scrollTo(0,0)};phBind()}}
-// ===== キタエル・クエスト掲示板 =====
+// ===== キタエル掲示板 =====
 const BVID={};const BCAT=[['hw','📝 宿題','どんな宿題をやってる？'],['shop','🍽 お店','近くのいいお店'],['gift','🎁 差し入れ','差し入れをいただきました！'],['etc','💬 その他','なんでも']];let bF='all';
 function BOARD(){S.board=S.board||[];return S.board}
 function vBoard(){const m=me(),L=BOARD().filter(x=>bF==='all'||x.cat===bF).sort((a,b)=>b.t-a.t);const cn=k=>(BCAT.find(c=>c[0]===k)||BCAT[3])[1];
-  $('#view').innerHTML=`<h2>📌 キタエル・クエスト掲示板</h2><p class="muted" style="margin:-4px 2px 8px;font-size:12px">宿題のこと、近くのいいお店、差し入れのお礼など、みんなに伝えたいことを書けます。名前を出すか「匿名」かをえらべます。</p>
+  $('#view').innerHTML=`<h2>📌 キタエル掲示板</h2><p class="muted" style="margin:-4px 2px 8px;font-size:12px">宿題のこと、近くのいいお店、差し入れのお礼など、みんなに伝えたいことを書けます。名前を出すか「匿名」かをえらべます。</p>
   <details class="bwrite" id="bwrite"><summary>✏️ 掲示板に書きこむ <small>（タップで開く）</small></summary>
   <div class="card stack" style="margin-top:8px"><div class="tplf" id="bcat">${BCAT.map(([k,l],i)=>`<button type="button" data-bc="${k}" class="${i?'':'on'}">${l}</button>`).join('')}</div>
    <textarea id="btx" rows="3" maxlength="300" placeholder="例：最近、駅前に野菜たっぷりの定食屋さんができました！"></textarea>
@@ -2611,14 +2611,14 @@ function vBoard(){const m=me(),L=BOARD().filter(x=>bF==='all'||x.cat===bF).sort(
   document.querySelectorAll('[data-bl]').forEach(b=>b.onclick=()=>{const x=BOARD().find(x=>x.id==b.dataset.bl);x.love=x.love||[];if(x.love.includes(S.current))return;x.love.push(S.current);m.stats.grit+=2;const to=!x.byT&&byId(x.by);if(to&&to!==m)to.stats.grit+=2;save();toast('💗 愛だね！を送りました　根性+2');vBoard()});
   document.querySelectorAll('[data-bdel]').forEach(b=>b.onclick=()=>{S.board=BOARD().filter(x=>x.id!=b.dataset.bdel);save();toast('投稿を消しました');vBoard()});
   $('#bBack').onclick=()=>{tab='feed';render();window.scrollTo(0,0)}}
-function bEntry(){if(tab!=='feed'||document.getElementById('bent'))return;const ph=document.getElementById('phent');if(!ph)return;const b=document.createElement('button');b.type='button';b.id='bent';b.className='phent bent';const n=BOARD().length;b.innerHTML=`📌 キタエル・クエスト掲示板 <small>${n?n+'件の書きこみ':'みんなで情報交換'}</small>`;b.onclick=()=>{tab='board';render();window.scrollTo(0,0)};ph.after(b)}
-// ===== キタエル・クエストblog =====
+function bEntry(){if(tab!=='feed'||document.getElementById('bent'))return;const ph=document.getElementById('phent');if(!ph)return;const b=document.createElement('button');b.type='button';b.id='bent';b.className='phent bent';const n=BOARD().length;b.innerHTML=`📌 キタエル掲示板 <small>${n?n+'件の書きこみ':'みんなで情報交換'}</small>`;b.onclick=()=>{tab='board';render();window.scrollTo(0,0)};ph.after(b)}
+// ===== キタエル・blog =====
 function BLOG(){S.blog=S.blog||[];return S.blog}
 const BFILE={};
 function blogUrl(x){return location.origin+location.pathname.replace(/admin\/?$/,'')+'?blog='+x.id}
-function blogText(x){return `【キタエル・クエストblog】${x.title}\n${(x.body||'').slice(0,100)}${(x.body||'').length>100?'…':''}`}
+function blogText(x){return `【キタエル・blog】${x.title}\n${(x.body||'').slice(0,100)}${(x.body||'').length>100?'…':''}`}
 function vBlog(){const L=BLOG().slice().sort((a,b)=>b.t-a.t),CAN=ADMIN||!!(window.AUTH&&AUTH.on&&AUTH.role==='trainer'),bm=me(),seen0=(bm&&bm.blogSeen)||0;
-  $('#view').innerHTML=`<h2>📝 キタエル・クエストblog</h2><p class="muted" style="margin:-4px 2px 8px;font-size:12px">ジムの記事を書いて、掲示板に貼ったり、LINE・X・Instagram・TikTok・YouTubeなどに送ったりできます。</p>
+  $('#view').innerHTML=`<h2>📝 キタエル・blog</h2><p class="muted" style="margin:-4px 2px 8px;font-size:12px">ジムの記事を書いて、掲示板に貼ったり、LINE・X・Instagram・TikTok・YouTubeなどに送ったりできます。</p>
   ${CAN?`<div class="card stack"><label>タイトル<input id="bgti" maxlength="50" placeholder="例：11月のおすすめ野菜はかぼちゃ！"></label>
    <label>本文<textarea id="bgbo" rows="6" maxlength="3000" placeholder="記事の本文を書きます"></textarea></label>
    <label>写真・動画（なくてもOK）<input type="file" id="bgf" accept="image/*,video/*"></label>
@@ -2642,7 +2642,7 @@ function vBlog(){const L=BLOG().slice().sort((a,b)=>b.t-a.t),CAN=ADMIN||!!(windo
   document.querySelectorAll('[data-bboard]').forEach(b=>b.onclick=()=>{const x=get(b.dataset.bboard);BOARD().push({id:Date.now(),t:Date.now(),by:S.current,name:me().name,byT:ADMIN?TN():null,anon:false,cat:'etc',text:`📝 blog「${x.title}」\n${(x.body||'').slice(0,200)}`,love:[]});save();toast('掲示板に貼りました')});
   document.querySelectorAll('[data-bgdel]').forEach(b=>b.onclick=()=>{S.blog=BLOG().filter(x=>x.id!=b.dataset.bgdel);save();toast('記事を消しました');vBlog()});
   $('#bgBack').onclick=()=>{tab='feed';render();window.scrollTo(0,0)}}
-function bgEntry(){if(tab!=='feed'||document.getElementById('bgent'))return;const be=document.getElementById('bent');if(!be)return;const b=document.createElement('button');b.type='button';b.id='bgent';b.className='phent bgent';b.innerHTML=`📝 キタエル・クエストblog <small>${BLOG().length?BLOG().length+'本の記事':'ジムの記事'}</small>`;b.onclick=()=>{tab='blog';render();window.scrollTo(0,0)};be.after(b)}
+function bgEntry(){if(tab!=='feed'||document.getElementById('bgent'))return;const be=document.getElementById('bent');if(!be)return;const b=document.createElement('button');b.type='button';b.id='bgent';b.className='phent bgent';b.innerHTML=`📝 キタエル・blog <small>${BLOG().length?BLOG().length+'本の記事':'ジムの記事'}</small>`;b.onclick=()=>{tab='blog';render();window.scrollTo(0,0)};be.after(b)}
 let blogFocus=null;try{const q=/[?&]blog=(\d+)/.exec(location.search);if(q){tab='blog';blogFocus=+q[1]}const rt=(location.pathname.match(/^\/(blog|photo|board|news|cinema)\/?$/)||[])[1];if(rt)tab=rt}catch(e){}
 // blogを開いたら既読にして、えらんだ記事までスクロール
 {const _vb=vBlog;vBlog=function(){const r=_vb.apply(this,arguments);if(blogFocus){const el=document.getElementById('bg-'+blogFocus);if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),60);blogFocus=null}const m=me();if(m&&!ADMIN){m.blogSeen=Date.now();save();const b=document.getElementById('bline');if(b){const i=b.querySelector('.bnew');if(i)i.remove()}const t2=document.querySelector('[data-t2="blog"] .nbadge');if(t2)t2.remove()}return r}}
@@ -2653,7 +2653,7 @@ function qNav(){if(tab!=='hero'||document.getElementById('qnav'))return;const v=
   v.insertBefore(d,v.firstChild);d.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{tab=b.dataset.q;render();window.scrollTo(0,0)})}
 function entRow(){let d=document.getElementById('entrow');if(!d){d=document.createElement('div');d.id='entrow';d.className='entrow'}
   const nb=BOARD().length,ng=BLOG().length;
-  d.innerHTML=`<button type="button" data-ent="photo" class="${tab==='photo'?'on':''}">📷<b>キタエル・クエスト<br>写真館</b><small>写真・動画</small></button><button type="button" data-ent="board" class="${tab==='board'?'on':''}">📌<b>キタエル・クエスト<br>掲示板</b><small>${nb?nb+'件':'情報交換'}</small></button><button type="button" data-ent="blog" class="${tab==='blog'?'on':''}">📝<b>キタエル・クエスト<br>blog</b><small>${ng?ng+'本の記事':'ジムの記事'}</small></button><button type="button" data-ent="cinema" class="${tab==='cinema'?'on':''}">🎬<b>映画館<br>ミドリ座</b><small>絵本の映画館</small></button>`;d.classList.add('e4');
+  d.innerHTML=`<button type="button" data-ent="photo" class="${tab==='photo'?'on':''}">📷<b>キタエル<br>写真館</b><small>写真・動画</small></button><button type="button" data-ent="board" class="${tab==='board'?'on':''}">📌<b>キタエル<br>掲示板</b><small>${nb?nb+'件':'情報交換'}</small></button><button type="button" data-ent="blog" class="${tab==='blog'?'on':''}">📝<b>キタエル・<br>blog</b><small>${ng?ng+'本の記事':'ジムの記事'}</small></button><button type="button" data-ent="cinema" class="${tab==='cinema'?'on':''}">🎬<b>絵本映画館<br>ミドリ座</b><small>絵本の映画館</small></button>`;d.classList.add('e4');
   const at=document.getElementById('bline')||document.getElementById('nline')||document.querySelector('header');if(at.nextElementSibling!==d)at.after(d);
   d.querySelectorAll('[data-ent]').forEach(b=>b.onclick=()=>{tab=b.dataset.ent;render();window.scrollTo(0,0)})}
 const _r5=render;render=function(){if(tab==='cinema'){renderTabs();if(window.vCinema)vCinema();else{const v=document.getElementById('view');if(v)v.innerHTML='<p style="padding:20px">ミドリ座を準備中…</p>'}try{newsLine();entRow();sw()}catch(e){}return}if(tab==='blog'){renderTabs();vBlog();try{newsLine();entRow();sw()}catch(e){}return}if(tab==='board'){renderTabs();vBoard();try{newsLine();entRow();sw()}catch(e){}return}if(tab==='photo'){renderTabs();vPhoto();try{newsLine();entRow();sw()}catch(e){}return}if(tab==='news'&&!ADMIN){renderTabs();vNews();try{newsLine();entRow();sw()}catch(e){}return}const r=_r5.apply(this,arguments);try{newsCard();newsNav();newsAdmin();entRow()}catch(e){console.warn(e)}return r};
