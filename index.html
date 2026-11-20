@@ -479,6 +479,10 @@ body.trmode header{background:linear-gradient(180deg,#ffd27a,#ffe9b0)!important}
 .nygo{border:0;background:#e8452c;color:#fff;font-weight:900;font-size:16px;border-radius:12px;padding:10px 18px;box-shadow:0 3px 0 #a8301c}.nygo:active{transform:translateY(2px);box-shadow:0 1px 0 #a8301c}.nyc2{border:2px solid #cfe3a8;background:#fff;border-radius:10px;padding:6px 8px;font-size:15px}
 .ncal{margin-top:8px;background:#f9fdf1;border-radius:10px;padding:6px}.nch{font-size:13px;font-weight:800;color:#33501a;margin-bottom:4px}.nch small{font-weight:600;color:var(--muted);font-size:11px}.ncw{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}.ncw i{font-style:normal;text-align:center;font-size:11px;border-radius:6px;padding:4px 0;background:#fff;color:#999}.ncw i.w{background:none;font-weight:800;color:#33501a}.ncw i.e{background:none}.ncw i.on{background:#7cb342;color:#fff;font-weight:800}.ncw i.on::after{content:'●';display:block;font-size:8px}.ncw i.off::after{content:'×';display:block;font-size:9px;color:#d08070}.ncw i.td{outline:2px solid #e8452c}
 .mchh{font-weight:900;color:#33501a;font-size:15px}.mchh small{font-weight:600;color:var(--muted);font-size:11px}
+.bmsg{display:flex;gap:10px;align-items:flex-start;margin:10px 0 12px}.bmsg canvas{width:64px;height:64px;flex:none;image-rendering:pixelated;animation:bmhop 2.4s ease-in-out infinite}
+.bmb{position:relative;flex:1;background:#fff;border:3px solid #33501a;border-radius:16px;padding:8px 12px;box-shadow:0 3px 0 #33501a}.bmb::before{content:'';position:absolute;left:-12px;top:20px;border:6px solid transparent;border-right-color:#33501a;border-width:7px 10px 7px 0}
+.bmh{font-size:12px;font-weight:900;color:#e8452c}.bmb p{margin:4px 0;font-size:15px;font-weight:700;line-height:1.6;color:#33501a}.bmt{font-size:12px;color:#7a6020;font-weight:700}.bmb small{display:block;font-size:11px;color:var(--muted);margin-top:4px}
+.bmsg.newmsg .bmb{animation:bmpop .6s ease-out}@keyframes bmpop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}@keyframes bmhop{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 </style>
 
 </head>
@@ -2268,6 +2272,34 @@ function badge(){if(!ADMIN)return;const n=S.members.reduce((a,m)=>a+m.homework.f
 const _r3=render;render=function(){const r=_r3.apply(this,arguments);try{badge()}catch(e){console.warn(e)}return r};
 // トレーナーがゲストごとにつける評価（日付ごとに残る）
 const TEV=[['gb','頑張り度'],['kz','継続度'],['is','意識度'],['sk','宿題度'],['mk','目標実現度'],['nk','仲良し度']];
+
+// ===== 相棒から毎日のひとことメッセージ（1日1通・日替わり）=====
+const BTAIL={carrot:'にんじんパワー全開だ！🥕',piman:'ピッピマンが守ってるぞ！🫑',onion:'玉ちゃんの魔法、かけといたよ✨',cabbage:'キャベリンがいつも応援してるよ💚',daikon:'ダイコンタ、まっすぐ見てるよ🏹',tomato:'リコピンちゃんより愛をこめて🍅',pumpkin:'カボッチャ、ホクホク応援中！🎃',broccoli:'ブロッコ将軍、出陣じゃ！🥦',shoga:'ジンジャー忍者、影から見守るでござる🫚',imo:'イモ吉、いつでもそばにいるっぺ🍠'};
+const BOWN={
+ carrot:['{n}、今日も一歩前へ！その一歩が、いちばん強い剣になるんだ！','昨日の{n}より、今日の{n}がちょっと強い。それでじゅうぶん最高だ！','よーし{n}、今日もいっしょに燃えようぜ！オレンジ色に！','迷ったら、とりあえず動こう！体が答えを教えてくれるさ！','{n}の背中、どんどんたくましくなってるぞ！自信もっていこう！','がんばった日のごはんは、いつもよりおいしい！今日もいい日にしよう！'],
+ piman:['{n}、苦いことがあっても大丈夫！ボクだって苦いけど、栄養たっぷりだもん！','どんな日も、{n}のことはボクの盾が守る！安心して進もう！','ちょっと疲れた日は、深呼吸ひとつ。それも立派なトレーニングだよ！','{n}の「やってみよう」が、ボクはだいすき！','コツコツは最強の盾！{n}はもう、それを持ってる！','今日は自分にやさしく、でも一歩だけ前へ。{n}ならできる！'],
+ onion:['{n}に、元気が出る魔法をかけたよ。ほら、もう笑顔になってる！','まほうの呪文は「できる、できる、できる」！3回となえてみて！','{n}のがんばり、目にしみるほどまぶしいよ〜！','涙が出るほどがんばった日も、ちゃんと見てたよ。えらい！','今日の{n}は、きっといいことが起きる顔をしてる！','小さな魔法も、毎日かければ大きな奇跡になるんだよ！'],
+ cabbage:['{n}、今日もここにいてくれてありがとう。それだけで花マル🌸','がんばりすぎた日は、ゆっくり休むのもトレーニングだよ。','{n}の笑顔で、ジムがぱっと明るくなるんだよ！','一枚一枚かさねたキャベツみたいに、{n}の毎日もちゃんと積みかさなってるよ。','今日はどこが気持ちよく動いたかな？体にありがとうって言ってあげてね。','{n}のペースが、いちばんのペース。くらべなくて大丈夫！'],
+ daikon:['{n}、ねらいは決まった？あとは矢を放つだけ！','まっすぐ伸びる大根みたいに、{n}も今日ぐんと伸びるよ！','目標は遠くても大丈夫。一本ずつ当てていこう！','{n}の集中力、きょうは百発百中の予感！','背すじをピンと伸ばすだけで、気分もピンと上がるよ！','根っこが強い人は、どこまでも伸びる。{n}の根っこ、育ってるよ！'],
+ tomato:['{n}、今日もキラキラしてるね！真っ赤にときめいていこう！','がんばる{n}は、太陽みたいにかがやいてるよ☀️','お肌もココロもつやつや！今日もいい日になるよ！','ちょっとでも動けたら、それは今日の大勝利！','{n}のこと、ほんっとに応援してるんだから！','笑顔はいちばんの美容液。今日もニコッといこう！'],
+ pumpkin:['{n}、今日もほくほく元気にいこう！','どっしり構えて、ゆっくりでいいんだよ。じっくり甘くなるからね！','{n}のがんばりは、ちゃんと実ってるよ！','おなかがすいたら、それは体ががんばったしるし！','今日もかぼちゃの馬車で、ジムまで送っていくよ〜！','{n}の明日は、今日よりちょっと甘くておいしい日だよ！'],
+ broccoli:['{n}どの、本日の任務は「楽しく体を動かすこと」じゃ！','小さな房も集まれば立派な森となる。毎日の一歩もまた然り！','{n}どのの成長、将軍はしかと見ておるぞ！','休むも戦のうち。疲れたらしっかり休むのじゃ！','今日の{n}どのに、勲章をさずけよう！🎖','勝負は昨日の自分と。{n}どのなら必ず勝てる！'],
+ shoga:['{n}どの、体の奥からポカポカ燃えてきたでござるな！','忍びの極意は、毎日つづけること。{n}どのはもう達人でござる！','寒い日も、ジンジャーの火がついてるでござる！','静かな努力ほど強いもの。{n}どの、見ているでござるよ。','ニンニン！今日も元気の術、発動でござる！','深い呼吸は忍者の基本。吸って、吐いて、さあ行くでござる！'],
+ imo:['{n}、今日ものんびり、でもしっかりいくっぺ！','土の中でじっくり甘くなるみたいに、{n}も毎日いい感じに育ってるっぺ！','ちょっとサボりたい日もあるっぺ。それでも来たらえらいっぺ！','{n}がんばってるの、ちゃんと知ってるっぺよ〜！','ほっこり笑えば、体もココロもあったまるっぺ！','焼きいもみたいに、じわじわ熱くいくっぺ！']};
+const BSHARED=['{n}、今日も会えてうれしい！いっしょにがんばろう！','昨日より1回多く。それだけで、すごい進化だよ！','「やろうかな」と思った時点で、もう半分成功してるよ！','{n}の体は、{n}のいちばんの味方。今日もいたわってあげてね。','水をしっかり飲んで、今日もキラッといこう！💧','いい姿勢は、いい1日のはじまり。胸をはっていこう！','笑うと腹筋もきたえられるんだって！今日はたくさん笑おう！','野菜を1つ多く食べたら、今日はもう勝ちだよ🥗','階段を見つけたら、チャンス到来！','{n}のがんばりは、ちゃんと未来の{n}にとどいてるよ！','完璧じゃなくていい。つづけることが、いちばんかっこいい！','今日の自分に、花マル🌸をあげてね。','きついときは「あと1回」じゃなくて「ここまでやった！」と思おう！','よく寝て、よく食べて、よく動く。それが最強の作戦だよ！','{n}の「おはよう」から、今日の冒険がはじまるよ！','ひとりじゃないよ。チームのみんなも、トレーナーも、ぼくもいるよ！','ストレッチ1分でも、体はよろこぶよ！','汗はがんばった証拠。きらきらの勲章だよ✨','{n}のレベルアップ、すぐそこまで来てるよ！','今日のごほうびは何にする？楽しみをつくっていこう！','深呼吸を3回。ほら、もう元気がわいてきた！','{n}ならできる。ぼくはずっと信じてるよ！'];
+function bHash(str){let h=0;for(const c of str)h=(h*31+c.codePointAt(0))>>>0;return h}
+function bMsg(m){const k=m.buddy||HEROES[bHash(dayKey())%HEROES.length].key,h=HEROES.find(x=>x.key===k)||HEROES[0],d=new Date(),hr=d.getHours(),
+  last=(()=>{const a=(m.visits||[]).map(v=>{const q=String(v).split('-').map(Number);return new Date(q[0],q[1]-1,q[2]).getTime()});return a.length?Math.floor((Date.now()-Math.max(...a))/864e5):-1})();
+  const pool=[...(BOWN[k]||[]),...BSHARED],pick=pool[bHash(dayKey()+'|'+m.id+'|'+k)%pool.length].replace(/\{n\}どの/g,m.name+'どの').replace(/\{n\}/g,m.name+(k==='broccoli'||k==='shoga'?'どの':'さん'));
+  const hi=hr<10?'おはよう！':hr<17?'やっほー！':'おつかれさま！';
+  let ex='';if(last===0)ex='今日もジムに来てくれたね、えらい！';else if(last>=7)ex='そろそろ会いたいな〜。ジムで待ってるよ！';else if(d.getDay()===6)ex='今日は土曜日！チーム対抗戦の発表日だよ！';else if(d.getDay()===1)ex='新しい1週間のはじまり！いいスタートを切ろう！';
+  return {h,text:`${hi}${pick}${ex?' '+ex:''}`,tail:BTAIL[k]||'',nobuddy:!m.buddy}}
+function bmsgCard(){if(tab!=='hero')return;const v=document.getElementById('view'),sc=v&&v.querySelector('.scene');if(!sc||document.getElementById('bmsg'))return;const m=me();if(!m)return;
+  const b=bMsg(m),d=document.createElement('div');d.id='bmsg';d.className='bmsg';
+  d.innerHTML=`<canvas data-hero="${b.h.key}"></canvas><div class="bmb"><div class="bmh">📩 ${esc(b.h.name)}から 今日のひとこと</div><p>${esc(b.text)}</p><div class="bmt">${esc(b.tail)}</div>${b.nobuddy?'<small>下の「相棒をえらぶ」で、毎日メッセージをくれる相棒を決められるよ</small>':''}</div>`;
+  const after=document.getElementById('snapgo')||sc;after.after(d);
+  if(!ADMIN&&m.bmsgDay!==dayKey()){m.bmsgDay=dayKey();save();d.classList.add('newmsg');setTimeout(()=>{try{toast(`📩 ${b.h.name}からメッセージが届いたよ！`)}catch(e){}},400)}}
+const _rB=render;render=function(){const r=_rB.apply(this,arguments);try{bmsgCard()}catch(e){console.warn(e)}return r};
 // ===== 入室ボタン（トレーナーが押す）・出欠カレンダー =====
 function vDate(v){const a=String(v).split('-').map(Number);return new Date(a[0],a[1]-1,a[2],12).getTime()}
 function inToday(m){return (m.visits||[]).includes(ymd(new Date()))}
