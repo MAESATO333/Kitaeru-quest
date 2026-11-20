@@ -374,6 +374,12 @@ body.adminv .pvsw a.on{background:#9b2f5e}
 .tevbox .gmr span{width:5.6em}.tevh{border-top:2px dashed #e3ecd0;padding-top:8px}.tevht{font-size:12px;font-weight:800;color:#2f6d2a;margin-bottom:4px}
 #tevlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}#tevlist li{background:#fafdf3;border-radius:10px;padding:6px 10px;font-size:12px}.tevd{font-weight:800;color:#4a5a3a}.tevv{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:2px}.tevv b{color:#e8452c}.tevm{margin-top:2px;color:var(--muted)}
 .gtag{font-size:10px;background:#e8f0fe;color:#1a56c4;border-radius:6px;padding:1px 5px;margin-left:4px}
+body.adminv #myBtn{display:none}
+.mysum{display:grid;grid-template-columns:repeat(4,1fr);text-align:center;gap:4px}.mysum b{display:block;font-family:var(--display);font-size:20px;color:#2f6d2a}.mysum small{font-size:11px;color:var(--muted)}
+.mymood{display:flex;flex-wrap:wrap;gap:4px}.mymood button{font-size:20px;background:#fff;border:2px solid #e3ecd0;border-radius:12px;padding:2px 6px}.mymood button.on{border-color:#e8452c;background:#fff3ef}
+.mydia,.myrec{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}.mydia li{display:grid;grid-template-columns:30px 1fr auto;gap:6px;align-items:start;background:#fafdf3;border-radius:12px;padding:8px}.mydia .mdm{font-size:22px}.mydia small{font-size:11px;color:var(--muted)}.mydia p{margin:2px 0 0;font-size:14px;white-space:pre-wrap}.mydia button{background:none;border:0;color:#b0b8a0;font-size:14px}
+.myrec li.muted,.mydia li.muted{display:block!important;background:none}
+.myrec li{display:grid;grid-template-columns:38px 1fr auto;gap:6px;font-size:13px;border-bottom:1px dashed #e3ecd0;padding:4px 0}.myrec small{color:var(--muted)}.myrec b{color:#e8452c;font-size:12px}.myf{margin:0 0 6px}
 </style>
 
 </head>
@@ -382,7 +388,7 @@ body.adminv .pvsw a.on{background:#9b2f5e}
   <header>
     <div class="logo"><div class="vlogo" role="img" aria-label="キタエル・クエスト"><b>キタエル・クエスト</b><span>KITAERU <i>●</i> QUEST</span></div><small style="color:var(--leaf);font-weight:700">試作版</small></div>
     <span id="admBadge" class="admb">トレーナー管理ページ</span><label class="whol"><span>ゲスト</span><select id="who" aria-label="表示するゲスト"></select><b id="whoName" class="whon"></b></label>
-    <button id="hwBtn" class="mode" type="button">宿題</button><i class="hbr"></i><button id="modeBtn" class="mode" type="button">トレーナー</button>
+    <button id="myBtn" class="mode" type="button">マイページ</button><button id="hwBtn" class="mode" type="button">宿題</button><i class="hbr"></i><button id="modeBtn" class="mode" type="button">トレーナー</button>
   </header>
   <main id="view"></main>
 </div>
@@ -1300,7 +1306,7 @@ const NAVH={hero:['carrot','#f08a12'],log:['piman','#3f9a3a'],feed:['tomato','#e
 const TABS=[['hero','冒険者','◆'],['log','記録','＋'],['feed','キタ酒場','≡'],['rank','番付','▲'],['boss','ボス','✦']];
 function renderTabs(){
   const list=ADMIN?[['guild','管理','★'],...TABS]:TABS;
-  if(tab!=='zukan'&&!list.find(x=>x[0]===tab))tab='hero';
+  if(tab!=='zukan'&&!(tab==='mypage'&&!ADMIN)&&!list.find(x=>x[0]===tab))tab='hero';
   $('#tabs').innerHTML=list.map(([k,l,i])=>{const nh=NAVH[k]||NAVH.hero;return `<button type="button" data-t="${k}" class="${k===tab?'on':''}" style="--hc:${nh[1]}"><canvas class="nh" data-hero="${nh[0]}"></canvas><span class="nl">${l}</span></button>`}).join('');
   $('#tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;S.trainerMode=ADMIN;save();render();window.scrollTo(0,0)});
 }
@@ -1309,7 +1315,8 @@ function render(){
   $('#who').innerHTML=(ADMIN?S.members:[me()]).map(m=>`<option value="${m.id}" ${m.id===S.current?'selected':''}>${esc(m.name)}</option>`).join('');
   $('#modeBtn').classList.toggle('on',S.trainerMode);document.body.classList.toggle('kensa',KS());
   renderTabs();
-  ({hero:vHero,log:vLog,feed:vFeed,rank:vRank,boss:vBoss,guild:vGuild,zukan:vZukan})[tab]();
+  ({hero:vHero,log:vLog,feed:vFeed,rank:vRank,boss:vBoss,guild:vGuild,zukan:vZukan,mypage:vMy})[tab]();
+  const mb=$('#myBtn');if(mb)mb.classList.toggle('on',tab==='mypage');
 }
 
 function vHero(){
@@ -1517,6 +1524,37 @@ function vBoss(){
 }
 
 let zLook='m';
+// ---------- マイページ（本人だけ） ----------
+let myF='all';
+const MYF=[['all','すべて'],['lift','加圧トレ'],['yoga','YOGA'],['meal','食事セラピー'],['kapala','カパラバティ'],['etc','そのほか']];
+function myKind(t){return /食事|ごはん|食べ|飲/.test(t)?'meal':/カパラバティ|呼吸|バストリカ|アヌロマ/.test(t)?'kapala':/ポーズ|アーサナ|YOGA|ヨガ/.test(t)?'yoga':/kg|回×|セット|スクワット|プランク|ランジ|加圧/.test(t)?'lift':'etc'}
+const MOODS=['😊','😆','🥰','😌','💪','😢','😤','😴'];
+function vMy(){const m=me(),L=levelOf(total(m)),fd=new Date();
+  const mine=S.feed.filter(p=>p.who===m.id||p.to===m.id);
+  const recs=mine.filter(p=>p.who===m.id&&(myF==='all'||myKind(p.text)===myF));
+  const hw=m.homework||[],hana=hw.filter(h=>h.status==='stamped').length,days=new Set(mine.filter(p=>p.who===m.id).map(p=>new Date(p.t).toDateString())).size;
+  const dia=(m.diary||[]).slice().sort((a,b)=>b.t-a.t);
+  const ds=t=>{const d=new Date(t);return `${d.getMonth()+1}/${d.getDate()}`};
+  $('#view').innerHTML=`<h2>マイページ</h2>
+  <p class="muted" style="margin:-4px 2px 8px;font-size:12px">ここは${esc(m.name)}さんだけが見られるページです。</p>
+  <div class="card mysum"><div><b>Lv${L.lv}</b><small>レベル</small></div><div><b>${total(m).toLocaleString()}</b><small>これまでのEXP</small></div><div><b>${days}</b><small>記録した日</small></div><div><b>${hana}</b><small>花マル🌸</small></div></div>
+  <h2>できごとノート</h2>
+  <div class="card stack"><div class="mymood" id="mymood">${MOODS.map((e,i)=>`<button type="button" data-md="${e}" class="${i?'':'on'}">${e}</button>`).join('')}</div>
+    <input id="mydt" type="date" value="${fd.getFullYear()}-${String(fd.getMonth()+1).padStart(2,'0')}-${String(fd.getDate()).padStart(2,'0')}">
+    <textarea id="mytx" rows="3" maxlength="400" placeholder="例：はじめてプランク1分できた！ 体が軽くなってきた。トレーナーさんにほめられた。"></textarea>
+    <button type="button" class="btn-main" id="mysave">ノートに残す</button>
+    <ul class="mydia">${dia.length?dia.map(d=>`<li><span class="mdm">${d.mood||'😊'}</span><div><small>${esc(d.date||ds(d.t))}</small><p>${esc(d.text)}</p></div><button type="button" data-dd="${d.t}" aria-label="消す">✕</button></li>`).join(''):'<li class="muted">まだありません。うれしかったこと、がんばったこと、からだの変化など、なんでも残せます。</li>'}</ul></div>
+  <h2>わたしの記録</h2>
+  <div class="tplf myf">${MYF.map(([k,l])=>`<button type="button" data-mf="${k}" class="${k===myF?'on':''}">${l}</button>`).join('')}</div>
+  <div class="card"><ul class="myrec">${recs.length?recs.slice(0,60).map(p=>`<li><small>${ds(p.t)}</small><span>${esc(p.text)}</span>${p.xp?`<b>+${p.xp}</b>`:''}</li>`).join(''):'<li class="muted">まだ記録がありません。「記録」タブから記録すると、ここにたまっていきます。</li>'}</ul></div>
+  <h2>宿題のあゆみ</h2>
+  <div class="card"><ul class="myrec">${hw.length?hw.slice().reverse().map(h=>`<li><small>${h.status==='stamped'?'🌸':h.status==='done'?'⏳':'📝'}</small><span>${esc(h.text.split('\n')[0])}</span></li>`).join(''):'<li class="muted">まだ宿題はありません。</li>'}</ul></div>`;
+  let mood=MOODS[0];
+  $('#mymood').onclick=e=>{const b=e.target.closest('[data-md]');if(!b)return;mood=b.dataset.md;$('#mymood').querySelectorAll('.on').forEach(x=>x.classList.remove('on'));b.classList.add('on')};
+  $('#mysave').onclick=()=>{const t=$('#mytx').value.trim();if(!t){toast('ノートに書く内容を入れてください');return}const dv=$('#mydt').value;const [y,mo,da]=dv?dv.split('-'):[];m.diary=m.diary||[];m.diary.push({t:Date.now(),date:dv?`${+mo}/${+da}`:'',mood,text:t});save();toast('ノートに残しました');vMy()};
+  document.querySelectorAll('[data-dd]').forEach(b=>b.onclick=()=>{m.diary=(m.diary||[]).filter(d=>String(d.t)!==b.dataset.dd);save();vMy()});
+  document.querySelectorAll('[data-mf]').forEach(b=>b.onclick=()=>{myF=b.dataset.mf;vMy()});
+}
 function vZukan(){
   const m=me(),lv=levelOf(total(m)).lv,cur=stageOfLv(lv),cls=STAT[topStat(m)].hex;
   $('#view').innerHTML=`<h2>進化図鑑</h2>
@@ -1677,6 +1715,7 @@ function vGuild(){
 
 $('#who').onchange=e=>{S.current=e.target.value;save();render()};
 window.kensaToggle=()=>{S.kensa=!KS();save();render();toast(KS()?'検査モード：ぜんぶ表示します':'ふつうの表示にもどしました')};
+$('#myBtn').onclick=()=>{tab='mypage';render();window.scrollTo(0,0)};
 $('#hwBtn').onclick=()=>{const tr=ADMIN;tab=tr?'guild':'hero';render();setTimeout(()=>{const h=[...document.querySelectorAll('#view h2')].find(x=>x.textContent.includes(tr?'宿題を出す':'トレーナーからの宿題'));if(h)h.scrollIntoView({behavior:'smooth',block:'start'})},80)};
 $('#modeBtn').onclick=()=>{};
 render();
