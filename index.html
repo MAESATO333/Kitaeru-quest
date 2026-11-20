@@ -403,6 +403,12 @@ nav{flex-direction:column;align-items:center;gap:5px}
 @media (max-width:400px){#tabs2 .nh2{font-size:20px;line-height:24px;height:24px}}
 .nline{display:flex;align-items:center;gap:8px;width:100%;margin:2px 0 4px;padding:8px 12px;border-radius:12px;border:2px solid #33501a;background:#fffbe0;color:#33501a;font-weight:800;font-size:13px;text-align:left;box-shadow:0 2px 0 #33501a}
 .nline .nlh{flex:none;color:#c26a00;display:flex;align-items:center;gap:4px}.nline .nlt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nline .nlm{flex:none;font-size:16px}.nline .nbadge{position:static}
+#gform.reqmode>label,#gform.reqmode>#glogin,#gform.reqmode>.gor,#gform.reqmode>#ggoogle,#gform.reqmode>#gforgot,#gform.reqmode>.gn{display:none}
+.greq{display:flex;flex-direction:column;gap:10px;margin-top:6px}.greq label{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:13px}.greq input{padding:10px;border-radius:10px;border:2px solid #d6e6b0;font-size:16px}
+.greq .rqh,.greq .rqok{background:#f3f9dc;border-radius:12px;padding:12px;font-size:14px;line-height:1.7;text-align:center}.greq .rqok{background:#fffbe0;border:2px solid #f39a1e}
+.rqlist ul{list-style:none;padding:0;margin:6px 0 0;display:flex;flex-direction:column;gap:8px}.rqlist li{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#fff;border-radius:10px;padding:8px 10px;font-size:13px}.rqlist .rqm{color:#666;font-size:12px}.rqlist .rqbtn{display:flex;gap:6px;flex:none}.rqlist .rqbtn button{padding:6px 10px;border-radius:999px;border:2px solid #d6e6b0;background:#fff;font-weight:800}.rqlist .rqbtn .ok{background:#e8452c;color:#fff;border-color:#e8452c}
+.subback{display:inline-flex;align-items:center;gap:4px;margin:12px 0 0;padding:8px 16px;border-radius:999px;border:2px solid #33501a;background:#fff;color:#33501a;font-weight:800;font-size:14px;box-shadow:0 2px 0 #33501a}
+#view>.subback+h2{margin-top:10px}
 </style>
 
 </head>
@@ -1891,7 +1897,8 @@ if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.s
 <button class="ggl" id="ggoogle" type="button"><svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.2-.1-2.4-.4-3.5z"/></svg>Googleでログイン</button>
 <div class="gm" id="gmsg"></div>
 <button class="gl" id="gforgot" type="button">パスワードを忘れたとき</button>
-<div class="gn">ログインのアカウントは、ジムのトレーナーが作ります。<br>お持ちでない方は、受付でお声がけください。</div>
+<div id="greq" class="greq" hidden></div>
+<div class="gn">はじめての方は「Googleでログイン」を押して、登録を申請してください。<br>トレーナーが承認すると使えるようになります。</div>
 </form></div><script>
 (function(){
 const LOCK=false;let ON=/[?&]login=1/.test(location.search);try{if(ON)localStorage.setItem('kq-login','1');if(/[?&]login=0/.test(location.search))localStorage.removeItem('kq-login');ON=ON||localStorage.getItem('kq-login')==='1'}catch(e){}ON=ON||(LOCK&&/\.web\.app$|\.firebaseapp\.com$/.test(location.hostname));
@@ -1904,6 +1911,21 @@ window.AUTH.ja=JA;
 const V='10.12.2',load=src=>new Promise((r,j)=>{const s=document.createElement('script');s.src=src;s.onload=r;s.onerror=()=>j(new Error('load '+src));document.head.appendChild(s)});
 const boot=window.__FB_BOOT||(()=>load(`/__/firebase/${V}/firebase-app-compat.js`).then(()=>Promise.all([load(`/__/firebase/${V}/firebase-auth-compat.js`),load(`/__/firebase/${V}/firebase-firestore-compat.js`)])).then(()=>load('/__/firebase/init.js')));
 function applyRole(){const tr=AUTH.role==='trainer';if(ADMIN&&!tr){alert('ここはトレーナー専用の管理ページです。ゲストの画面にもどります。');location.replace(window.KQ_GUEST_URL);return}document.body.classList.add('signed');document.body.classList.toggle('member',!tr);if(!tr){S.trainerMode=false;S.kensa=false;S.current='me';const me0=S.members.find(x=>x.id==='me');if(me0&&AUTH.name)me0.name=AUTH.name;if(tab==='guild')tab='hero';save()}render()}
+// 登録の申請（Googleで入ったが、まだ登録されていない人）
+let reqWatch=null;
+async function showReq(u,db,auth){const box=$g('greq');if(!box)return;$g('gform').classList.add('reqmode');box.hidden=false;msg('');
+  const rq=db.doc('requests/'+u.uid);let has=false;try{const d=await rq.get();has=d.exists}catch(e){console.warn(e)}
+  const out=`<button type="button" class="gl" id="rqout">別のアカウントで入る（ログアウト）</button>`;
+  if(has){box.innerHTML=`<div class="rqok">📨 申請しました！<br><b>${esc(u.email)}</b><br>トレーナーが承認すると、自動で入れます。<br>このまま待つか、あとでもう一度開いてください。</div>${out}`}
+  else{box.innerHTML=`<div class="rqh">はじめまして！<br><b>${esc(u.email)}</b> はまだ登録されていません。<br>お名前を入れて、登録を申請してください。</div>
+    <label>お名前（ジムで呼ばれている名前）<input id="rqname" maxlength="20" value="${esc(u.displayName||'')}"></label>
+    <label>ひとこと（なくてもOK）<input id="rqmsg" maxlength="60" placeholder="例：火曜日に通っています"></label>
+    <button type="button" class="gb" id="rqsend">登録を申請する</button>${out}`;
+    $g('rqsend').onclick=async()=>{const name=$g('rqname').value.trim();if(!name){msg('お名前を入れてください');return}$g('rqsend').disabled=true;
+      try{await rq.set({email:(u.email||'').toLowerCase(),name,msg:$g('rqmsg').value.trim(),t:Date.now()});showReq(u,db,auth)}catch(e){console.warn(e);msg('申請できませんでした。受付でお声がけください。［'+(e.code||e.message)+'］');$g('rqsend').disabled=false}}}
+  $g('rqout').onclick=()=>auth.signOut();
+  // 承認されたら自動で入る
+  if(reqWatch)reqWatch();const ref=db.doc('roles/'+u.uid);if(ref.onSnapshot)reqWatch=ref.onSnapshot(d=>{if(d.exists){reqWatch&&reqWatch();reqWatch=null;const x=d.data();AUTH.role=x.role||'member';AUTH.name=x.name||'';box.hidden=true;box.innerHTML='';$g('gform').classList.remove('reqmode');document.body.classList.remove('locked');applyRole()}},e=>console.warn(e))}
 boot().then(()=>{
   const auth=firebase.auth(),db=firebase.firestore();
   $g('gform').onsubmit=e=>{e&&e.preventDefault&&e.preventDefault();const em=$g('gemail').value.trim(),pw=$g('gpass').value;if(!em||!pw){msg('メールアドレスとパスワードを入れてください');return false}$g('glogin').disabled=true;msg('ログインしています…',1);auth.signInWithEmailAndPassword(em,pw).catch(err=>msg(JA(err))).finally(()=>$g('glogin').disabled=false);return false};
@@ -1912,7 +1934,7 @@ boot().then(()=>{
   auth.getRedirectResult().catch(err=>msg(JA(err)));
   $g('gforgot').onclick=()=>{const em=$g('gemail').value.trim();if(!em){msg('上にメールアドレスを入れてから押してください');return}auth.sendPasswordResetEmail(em).then(()=>msg('パスワード再設定のメールを送りました',1)).catch(err=>msg(JA(err)))};
   auth.onAuthStateChanged(async u=>{
-    if(!u){AUTH.user=null;document.body.classList.remove('signed','member');document.body.classList.add('locked');return}
+    if(!u){if(reqWatch){reqWatch();reqWatch=null}{const r=$g('greq');if(r){r.hidden=true;r.innerHTML=''}$g('gform').classList.remove('reqmode')}AUTH.user=null;document.body.classList.remove('signed','member');document.body.classList.add('locked');return}
     AUTH.user=u;let role='member',name='';
     const isG=(u.providerData||[]).some(p=>p&&p.providerId==='google.com')&&!(u.providerData||[]).some(p=>p&&p.providerId==='password');let ok=false,why='';
     const ref=db.doc('roles/'+u.uid),em=(u.email||'').toLowerCase();
@@ -1926,7 +1948,9 @@ boot().then(()=>{
     if(!ok&&u.emailVerified){try{const hb=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(em));const hx=[...new Uint8Array(hb)].map(b=>b.toString(16).padStart(2,'0')).join('');if(hx==='74933ede2c82fa570047fbcc8a1dd24b985c979d4b98455984ae35a15bf16936'){role='trainer';name='オーナー';ok=true;console.warn('owner fallback: Firestore rules denied ('+why+')')}}catch(e){console.warn(e)}}
     // ④ メール/パスワードで入った人は、トレーナーが作ったアカウントなので会員として入れる
     if(!ok&&!isG){role='member';ok=true}
+    if(!ok&&isG){console.warn('login: no role yet',u.email,why);showReq(u,db,auth);return}
     if(!ok){msg(`このアカウント（${u.email}）は、ジムに登録されていません。受付でお声がけください。`+`［${why||'no-role'}］`);console.warn('login denied',u.email,u.uid,why);await auth.signOut();return}
+    {const r=$g('greq');if(r){r.hidden=true;r.innerHTML=''}$g('gform').classList.remove('reqmode')}
     AUTH.role=role;AUTH.name=name;document.body.classList.remove('locked');applyRole();
   });
 }).catch(e=>{msg('ログインの準備ができませんでした。通信を確認して、もう一度開いてください');console.warn(e)});
@@ -1941,6 +1965,13 @@ function acctPanel(){const v=document.getElementById('view');if(!v||document.get
   <button type="button" class="btn-main" id="amk">アカウントを作る</button><div class="gm" id="amsg" style="font-size:13px"></div>
   <details id="alist"><summary style="cursor:pointer;font-size:13px;color:#2f6d2a;font-weight:700">登録されているアカウントを見る</summary><ul></ul></details>`;
   v.insertBefore(d,v.firstChild);
+  const rqs=document.createElement('section');rqs.id='rqlist';rqs.className='acct rqlist';rqs.innerHTML='<h3>📨 登録の申請</h3><ul><li class="muted">読みこみ中…</li></ul>';d.before(rqs);loadReq();
+  async function loadReq(){const ul=rqs.querySelector('ul'),db=firebase.firestore();try{const q=await db.collection('requests').get();const a=[];q.forEach(x=>a.push({id:x.id,...x.data()}));a.sort((x,y)=>(x.t||0)-(y.t||0));
+    rqs.querySelector('h3').innerHTML=`📨 登録の申請${a.length?` <i class="nbadge in">${a.length}</i>`:''}`;
+    ul.innerHTML=a.length?a.map(x=>`<li><span><b>${esc(x.name||'')}</b> ${esc(x.email||'')}${x.msg?`<br><span class="rqm">「${esc(x.msg)}」</span>`:''}</span><span class="rqbtn"><button type="button" class="ok" data-ok="${esc(x.id)}">承認</button><button type="button" data-ng="${esc(x.id)}">見送る</button></span></li>`).join(''):'<li class="muted">いま、申請はありません。</li>';
+    ul.querySelectorAll('[data-ok]').forEach(b=>b.onclick=async()=>{const x=a.find(y=>y.id===b.dataset.ok);b.disabled=true;try{await db.doc('roles/'+x.id).set({role:'member',email:x.email||'',name:x.name||'',via:'request',t:Date.now()});await db.doc('requests/'+x.id).delete();toast(`${x.name||x.email} さんを承認しました`);loadReq()}catch(e){toast(JA(e));b.disabled=false}});
+    ul.querySelectorAll('[data-ng]').forEach(b=>b.onclick=async()=>{const x=a.find(y=>y.id===b.dataset.ng);if(!confirm(`${x.name||x.email} さんの申請を見送りますか？`))return;try{await db.doc('requests/'+x.id).delete();loadReq()}catch(e){toast(JA(e))}})
+  }catch(e){ul.innerHTML=`<li class="muted">申請を読めませんでした（Firebaseのルールの更新が必要かもしれません）［${esc(e.code||e.message)}］</li>`}}
   const am=(t,ok)=>{const m=document.getElementById('amsg');m.textContent=t;m.style.color=ok?'#2f6d2a':'#c0392b'};
   document.getElementById('amk').onclick=async()=>{const name=document.getElementById('an').value.trim(),role=document.getElementById('ar').value,email=document.getElementById('ae').value.trim(),pw=document.getElementById('ap').value;if(!email){am('メールアドレスを入れてください');return}
     if(!pw){am('登録しています…',1);try{await firebase.firestore().doc('roles/g_'+email.toLowerCase()).set({role,email:email.toLowerCase(),name,google:true,t:Date.now()});am(`${name||email} を登録しました。このGmailで「Googleでログイン」から入れます`,1);['an','ae','ap'].forEach(i=>document.getElementById(i).value='');listAcc()}catch(e){am(JA(e))}return}
@@ -2017,7 +2048,7 @@ function newsAdmin(){if(!ADMIN||tab!=='guild'||document.getElementById('nwadm'))
   d.querySelector('#nwlist').onclick=e=>{const p=e.target.closest('[data-np]'),x=e.target.closest('[data-nd]');if(p){const n=NEWS().find(n=>n.id==p.dataset.np);n.pin=!n.pin;save();draw()}if(x){S.news=NEWS().filter(n=>n.id!=x.dataset.nd);save();draw();toast('ニュースを消しました')}}}
 // ===== キタエル写真館 =====
 // 試作版：写真はこの端末に保存（小さくしてから）。動画はこの画面を開いている間だけ。本番はFirebase Storageに保存します。
-const PKEY='kq-photos';let PH=[];try{PH=JSON.parse(localStorage.getItem(PKEY))||[]}catch(e){PH=[]}
+const PKEY='kq-photos';let PH=[];try{PH=JSON.parse(localStorage.getItem(PKEY))||[]}catch(e){PH=[]}PH.forEach(x=>{if(x.st==='pending')x.st='ok'});
 const PVID={};
 function phSave(){try{localStorage.setItem(PKEY,JSON.stringify(PH));return true}catch(e){toast('この端末の保存容量がいっぱいです。古い写真を消してください');return false}}
 function shrink(file){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,900/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',0.72))};im.onerror=rej;im.src=fr.result};fr.onerror=rej;fr.readAsDataURL(file)})}
@@ -2025,22 +2056,22 @@ function phMedia(x){if(x.kind==='video'){const u=PVID[x.id];return u?`<video src
 function phCard(x,adm){const mine=x.by===S.current&&!x.byT;return `<figure class="phc">${phMedia(x)}<figcaption><b>${esc(x.cap||'')}</b><small>${x.byT?'📷 '+esc(x.byT)+'トレーナー':esc(x.name||'')}・${newsDate(x.t)}${x.st==='pending'?' ・ <em>承認待ち</em>':''}</small>${x.st==='ok'?(()=>{const L=x.love||[],on=L.includes(S.current),own=x.by===S.current&&!x.byT;return `<button type="button" class="phlove ${on?'on':''}" data-pl="${x.id}" ${on||own||ADMIN?'disabled':''}>💗 愛だね！ <b>${L.length}</b></button>`})():''}
   ${adm&&x.st==='pending'?`<span class="phbtn"><button type="button" class="btn-main" data-pa="${x.id}">公開する</button><button type="button" data-pr="${x.id}">見送る</button></span>`:''}${(adm||mine)?`<button type="button" class="phdel" data-pdel="${x.id}">消す</button>`:''}</figcaption></figure>`}
 function vPhoto(){const m=me(),pub=PH.filter(x=>x.st==='ok').sort((a,b)=>b.t-a.t),mineP=PH.filter(x=>x.st==='pending'&&x.by===S.current&&!x.byT);
-  $('#view').innerHTML=`<h2>📷 キタエル写真館</h2><p class="muted" style="margin:-4px 2px 8px;font-size:12px">トレーナーやゲストの写真、トレーニング中の動画をみんなで見られます。ゲストの投稿は、トレーナーが確認してから公開されます。</p>
+  $('#view').innerHTML=`<h2>📷 キタエル写真館</h2><p class="muted" style="margin:-4px 2px 8px;font-size:12px">トレーナーやゲストの写真、トレーニング中の動画をみんなで見られます。ゲストもトレーナーも、投稿するとすぐにみんなに公開されます。よくない投稿は、トレーナーが消せます。</p>
   <div class="card stack phup"><label>写真・動画をえらぶ<input type="file" id="phf" accept="image/*,video/*"></label><div id="phpv" class="phpv"></div>
    <label>ひとこと<input id="phcap" maxlength="60" placeholder="例：今日はじめてヘッドスタンドできた！"></label>
    <label class="nwchk"><input type="checkbox" id="phok"> 写っている人みんなの了解をとりました</label>
-   <button type="button" class="btn-main" id="phsend">${ADMIN?'写真館に公開する':'トレーナーに送って公開してもらう'}</button>
+   <button type="button" class="btn-main" id="phsend">写真館に公開する</button>
    <p class="muted" style="font-size:11px;margin:0">試作版：写真はこの端末の中だけに保存されます。動画は画面を閉じると消えます。</p></div>
   ${mineP.length?`<h2>確認待ち（あなたの投稿）</h2><div class="phgrid">${mineP.map(x=>phCard(x,false)).join('')}</div>`:''}
   <h2>みんなの写真・動画</h2><div class="phgrid">${pub.length?pub.map(x=>phCard(x,ADMIN)).join(''):'<p class="muted">まだありません。最初の1枚をどうぞ！</p>'}</div>
   <button type="button" class="nwall" id="phBack">‹ ${ADMIN?'管理':'キタ酒場'}にもどる</button>`;
   let file=null;$('#phf').onchange=e=>{file=e.target.files[0];const pv=$('#phpv');if(!file){pv.innerHTML='';return}const u=URL.createObjectURL(file);pv.innerHTML=file.type.startsWith('video')?`<video src="${u}" controls playsinline></video>`:`<img src="${u}" alt="">`};
   $('#phsend').onclick=async()=>{if(!file){toast('写真か動画をえらんでください');return}if(!$('#phok').checked){toast('写っている人の了解をとってから、チェックを入れてください');return}
-    const x={id:Date.now(),t:Date.now(),cap:$('#phcap').value.trim(),st:ADMIN?'ok':'pending',by:S.current,name:m.name,byT:ADMIN?TN():null,kind:file.type.startsWith('video')?'video':'image'};
+    const x={id:Date.now(),t:Date.now(),cap:$('#phcap').value.trim(),st:'ok',by:S.current,name:m.name,byT:ADMIN?TN():null,kind:file.type.startsWith('video')?'video':'image'};
     try{if(x.kind==='video'){PVID[x.id]=URL.createObjectURL(file)}else{x.src=await shrink(file)}}catch(e){toast('読みこめませんでした');return}
     PH.push(x);if(!phSave()){PH.pop();return}
     if(ADMIN)S.feed.unshift({id:S.nextId++,who:'trainer',tn:TN(),text:`📷 写真館に新しい${x.kind==='video'?'動画':'写真'}：${x.cap||''}`,xp:0,stat:'grit',t:Date.now(),cheers:[]}),save();
-    toast(ADMIN?'写真館に公開しました':'トレーナーに送りました。確認されたら公開されます');vPhoto()};
+    toast('写真館に公開しました');vPhoto()};
   $('#phBack').onclick=()=>{tab=ADMIN?'guild':'feed';render();window.scrollTo(0,0)};
   phBind()}
 function phBind(){document.querySelectorAll('[data-pl]').forEach(b=>b.onclick=()=>{const x=PH.find(x=>x.id==b.dataset.pl);if(!x)return;x.love=x.love||[];if(x.love.includes(S.current))return;x.love.push(S.current);phSave();const m=me();m.stats.grit+=2;const to=!x.byT&&byId(x.by);if(to&&to!==m)to.stats.grit+=2;save();toast(`💗 愛だね！を送りました　根性+2${to?`（${to.name}さんにも+2）`:''}`);render()});document.querySelectorAll('[data-pdel]').forEach(b=>b.onclick=()=>{PH=PH.filter(x=>x.id!=b.dataset.pdel);phSave();toast('消しました');render()});
@@ -2048,7 +2079,7 @@ function phBind(){document.querySelectorAll('[data-pl]').forEach(b=>b.onclick=()
   document.querySelectorAll('[data-pr]').forEach(b=>b.onclick=()=>{PH=PH.filter(x=>x.id!=b.dataset.pr);phSave();toast('見送りました（消しました）');render()})}
 function phEntry(){const v=document.getElementById('view');if(!v||document.getElementById('phent'))return;
   if(tab==='feed'){const b=document.createElement('button');b.type='button';b.id='phent';b.className='phent';b.innerHTML='📷 キタエル写真館を見る <small>写真・動画</small>';b.onclick=()=>{tab='photo';render();window.scrollTo(0,0)};const h=v.querySelector('h2');if(h)h.after(b)}
-  if(ADMIN&&tab==='guild'){const pend=PH.filter(x=>x.st==='pending');const d=document.createElement('section');d.id='phent';d.innerHTML=`<h2>📷 写真館の承認待ち（${pend.length}件）</h2>${pend.length?`<div class="phgrid">${pend.map(x=>phCard(x,true)).join('')}</div>`:'<div class="card muted">承認待ちの写真・動画はありません。</div>'}<button type="button" class="nwall" id="phgo">📷 写真館をひらく（トレーナーとして投稿） ›</button>`;
+  if(ADMIN&&tab==='guild'){PH.forEach(x=>{if(x.st==='pending')x.st='ok'});const pend=PH.filter(x=>!x.byT).sort((a,b)=>b.t-a.t).slice(0,6);const d=document.createElement('section');d.id='phent';d.innerHTML=`<h2>📷 写真館：ゲストの新しい投稿</h2><p class="muted" style="margin:-4px 2px 8px;font-size:12px">ゲストの投稿はすぐ公開されます。よくないものは「消す」で消せます。</p>${pend.length?`<div class="phgrid">${pend.map(x=>phCard(x,true)).join('')}</div>`:'<div class="card muted">ゲストの投稿はまだありません。</div>'}<button type="button" class="nwall" id="phgo">📷 写真館をひらく（トレーナーとして投稿） ›</button>`;
     const h=[...v.querySelectorAll('h2')].find(x=>x.textContent.includes('宿題を出す'));v.insertBefore(d,h||null);d.querySelector('#phgo').onclick=()=>{tab='photo';render();window.scrollTo(0,0)};phBind()}}
 // ===== キタエル掲示板 =====
 const BCAT=[['hw','📝 宿題','どんな宿題をやってる？'],['shop','🍽 お店','近くのいいお店'],['gift','🎁 差し入れ','差し入れをいただきました！'],['etc','💬 その他','なんでも']];let bF='all';
@@ -2110,6 +2141,12 @@ function qNav(){if(tab!=='hero'||document.getElementById('qnav'))return;const v=
   const d=document.createElement('nav');d.id='qnav';d.className='qnav';d.innerHTML=it.map(([t,i,l,n])=>`<button type="button" data-q="${t}"><b>${i}</b><span>${l}</span>${n?`<i class="nbadge">${n}</i>`:''}</button>`).join('');
   v.insertBefore(d,v.firstChild);d.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{tab=b.dataset.q;render();window.scrollTo(0,0)})}
 const _r5=render;render=function(){if(tab==='blog'){renderTabs();vBlog();try{sw()}catch(e){}return}if(tab==='board'){renderTabs();vBoard();try{sw()}catch(e){}return}if(tab==='photo'){renderTabs();vPhoto();try{sw()}catch(e){}return}if(tab==='news'&&!ADMIN){renderTabs();vNews();try{sw()}catch(e){}return}const r=_r5.apply(this,arguments);try{newsCard();newsNav();newsAdmin();phEntry();bEntry();bgEntry()}catch(e){console.warn(e)}return r};
+// ===== サブページの「もどる」ボタン =====
+const SUBP=['photo','board','blog','news','zukan','mypage'];let lastMain='hero';
+const _r6=render;render=function(){if(!SUBP.includes(tab))lastMain=tab;const r=_r6.apply(this,arguments);try{backBtn()}catch(e){console.warn(e)}return r};
+function backBtn(){if(!SUBP.includes(tab)||document.getElementById('subback'))return;const v=document.getElementById('view');if(!v)return;
+  const L={hero:'冒険者',log:'記録',feed:'キタ酒場',rank:'番付',boss:'ボス',guild:'管理'};const b=document.createElement('button');b.type='button';b.id='subback';b.className='subback';b.textContent='‹ もどる';
+  b.onclick=()=>{tab=lastMain||'hero';render();window.scrollTo(0,0)};v.insertBefore(b,v.firstChild)}
 if(!NEWS().length){NEWS().push({id:1,t:Date.now()-864e5,tn:TN(),title:'キタエル・クエスト 試作版スタート！',body:'トレーニングを記録して、相棒といっしょにレベルアップしよう。わからないことはトレーナーに聞いてね。',pin:false});save()}
 render();
 })();
