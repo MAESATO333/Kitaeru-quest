@@ -483,6 +483,7 @@ body.trmode header{background:linear-gradient(180deg,#ffd27a,#ffe9b0)!important}
 .bmb{position:relative;flex:1;background:#fff;border:3px solid #33501a;border-radius:16px;padding:8px 12px;box-shadow:0 3px 0 #33501a}.bmb::before{content:'';position:absolute;left:-12px;top:20px;border:6px solid transparent;border-right-color:#33501a;border-width:7px 10px 7px 0}
 .bmh{font-size:12px;font-weight:900;color:#e8452c}.bmb p{margin:4px 0;font-size:15px;font-weight:700;line-height:1.6;color:#33501a}.bmt{font-size:12px;color:#7a6020;font-weight:700}.bmb small{display:block;font-size:11px;color:var(--muted);margin-top:4px}
 .bmsg.newmsg .bmb{animation:bmpop .6s ease-out}@keyframes bmpop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}@keyframes bmhop{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.mtq{background:#fff7e0;border:3px solid #f39a1e;border-radius:14px;padding:8px;margin-bottom:8px}.mtqh{font-weight:900;color:#a85a00;font-size:14px;margin-bottom:6px}#mytr .mtqb{border:2px solid #f39a1e!important;background:#fff!important;color:#a85a00!important;border-radius:12px!important;padding:8px 4px!important;font-weight:800;font-size:13px!important;box-shadow:none!important;width:auto!important;margin:0!important}#mytr .mtqb.big{width:100%!important;background:#f39a1e!important;color:#fff!important;font-size:18px!important;padding:12px!important;box-shadow:0 3px 0 #b86a0a!important;margin-bottom:6px!important}.mtq2{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 </style>
 
 </head>
@@ -2256,10 +2257,12 @@ function sw(){const show=!AUTH.on||AUTH.role==='trainer';let d=document.getEleme
 function myTrBtn(){if(!ADMIN)return;const v=document.getElementById('view');if(!v||document.getElementById('mytr'))return;const n=TN(),m=trMember(n),on=S.current===m.id,L=levelOf(total(m)),t=teamOf(m);
   const d=document.createElement('div');d.id='mytr';d.className='mytr'+(on?' on':'');
   const ex=`<div class="mtx"><div class="${on?'cur':''}"><b>💪 自分のトレーニング</b>：トレーナー本人（${esc(n)}）の記録をつけるモード。EXPは自分のレベルと、チーム対抗戦${t?'「'+esc(tName(t))+'」':''}の点数になります。</div><div class="${on?'':'cur'}"><b>👥 ゲストの管理</b>：お客さんを選んで、その人の記録・宿題・花マル🌸スタンプ・評価を見たり、つけたりするモード。</div></div>`;
-  d.innerHTML=on?`<b class="mth">💪 いまは「自分のトレーニング」中（${esc(n)}）</b><span>Lv${L.lv}・今週 ${m.weekXp} EXP${t?'・'+esc(tName(t)):''}</span>${ex}<button type="button" id="mytrx">👥 ゲストの管理にもどる</button>`
-   :`<b class="mth">👥 いまは「ゲストの管理」中</b>${ex}<button type="button" id="mytrgo">💪 自分のトレーニングをする（${esc(n)}）</button><span>Lv${L.lv}・今週 ${m.weekXp} EXP</span>`;
+  const qk=`<div class="mtq"><div class="mtqh">🏋️ 自分のトレーニングを記録する（${esc(n)}）</div><button type="button" class="mtqb big" data-mtq="machine">🏋️ マシントレーニング</button><div class="mtq2"><button type="button" class="mtqb" data-mtq="lift">💪 加圧トレ</button><button type="button" class="mtqb" data-mtq="yoga">🧘 YOGA</button><button type="button" class="mtqb" data-mtq="cardio">🏃 有酸素</button><button type="button" class="mtqb" data-mtq="meal">🥗 食事</button><button type="button" class="mtqb" data-mtq="kapala">🌬 カパラバティ</button></div></div>`;
+  d.innerHTML=qk+(on?`<b class="mth">💪 いまは「自分のトレーニング」中（${esc(n)}）</b><span>Lv${L.lv}・今週 ${m.weekXp} EXP${t?'・'+esc(tName(t)):''}</span>${ex}<button type="button" id="mytrx">👥 ゲストの管理にもどる</button>`
+   :`<b class="mth">👥 いまは「ゲストの管理」中</b>${ex}<button type="button" id="mytrgo">💪 自分のトレーニングをする（${esc(n)}）</button><span>Lv${L.lv}・今週 ${m.weekXp} EXP</span>`);
   document.body.classList.toggle('trmode',on);
   v.insertBefore(d,v.firstChild);
+  d.querySelectorAll('[data-mtq]').forEach(b=>b.onclick=()=>{if(S.current!==m.id)S.prevCur=S.current;S.current=m.id;tab='log';logType=b.dataset.mtq;window._gm=null;save();render();setTimeout(()=>{const f=document.getElementById('form');if(f)f.scrollIntoView({behavior:'smooth',block:'start'})},120)});
   const g=document.getElementById('mytrgo');if(g)g.onclick=()=>{S.prevCur=S.current;S.current=m.id;tab='log';save();render();window.scrollTo(0,0)};
   const x=document.getElementById('mytrx');if(x)x.onclick=()=>{const b=S.prevCur&&S.members.find(y=>y.id===S.prevCur&&!y.tr);S.current=b?b.id:(S.members.find(y=>!y.tr)||{}).id;tab='guild';save();render();window.scrollTo(0,0)}}
 const _r2=render;render=function(){const r=_r2.apply(this,arguments);try{myTrBtn();const w=document.querySelector('.whol>span');if(w)w.textContent=me()&&me().tr?'トレーナー':'ゲスト'}catch(e){console.warn(e)}try{sw();if(ADMIN&&tab==='guild'&&!document.getElementById('admintro')){const v=document.getElementById('view');const d=document.createElement('div');d.id='admintro';d.className='admintro';d.innerHTML='<b>トレーナー管理ページ</b>：全ゲストの宿題の花マル🌸スタンプ・宿題出し・称号やクエストの設定ができます。右上の「ゲスト」でだれでも選べて、下のメニューでその人の画面も見られます。';v.insertBefore(d,v.firstChild)}else if(ADMIN&&tab!=='guild'&&!document.getElementById('admintro')){const v=document.getElementById('view');const d=document.createElement('div');d.id='admintro';d.className='admintro';d.innerHTML=`いま <b>${esc(me().name)}</b> さんの画面を見ています（管理ページ）`;v.insertBefore(d,v.firstChild)}}catch(e){console.warn(e)}return r};
@@ -2299,7 +2302,7 @@ function bmsgCard(){if(tab!=='hero')return;const v=document.getElementById('view
   d.innerHTML=`<canvas data-hero="${b.h.key}"></canvas><div class="bmb"><div class="bmh">📩 ${esc(b.h.name)}から 今日のひとこと</div><p>${esc(b.text)}</p><div class="bmt">${esc(b.tail)}</div>${b.nobuddy?'<small>下の「相棒をえらぶ」で、毎日メッセージをくれる相棒を決められるよ</small>':''}</div>`;
   const after=document.getElementById('snapgo')||sc;after.after(d);
   if(!ADMIN&&m.bmsgDay!==dayKey()){m.bmsgDay=dayKey();save();d.classList.add('newmsg');setTimeout(()=>{try{toast(`📩 ${b.h.name}からメッセージが届いたよ！`)}catch(e){}},400)}}
-const _rB=render;render=function(){const r=_rB.apply(this,arguments);try{bmsgCard()}catch(e){console.warn(e)}return r};
+const _rB=render;render=function(){const r=_rB.apply(this,arguments);try{bmsgCard()}catch(e){console.warn(e)}setTimeout(()=>{const v=document.getElementById('view'),t=document.getElementById('mytr');if(ADMIN&&v&&t&&v.firstChild!==t)v.insertBefore(t,v.firstChild)},0);return r};
 // ===== 入室ボタン（トレーナーが押す）・出欠カレンダー =====
 function vDate(v){const a=String(v).split('-').map(Number);return new Date(a[0],a[1]-1,a[2],12).getTime()}
 function inToday(m){return (m.visits||[]).includes(ymd(new Date()))}
