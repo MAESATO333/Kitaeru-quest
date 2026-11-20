@@ -366,6 +366,7 @@ body.adminv .pvsw a.on{background:#9b2f5e}
 .tgift{border:3px solid #f2c230!important;background:#fffbe6!important;display:flex;flex-direction:column;gap:4px;margin-bottom:10px}.tgift b{color:#b5651d}.tgift span{font-size:13px}
 .tlast{font-size:13px;margin:0 2px 8px;color:var(--muted)}
 .tplf{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 6px}.tplf button{font-size:12px;padding:3px 10px;border-radius:999px;border:2px solid #9ccc3c;background:#fff;color:#2f6d2a;font-weight:800}.tplf button.on{background:#2f6d2a;border-color:#2f6d2a;color:#fff}
+.expnote{font-size:12px;line-height:1.6;color:#4a5a3a;background:#f6fbe9;border:2px dashed #9ccc3c;border-radius:12px;padding:6px 10px;margin:8px 0}.expnote b:first-child{color:#2f6d2a;margin-right:4px}
 </style>
 
 </head>
@@ -509,6 +510,7 @@ function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 // ---------- rules ----------
 const total=m=>m.stats.str+m.stats.end+m.stats.tec+m.stats.grit;
 // Lv100までの累計は約7万EXP（週500EXPペースで約3年）。Lv100以降も上限なし
+const EXPNOTE=`<div class="expnote"><b>EXPとは？</b> Experience Points（エクスペリエンス・ポイント）の略で、<b>経験値</b>のことです。トレーニング・記録・宿題・ごはんなどでたまり、たまるとレベルアップして見た目が進化します。</div>`;
 function levelOf(xp){let lv=1,need=63,acc=0;while(xp>=acc+need){acc+=need;lv++;need=50+13*lv;}return{lv,into:xp-acc,need};}
 function classOf(m){
   const s=m.stats,arr=[['str','重戦士'],['end','旅人'],['tec','剣術師'],['grit','守護騎士']].sort((a,b)=>s[b[0]]-s[a[0]]);
@@ -1311,7 +1313,7 @@ function vHero(){
       <div class="cls">${classOf(m)} ／ <span style="color:${TEAMS[teamOf(m)].color}">${TEAMS[teamOf(m)].name}</span></div>
       <div style="display:flex;align-items:baseline;gap:8px"><span class="muted">Lv</span><span class="lv">${L.lv}</span></div>
       <div class="bar" aria-label="次のレベルまで"><i style="width:${L.into/L.need*100}%"></i></div>
-      <div class="muted">次のレベルまで ${L.need-L.into} EXP</div>
+      <div class="muted">次のレベルまで ${L.need-L.into} EXP</div>${EXPNOTE}
       <label>見た目<select id="lk">${LOOKS.map(([k,l])=>`<option value="${k}" ${(m.look||'m')===k?'selected':''}>${l}</option>`).join('')}</select></label>
       <button type="button" id="zk" class="btn-main" style="font-size:13px;padding:7px 16px;align-self:flex-start">進化図鑑を見る（${stageOfLv(L.lv)+1}/21）</button>
     </div>
@@ -1479,7 +1481,7 @@ function vRank(){
     <p class="tnote">チームは<b>毎週土曜の朝4時</b>に、ランダムで3つに分かれて発表されます。今週の1位チームのメンバー全員に <b>🎁 +${TEAM_GIFT} EXP ＋ごほうびごはん</b>！ 次の発表まであと${left}。</p>
     ${!window.AUTH||!AUTH.on||AUTH.role==='trainer'?'<button type="button" id="nextWeek" class="tnext">お試し：来週にしてみる</button>':''}
   </div>
-  <h2>今日の顔ぶれ番付（今週のEXP）</h2>
+  <h2>今日の顔ぶれ番付（今週のEXP）</h2>${EXPNOTE}
   <div class="card"><table>${list.map((m,i)=>`<tr class="${m.id===S.current?'me':''}"><td class="n">${i+1}</td><td>${esc(m.name)} <span class="muted">Lv${levelOf(total(m)).lv}</span></td><td class="r">${m.weekXp.toLocaleString()}</td></tr>`).join('')}</table>
   <p class="muted" style="margin:8px 0 0">顔ぶれは毎日入れ替わり、番付は毎週土曜の朝4時にリセット。ベテランも初心者も、毎週横一線から。</p></div>`;
   if(L&&!L.seen&&L.mine){L.seen=true;save()}
