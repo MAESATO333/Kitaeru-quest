@@ -403,6 +403,10 @@ nav{flex-direction:column;align-items:center;gap:5px}
 @media (max-width:400px){#tabs2 .nh2{font-size:20px;line-height:24px;height:24px}}
 .nline{display:flex;align-items:center;gap:8px;width:100%;margin:2px 0 4px;padding:8px 12px;border-radius:12px;border:2px solid #33501a;background:#fffbe0;color:#33501a;font-weight:800;font-size:13px;text-align:left;box-shadow:0 2px 0 #33501a}
 .nline .nlh{flex:none;color:#c26a00;display:flex;align-items:center;gap:4px}.nline .nlt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nline .nlm{flex:none;font-size:16px}.nline .nbadge{position:static}
+#gform.reqmode>label,#gform.reqmode>#glogin,#gform.reqmode>.gor,#gform.reqmode>#ggoogle,#gform.reqmode>#gforgot,#gform.reqmode>.gn{display:none}
+.greq{display:flex;flex-direction:column;gap:10px;margin-top:6px}.greq label{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:13px}.greq input{padding:10px;border-radius:10px;border:2px solid #d6e6b0;font-size:16px}
+.greq .rqh,.greq .rqok{background:#f3f9dc;border-radius:12px;padding:12px;font-size:14px;line-height:1.7;text-align:center}.greq .rqok{background:#fffbe0;border:2px solid #f39a1e}
+.rqlist ul{list-style:none;padding:0;margin:6px 0 0;display:flex;flex-direction:column;gap:8px}.rqlist li{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#fff;border-radius:10px;padding:8px 10px;font-size:13px}.rqlist .rqm{color:#666;font-size:12px}.rqlist .rqbtn{display:flex;gap:6px;flex:none}.rqlist .rqbtn button{padding:6px 10px;border-radius:999px;border:2px solid #d6e6b0;background:#fff;font-weight:800}.rqlist .rqbtn .ok{background:#e8452c;color:#fff;border-color:#e8452c}
 </style>
 
 </head>
@@ -1891,7 +1895,8 @@ if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.s
 <button class="ggl" id="ggoogle" type="button"><svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.2-.1-2.4-.4-3.5z"/></svg>Googleでログイン</button>
 <div class="gm" id="gmsg"></div>
 <button class="gl" id="gforgot" type="button">パスワードを忘れたとき</button>
-<div class="gn">ログインのアカウントは、ジムのトレーナーが作ります。<br>お持ちでない方は、受付でお声がけください。</div>
+<div id="greq" class="greq" hidden></div>
+<div class="gn">はじめての方は「Googleでログイン」を押して、登録を申請してください。<br>トレーナーが承認すると使えるようになります。</div>
 </form></div><script>
 (function(){
 const LOCK=false;let ON=/[?&]login=1/.test(location.search);try{if(ON)localStorage.setItem('kq-login','1');if(/[?&]login=0/.test(location.search))localStorage.removeItem('kq-login');ON=ON||localStorage.getItem('kq-login')==='1'}catch(e){}ON=ON||(LOCK&&/\.web\.app$|\.firebaseapp\.com$/.test(location.hostname));
@@ -1904,6 +1909,21 @@ window.AUTH.ja=JA;
 const V='10.12.2',load=src=>new Promise((r,j)=>{const s=document.createElement('script');s.src=src;s.onload=r;s.onerror=()=>j(new Error('load '+src));document.head.appendChild(s)});
 const boot=window.__FB_BOOT||(()=>load(`/__/firebase/${V}/firebase-app-compat.js`).then(()=>Promise.all([load(`/__/firebase/${V}/firebase-auth-compat.js`),load(`/__/firebase/${V}/firebase-firestore-compat.js`)])).then(()=>load('/__/firebase/init.js')));
 function applyRole(){const tr=AUTH.role==='trainer';if(ADMIN&&!tr){alert('ここはトレーナー専用の管理ページです。ゲストの画面にもどります。');location.replace(window.KQ_GUEST_URL);return}document.body.classList.add('signed');document.body.classList.toggle('member',!tr);if(!tr){S.trainerMode=false;S.kensa=false;S.current='me';const me0=S.members.find(x=>x.id==='me');if(me0&&AUTH.name)me0.name=AUTH.name;if(tab==='guild')tab='hero';save()}render()}
+// 登録の申請（Googleで入ったが、まだ登録されていない人）
+let reqWatch=null;
+async function showReq(u,db,auth){const box=$g('greq');if(!box)return;$g('gform').classList.add('reqmode');box.hidden=false;msg('');
+  const rq=db.doc('requests/'+u.uid);let has=false;try{const d=await rq.get();has=d.exists}catch(e){console.warn(e)}
+  const out=`<button type="button" class="gl" id="rqout">別のアカウントで入る（ログアウト）</button>`;
+  if(has){box.innerHTML=`<div class="rqok">📨 申請しました！<br><b>${esc(u.email)}</b><br>トレーナーが承認すると、自動で入れます。<br>このまま待つか、あとでもう一度開いてください。</div>${out}`}
+  else{box.innerHTML=`<div class="rqh">はじめまして！<br><b>${esc(u.email)}</b> はまだ登録されていません。<br>お名前を入れて、登録を申請してください。</div>
+    <label>お名前（ジムで呼ばれている名前）<input id="rqname" maxlength="20" value="${esc(u.displayName||'')}"></label>
+    <label>ひとこと（なくてもOK）<input id="rqmsg" maxlength="60" placeholder="例：火曜日に通っています"></label>
+    <button type="button" class="gb" id="rqsend">登録を申請する</button>${out}`;
+    $g('rqsend').onclick=async()=>{const name=$g('rqname').value.trim();if(!name){msg('お名前を入れてください');return}$g('rqsend').disabled=true;
+      try{await rq.set({email:(u.email||'').toLowerCase(),name,msg:$g('rqmsg').value.trim(),t:Date.now()});showReq(u,db,auth)}catch(e){console.warn(e);msg('申請できませんでした。受付でお声がけください。［'+(e.code||e.message)+'］');$g('rqsend').disabled=false}}}
+  $g('rqout').onclick=()=>auth.signOut();
+  // 承認されたら自動で入る
+  if(reqWatch)reqWatch();const ref=db.doc('roles/'+u.uid);if(ref.onSnapshot)reqWatch=ref.onSnapshot(d=>{if(d.exists){reqWatch&&reqWatch();reqWatch=null;const x=d.data();AUTH.role=x.role||'member';AUTH.name=x.name||'';box.hidden=true;box.innerHTML='';$g('gform').classList.remove('reqmode');document.body.classList.remove('locked');applyRole()}},e=>console.warn(e))}
 boot().then(()=>{
   const auth=firebase.auth(),db=firebase.firestore();
   $g('gform').onsubmit=e=>{e&&e.preventDefault&&e.preventDefault();const em=$g('gemail').value.trim(),pw=$g('gpass').value;if(!em||!pw){msg('メールアドレスとパスワードを入れてください');return false}$g('glogin').disabled=true;msg('ログインしています…',1);auth.signInWithEmailAndPassword(em,pw).catch(err=>msg(JA(err))).finally(()=>$g('glogin').disabled=false);return false};
@@ -1912,7 +1932,7 @@ boot().then(()=>{
   auth.getRedirectResult().catch(err=>msg(JA(err)));
   $g('gforgot').onclick=()=>{const em=$g('gemail').value.trim();if(!em){msg('上にメールアドレスを入れてから押してください');return}auth.sendPasswordResetEmail(em).then(()=>msg('パスワード再設定のメールを送りました',1)).catch(err=>msg(JA(err)))};
   auth.onAuthStateChanged(async u=>{
-    if(!u){AUTH.user=null;document.body.classList.remove('signed','member');document.body.classList.add('locked');return}
+    if(!u){if(reqWatch){reqWatch();reqWatch=null}{const r=$g('greq');if(r){r.hidden=true;r.innerHTML=''}$g('gform').classList.remove('reqmode')}AUTH.user=null;document.body.classList.remove('signed','member');document.body.classList.add('locked');return}
     AUTH.user=u;let role='member',name='';
     const isG=(u.providerData||[]).some(p=>p&&p.providerId==='google.com')&&!(u.providerData||[]).some(p=>p&&p.providerId==='password');let ok=false,why='';
     const ref=db.doc('roles/'+u.uid),em=(u.email||'').toLowerCase();
@@ -1926,7 +1946,9 @@ boot().then(()=>{
     if(!ok&&u.emailVerified){try{const hb=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(em));const hx=[...new Uint8Array(hb)].map(b=>b.toString(16).padStart(2,'0')).join('');if(hx==='74933ede2c82fa570047fbcc8a1dd24b985c979d4b98455984ae35a15bf16936'){role='trainer';name='オーナー';ok=true;console.warn('owner fallback: Firestore rules denied ('+why+')')}}catch(e){console.warn(e)}}
     // ④ メール/パスワードで入った人は、トレーナーが作ったアカウントなので会員として入れる
     if(!ok&&!isG){role='member';ok=true}
+    if(!ok&&isG){console.warn('login: no role yet',u.email,why);showReq(u,db,auth);return}
     if(!ok){msg(`このアカウント（${u.email}）は、ジムに登録されていません。受付でお声がけください。`+`［${why||'no-role'}］`);console.warn('login denied',u.email,u.uid,why);await auth.signOut();return}
+    {const r=$g('greq');if(r){r.hidden=true;r.innerHTML=''}$g('gform').classList.remove('reqmode')}
     AUTH.role=role;AUTH.name=name;document.body.classList.remove('locked');applyRole();
   });
 }).catch(e=>{msg('ログインの準備ができませんでした。通信を確認して、もう一度開いてください');console.warn(e)});
@@ -1941,6 +1963,13 @@ function acctPanel(){const v=document.getElementById('view');if(!v||document.get
   <button type="button" class="btn-main" id="amk">アカウントを作る</button><div class="gm" id="amsg" style="font-size:13px"></div>
   <details id="alist"><summary style="cursor:pointer;font-size:13px;color:#2f6d2a;font-weight:700">登録されているアカウントを見る</summary><ul></ul></details>`;
   v.insertBefore(d,v.firstChild);
+  const rqs=document.createElement('section');rqs.id='rqlist';rqs.className='acct rqlist';rqs.innerHTML='<h3>📨 登録の申請</h3><ul><li class="muted">読みこみ中…</li></ul>';d.before(rqs);loadReq();
+  async function loadReq(){const ul=rqs.querySelector('ul'),db=firebase.firestore();try{const q=await db.collection('requests').get();const a=[];q.forEach(x=>a.push({id:x.id,...x.data()}));a.sort((x,y)=>(x.t||0)-(y.t||0));
+    rqs.querySelector('h3').innerHTML=`📨 登録の申請${a.length?` <i class="nbadge in">${a.length}</i>`:''}`;
+    ul.innerHTML=a.length?a.map(x=>`<li><span><b>${esc(x.name||'')}</b> ${esc(x.email||'')}${x.msg?`<br><span class="rqm">「${esc(x.msg)}」</span>`:''}</span><span class="rqbtn"><button type="button" class="ok" data-ok="${esc(x.id)}">承認</button><button type="button" data-ng="${esc(x.id)}">見送る</button></span></li>`).join(''):'<li class="muted">いま、申請はありません。</li>';
+    ul.querySelectorAll('[data-ok]').forEach(b=>b.onclick=async()=>{const x=a.find(y=>y.id===b.dataset.ok);b.disabled=true;try{await db.doc('roles/'+x.id).set({role:'member',email:x.email||'',name:x.name||'',via:'request',t:Date.now()});await db.doc('requests/'+x.id).delete();toast(`${x.name||x.email} さんを承認しました`);loadReq()}catch(e){toast(JA(e));b.disabled=false}});
+    ul.querySelectorAll('[data-ng]').forEach(b=>b.onclick=async()=>{const x=a.find(y=>y.id===b.dataset.ng);if(!confirm(`${x.name||x.email} さんの申請を見送りますか？`))return;try{await db.doc('requests/'+x.id).delete();loadReq()}catch(e){toast(JA(e))}})
+  }catch(e){ul.innerHTML=`<li class="muted">申請を読めませんでした（Firebaseのルールの更新が必要かもしれません）［${esc(e.code||e.message)}］</li>`}}
   const am=(t,ok)=>{const m=document.getElementById('amsg');m.textContent=t;m.style.color=ok?'#2f6d2a':'#c0392b'};
   document.getElementById('amk').onclick=async()=>{const name=document.getElementById('an').value.trim(),role=document.getElementById('ar').value,email=document.getElementById('ae').value.trim(),pw=document.getElementById('ap').value;if(!email){am('メールアドレスを入れてください');return}
     if(!pw){am('登録しています…',1);try{await firebase.firestore().doc('roles/g_'+email.toLowerCase()).set({role,email:email.toLowerCase(),name,google:true,t:Date.now()});am(`${name||email} を登録しました。このGmailで「Googleでログイン」から入れます`,1);['an','ae','ap'].forEach(i=>document.getElementById(i).value='');listAcc()}catch(e){am(JA(e))}return}
