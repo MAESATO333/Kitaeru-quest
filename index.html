@@ -427,6 +427,7 @@ nav{flex-direction:column;align-items:center;gap:5px}
 .hnote ul,.hlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}.hnote li,.hlist li{display:block!important;background:#fff;border-radius:10px;padding:8px 10px}.hnm{font-size:11px;color:#5b7f99;display:flex;align-items:center;gap:6px;flex-wrap:wrap}.hnm .phdel{margin-left:auto}.hnote p,.hlist p{margin:2px 0 0;font-size:14px;white-space:pre-wrap;line-height:1.6}
 .hform{display:flex;flex-direction:column;gap:8px;border-top:2px dashed #9cc3e6;padding-top:10px;margin-top:4px}.hform textarea{border:2px solid #d6e6b0;border-radius:10px;padding:8px;font-size:15px}
 .hkb{display:inline-block;background:#1f5f8b;color:#fff;font-size:11px;font-weight:900;border-radius:999px;padding:2px 9px;margin-right:6px;vertical-align:middle}
+.lkn{font-size:12px;line-height:1.7;color:#33501a;background:#f3f9dc;border-radius:10px;padding:6px 10px;margin:-2px 0 6px}
 </style>
 
 </head>
@@ -1394,7 +1395,8 @@ function vHero(){
       <div style="display:flex;align-items:baseline;gap:8px"><span class="muted">Lv</span><span class="lv">${L.lv}</span></div>
       <div class="bar" aria-label="次のレベルまで"><i style="width:${L.into/L.need*100}%"></i></div>
       <div class="muted">次のレベルまで ${L.need-L.into} EXP</div>${EXPNOTE}
-      <label>見た目<select id="lk">${LOOKS.map(([k,l])=>{const lock=k==='g'&&L.lv<KAMI_LV&&m.look!=='g'&&!ADMIN;return `<option value="${k}" ${(m.look||'m')===k?'selected':''} ${lock?'disabled':''}>${lock?'🔒 '+l+'（Lv'+KAMI_LV+'から）':(k==='g'?'⛩ '+l:l)}</option>`}).join('')}</select></label>
+      <label>見た目<select id="lk" ${lookLeft(m,L.lv)===0?'disabled':''}>${LOOKS.map(([k,l])=>{const lock=k==='g'&&L.lv<KAMI_LV&&m.look!=='g'&&!ADMIN;return `<option value="${k}" ${(m.look||'m')===k?'selected':''} ${lock?'disabled':''}>${lock?'🔒 '+l+'（Lv'+KAMI_LV+'から）':(k==='g'?'⛩ '+l:l)}</option>`}).join('')}</select></label>
+      <div class="lkn">${lookNote(m,L.lv)}</div>
       <div class="kamin">${L.lv>=KAMI_LV?`⛩ <b>八百万の神</b>が解放されています！「見た目」で神様をえらべます。`:`🔒 <b>八百万の神</b>は、<b>Lv${KAMI_LV}</b>になった人だけがえらべる特別な姿です。まずは人や動物（ひつじ・犬など）からスタート！ Lv${KAMI_LV}になると神様になれて、そこから5レベルごとに別の神様へ。最後はLv${KAMI_LV+99}で天照大神（あまてらすおおみかみ）に。あと <b>${KAMI_LV-L.lv}</b> レベル！`}</div>
       <button type="button" id="zk" class="btn-main" style="font-size:13px;padding:7px 16px;align-self:flex-start">進化図鑑を見る（${stageFor(m.look,L.lv)+1}/21）</button>
     </div>
@@ -1429,7 +1431,11 @@ function vHero(){
   document.querySelectorAll('canvas[data-food]').forEach(c=>paintFood(c,c.dataset.food));
   const bb=$('#bonus');if(bb)bb.onclick=()=>{const fk=foodOfDay(),f=FOODS[fk];S.bonusDay=dayKey();const t=giveFood(m,fk);gain(m,f.stat,fxp(f),`今日のごはん「${f.name}」を食べた`);if(t)overlay('称号ゲット！',`${f.name}を10こ集めて「${t}」になりました`);vHero();};
   $('#zk').onclick=()=>{tab='zukan';zLook=m.look||'m';render();window.scrollTo(0,0)};
-  $('#lk').onchange=e=>{m.look=e.target.value;save();vHero()};
+  $('#lk').onchange=e=>{const v=e.target.value,left=lookLeft(m,L.lv),first=!m.lookN;
+    if(left===0){e.target.value=m.look||'m';toast('見た目は、Lv'+KAMI_LV+'になるまで変えられません');return}
+    const msg=ADMIN||left===Infinity?'':first?`見た目を「${(LOOKS.find(x=>x[0]===v)||[])[1]}」にしますか？\nこのあと変えられるのは、Lv${KAMI_LV}までに1回だけです。`:`見た目を「${(LOOKS.find(x=>x[0]===v)||[])[1]}」に変えますか？\nこれが最後の1回です。Lv${KAMI_LV}まで、もう変えられません。`;
+    if(msg&&!confirm(msg)){e.target.value=m.look||'m';return}
+    m.look=v;if(!ADMIN&&left!==Infinity)m.lookN=(m.lookN||0)+1;save();vHero()};
   document.querySelectorAll('[data-hw]').forEach(b=>b.onclick=()=>{const h=m.homework.find(x=>x.id==b.dataset.hw);h.status='done';h.doneAt=Date.now();save();toast('トレーナーにお知らせしました！ 花マル🌸スタンプを待とう');vHero()});
   $('#nextDay').onclick=()=>{S.dayShift=(S.dayShift||0)+1;save();render();toast('顔ぶれが入れ替わりました')};
   $('#kensaBtn').onclick=()=>window.kensaToggle();
@@ -1451,6 +1457,12 @@ const HPROG=[['all','全体'],['lift','加圧トレ'],['yoga','YOGA'],['kapala',
 const hpName=k=>(HPROG.find(x=>x[0]===k)||[,'全体'])[1];
 function hNotesBox(m,prog){if(!ADMIN)return '';const L=(m.health||[]).filter(x=>x.prog==='all'||x.prog===prog).slice().sort((a,b)=>b.t-a.t).slice(0,5);
   return `<div class="card hnote"><div class="hnt">🩺 健康管理室より <small>トレーナー・看護師だけが読めます</small></div>${L.length?`<ul>${L.map(x=>`<li><div class="hnm">${new Date(x.t).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric'})}・${esc(x.tn)}・<b>${hpName(x.prog)}</b></div><p>${esc(x.text)}</p></li>`).join('')}</ul>`:'<p class="muted" style="margin:0;font-size:13px">このプログラムへのメモはまだありません。管理タブの「健康管理室」で書けます。</p>'}</div>`}
+// 見た目：最初にえらんだら、Lv100（クリア）まで変えられるのは1回だけ
+function lookLeft(m,lv){if(ADMIN||lv>=KAMI_LV)return Infinity;return Math.max(0,2-(m.lookN||0))}
+function lookNote(m,lv){const n=lookLeft(m,lv);if(ADMIN)return '';if(n===Infinity)return '🎉 クリア（Lv'+KAMI_LV+'）したので、見た目はいつでも変えられます。';
+  if(!m.lookN)return '🐑 好きな姿をえらんでスタート！ えらんだあとは、<b>Lv'+KAMI_LV+'になるまでに1回だけ</b>変えられます。';
+  if(n>0)return '見た目を変えられるのは、<b>あと1回だけ</b>です（Lv'+KAMI_LV+'になると、また自由に変えられます）。';
+  return '🔒 見た目の変更は使いきりました。<b>Lv'+KAMI_LV+'</b>になると、また自由に変えられます（八百万の神もえらべます）。'}
 function vLog(){
   const m=me();
   if(!ADMIN&&!m.course){vCourse(m);return}
