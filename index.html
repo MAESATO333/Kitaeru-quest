@@ -518,6 +518,8 @@ body.trmode header{background:linear-gradient(180deg,#ffd27a,#ffe9b0)!important}
 .ypill.bk-cxl{background:#b3261e;color:#fff}.yrow.bk-cxl{border-color:#b3261e;background:#fff1ef}
 .gyli{flex-direction:column;align-items:stretch!important}.gyl1{display:flex;gap:8px;align-items:center}.gyl2{display:flex;gap:6px;flex-wrap:wrap}.gyl2 .yb{padding:5px 10px;font-size:12px}
 .gyreq{display:flex;flex-direction:column;gap:6px;background:#fffbe6;border-radius:10px;padding:8px;margin-top:4px}.gyreq b{font-size:13px;color:#8a5200}.gyreq label{display:flex;flex-direction:column;font-size:12px;font-weight:800;color:#6f7a5c}.gyreq input,.gyreq select,.gyreq textarea{font:inherit;font-size:15px;border:2px solid #d7e7b4;border-radius:10px;padding:6px;width:100%;box-sizing:border-box;background:#fff}.gydw{color:#e8452c;font-weight:800}
+.navtog{flex:none!important;align-self:flex-end;margin:-2px 8px 0 0;background:#fff!important;color:#33501a!important;border:2px solid #33501a!important;border-radius:999px!important;padding:3px 12px!important;font-size:12px!important;font-weight:900!important;display:block!important;opacity:1!important;transform:none!important;box-shadow:0 2px 0 rgba(0,0,0,.2)}
+body.navmin nav .in{display:none!important}body.navmin nav{padding-top:4px;padding-bottom:4px}body.navmin .navtog{align-self:center;margin:0}
 </style>
 
 </head>
@@ -530,7 +532,7 @@ body.trmode header{background:linear-gradient(180deg,#ffd27a,#ffe9b0)!important}
   </header>
   <main id="view"></main>
 </div>
-<nav><div class="in" id="tabs"></div><div class="in" id="tabs2"></div></nav>
+<nav><button type="button" id="navtog" class="navtog" aria-expanded="true">▼ メニューをたたむ</button><div class="in" id="tabs"></div><div class="in" id="tabs2"></div></nav>
 <div id="ov" class="ov" hidden></div>
 <div id="toast" class="toast" hidden></div>
 
@@ -2842,5 +2844,13 @@ const _rY=render;render=function(){const r=_rY.apply(this,arguments);try{panelA(
 let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='trainer'||AUTH.role==='member')&&AUTH.user){clearInterval(w);try{render()}catch(e){}}if(tries>40)clearInterval(w)},500);
 })();
 </script><script src="cinema.js"></script>
-</body>
+<script>
+// ===== 下のメニューをたたむ（v143）：状態は端末に記憶。ミドリ座ではたたんだ状態から =====
+(function(){const b=document.getElementById('navtog');if(!b)return;let mn=false,cin=false;try{mn=localStorage.getItem('kq-navmin')==='1'}catch(e){}
+ const ap=v=>{document.body.classList.toggle('navmin',v);b.textContent=v?'▲ メニューをひらく':'▼ メニューをたたむ';b.setAttribute('aria-expanded',String(!v))};
+ b.onclick=()=>{const v=!document.body.classList.contains('navmin');ap(v);if(!(typeof tab!=='undefined'&&tab==='cinema')){try{localStorage.setItem('kq-navmin',v?'1':'0')}catch(e){}}};
+ ap(mn);
+ const _rN=render;render=function(){const r=_rN.apply(this,arguments);try{const c=tab==='cinema';if(c&&!cin)ap(true);else if(!c&&cin){let v=false;try{v=localStorage.getItem('kq-navmin')==='1'}catch(e){}ap(v)}cin=c}catch(e){}return r};
+})();
+</script></body>
 </html>
