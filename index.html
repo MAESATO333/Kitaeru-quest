@@ -452,6 +452,11 @@ body.trmode header{background:linear-gradient(180deg,#ffd27a,#ffe9b0)!important}
 .bsub{margin:6px 2px 6px;font-size:17px;color:#33501a}.bsub small{font-size:12px;color:var(--muted)}
 .bwrite{margin:14px 0 8px}.bwrite>summary{cursor:pointer;list-style:none;text-align:center;padding:13px;border-radius:999px;background:#4f7d2a;color:#fff;font-weight:900;font-size:16px;box-shadow:0 3px 0 #2c4a14}.bwrite>summary small{font-size:11px;opacity:.85}.bwrite[open]>summary{background:#fff;color:#4f7d2a;border:2.5px solid #4f7d2a;box-shadow:none}
 .nwgo{margin-top:6px;border:2px solid #4f7d2a;background:#f2fbe0;color:#33501a;border-radius:999px;padding:5px 12px;font-weight:800;font-size:12px}
+.memp h3 small{font-size:12px;color:var(--muted)}.zsk{background:#fff4d6;border:2px solid #f39a1e;border-radius:12px;padding:8px 10px;font-size:13px;margin:6px 0}.zsk button{display:block;margin-top:6px;border:0;border-radius:999px;background:#f39a1e;color:#fff;font-weight:800;padding:6px 14px}
+.meml{list-style:none;padding:0;margin:6px 0;display:flex;flex-direction:column;gap:6px}.meml li{display:flex!important;justify-content:space-between;align-items:center;gap:8px;background:#fff;border:2px solid #e3efc8;border-radius:10px;padding:6px 10px}.meml li.old{border-color:#f39a1e;background:#fffaf0}.meml li.gone{opacity:.6}
+.meml button{flex:none;border:2px solid #c0392b;background:#fff;color:#c0392b;border-radius:999px;padding:4px 12px;font-weight:800;font-size:12px}.meml li.gone button{border-color:#4f7d2a;color:#4f7d2a}
+.mbt{display:flex;gap:6px;flex:none}.meml button.pz{border-color:#7a6bb0;color:#5b4b96}.meml button.rs{border-color:#4f7d2a;color:#33501a;background:#f2fbe0}.pzh{font-weight:800;color:#5b4b96;margin-top:10px}.meml li.pzl{background:#f7f5ff;border-color:#d8d0f0}.meml li.pzl.old{border-color:#f39a1e}
+.meml small{background:none!important;color:var(--muted)!important;padding:0!important;border:0!important;font-weight:600}.meml button[data-left]{color:#c0392b!important;border-color:#c0392b!important;background:#fff!important}
 </style>
 
 </head>
@@ -2027,13 +2032,15 @@ if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.s
 <button class="gl" id="gsignup" type="button">はじめての方：このメールとパスワードで新しく登録する</button>
 <button class="gl" id="gforgot" type="button">パスワードを忘れたとき</button>
 <div id="greq" class="greq" hidden></div>
-<div class="gn">はじめての方は「Googleでログイン」か、メールとパスワードを入れて「新しく登録する」を押してください。お名前を入れると、すぐに使えます。<br>※トレーナーのアカウントは、ジムが登録したものだけです。</div>
+<div class="gn">はじめての方は「Googleでログイン」か、メールとパスワードを入れて「新しく登録する」を押して、入会を申しこんでください。トレーナーが承認すると使えるようになります。<br>※トレーナーのアカウントは、ジムが登録したものだけです。</div>
 </form></div><script>
 (function(){
-const LOCK=false;let ON=/[?&]login=1/.test(location.search);try{if(ON)localStorage.setItem('kq-login','1');if(/[?&]login=0/.test(location.search))localStorage.removeItem('kq-login');ON=ON||localStorage.getItem('kq-login')==='1'}catch(e){}ON=ON||(LOCK&&/\.web\.app$|\.firebaseapp\.com$/.test(location.hostname))||(ADMIN&&!/^(localhost|127\.)/.test(location.hostname));
+const LOCK=false;let ON=/[?&]login=1/.test(location.search);try{if(ON)localStorage.setItem('kq-login','1');if(/[?&]login=0/.test(location.search))localStorage.removeItem('kq-login');ON=ON||localStorage.getItem('kq-login')==='1'}catch(e){}const JOIN=/^\/join\/?$/.test(location.pathname)||/[?&]join=1/.test(location.search);ON=ON||JOIN||(LOCK&&/\.web\.app$|\.firebaseapp\.com$/.test(location.hostname))||(ADMIN&&!/^(localhost|127\.)/.test(location.hostname));
 window.AUTH={on:ON,user:null,role:null};
 if(!ON)return;
 document.body.classList.add('locked');if(ADMIN){const gs=document.querySelector('#gate .gs');if(gs)gs.textContent='トレーナー専用 管理ページ';}
+if(JOIN){const gs=document.querySelector('#gate .gs');if(gs)gs.innerHTML='🌱 入会の申しこみ<br><small>Googleか、メールとパスワードで登録してください</small>';
+  if(/Line\//i.test(navigator.userAgent)){const g=document.getElementById('gmsg');if(g){g.style.color='#c0392b';g.innerHTML='LINEの中のブラウザでは、Googleログインが使えません。右下の「…」→「ブラウザで開く」（Safari/Chrome）で開き直してください。'}}}
 const $g=id=>document.getElementById(id),msg=(t,ok)=>{const m=$g('gmsg');m.textContent=t||'';m.className='gm'+(ok?' ok':'')};
 const JA=e=>{const c=(e&&e.code)||'';const t={'auth/popup-closed-by-user':'Googleのログインが途中で閉じられました','auth/cancelled-popup-request':'Googleのログインが途中で閉じられました','auth/unauthorized-domain':'このアドレスはGoogleログインの許可がまだです（Firebaseの設定が必要です）','auth/account-exists-with-different-credential':'このメールはパスワードで登録済みです。メールとパスワードで入ってください','auth/invalid-credential':'メールアドレスかパスワードがちがいます','auth/wrong-password':'メールアドレスかパスワードがちがいます','auth/user-not-found':'メールアドレスかパスワードがちがいます','auth/invalid-email':'メールアドレスの形がちがいます','auth/too-many-requests':'何度も失敗したので、しばらく待ってからお試しください','auth/network-request-failed':'インターネットにつながっていません','auth/email-already-in-use':'このメールアドレスはもう登録されています','auth/weak-password':'パスワードは6文字以上にしてください','auth/operation-not-allowed':'ログイン方法がまだ有効になっていません（Firebaseの設定が必要です）','auth/configuration-not-found':'ログイン機能がまだ有効になっていません（Firebaseの設定が必要です）','permission-denied':'権限がありません（Firestoreのルール設定を確認してください）','unavailable':'データベースにつながりません（Firestoreが作られているか確認してください）','failed-precondition':'データベースの準備ができていません'}[c];return t?t+'［'+c+'］':('エラー：'+(c||e&&e.message||e))};
 window.AUTH.ja=JA;
@@ -2043,17 +2050,18 @@ function applyRole(){const tr=AUTH.role==='trainer';if(ADMIN&&!tr){alert('ここ
 // 登録の申請（Googleで入ったが、まだ登録されていない人）
 let reqWatch=null;
 async function showReq(u,db,auth){const box=$g('greq');if(!box)return;$g('gform').classList.add('reqmode');box.hidden=false;msg('');
+  const rq=db.doc('requests/'+u.uid);let has=false;try{const d=await rq.get();has=d.exists}catch(e){console.warn(e)}
   const out=`<button type="button" class="gl" id="rqout">別のアカウントで入る（ログアウト）</button>`;
-  box.innerHTML=`<div class="rqh">ようこそ！<br><b>${esc(u.email||'')}</b> で登録します。<br>お名前を入れて「登録してはじめる」を押してください。</div>
+  if(has){box.innerHTML=`<div class="rqok">📨 入会の申しこみを受けつけました！<br><b>${esc(u.email||'')}</b><br>トレーナーが「承認」すると、正式に入会です。<br>承認されると、この画面から自動で入れます。<br>（受付でひと声かけてもらうと早いです）</div>${out}`}
+  else{box.innerHTML=`<div class="rqh">ようこそ333GYMへ！<br><b>${esc(u.email||'')}</b> で入会を申しこみます。<br>お名前を入れて「入会を申しこむ」を押してください。</div>
     <label>お名前（ジムで呼ばれている名前）<input id="rqname" maxlength="20" value="${esc(u.displayName||'')}"></label>
-    <button type="button" class="gb" id="rqsend">登録してはじめる</button>${out}`;
-  $g('rqsend').onclick=async()=>{const name=$g('rqname').value.trim();if(!name){msg('お名前を入れてください');return}$g('rqsend').disabled=true;
-    try{await db.doc('roles/'+u.uid).set({role:'member',email:(u.email||'').toLowerCase(),name,via:'self',t:Date.now()});
-      box.hidden=true;box.innerHTML='';$g('gform').classList.remove('reqmode');AUTH.role='member';AUTH.name=name;document.body.classList.remove('locked');applyRole();try{const m=me();if(m&&/^ゲスト/.test(m.name)){m.name=name;save();render()}}catch(e){}}
-    catch(e){console.warn(e);msg('登録できませんでした。受付でお声がけください。［'+(e.code||e.message)+'］');$g('rqsend').disabled=false}};
+    <label>ひとこと（なくてもOK）<input id="rqmsg" maxlength="60" placeholder="例：体験に来た○○です／火曜に通っています"></label>
+    <button type="button" class="gb" id="rqsend">入会を申しこむ</button>${out}`;
+    $g('rqsend').onclick=async()=>{const name=$g('rqname').value.trim();if(!name){msg('お名前を入れてください');return}$g('rqsend').disabled=true;
+      try{await rq.set({email:(u.email||'').toLowerCase(),name,msg:$g('rqmsg').value.trim(),t:Date.now()});showReq(u,db,auth)}catch(e){console.warn(e);msg('申しこみできませんでした。受付でお声がけください。［'+(e.code||e.message)+'］');$g('rqsend').disabled=false}}}
   $g('rqout').onclick=()=>auth.signOut();
   // 承認されたら自動で入る
-  if(reqWatch)reqWatch();const ref=db.doc('roles/'+u.uid);if(ref.onSnapshot)reqWatch=ref.onSnapshot(d=>{if(d.exists){reqWatch&&reqWatch();reqWatch=null;const x=d.data();AUTH.role=x.role||'member';AUTH.name=x.name||'';box.hidden=true;box.innerHTML='';$g('gform').classList.remove('reqmode');document.body.classList.remove('locked');applyRole()}},e=>console.warn(e))}
+  if(reqWatch)reqWatch();const ref=db.doc('roles/'+u.uid);if(ref.onSnapshot)reqWatch=ref.onSnapshot(d=>{if(d.exists){reqWatch&&reqWatch();reqWatch=null;const x=d.data();AUTH.role=x.role||'member';AUTH.name=x.name||'';box.hidden=true;box.innerHTML='';$g('gform').classList.remove('reqmode');if(JOIN){location.replace(window.KQ_GUEST_URL||'/');return}document.body.classList.remove('locked');applyRole()}},e=>console.warn(e))}
 boot().then(()=>{
   const auth=firebase.auth(),db=firebase.firestore();
   $g('gform').onsubmit=e=>{e&&e.preventDefault&&e.preventDefault();const em=$g('gemail').value.trim(),pw=$g('gpass').value;if(!em||!pw){msg('メールアドレスとパスワードを入れてください');return false}$g('glogin').disabled=true;msg('ログインしています…',1);auth.signInWithEmailAndPassword(em,pw).catch(err=>msg(JA(err))).finally(()=>$g('glogin').disabled=false);return false};
@@ -2070,6 +2078,9 @@ boot().then(()=>{
     const ref=db.doc('roles/'+u.uid),em=(u.email||'').toLowerCase();
     // ① 自分の roles があればそれを使う
     try{const d=await ref.get();if(d.exists){role=d.data().role||'member';name=d.data().name||'';ok=true}}catch(e){console.warn(e);why=e.code||e.message}
+    if(ok&&role==='pause'){msg('いまは休会中です。記録とEXPは1年間そのまま残っています。再開するときは、受付でお声がけください。');await auth.signOut();return}
+    if(ok&&role==='left'){msg('このアカウントは退会の手続きがされています。また通う場合は、受付でお声がけください。');await auth.signOut();return}
+    if(ok&&role==='member'){try{await ref.update({lastSeen:Date.now()})}catch(e){}}
     // ①' 先に会員として自分で登録していても、ジムがトレーナーとして登録していれば、トレーナーに切りかえる
     if(ok&&role!=='trainer'&&em){try{const g=await db.doc('roles/g_'+em).get();if(g.exists&&g.data().role==='trainer'){role='trainer';name=g.data().name||name;try{await ref.update({role:'trainer',name})}catch(e){console.warn('role upgrade needs rules',e)}}}catch(e){console.warn(e)}}
     // ② Google用の事前登録（roles/g_メール）
@@ -2082,6 +2093,7 @@ boot().then(()=>{
     if(!ok){console.warn('login: no role yet',u.email,why);showReq(u,db,auth);return}
     if(!ok){msg(`このアカウント（${u.email}）は、ジムに登録されていません。受付でお声がけください。`+`［${why||'no-role'}］`);console.warn('login denied',u.email,u.uid,why);await auth.signOut();return}
     {const r=$g('greq');if(r){r.hidden=true;r.innerHTML=''}$g('gform').classList.remove('reqmode')}
+    if(JOIN){location.replace(role==='trainer'?'/admin':(window.KQ_GUEST_URL||'/'));return}
     AUTH.role=role;AUTH.name=name;document.body.classList.remove('locked');applyRole();
   });
 }).catch(e=>{msg('ログインの準備ができませんでした。通信を確認して、もう一度開いてください');console.warn(e)});
@@ -2096,11 +2108,11 @@ function acctPanel(){const v=document.getElementById('view');if(!v||document.get
   <button type="button" class="btn-main" id="amk">トレーナーとして登録</button><div class="gm" id="amsg" style="font-size:13px"></div>
   <details id="alist"><summary style="cursor:pointer;font-size:13px;color:#2f6d2a;font-weight:700">登録されているアカウントを見る</summary><ul></ul></details></details>`;
   v.appendChild(d);
-  const rqs=document.createElement('section');rqs.id='rqlist';rqs.className='acct rqlist';rqs.innerHTML='<h3>📨 登録の申請</h3><ul><li class="muted">読みこみ中…</li></ul>';d.before(rqs);loadReq();
+  const rqs=document.createElement('section');rqs.id='rqlist';rqs.className='acct rqlist';rqs.innerHTML='<h3>📨 入会の申しこみ（承認まち）</h3><ul><li class="muted">読みこみ中…</li></ul>';v.insertBefore(rqs,v.firstChild);loadReq();memPanel(v);
   async function loadReq(){const ul=rqs.querySelector('ul'),db=firebase.firestore();try{const q=await db.collection('requests').get();const a=[];q.forEach(x=>a.push({id:x.id,...x.data()}));a.sort((x,y)=>(x.t||0)-(y.t||0));
-    rqs.querySelector('h3').innerHTML=`📨 登録の申請${a.length?` <i class="nbadge in">${a.length}</i>`:''}`;
+    rqs.querySelector('h3').innerHTML=`📨 入会の申しこみ（承認まち）${a.length?` <i class="nbadge in">${a.length}</i>`:''}`;
     ul.innerHTML=a.length?a.map(x=>`<li><span><b>${esc(x.name||'')}</b> ${esc(x.email||'')}${x.msg?`<br><span class="rqm">「${esc(x.msg)}」</span>`:''}</span><span class="rqbtn"><button type="button" class="ok" data-ok="${esc(x.id)}">承認</button><button type="button" data-ng="${esc(x.id)}">見送る</button></span></li>`).join(''):'<li class="muted">いま、申請はありません。</li>';rqs.hidden=!a.length;
-    ul.querySelectorAll('[data-ok]').forEach(b=>b.onclick=async()=>{const x=a.find(y=>y.id===b.dataset.ok);b.disabled=true;try{await db.doc('roles/'+x.id).set({role:'member',email:x.email||'',name:x.name||'',via:'request',t:Date.now()});await db.doc('requests/'+x.id).delete();toast(`${x.name||x.email} さんを承認しました`);loadReq()}catch(e){toast(JA(e));b.disabled=false}});
+    ul.querySelectorAll('[data-ok]').forEach(b=>b.onclick=async()=>{const x=a.find(y=>y.id===b.dataset.ok);b.disabled=true;try{await db.doc('roles/'+x.id).set({role:'member',email:x.email||'',name:x.name||'',via:'request',t:Date.now()});await db.doc('requests/'+x.id).delete();toast(`${x.name||x.email} さんの入会を承認しました`);loadReq();memPanel(v,1)}catch(e){toast(JA(e));b.disabled=false}});
     ul.querySelectorAll('[data-ng]').forEach(b=>b.onclick=async()=>{const x=a.find(y=>y.id===b.dataset.ng);if(!confirm(`${x.name||x.email} さんの申請を見送りますか？`))return;try{await db.doc('requests/'+x.id).delete();loadReq()}catch(e){toast(JA(e))}})
   }catch(e){console.warn('requests',e);rqs.hidden=true}}
   const am=(t,ok)=>{const m=document.getElementById('amsg');m.textContent=t;m.style.color=ok?'#2f6d2a':'#c0392b'};
@@ -2114,6 +2126,23 @@ function acctPanel(){const v=document.getElementById('view');if(!v||document.get
       if(c){await db.doc('roles/'+c.user.uid).set({role,email:em,name,t:Date.now()});await sec.auth().signOut()}const n=await invite();
       am(c?`${name||email} の${RL}アカウントを作りました`:`このメールはもう使われていたので、そのアカウントを${RL}にしました${n?'':'（まだ一度も入っていなければ、入ったときに切りかわります）'}`,1);['an','ae','ap'].forEach(i=>document.getElementById(i).value='');listAcc()}catch(e){am(JA(e))}};
   document.getElementById('alist').ontoggle=e=>{if(e.target.open)listAcc()};
+  // ===== 在籍・退会：退会し忘れを防ぐ =====
+  async function memPanel(v,re){let p=document.getElementById('memp');if(p&&!re)return;if(!p){p=document.createElement('section');p.id='memp';p.className='acct memp';const r=document.getElementById('rqlist');r?r.after(p):v.insertBefore(p,v.firstChild)}
+    const db=firebase.firestore(),DAY=864e5,now=Date.now(),ym=new Date().toISOString().slice(0,7),first=new Date().getDate()<=7&&S.zaiseki!==ym;
+    let a=[];try{const q=await db.collection('roles').get();q.forEach(x=>{const d=x.data();if(!x.id.startsWith('g_')&&(d.role==='member'||d.role==='left'||d.role==='pause'))a.push(Object.assign({_id:x.id},d))})}catch(e){p.innerHTML=`<h3>👥 会員の在籍・退会</h3><div class="muted">${JA(e)}</div>`;return}
+    const last=x=>x.lastSeen||x.t||0,act=a.filter(x=>x.role==='member').sort((x,y)=>last(x)-last(y)),left=a.filter(x=>x.role==='left'),old=act.filter(x=>now-last(x)>30*DAY),pz=a.filter(x=>x.role==='pause').sort((x,y)=>(x.pausedAt||0)-(y.pausedAt||0)),pd=x=>Math.floor((now-(x.pausedAt||now))/DAY),pSoon=pz.filter(x=>pd(x)>=335);
+    p.innerHTML=`<h3>👥 会員の在籍・退会 <small>${act.length}人</small></h3>
+     ${first?`<div class="zsk">📅 <b>毎月はじめの在籍確認</b>：やめた人がいないか、下の一覧を見てください。${old.length?`<br>30日以上アプリを開いていない人が <b>${old.length}人</b> います。`:''}<button type="button" id="zskok">今月の確認をしました</button></div>`:old.length?`<div class="zsk">🔔 30日以上アプリを開いていない人が <b>${old.length}人</b> います。やめた人なら「退会」を押してください。</div>`:''}
+     ${pSoon.length?`<div class="zsk">⏳ 休会の保存期間（1年）が近い・過ぎた人が <b>${pSoon.length}人</b> います。下の「休会中の人」を見てください。</div>`:''}
+     <div class="muted" style="font-size:12px"><b>休会</b>：ログインを止めて、記録とEXPを1年間そのまま保存。「再開」で続きからスタートできます。<br><b>退会</b>：ログインできなくなります。もどすこともできます。</div>
+     <ul class="meml">${act.map(x=>{const dd=Math.floor((now-last(x))/DAY);return `<li class="${dd>30?'old':''}"><span><b>${esc(x.name||'')}</b> <small>${esc(x.email||'')}</small><br><small>${x.lastSeen?`最後に開いた日：${dd===0?'今日':dd+'日前'}`:'まだ開いていません'}${dd>30?' 🔔':''}</small></span><span class="mbt"><button type="button" class="pz" data-pause="${esc(x._id)}">休会</button><button type="button" data-left="${esc(x._id)}">退会</button></span></li>`}).join('')||'<li class="muted">まだ会員はいません。</li>'}</ul>
+     ${pz.length?`<div class="pzh">😴 休会中の人（${pz.length}人）</div><ul class="meml">${pz.map(x=>{const n=pd(x),rest=365-n;return `<li class="pzl ${n>=335?'old':''}"><span><b>${esc(x.name||'')}</b> <small>${esc(x.email||'')}</small><br><small>休会して${n}日・${rest>0?`保存はあと${rest}日`:'<b>保存期間（1年）を過ぎました</b>'}${n>=335?' ⏳':''}</small></span><span class="mbt"><button type="button" class="rs" data-resume="${esc(x._id)}">再開</button>${n>=365?`<button type="button" data-left="${esc(x._id)}">退会</button>`:''}</span></li>`}).join('')}</ul>`:''}
+     ${left.length?`<details><summary>退会した人（${left.length}人）</summary><ul class="meml">${left.map(x=>`<li class="gone"><span><b>${esc(x.name||'')}</b> <small>${esc(x.email||'')}</small></span><button type="button" data-back="${esc(x._id)}">もどす</button></li>`).join('')}</ul></details>`:''}`;
+    const ok=document.getElementById('zskok');if(ok)ok.onclick=()=>{S.zaiseki=ym;save();memPanel(v,1)};
+    p.querySelectorAll('[data-pause]').forEach(b=>b.onclick=async()=>{const x=act.find(y=>y._id===b.dataset.pause);if(!confirm(`${x.name||x.email} さんを休会にしますか？\n記録とEXPは1年間そのまま残り、「再開」で続きから始められます。`))return;try{await db.doc('roles/'+x._id).update({role:'pause',pausedAt:Date.now()});toast('休会にしました');memPanel(v,1)}catch(e){toast(JA(e))}});
+    p.querySelectorAll('[data-resume]').forEach(b=>b.onclick=async()=>{const x=pz.find(y=>y._id===b.dataset.resume);if(!confirm(`${x.name||x.email} さんの休会を終えて、再開しますか？\n前のEXP・レベルの続きから始まります。`))return;try{await db.doc('roles/'+x._id).update({role:'member',resumedAt:Date.now()});toast('再開しました。続きからスタートです');memPanel(v,1)}catch(e){toast(JA(e))}});
+    p.querySelectorAll('[data-left]').forEach(b=>b.onclick=async()=>{const x=act.concat(pz).find(y=>y._id===b.dataset.left);if(!confirm(`${x.name||x.email} さんを退会にしますか？\nこの人はログインできなくなります。`))return;try{await db.doc('roles/'+x._id).update({role:'left',leftAt:Date.now()});toast('退会にしました');memPanel(v,1)}catch(e){toast(JA(e))}});
+    p.querySelectorAll('[data-back]').forEach(b=>b.onclick=async()=>{try{await db.doc('roles/'+b.dataset.back).update({role:'member'});toast('会員にもどしました');memPanel(v,1)}catch(e){toast(JA(e))}})}
   async function listAcc(){const ul=document.querySelector('#alist ul');try{const q=await firebase.firestore().collection('roles').get();const a=[];q.forEach(x=>a.push(Object.assign({_id:x.id},x.data())));ul.innerHTML=a.sort((x,y)=>(x.t||0)-(y.t||0)).map(x=>`<li><small class="${x.role==='trainer'?'':'m'}">${x.role==='trainer'?'トレーナー':'会員'}</small><span>${esc(x.name||'')} ${esc(x.email||'')}${x.google||x.via==='google'?' <b class="gtag">Google</b>':''}</span>${x.google||x.via==='google'?'':`<button type="button" data-rs="${esc(x.email||'')}">再設定メール</button>`}<button type="button" class="rlsw" data-rl="${esc(x._id)}" data-to="${x.role==='trainer'?'member':'trainer'}">${x.role==='trainer'?'会員にする':'トレーナーにする'}</button></li>`).join('')||'<li>まだありません</li>';
     ul.querySelectorAll('[data-rl]').forEach(b=>b.onclick=async()=>{const to=b.dataset.to;if(!confirm(to==='trainer'?'このアカウントをトレーナーにしますか？（管理ページに入れるようになります）':'このアカウントを会員にもどしますか？'))return;
       try{const db=firebase.firestore(),d=await db.doc('roles/'+b.dataset.rl).get(),em=((d.data()||{}).email||'').toLowerCase();await db.doc('roles/'+b.dataset.rl).update({role:to});

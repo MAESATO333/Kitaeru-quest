@@ -47,6 +47,10 @@
       {
         "source": "/news",
         "destination": "/index.html"
+      },
+      {
+        "source": "/join",
+        "destination": "/index.html"
       }
     ]
   }
