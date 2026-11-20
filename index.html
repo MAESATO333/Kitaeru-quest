@@ -652,7 +652,7 @@ function classOf(m){
 }
 const STAT={str:{name:'力',kg:25,c:'var(--red)',hex:'#e2483d',hint:'筋トレ量'},end:{name:'持久',kg:20,c:'var(--blue)',hex:'#3a7bea',hint:'有酸素'},tec:{name:'技',kg:15,c:'var(--yellow)',hex:'#f2c230',hint:'トレーナー評価'},grit:{name:'根性',kg:10,c:'var(--green)',hex:'#3fae5a',hint:'来館・継続'}};
 const byId=id=>S.members.find(m=>m.id===id);
-const me=()=>byId(S.current);
+const me=()=>{let m=byId(S.current);if(m&&m.tr&&typeof ADMIN!=='undefined'&&!ADMIN){const g=(S.prevCur&&S.members.find(y=>y.id===S.prevCur&&!y.tr))||S.members.find(y=>!y.tr);if(g){S.current=g.id;m=g}}if(m&&m.tr&&m.allow&&!m.allow.includes('machine'))m.allow.push('machine');return m};
 // ---------- 今日の顔ぶれ：日付と本人で決まる乱数で毎日入れ替え ----------
 function dayKey(){const d=new Date(Date.now()+(S.dayShift||0)*day);return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;}
 function hashStr(t){let h=2166136261;for(const c of t){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0;}
@@ -1084,7 +1084,7 @@ const TRAINERS=['川満由希夫','石井麻美','佐々木美香','垣花 豊',
 function TN(){const a=window.AUTH&&AUTH.on&&AUTH.role==='trainer'&&AUTH.name;if(a&&TRAINERS.includes(a))return a;return S.tname&&TRAINERS.includes(S.tname)?S.tname:TRAINERS[0]}
 // トレーナーも冒険者として参加（チーム対抗戦にトレーナーとして出る）
 function trId(n){return 'tr_'+hashStr(n).toString(36)}
-function trMember(n){let m=S.members.find(x=>x.id===trId(n));if(!m){m={id:trId(n),name:n,tr:true,team:'am',stats:{str:0,end:0,tec:0,grit:0},titles:[],streak:[0,0,0,0,0,0,0],weekXp:0,checkins:[],homework:[],boost:0,look:/美|香|子|花|麻|みや|有花/.test(n)?'f':'m',course:'lift',allow:['yoga','kapala','meal']};S.members.push(m);for(const k in _teamCache)delete _teamCache[k];save()}return m}
+function trMember(n){let m=S.members.find(x=>x.id===trId(n));if(!m){m={id:trId(n),name:n,tr:true,team:'am',stats:{str:0,end:0,tec:0,grit:0},titles:[],streak:[0,0,0,0,0,0,0],weekXp:0,checkins:[],homework:[],boost:0,look:/美|香|子|花|麻|みや|有花/.test(n)?'f':'m',course:'lift',allow:['machine','yoga','kapala','meal']};S.members.push(m);for(const k in _teamCache)delete _teamCache[k];save()}return m}
 function KS(){return S.kensa!==false}
 function visibleIds(){
   if(KS())return new Set(S.members.map(m=>m.id));
@@ -1401,6 +1401,7 @@ const BUDDY_ST={'力':'str','持久':'end','技':'tec','根性':'grit'};
 new MutationObserver(()=>document.querySelectorAll('canvas[data-hero]:not([data-d])').forEach(c=>{c.dataset.d=1;const h=HEROES.find(h=>h.key===c.dataset.hero);if(h)drawHero(c,h)})).observe(document.documentElement,{childList:true,subtree:true});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-buddy]');if(!b)return;const m=me(),k=b.dataset.buddy,h=HEROES.find(x=>x.key===k);if(!ADMIN&&m.buddy&&m.buddyDay===dayKey()){toast('相棒を変えられるのは1日1回までです。また明日えらべます');return}if(!ADMIN)m.buddyDay=dayKey();if(m.buddy===k){m.buddy=null;toast('相棒をはずしました')}else{m.buddy=k;toast(`${h.name}が相棒になりました！`)}save();render();});
 function gain(m,stat,xp,text,extra={}){
+  if(!ADMIN&&m&&!m.tr&&typeof tab!=='undefined'&&tab==='log'&&typeof logType!=='undefined'&&COURSES.some(c=>c[0]===logType)&&!canRec(m,logType)){try{toast(`「${cName(logType)}」は、あなたの会員区別では記録できません（有酸素はだれでもOK）`)}catch(e){}return}
   let boosted=false;
   if(!extra.by&&m.buddy){const h=HEROES.find(h=>h.key===m.buddy);if(h&&BUDDY_ST[h.stat]===stat){xp=Math.round(xp*1.1);text+=`（相棒${h.name}×1.1）`;}}
   if(!extra.by&&m.boost>0&&(stat==='str'||stat==='end')){xp=Math.round(xp*1.5);m.boost--;boosted=true;text+='（気合ブースト×1.5）';}
@@ -1662,7 +1663,7 @@ function vLog(){
     const calc=()=>Math.min(240,Math.max(5,Math.round((+$('#min').value||0)*2)));
     const upd=()=>$('#pv').innerHTML=`持久 <b>+${calc()}</b> EXP`;
     $('#min').oninput=upd;$('#ma').onchange=()=>{const v=CMIN[$('#ma').value];if(v)$('#min').value=v;upd()};upd();bindAdd('man','cardio');if(window._pick){$('#ma').value=window._pick;window._pick=null;upd()}
-    $('#go').onclick=()=>{gain(m,'end',calc(),CMIN[$('#ma').value]?$('#ma').value:`${$('#ma').value} ${$('#min').value}分`);tab='hero';render()};
+    $('#go').onclick=()=>{gain(m,'end',calc(),'🏃 '+(CMIN[$('#ma').value]?$('#ma').value:`${$('#ma').value} ${$('#min').value}分`));tab='hero';render()};
   }else{
     const today=(new Date().getDay()+6)%7, done=m.streak[today];
     f.innerHTML=`<div class="stack"><div class="muted">ジムに来たらタップ。本番では受付のQRコードを読む形を想定しています。</div>
@@ -1727,8 +1728,8 @@ function vBoss(){
 let zLook='m';
 // ---------- マイページ（本人だけ） ----------
 let myF='all';
-const MYF=[['all','すべて'],['lift','加圧トレ'],['machine','マシントレ'],['yoga','YOGA'],['meal','食事セラピー'],['kapala','カパラバティ'],['etc','そのほか']];
-function myKind(t){return /🏋️|マシントレ/.test(t)?'machine':/食事|ごはん|食べ|飲/.test(t)?'meal':/カパラバティ|呼吸|バストリカ|アヌロマ/.test(t)?'kapala':/ポーズ|アーサナ|YOGA|ヨガ/.test(t)?'yoga':/kg|回×|セット|スクワット|プランク|ランジ|加圧/.test(t)?'lift':'etc'}
+const MYF=[['all','すべて'],['lift','加圧トレ'],['machine','マシントレ'],['yoga','YOGA'],['meal','食事セラピー'],['kapala','カパラバティ'],['cardio','有酸素'],['etc','そのほか']];
+function myKind(t){return /🏋️|マシントレ/.test(t)?'machine':/🏃|有酸素|ウォーキング|ジョギング|ランニング|トレッドミル|バイク漕ぎ|水泳|なわとび|サイクリング|ステアクライマー|クロストレーナー|踏み台/.test(t)?'cardio':/食事|ごはん|食べ|飲/.test(t)?'meal':/カパラバティ|呼吸|バストリカ|アヌロマ/.test(t)?'kapala':/ポーズ|アーサナ|YOGA|ヨガ/.test(t)?'yoga':/kg|回×|セット|スクワット|プランク|ランジ|加圧/.test(t)?'lift':'etc'}
 const MOODS=['😊','😆','🥰','😌','💪','😢','😤','😴'];
 function vMy(){const m=me(),L=levelOf(total(m)),fd=new Date();
   const mine=S.feed.filter(p=>p.who===m.id||p.to===m.id);
