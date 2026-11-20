@@ -457,6 +457,10 @@ body.trmode header{background:linear-gradient(180deg,#ffd27a,#ffe9b0)!important}
 .meml button{flex:none;border:2px solid #c0392b;background:#fff;color:#c0392b;border-radius:999px;padding:4px 12px;font-weight:800;font-size:12px}.meml li.gone button{border-color:#4f7d2a;color:#4f7d2a}
 .mbt{display:flex;gap:6px;flex:none}.meml button.pz{border-color:#7a6bb0;color:#5b4b96}.meml button.rs{border-color:#4f7d2a;color:#33501a;background:#f2fbe0}.pzh{font-weight:800;color:#5b4b96;margin-top:10px}.meml li.pzl{background:#f7f5ff;border-color:#d8d0f0}.meml li.pzl.old{border-color:#f39a1e}
 .meml small{background:none!important;color:var(--muted)!important;padding:0!important;border:0!important;font-weight:600}.meml button[data-left]{color:#c0392b!important;border-color:#c0392b!important;background:#fff!important}
+.stag{background:#fff3ef;border:3px solid #e8452c;border-radius:16px;padding:10px 12px;margin:0 0 12px}.stag h3{margin:0 0 4px;color:#c0392b;font-size:16px}.stag h3 small{font-size:12px;color:#8a5a50}
+.stag>ul{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:8px}.stag>ul>li{background:#fff;border:2px solid #f3c9bf;border-radius:12px;padding:8px 10px;display:flex!important;flex-direction:column;gap:6px}.stag>ul>li.mine{border-color:#e8452c;box-shadow:0 2px 0 #e8452c}
+.stc{font-size:12px;background:#ffe7df;color:#a03020;border-radius:999px;padding:1px 8px;font-weight:800}.str{margin:4px 0 0;padding-left:18px;font-size:12px;color:#6a4a40}
+.sta{display:flex;gap:6px;flex-wrap:wrap}.sta select{flex:1;min-width:120px;padding:6px;border-radius:10px;border:2px solid #f3c9bf;font-size:13px}.sta button{border:2px solid #4f7d2a;background:#f2fbe0;color:#33501a;border-radius:999px;padding:5px 12px;font-weight:800;font-size:12px}.sta button.see{border-color:#a8346a;background:#fff4fa;color:#a8346a}
 </style>
 
 </head>
@@ -1857,7 +1861,7 @@ function vGuild(){
     m.titles.push(t);S.feed.unshift({id:S.nextId++,who:'trainer',tn:TN(),to:m.id,text:`${m.name}さんに称号「${t}」を授与`,xp:0,stat:'tec',t:Date.now(),cheers:[]});save();toast(`称号「${t}」を授けました`)};
   document.querySelectorAll('[data-st]').forEach(b=>b.onclick=()=>{
     const [mid,hid]=b.dataset.st.split(':'),m=byId(mid),h=m.homework.find(x=>x.id==hid);
-    h.status='stamped';m.boost=(m.boost||0)+2;const hf=Object.keys(FOODS)[hashStr(String(h.id)+m.id)%Object.keys(FOODS).length];giveFood(m,hf);
+    h.status='stamped';h.stAt=Date.now();h.stT=TN();if(!m.coach)m.coach=TN();m.boost=(m.boost||0)+2;const hf=Object.keys(FOODS)[hashStr(String(h.id)+m.id)%Object.keys(FOODS).length];giveFood(m,hf);
     const before=levelOf(total(m)).lv;['str','end','tec','grit'].forEach(k=>m.stats[k]+=15);m.weekXp+=60;
     S.feed.unshift({id:S.nextId++,who:'trainer',tn:TN(),to:m.id,text:`${m.name}さんの宿題「${h.text}」に花マル🌸スタンプ！ パワーアップ`,xp:60,stat:'grit',t:Date.now(),cheers:[]});save();
     const after=levelOf(total(m)).lv;
@@ -1873,7 +1877,7 @@ function vGuild(){
     $('#hfn').value='';$('#hfm').value='';hdraw();toast(reg?`宿題に追加し、「${n}」を一覧に登録しました`:'宿題に追加しました')};
   document.querySelectorAll('[data-rk]').forEach(b=>b.onclick=()=>{const a=CX(b.dataset.rk),i=a.indexOf(b.dataset.rv);if(i>=0)a.splice(i,1);save();render();toast('登録を消しました')});
   $('#hlist').onclick=e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;if(d.hx!=null)HQ.splice(+d.hx,1);else if(d.hu!=null){const i=+d.hu;[HQ[i-1],HQ[i]]=[HQ[i],HQ[i-1]]}else if(d.hd!=null){const i=+d.hd;[HQ[i+1],HQ[i]]=[HQ[i],HQ[i+1]]}hdraw()};
-  $('#hgive').onclick=()=>{if(!HQ.length){toast('先に項目を追加してください');return}const m=byId($('#hm').value);m.homework.push({id:S.hwId++,text:HQ.map((t,i)=>HQ.length>1?`${i+1}. ${t}`:t).join('\n'),items:HQ.slice(),status:'open',t:Date.now()});save();toast(`${m.name}さんに宿題（${HQ.length}こ）を送りました`);HQ=[];hdraw()};
+  $('#hgive').onclick=()=>{if(!HQ.length){toast('先に項目を追加してください');return}const m=byId($('#hm').value);m.homework.push({id:S.hwId++,text:HQ.map((t,i)=>HQ.length>1?`${i+1}. ${t}`:t).join('\n'),items:HQ.slice(),status:'open',t:Date.now(),tn:TN()});if(!m.coach)m.coach=TN();save();toast(`${m.name}さんに宿題（${HQ.length}こ）を送りました`);HQ=[];hdraw()};
   {const L=$('#okl');if(L)L.onclick=e=>{const b=e.target.closest('[data-ok]');if(!b)return;L.querySelectorAll('.on').forEach(x=>x.classList.remove('on'));b.classList.add('on');$('#ok').value=b.dataset.ok};
   const og=$('#ogive');if(og)og.onclick=()=>{const m=byId($('#om').value),k=$('#ok').value,f=FOODS[k],msg=$('#omsg').value.trim();m.osusume=m.osusume||[];m.osusume.push({k,msg,tn:TN(),t:Date.now()});giveFood(m,k);gain(m,f.stat,30,`${TN()}トレーナーからおすすめ野菜「${f.name}」${msg?'：'+msg:''}`,{by:'trainer'});save();$('#omsg').value='';toast(`${m.name}さんに「${f.name}」を贈りました`)}}
   {const C=$('#tplc');if(C)C.onclick=e=>{const b=e.target.closest('[data-tpl]');if(!b)return;const t=HWTPL()[+b.dataset.tpl];const ta=$('#hwt');ta.value=t[1];C.querySelectorAll('.on').forEach(x=>x.classList.remove('on'));b.classList.add('on');$('#hwtn').value=t[2]?t[0]:'';ta.focus()};
@@ -2177,6 +2181,30 @@ function badge(){if(!ADMIN)return;const n=S.members.reduce((a,m)=>a+m.homework.f
 const _r3=render;render=function(){const r=_r3.apply(this,arguments);try{badge()}catch(e){console.warn(e)}return r};
 // トレーナーがゲストごとにつける評価（日付ごとに残る）
 const TEV=[['gb','頑張り度'],['kz','継続度'],['is','意識度'],['sk','宿題度'],['mk','目標実現度'],['nk','仲良し度']];
+// ===== 活動の停滞アラート（10日）：担当トレーナー名つき =====
+const STAG_D=10;
+function coachOf(m){if(m.coach&&TRAINERS.includes(m.coach))return m.coach;const h=(m.homework||[]).slice().reverse().find(x=>x.tn||x.stT);return h?(h.tn||h.stT):''}
+function stagOf(m){const D=864e5,now=Date.now(),r=[],ago=t=>Math.floor((now-t)/D);
+  const vs=(m.visits||[]).map(v=>new Date(v+'T12:00:00').getTime()).filter(x=>!isNaN(x)),td=(new Date().getDay()+6)%7;(m.streak||[]).forEach((x,i)=>{if(x&&i<=td)vs.push(now-(td-i)*D)});const lv=vs.length?Math.max(...vs):0;
+  if(!lv)r.push('来館の記録がまだありません');else if(ago(lv)>=STAG_D)r.push(`トレーニングに${ago(lv)}日来ていません`);
+  const hw=m.homework||[];if(hw.length){const first=Math.min(...hw.map(h=>h.t||now));
+    const ld=Math.max(0,...hw.map(h=>h.doneAt||0));const base=ld||first;if(ago(base)>=STAG_D)r.push(ld?`宿題の報告が${ago(ld)}日ありません`:`宿題の報告が一度もありません（${ago(first)}日）`);
+    const ls=Math.max(0,...hw.filter(h=>h.status==='stamped').map(h=>h.stAt||h.t||0));const sb=ls||first;if(ago(sb)>=STAG_D)r.push(ls?`花マル🌸スタンプが${ago(ls)}日送られていません`:`花マル🌸スタンプがまだ一度も送られていません`)}
+  return r}
+function stagPanel(){if(!ADMIN||tab!=='guild'||document.getElementById('stag'))return;const v=document.getElementById('view');if(!v)return;
+  const now=Date.now(),me0=TN(),L=S.members.filter(m=>!m.tr&&!m.left&&!(m.stagSnooze>now)).map(m=>({m,r:stagOf(m),c:coachOf(m)})).filter(x=>x.r.length).sort((a,b)=>(b.c===me0)-(a.c===me0)||b.r.length-a.r.length);
+  if(!L.length)return;const mine=L.filter(x=>x.c===me0).length,SH=window._stagAll?L:L.slice(0,8);
+  const d=document.createElement('section');d.id='stag';d.className='stag';
+  d.innerHTML=`<h3>⚠️ 活動が停滞しています！ご確認ください <small>${L.length}人${mine?`（${esc(me0)}さん担当 ${mine}人）`:''}</small></h3>
+   <div class="muted" style="font-size:12px">10日間「来館なし」「宿題の報告なし」「花マル🌸スタンプなし」のどれかに当てはまる人です。声をかけたら「確認した」を押すと、7日間かくれます。</div>
+   <ul>${SH.map(({m,r,c})=>`<li class="${c===me0?'mine':''}"><div><b>${esc(m.name)}さん</b> <span class="stc">担当：${c?esc(c)+'トレーナー':'未設定'}</span><ul class="str">${r.map(t=>`<li>${t}</li>`).join('')}</ul></div>
+    <div class="sta"><select data-coach="${m.id}"><option value="">担当を選ぶ</option>${TRAINERS.map(t=>`<option ${t===c?'selected':''}>${esc(t)}</option>`).join('')}</select><button type="button" data-snz="${m.id}">確認した</button><button type="button" class="see" data-see="${m.id}">この人を見る</button></div></li>`).join('')}</ul>
+   ${L.length>8?`<button type="button" class="nwall" id="stagAll">${window._stagAll?'少なく表示':`ぜんぶ見る（${L.length}人）`}</button>`:''}`;
+  v.insertBefore(d,v.firstChild);
+  d.querySelectorAll('[data-coach]').forEach(sl=>sl.onchange=()=>{const m=byId(sl.dataset.coach);m.coach=sl.value||'';save();toast(`${m.name}さんの担当：${sl.value||'未設定'}`);d.remove();stagPanel()});
+  d.querySelectorAll('[data-snz]').forEach(b=>b.onclick=()=>{const m=byId(b.dataset.snz);m.stagSnooze=Date.now()+7*864e5;save();toast(`${m.name}さん：確認しました`);d.remove();stagPanel()});
+  d.querySelectorAll('[data-see]').forEach(b=>b.onclick=()=>{S.current=b.dataset.see;tab='hero';save();render();window.scrollTo(0,0)});
+  const al=document.getElementById('stagAll');if(al)al.onclick=()=>{window._stagAll=!window._stagAll;d.remove();stagPanel()}}
 function tevPanel(){if(!ADMIN||tab!=='guild'||document.getElementById('tev'))return;const v=document.getElementById('view');const h=[...v.querySelectorAll('h2')].find(x=>x.textContent.includes('宿題を出す'));if(!h)return;
   const sel=S.current;const d=document.createElement('section');d.id='tev';
   const hist=m=>{const L=(m.tEval||[]).slice(-5).reverse();return L.length?L.map(e=>`<li><div class="tevd">${new Date(e.t).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric'})}　${esc(e.tn)}トレーナー</div><div class="tevv">${TEV.map(([k,l])=>e.v[k]==null?'':`<span>${l} <b>${e.v[k]}%</b></span>`).join('')}</div>${e.memo?`<div class="tevm">${esc(e.memo)}</div>`:''}</li>`).join(''):'<li class="muted">まだ記録はありません。</li>'};
@@ -2220,7 +2248,7 @@ function coursePanel(){if(!ADMIN||tab!=='guild'||document.getElementById('cpan')
     document.getElementById('cpc').onchange=e=>{m.course=e.target.value||undefined;m.allow=(m.allow||[]).filter(k=>k!==m.course);save();toast(`${m.name}さん：会員区別を${m.course?cName(m.course):'未設定'}にしました`);draw()};
     document.querySelectorAll('#cpb [data-al]').forEach(c=>c.onchange=()=>{const k=c.dataset.al;m.allow=(m.allow||[]).filter(x=>x!==k);if(c.checked)m.allow.push(k);save();toast(`${m.name}さん：「${cName(k)}」を${c.checked?'許可しました':'許可なしにしました'}`)})};
   document.getElementById('cpm').onchange=draw;draw()}
-const _r4=render;render=function(){const r=_r4.apply(this,arguments);try{tevPanel();coursePanel();kenkoPanel();snapInbox()}catch(e){console.warn(e)}return r};
+const _r4=render;render=function(){const r=_r4.apply(this,arguments);try{tevPanel();coursePanel();kenkoPanel();snapInbox();stagPanel()}catch(e){console.warn(e)}return r};
 // ===== 333GYMニュース（トレーナーが配信 → ゲスト全員に表示） =====
 function NEWS(){S.news=S.news||[];return S.news}
 // 写真館・掲示板に投稿されたら、ニュースにも自動でのせる（ゲストの名前は出さない）
