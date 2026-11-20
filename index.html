@@ -429,6 +429,10 @@ nav{flex-direction:column;align-items:center;gap:5px}
 .hkb{display:inline-block;background:#1f5f8b;color:#fff;font-size:11px;font-weight:900;border-radius:999px;padding:2px 9px;margin-right:6px;vertical-align:middle}
 .lkn{font-size:12px;line-height:1.7;color:#33501a;background:#f3f9dc;border-radius:10px;padding:6px 10px;margin:-2px 0 6px}
 .zkb .pc[data-fk]{cursor:pointer}.zkhint{font-size:12px;background:#fffbe0;border:2px dashed #f39a1e;border-radius:10px;padding:6px 10px;margin:8px 0 0}
+.fsc.hst{text-align:left;align-items:stretch}.hst .hsb{text-align:left}.hst>canvas,.hst>h3,.hsr,.hsc{align-self:center;text-align:center}.hsr{font-size:12px;color:var(--muted)}.hsc{font-weight:900;color:#c26a00;font-size:15px}
+.hsb{background:#f3f9dc;border-radius:12px;padding:10px 12px;font-size:14px;line-height:1.8}.hsh{font-weight:900;color:#33501a;margin-bottom:4px}.hsb dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:2px 10px}.hsb dt{font-weight:800;color:#4f7d2a;white-space:nowrap}.hsb dd{margin:0}.hse{margin:4px 0}.hse b{display:block;color:#9b2f5e}
+.hsst{background:#fffbe8;border:2px solid #f5d63d}.hsst p{margin:0 0 8px;text-indent:1em}.hsm{font-weight:800;color:#9b2f5e;border-top:2px dashed #f39a1e;padding-top:8px}
+#bmsg canvas[data-hero],.scene canvas.buddy{cursor:pointer}
 .fsheet{position:fixed;inset:0;z-index:80;background:rgba(30,40,10,.45);display:flex;align-items:flex-end;justify-content:center}
 .fsc{position:relative;background:#fff;width:100%;max-width:520px;border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;max-height:90vh;overflow:auto}
 .fsc h3{margin:0;font-size:20px}.fsx{position:absolute;top:8px;right:10px;border:0;background:none;font-size:26px;color:#666}.fsn{font-size:14px}
@@ -1429,7 +1433,7 @@ function drawHero(cv,h){
 ;return {HEROES,drawHero};})();
 const BUDDY_ST={'力':'str','持久':'end','技':'tec','根性':'grit'};
 new MutationObserver(()=>document.querySelectorAll('canvas[data-hero]:not([data-d])').forEach(c=>{c.dataset.d=1;const h=HEROES.find(h=>h.key===c.dataset.hero);if(h)drawHero(c,h)})).observe(document.documentElement,{childList:true,subtree:true});
-document.addEventListener('click',e=>{const b=e.target.closest('[data-buddy]');if(!b)return;const m=me(),k=b.dataset.buddy,h=HEROES.find(x=>x.key===k);if(!ADMIN&&m.buddy&&m.buddyDay===dayKey()){toast('相棒を変えられるのは1日1回までです。また明日えらべます');return}if(!ADMIN)m.buddyDay=dayKey();if(m.buddy===k){m.buddy=null;toast('相棒をはずしました')}else{m.buddy=k;toast(`${h.name}が相棒になりました！`)}save();render();});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-buddy]');if(!b)return;{const hs=document.getElementById('hsheet');if(hs)hs.remove()}const m=me(),k=b.dataset.buddy,h=HEROES.find(x=>x.key===k);if(!ADMIN&&m.buddy&&m.buddyDay===dayKey()){toast('相棒を変えられるのは1日1回までです。また明日えらべます');return}if(!ADMIN)m.buddyDay=dayKey();if(m.buddy===k){m.buddy=null;toast('相棒をはずしました')}else{m.buddy=k;toast(`${h.name}が相棒になりました！`)}save();render();});
 function gain(m,stat,xp,text,extra={}){
   if(!ADMIN&&m&&!m.tr&&typeof tab!=='undefined'&&tab==='log'&&typeof logType!=='undefined'&&COURSES.some(c=>c[0]===logType)&&!canRec(m,logType)){try{toast(`「${cName(logType)}」は、あなたの会員区別では記録できません（有酸素はだれでもOK）`)}catch(e){}return}
   let boosted=false;
@@ -1504,8 +1508,8 @@ function vHero(){
   </div>
   ${m.titles.length?`<div class="titles">${m.titles.map(t=>`<span class="chip gold">${esc(t)}</span>`).join('')}</div>`:''}
   <h2>お野菜十勇士</h2>
-  <p class="muted" style="margin:-4px 2px 8px;font-size:12px">タップして相棒をえらぶと、島にいっしょに立ちます。相棒の得意な能力は、EXPが1.1倍。${ADMIN?'':(m.buddy&&m.buddyDay===dayKey()?'<b>今日はもう変えました。また明日えらべます。</b>':'<b>相棒を変えられるのは1日1回まで。</b>')}</p>
-  <div class="heroes">${HEROES.map(h=>`<button type="button" class="vhero ${m.buddy===h.key?'on':''}" data-buddy="${h.key}"><canvas data-hero="${h.key}"></canvas><b>${h.name}</b><span>${h.role}・${h.stat}</span></button>`).join('')}</div>
+  <p class="muted" style="margin:-4px 2px 8px;font-size:12px">タップすると<b>📖 キャラクター紹介と武勇伝</b>が読めます。そこから相棒にえらぶと、島にいっしょに立ちます。相棒の得意な能力は、EXPが1.1倍。${ADMIN?'':(m.buddy&&m.buddyDay===dayKey()?'<b>今日はもう変えました。また明日えらべます。</b>':'<b>相棒を変えられるのは1日1回まで。</b>')}</p>
+  <div class="heroes">${HEROES.map(h=>`<button type="button" class="vhero ${m.buddy===h.key?'on':''}" data-hstory="${h.key}"><canvas data-hero="${h.key}"></canvas><b>${h.name}</b><span>${h.role}・${h.stat}</span></button>`).join('')}</div>
   <h2>ごはん＆パワー図鑑 <small style="font-size:13px;color:var(--muted)">${Object.keys(FOODS).filter(k=>(canSee(m,'yoga')||FOODS[k].cat!=='yoga')&&((m.foods||{})[k]||0)>0).length} / ${Object.keys(FOODS).filter(k=>canSee(m,'yoga')||FOODS[k].cat!=='yoga').length} しゅるい</small></h2>
   <div class="zktabs" id="zktabs"></div><div class="zkb">${[['野菜',k=>FSUB(k)==='veg'],['果物',k=>FSUB(k)==='fruit'],['豆',k=>FSUB(k)==='mame'],['穀物',k=>FSUB(k)==='koku'],['海藻',k=>FSUB(k)==='sou'],['食品',k=>FSUB(k)==='shoku'],['食事メニュー',k=>FSUB(k)==='menu'],['海の幸',k=>FOODS[k].cat==='sea'],['飲み物',k=>FOODS[k].cat==='drink'],['パワースポット',k=>FOODS[k].cat==='power'],['こころのパワー',k=>FOODS[k].cat==='heart'],['必殺技',k=>FOODS[k].cat==='move'],...(canSee(m,'yoga')?[['ヨガのアーサナ',k=>FOODS[k].cat==='yoga']]:[]),['トレーナーの愛',k=>FOODS[k].cat==='energy'],['キレイ＆強く',k=>FOODS[k].cat==='beauty'],['ラッキー',k=>FOODS[k].cat==='luck'],['サプリ＆くすり',k=>FOODS[k].cat==='care']].map(([lab,fl],si)=>`<div class="zsec" data-zi="${si}" data-lab="${lab}" data-n="${Object.keys(FOODS).filter(fl).length}"><div class="shelf">${lab} <small>${Object.keys(FOODS).filter(fl).length}</small></div><div class="pantry">${Object.keys(FOODS).filter(fl).map(k=>{const f=FOODS[k],n=(m.foods||{})[k]||0;return `<div class="pc ${n||KS()?'':'none'} ${f.rare?'rare':''}" data-fk="${k}"><canvas class="food" data-food="${k}"></canvas><b class="${f.name.length>6?'ln':''}">${f.name}</b><div class="ct">${n}<small>こ</small></div><div class="ef"><span class="st" style="background:${STAT[f.stat].c}">${STAT[f.stat].name}</span>+${fxp(f)}</div>${n>=10?`<div class="tt got">★${f.title}</div>`:''}</div>`}).join('')}</div></div>`).join('')}</div>
   <p class="zkhint">👆 カードをタップすると、${canSee(m,'meal')?'<b>🍽 食べた！と記録</b>したり、':''}<b>🎁 プレゼント</b>したりできます。</p>
@@ -2309,6 +2313,82 @@ const _r3=render;render=function(){const r=_r3.apply(this,arguments);try{badge()
 const TEV=[['gb','頑張り度'],['kz','継続度'],['is','意識度'],['sk','宿題度'],['mk','目標実現度'],['nk','仲良し度']];
 
 // ===== 相棒から毎日のひとことメッセージ（1日1通・日替わり）=====
+// ===== お野菜十勇士：キャラクター設定と武勇伝（v136）=====
+// 舞台：はたけの国「ミノリ村」。栄養の説明は、実際の野菜の栄養素にもとづく（やさしい言葉で）。
+const HSTORY={
+ carrot:{catch:'まっすぐ前へ！オレンジの熱血剣士',
+  prof:[['性格','熱血でまっすぐ。困っている人を見ると、考えるより先に走り出す。'],['得意','剣の技「キャロット・スラッシュ」。早起き。'],['好き','朝日、ランニング、みんなの「ありがとう」'],['ヒミツ','じつは暗いところがちょっぴり苦手。夜は葉っぱをぎゅっとにぎって眠る。'],['口ぐせ','「その一歩が、いちばん強い剣だ！」']],
+  eiyo:[['β-カロテン','体の中でビタミンAに変わり、目・お肌・のどや鼻の粘膜を守る。暗いところで物を見る力も助ける。油といっしょだと吸収アップ。'],['食物繊維','おなかの調子をととのえる。'],['カリウム','体の中の余分な塩分を外に出すのを助ける。']],
+  title:'くらやみ森の夜明け',
+  story:['ミノリ村のとなりの「くらやみ森」に、ある日、霧の魔物「モヤモヤン」があらわれた。森はまっ暗になり、遊びに来ていた子うさぎたちが帰れなくなってしまった。','みんなが「夜が明けるまで待とう」と言う中、キャロットはひとり剣をにぎった。「待ってたら、あの子たちが寒いだろ！」　本当は、暗いところが大の苦手。足はガクガク。でも、心はまっすぐだった。','森の中で、キャロットは気づいた。体にたっぷりたくわえた“β-カロテン”のおかげで、暗い中でも目がよく見える！　木の根っこも、子うさぎの小さな足あとも、ちゃんと見えた。','モヤモヤンは「どうせ迷うぞ〜」とささやいてくる。キャロットはさけんだ。「迷ったら、とりあえず一歩！」　剣をふると、オレンジの光が霧を切りさき、森に朝日がさしこんだ。','子うさぎたちを背中に乗せて帰ったキャロット。お礼を言われると、真っ赤になって「べ、べつに、ちょっと散歩してただけだ！」　その日から、くらやみ森は「夜明けの森」と呼ばれている。'],
+  moral:'こわくても、一歩ふみ出せば、道は見えてくる。'},
+ piman:{catch:'苦くても、守りは最強！やさしい盾の騎士',
+  prof:[['性格','まじめで心やさしい。ちょっと気にしやで、「苦いからきらい」と言われると、こっそり落ちこむ。'],['得意','大きな盾「グリーンシールド」でみんなを守ること。'],['好き','お日さま、夏、子どもたちの笑い声'],['ヒミツ','中が空っぽなのは「だれかを入れてあげるスペース」だと思っている。苦いと言われた日は、ベッドで少しだけ泣く。'],['口ぐせ','「ボクの盾がある限り、大丈夫！」']],
+  eiyo:[['ビタミンC','体を守る力や、お肌のハリを助ける。ピーマンのビタミンCは、加熱しても比較的こわれにくい。'],['β-カロテン','目やお肌を守る。油でいためると吸収アップ。'],['苦みと香りの成分','クエルシトリンやピラジンなど。あの独特の苦みと香りの正体。細く切ってさっと加熱すると、苦みがやわらぐ。']],
+  title:'ハックション大嵐の七日間',
+  story:['ある冬、はたけの国に「ハックション大嵐」がやってきた。冷たい風にのって、カゼひき虫たちが村じゅうに飛んでくる。','村の子どもたちは、前の日まで「ピーマン、にがーい！」と言っていた子たちだった。ピッピマンは少しだけ迷った。でも、すぐに盾をかまえた。「苦いって言われても、守りたい気持ちは苦くないもん！」','ピッピマンの盾は、“ビタミンC”の光でできている。しかも、火のそばでも、なかなかこわれない。七日七晩、ピッピマンは学校の入口に立ちつづけ、カゼひき虫をはね返した。','八日目の朝、嵐がやんだ。ふらふらのピッピマンに、ひとりの女の子が近づいてきて、小さな声で言った。「……ピーマン、ちょっとだけ食べてみたよ。細く切って、いためたら食べられた」','ピッピマンの目から、ぽろっと涙。「苦くてもいいんだ。ボクはボクのまま、みんなを守ればいいんだ」　それからピッピマンは、苦いと言われても笑って「いつか好きになってね！」と言えるようになった。'],
+  moral:'自分のちょっと苦手なところも、ちゃんとだれかを守る力になる。'},
+ onion:{catch:'涙の数だけ強くなる、ころころ魔法使い',
+  prof:[['性格','おっとり、ほんわか。でも魔法の勉強はだれよりも熱心。'],['得意','涙の魔法「ナミダ・キラリ」。どんな料理もおいしくする、かくし味の魔法。'],['好き','じっくり煮こむスープ、読書、みんなでごはん'],['ヒミツ','自分の魔法でまわりの人を泣かせてしまうのが、ずっと悩みだった。'],['口ぐせ','「できる、できる、できる！」']],
+  eiyo:[['硫化アリル（アリシンなど）','切ると目にしみる成分。ビタミンB1の吸収を助けて、つかれにくい体づくりをサポート。'],['ケルセチン','皮の近くに多いポリフェノール。体のサビ（酸化）から守る。'],['オリゴ糖・食物繊維','おなかのいい菌のごはんになる。じっくり加熱すると、甘さが引き立つ。']],
+  title:'ぐったり鬼と、ひとつぶの涙',
+  story:['玉ちゃんは小さいころ、魔法学校で「泣き虫さん」と呼ばれていた。玉ちゃんが魔法を使うと、なぜかまわりの人の目から涙が出てしまうから。「わたしの魔法は、人を泣かせるだけなのかな……」','ある夏、村に「ぐったり鬼」があらわれた。畑の人たちはみんな、体が重くて動けない。ごはんを食べても力がわかない。鬼が、みんなのつかれをどんどん集めていたのだ。','玉ちゃんは図書館で、古い本を見つけた。「涙の魔法の正体は“硫化アリル”。お豆や玄米にふくまれるビタミンB1という“元気のもと”を、体にしっかりとどける力がある」　玉ちゃんの魔法は、泣かせるためのものじゃなかった！','玉ちゃんは、村の人たちのお豆ごはんやおみそ汁に、そっと魔法をかけてまわった。「できる、できる、できる！」　みんなの体に元気がもどり、ぐったり鬼はしゅるしゅると小さくなって逃げていった。','その夜、村の人たちは玉ちゃんにお礼を言いながら、うれし涙をながした。「この涙は、いい涙だね」　玉ちゃんは、はじめて自分の魔法が好きになった。'],
+  moral:'弱点だと思っていたことが、だれかを助ける力になることもある。'},
+ cabbage:{catch:'やさしさ何枚重ね？みんなのいやし手',
+  prof:[['性格','おだやかで聞き上手。だれかの話を、うんうんと最後まで聞いてあげる。'],['得意','いやしの葉「リーフ・ヒール」。おなかを守るおまじない。'],['好き','春の朝、ハーブティー、だれかの寝顔'],['ヒミツ','人のことばかり気にして、自分がつかれていることに気づかないことがある。'],['口ぐせ','「今日もここにいてくれて、ありがとう」']],
+  eiyo:[['ビタミンU（キャベジン）','胃の粘膜を守る成分として知られている。'],['ビタミンC','外側の葉や芯のまわりにも多い。生で食べると取りやすい。'],['ビタミンK','骨づくりを助ける。'],['食物繊維','おなかの調子をととのえる。']],
+  title:'キリキリ大王と、千枚の葉っぱ',
+  story:['お城の王さまが、毎晩おなかをかかえて苦しんでいた。原因は「キリキリ大王」。心配ごとをエサにして、王さまの胃をチクチクいじめる、小さな大王だった。','国じゅうのお医者さんも、剣士も、どうにもできなかった。そこへ呼ばれたのがキャベリン。キャベリンは戦わなかった。かわりに、王さまの話を一晩じゅう聞いた。「本当は、毎日こわかったんですね」','話を聞きながら、キャベリンは葉っぱを一枚ずつ、王さまのおなかにそっと重ねた。キャベリンの葉には、胃をやさしく守る“ビタミンU”の力がつまっている。一枚、また一枚。千枚目を重ねたとき、キリキリ大王は「こんなにやさしくされたら、いじめられないよ〜」と、ころんと眠ってしまった。','朝、王さまはひさしぶりにぐっすり眠れた顔で言った。「何でもほうびを取らせよう」　キャベリンは首をふった。「じゃあ、王さまも、ちゃんと休んでくださいね」','帰り道、キャベリンはふらっと倒れそうになった。自分のことを忘れて、一晩じゅうがんばっていたから。それを支えたのは、こっそりついてきたキャロットだった。「おまえも休め！」　キャベリンは、はじめて「ありがとう」を言う側になって、少し照れた。'],
+  moral:'やさしさは、ちゃんと自分にも向けてあげよう。'},
+ daikon:{catch:'ねらった的は外さない！まっすぐ伸びる弓使い',
+  prof:[['性格','物静かで、集中力ばつぐん。口数は少ないけれど、ここぞという時にきめる。'],['得意','百発百中の弓「ホワイトアロー」。上と下で味が変わる七変化。'],['好き','冬の朝の空気、おでん、背伸び'],['ヒミツ','昔「大根役者！」とからかわれたことを、今でもちょっと気にしている。じつは歌がうまい。'],['口ぐせ','「ねらいは決まった。あとは放つだけ」']],
+  eiyo:[['ジアスターゼ（アミラーゼ）','でんぷんの消化を助ける酵素。熱に弱いので、大根おろしなど生で取るのがおすすめ。'],['イソチオシアネート','すりおろすと出る辛み成分。先っぽのほうほど辛い。'],['ビタミンC','白い根の部分に多い。'],['葉っぱの栄養','β-カロテン、カルシウム、鉄などがたっぷり。葉も捨てないで！']],
+  title:'ズッシリ大ゴロンの大合戦',
+  story:['お正月あけ、はたけの国はたいへんなことになっていた。みんなお餅やごちそうを食べすぎて、おなかが重たく、ぜんぜん動けない。そこへ、ねむけとダルさのかたまり「ズッシリ大ゴロン」が、のしのしやってきた。','「ダイコンタ、たのむ！」とみんなが言う。でも、木の上のカラスがからかった。「大根役者に何ができる〜」　ダイコンタは何も言い返さず、ただ静かに弓を引いた。','ダイコンタの矢は、白く光る“ジアスターゼ”。ごはんやお餅のでんぷんを、すーっと消化しやすくしてくれる。矢はズッシリ大ゴロンに、ひとつ残らず命中した。','ただし、この矢には弱点がある。火であぶると力がなくなってしまうのだ。だからダイコンタは、矢をいつも「すりおろしたて」で放つ。手間がかかっても、ぜったいに手をぬかない。','戦いのあと、さっきのカラスがもじもじしながらやってきた。「……さっきはごめん。かっこよかった」　ダイコンタはちょっとだけ笑って、自分の葉っぱを一枚あげた。「これ、栄養たっぷりなんだ。食べて」'],
+  moral:'言い返さなくても、まっすぐな行動がいちばん伝わる。'},
+ tomato:{catch:'真っ赤なハートで突き進む！キラキラ格闘家',
+  prof:[['性格','明るくて元気、ちょっとおてんば。思ったことはすぐ口に出るけど、根っこはとっても友だち思い。'],['得意','必殺パンチ「リコピン・ストレート」。うま味で料理をおいしくすること。'],['好き','夏の太陽、おしゃれ、オリーブオイル'],['ヒミツ','熱いのは苦手だと思っていたら、加熱されるとパワーアップする自分にびっくりした。'],['口ぐせ','「ほんっとに応援してるんだから！」']],
+  eiyo:[['リコピン','赤い色のもと。体のサビ（酸化）を防ぐ力がとても強い。油といっしょ、加熱すると吸収アップ。'],['ビタミンC','お肌のハリを助ける。'],['カリウム','体の中の余分な塩分を外に出すのを助ける。'],['うま味（グルタミン酸）','料理をおいしくして、塩をへらすのにも役立つ。']],
+  title:'サビサビ団と、真夏の太陽',
+  story:['真夏のある日、海辺の町に「サビサビ団」がやってきた。強い日ざしにまぎれて、人びとの体を少しずつサビさせてしまう、こまったやつらだ。','町の人はみんな、日がさの下でしょんぼり。リコピンちゃんは腕まくりをした。「あたしの出番ね！　太陽の下でこそ、赤くかがやくのがトマトなんだから！」','リコピンちゃんの赤いパンチには、体のサビを防ぐ“リコピン”がつまっている。でもサビサビ団は数が多い。だんだん息が切れてきた、そのとき——ジンジャー忍者が、そっとオリーブオイルを投げてくれた。「油と組めば、力がもっと体にとどくでござる」','オイルをまとったリコピンちゃんは、さらに真っ赤にパワーアップ！「リコピン・ストレート！」　サビサビ団はピカピカにみがかれて、ただのいい人たちにもどってしまった。','戦いのあと、リコピンちゃんはジンジャー忍者に言った。「……あ、ありがと。あたしひとりでも勝てたけどね！」　そう言いながら、ちゃんと自分のトマトスープを半分わけてあげた。'],
+  moral:'ひとりでがんばるより、仲間と組むともっと強くなれる。'},
+ pumpkin:{catch:'どっしり、ほくほく。寒い冬の守り神',
+  prof:[['性格','のんびり屋で力持ち。あわてず、さわがず、最後までやりきる。'],['得意','大きなハンマー「ホクホク・インパクト」。長い冬をのりこえる、ねばり強さ。'],['好き','ひなたぼっこ、冬至、あまいもの'],['ヒミツ','見た目がかたいので、こわがられることがある。中身はとってもあまえんぼう。'],['口ぐせ','「ゆっくりでいいんだよ。じっくり甘くなるからね」']],
+  eiyo:[['β-カロテン','とても多い。目・お肌・粘膜を守る。'],['ビタミンE','「若返りのビタミン」とも呼ばれ、体のサビを防ぐ。'],['ビタミンC','β-カロテン（A）・C・Eがそろう「ビタミンエース」の野菜。'],['食物繊維','おなかの調子をととのえる。とってから少しおくと、甘みが増す。']],
+  title:'いちばん長い冬の夜',
+  story:['むかし、はたけの国に、春がなかなか来ない年があった。冬の大魔物「コゴエール」が、空に居すわってしまったのだ。畑はこおり、野菜たちはどんどん元気をなくしていった。','みんなが「もうだめだ」と下を向く中、カボッチャはどっしりと立っていた。「おいら、夏にとれて、冬まで元気でいられるんだ。だから大丈夫。いっしょに待とう」','カボッチャは毎晩、こごえるみんなのところをまわって、ほくほくのスープをつくった。β-カロテン、ビタミンC、ビタミンE。“ビタミンエース”のスープを飲んだ村の人たちは、カゼもひかずに冬をこえていった。','一年でいちばん夜が長い「冬至」の日。コゴエールが、最後の大吹雪をおこした。カボッチャはハンマーをふりあげた。「ホクホク・インパクト！」　あたたかい光がはじけて、空の魔物はとけて消え、次の日から、昼が少しずつ長くなりはじめた。','それから、はたけの国では冬至の日にかぼちゃを食べるようになった——と、村では言い伝えられている。カボッチャは「おいらのおかげってわけじゃないよ〜」と照れるけれど、その日はいちばんの人気者だ。'],
+  moral:'あせらず、じっくり。つづけた人が、最後に春をつれてくる。'},
+ broccoli:{catch:'小さな房もあつまれば森となる！緑の大将軍',
+  prof:[['性格','堂々として、まわりをよく見る。みんなをまとめるのが得意。ただし、お話がちょっと長い。'],['得意','緑の槍「グリーン・ランス」。作戦を立てること。'],['好き','朝礼、整列、若いつぼみたちの成長'],['ヒミツ','頭のつぼみより「茎もあまくておいしい」とほめられるのが、ひそかな自慢。ゆですぎられると、しょんぼりする。'],['口ぐせ','「勝負は、昨日の自分とじゃ！」']],
+  eiyo:[['ビタミンC','野菜の中でもトップクラスの多さ。'],['スルフォラファン','体を守る力を引き出す成分として注目されている。新芽（ブロッコリースプラウト）にとくに多い。'],['葉酸','新しい細胞をつくるのに欠かせない。'],['ビタミンK・たんぱく質','野菜の中では、たんぱく質も多め。ゆでるより、蒸す・電子レンジのほうが栄養が残りやすい。']],
+  title:'つぼみ千人隊と、ナマケ竜',
+  story:['山のふもとに「ナマケ竜」がすみついた。竜のあくびをあびると、だれでも「今日はいっか〜」と寝ころんでしまう。とうとう村じゅうの人が、ゴロゴロしはじめた。','ブロッコ将軍は、頭の小さなつぼみたちに号令をかけた。「つぼみ千人隊、整列じゃ！」　ひとつひとつは小さな房。でも、千人がならぶと、それは大きな緑の森になる。','ナマケ竜の大あくびが、つぼみ隊をおそう。何人かが、うとうと……。将軍はさけんだ。「一回でよい！　一歩でよい！　昨日のおのれに勝つのじゃ！」　つぼみたちは一人、また一人と立ちあがった。ビタミンCと葉酸を力に、みんなの元気がもどっていく。','とうとう、ナマケ竜のほうが目をまるくした。「なんでそんなに、毎日がんばれるの……？」　将軍は槍を下ろして言った。「がんばるのではない。毎日少しずつ、楽しんでおるだけじゃ」','ナマケ竜はそれから、毎朝こっそり将軍の朝礼に参加している。ただし、将軍のお話が長すぎて、ときどきやっぱり寝てしまうらしい。'],
+  moral:'小さな一歩も、毎日あつまれば大きな森になる。'},
+ shoga:{catch:'影から見守り、体の芯からぽかぽかに！',
+  prof:[['性格','無口でクール。でも本当は、だれよりも仲間思い。こっそり助けて、名のらずに去る。'],['得意','体をあたためる「ぽかぽかの術」、気分すっきり「しゃっきりの術」'],['好き','静かな夜、湯気の立つお茶、こたつ'],['ヒミツ','辛口に見えて、じつは甘いもの（はちみつ）が大好き。ほめられると耳まで赤くなる。'],['口ぐせ','「ニンニン！　元気の術、発動でござる」']],
+  eiyo:[['ジンゲロール','生の生姜に多い辛み成分。すっきりした香りで、食欲や消化を助ける。'],['ショウガオール','加熱したり、かわかしたりするとふえる成分。体を内側からあたためる。'],['名わき役','少しの量で、料理の香りと味がぐんと変わる。塩をへらす工夫にも。']],
+  title:'ひえひえ城の、ひみつの任務',
+  story:['ある冬、北の「ひえひえ城」に住む人たちが、みんな手足が冷たくて、外に出られなくなっていた。城の地下で、冷気の妖怪「ヒエラ」が、毎晩つめたい息をはいていたのだ。','この任務をまかされたのは、ジンジャー忍者。だれにも見つからず、城にしのびこむ。（じつは三日間、ずっと天井にはりついていた。だれも気づかなかった。）','地下でヒエラと向かいあう。ジンジャー忍者は、まず生のままの“ジンゲロールの術”で、ヒエラのつまった鼻をすっきりさせた。つぎに、かまどで自分をあぶって“ショウガオールの術”。熱で力を変えるのが、忍びの極意でござる。','ぽかぽかの湯気が城じゅうにひろがり、人びとの手足に、ふわっと温かさがもどってきた。ヒエラも「あったかいって、気持ちいい……」と、ふにゃっととけてしまった。','朝、城の人たちは「だれが助けてくれたんだろう」とふしぎがった。テーブルの上には、はちみつ生姜湯と、小さな手紙。「おしごと、おつかれさまでござる。——J」　そのころジンジャー忍者は、窓の外で耳まで真っ赤にしていた。'],
+  moral:'人知れずがんばるやさしさも、ちゃんとだれかをあたためている。'},
+ imo:{catch:'おなかもココロもほっこり！みんなの応援団長',
+  prof:[['性格','のんびり、ほがらか。いつもニコニコで、だれとでもすぐ友だちになる。'],['得意','応援旗をふる「フレフレ・ほっこり」。土の中でじっくり力をためること。'],['好き','焼きいも大会、秋祭り、みんなが笑ってる顔'],['ヒミツ','じつは自分がいちばん緊張しい。大きな舞台の前は、こっそりおなかが鳴る。'],['口ぐせ','「がんばってるの、ちゃんと知ってるっぺよ〜！」']],
+  eiyo:[['食物繊維','たっぷり。おなかの調子をととのえる。'],['ヤラピン','切ったときに出る白いみつ。おなかの動きを助ける。'],['ビタミンC','でんぷんに守られて、加熱しても残りやすい。'],['カリウム','余分な塩分を外に出すのを助ける。じっくり加熱すると、甘みがアップ。']],
+  title:'ツマリンボと、秋の大運動会',
+  story:['ある秋、村いちばんの運動会の前の日。選手たちがみんな、おなかの調子をくずしてしまった。犯人は、おなかのトンネルをつまらせる「ツマリンボ」。このままでは運動会は中止だ。','「おらにまかせるっぺ！」　応援団長のイモ吉は、旗をかついで立ちあがった。でも本当は、ひざがガクガク。大きなことを言ったあとで、こっそりおなかが「グ〜」と鳴った。','イモ吉は選手のみんなのところをまわって、ほくほくの焼きいもをくばった。“食物繊維”と、白いみつ“ヤラピン”の力で、つまったトンネルがすーっと通っていく。ツマリンボは、あわてて逃げだした。','運動会の当日。イモ吉はだれよりも大きな声で旗をふった。「フレー！　フレー！　みんなー！」　勝った子にも、ころんだ子にも、同じくらい大きな声で。ころんで泣いた子が、もう一度走りだしたとき、会場じゅうから拍手がわいた。','閉会式で「MVPはイモ吉！」と呼ばれた。イモ吉はぽかんとして言った。「おら、走ってないっぺよ？」　みんなは笑って答えた。「いちばん走ってたのは、イモ吉の声だよ！」'],
+  moral:'応援する人も、ちゃんとチームの主役。'}
+};
+function heroStory(k){const h=HEROES.find(x=>x.key===k),s=HSTORY[k];if(!h||!s)return;const m=me();
+  let d=document.getElementById('hsheet');if(d)d.remove();d=document.createElement('div');d.id='hsheet';d.className='fsheet';
+  const on=m&&m.buddy===k;
+  d.innerHTML=`<div class="fsc hst"><button type="button" class="fsx" aria-label="閉じる">×</button>
+   <canvas data-hero="${k}" style="width:120px;height:auto;aspect-ratio:27/22;image-rendering:pixelated"></canvas>
+   <h3>${esc(h.name)}</h3><div class="hsr">${esc(h.veg)}の${esc(h.role)}・得意な能力「${esc(h.stat)}」</div><div class="hsc">${esc(s.catch)}</div>
+   <div class="hsb"><div class="hsh">🌱 プロフィール</div><dl>${s.prof.map(([a,b])=>`<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join('')}</dl></div>
+   <div class="hsb"><div class="hsh">💪 ${esc(h.veg)}の栄養パワー</div>${s.eiyo.map(([a,b])=>`<p class="hse"><b>${esc(a)}</b>${esc(b)}</p>`).join('')}</div>
+   <div class="hsb hsst"><div class="hsh">📖 武勇伝「${esc(s.title)}」</div>${s.story.map(p=>`<p>${esc(p)}</p>`).join('')}<div class="hsm">🌸 ${esc(s.moral)}</div></div>
+   ${m?`<button type="button" class="btn-main" data-buddy="${k}">${on?'相棒をはずす':'🤝 '+esc(h.name)+'を相棒にする'}</button>`:''}</div>`;
+  document.body.appendChild(d);const close=()=>d.remove();d.onclick=e=>{if(e.target===d)close()};d.querySelector('.fsx').onclick=close}
+document.addEventListener('click',e=>{const c=e.target.closest('[data-hstory],#bmsg canvas[data-hero],.scene canvas.buddy');if(!c)return;heroStory(c.dataset.hstory||c.dataset.hero)});
 const BTAIL={carrot:'にんじんパワー全開だ！🥕',piman:'ピッピマンが守ってるぞ！🫑',onion:'玉ちゃんの魔法、かけといたよ✨',cabbage:'キャベリンがいつも応援してるよ💚',daikon:'ダイコンタ、まっすぐ見てるよ🏹',tomato:'リコピンちゃんより愛をこめて🍅',pumpkin:'カボッチャ、ホクホク応援中！🎃',broccoli:'ブロッコ将軍、出陣じゃ！🥦',shoga:'ジンジャー忍者、影から見守るでござる🫚',imo:'イモ吉、いつでもそばにいるっぺ🍠'};
 const BOWN={
  carrot:['{n}、今日も一歩前へ！その一歩が、いちばん強い剣になるんだ！','昨日の{n}より、今日の{n}がちょっと強い。それでじゅうぶん最高だ！','よーし{n}、今日もいっしょに燃えようぜ！オレンジ色に！','迷ったら、とりあえず動こう！体が答えを教えてくれるさ！','{n}の背中、どんどんたくましくなってるぞ！自信もっていこう！','がんばった日のごはんは、いつもよりおいしい！今日もいい日にしよう！'],
@@ -2331,7 +2411,7 @@ function bMsg(m){const k=m.buddy||HEROES[bHash(dayKey())%HEROES.length].key,h=HE
   return {h,text:`${hi}${pick}${ex?' '+ex:''}`,tail:BTAIL[k]||'',nobuddy:!m.buddy}}
 function bmsgCard(){if(tab!=='hero')return;const v=document.getElementById('view'),sc=v&&v.querySelector('.scene');if(!sc||document.getElementById('bmsg'))return;const m=me();if(!m)return;
   const b=bMsg(m),d=document.createElement('div');d.id='bmsg';d.className='bmsg';
-  d.innerHTML=`<canvas data-hero="${b.h.key}"></canvas><div class="bmb"><div class="bmh">📩 ${esc(b.h.name)}から 今日のひとこと</div><p>${esc(b.text)}</p><div class="bmt">${esc(b.tail)}</div>${b.nobuddy?'<small>下の「相棒をえらぶ」で、毎日メッセージをくれる相棒を決められるよ</small>':''}</div>`;
+  d.innerHTML=`<canvas data-hero="${b.h.key}"></canvas><div class="bmb"><div class="bmh">📩 ${esc(b.h.name)}から 今日のひとこと</div><p>${esc(b.text)}</p><div class="bmt">${esc(b.tail)}</div>${b.nobuddy?'<small>下の「お野菜十勇士」をタップすると、物語が読めて相棒も決められるよ</small>':''}</div>`;
   const after=document.getElementById('snapgo')||sc;after.after(d);
   if(!ADMIN&&m.bmsgDay!==dayKey()){m.bmsgDay=dayKey();save();d.classList.add('newmsg');setTimeout(()=>{try{toast(`📩 ${b.h.name}からメッセージが届いたよ！`)}catch(e){}},400)}}
 const _rB=render;render=function(){const r=_rB.apply(this,arguments);try{bmsgCard()}catch(e){console.warn(e)}setTimeout(()=>{const v=document.getElementById('view'),t=document.getElementById('mytr');if(ADMIN&&v&&t){const y=document.getElementById('yoy');const ref=y&&y.parentNode===v?y.nextSibling:v.firstChild;if(ref!==t)v.insertBefore(t,ref)}},0);return r};
