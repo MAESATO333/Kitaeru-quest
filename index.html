@@ -417,6 +417,11 @@ nav{flex-direction:column;align-items:center;gap:5px}
 .bgpost{position:relative}.bgpost>.bnew{position:absolute;top:10px;right:10px;z-index:1}.bgpost.focus{outline:3px solid #f39a1e}
 #tabs2 button{position:relative}
 .kamin{font-size:12px;line-height:1.7;background:#fff8d6;border:2px dashed #d9a800;border-radius:12px;padding:8px 10px;color:#5a4a00}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.cgrid button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px 6px;border-radius:16px;border:2.5px solid #33501a;background:#fff;font-weight:900;font-size:15px;color:#33501a;box-shadow:0 3px 0 #33501a}.cgrid button b{font-size:30px}
+.cgrid button:nth-child(1){background:#ffd0c8}.cgrid button:nth-child(2){background:#e4f3a6}.cgrid button:nth-child(3){background:#d8eefc}.cgrid button:nth-child(4){background:#ffe9a8}
+.cnow{background:#fff;border:2px solid #d6e6b0;border-radius:12px;padding:8px 12px;margin:0 0 10px;font-size:14px}.cnow small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.seg button.lock{opacity:.5;text-decoration:none}
+.callow{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}.callow label{display:flex!important;flex-direction:row!important;align-items:center;gap:6px;font-size:14px;background:#f3f9dc;border-radius:999px;padding:6px 12px}.callow input{width:auto!important;margin:0}.callow>div{flex-basis:100%}
 </style>
 
 </head>
@@ -429,7 +434,7 @@ nav{flex-direction:column;align-items:center;gap:5px}
   </header>
   <main id="view"></main>
 </div>
-<nav><div class="in" id="tabs2"></div><div class="in" id="tabs"></div></nav>
+<nav><div class="in" id="tabs"></div><div class="in" id="tabs2"></div></nav>
 <div id="ov" class="ov" hidden></div>
 <div id="toast" class="toast" hidden></div>
 
@@ -1352,9 +1357,10 @@ function renderTabs(){
 }
 // 下メニューの上の段（ニュース・写真館・掲示板・blog・マイページ）
 function renderTabs2(){const el=document.getElementById('tabs2');if(!el)return;
-  const L=ADMIN?[['photo','写真館','📷','#f39a1e'],['board','掲示板','📌','#e8452c'],['blog','blog','📝','#9b2f5e'],['zukan','図鑑','🥕','#4f7d2a']]
-    :[['photo','写真館','📷','#f39a1e'],['board','掲示板','📌','#e8452c'],['blog','blog','📝','#9b2f5e'],['zukan','図鑑','🥕','#4f7d2a'],['mypage','マイページ','🙋','#2f8fb0']];
-  el.innerHTML=L.map(([k,l,i,c])=>`<button type="button" data-t2="${k}" class="${k===tab?'on':''}" style="--hc:${c}"><b class="nh2">${i}</b><span class="nl">${l}</span></button>`).join('');
+  // 絵はお野菜十勇士から：写真館=カボッチャ、掲示板=ダイコンタ、blog=ジンジャー忍者、図鑑=キャベリン、マイページ=イモ吉
+  const L=ADMIN?[['photo','写真館','pumpkin','#e07b00'],['board','掲示板','daikon','#7a6fb0'],['blog','blog','shoga','#9b2f5e'],['zukan','図鑑','cabbage','#4f7d2a']]
+    :[['photo','写真館','pumpkin','#e07b00'],['board','掲示板','daikon','#7a6fb0'],['blog','blog','shoga','#9b2f5e'],['zukan','図鑑','cabbage','#4f7d2a'],['mypage','マイページ','imo','#2f8fb0']];
+  el.innerHTML=L.map(([k,l,i,c])=>`<button type="button" data-t2="${k}" class="${k===tab?'on':''}" style="--hc:${c}"><canvas class="nh" data-hero="${i}"></canvas><span class="nl">${l}</span></button>`).join('');
   try{const u=!ADMIN&&window.KQblogUnseen&&KQblogUnseen();const bb=el.querySelector('[data-t2="blog"]');if(u&&bb){const i=document.createElement('i');i.className='nbadge';i.textContent='新';bb.appendChild(i)}}catch(e){}
   el.querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t2;render();window.scrollTo(0,0)});
   requestAnimationFrame(()=>{const n=document.querySelector('nav'),a=document.querySelector('.app');if(n&&a)a.style.paddingBottom=(n.offsetHeight+20)+'px';const pv=document.getElementById('pvsw');if(n&&pv)pv.style.bottom=(n.offsetHeight+8)+'px'})}
@@ -1425,23 +1431,35 @@ function vHero(){
   $('#reset').onclick=()=>{S=seed();save();render();toast('デモを最初の状態に戻しました')};
 }
 
+// ===== 会員区別：最初にえらんだコースだけ記録できる。ほかはトレーナーの許可で使える =====
+const COURSES=[['lift','加圧トレ','💪'],['yoga','YOGA','🧘'],['kapala','カパラバティ','🌬'],['meal','食事セラピー','🥗']];
+const cName=k=>(COURSES.find(c=>c[0]===k)||[,''])[1];
+function canRec(m,k){if(ADMIN)return true;if(!COURSES.some(c=>c[0]===k))return true;return m.course===k||(m.allow||[]).includes(k)}
+function vCourse(m){$('#view').innerHTML=`<h2>会員区別をえらぶ</h2><div class="card stack"><p style="margin:0;line-height:1.7">はじめに、あなたの<b>会員区別</b>をえらんでください。<br>えらんだものを記録できます。ほかの記録は、トレーナーが許可すると使えるようになります。</p>
+  <div class="cgrid">${COURSES.map(([k,l,i])=>`<button type="button" data-cs="${k}"><b>${i}</b>${l}</button>`).join('')}</div>
+  <p class="muted" style="font-size:12px;margin:0">あとから変えたいときは、トレーナーに伝えてください。</p></div>`;
+  document.querySelectorAll('[data-cs]').forEach(b=>b.onclick=()=>{if(!confirm(`会員区別を「${cName(b.dataset.cs)}」にしますか？`))return;m.course=b.dataset.cs;logType=m.course;save();toast(`会員区別：${cName(m.course)}`);vLog()})}
 function vLog(){
   const m=me();
+  if(!ADMIN&&!m.course){vCourse(m);return}
+  if(!canRec(m,logType))logType=m.course;
+  const sb=(k,l)=>{const lk=!canRec(m,k);return `<button type="button" data-k="${k}" class="${logType===k?'on':''}${lk?' lock':''}" ${lk?'data-lock="1"':''}>${lk?'🔒 ':''}${l}</button>`};
   $('#view').innerHTML=`
   <h2>今日のトレーニングを記録</h2>
+  ${ADMIN?'':`<div class="cnow">会員区別：<b>${cName(m.course)}</b>${(m.allow||[]).length?`　＋ 許可：${m.allow.map(cName).join('・')}`:''}<small>🔒の記録は、トレーナーが許可すると使えます</small></div>`}
   <div class="card stack">
     <div class="seg">
-      <button type="button" data-k="lift" class="${logType==='lift'?'on':''}">加圧トレ</button>
-      <button type="button" data-k="yoga" class="${logType==='yoga'?'on':''}">YOGA</button>
-      <button type="button" data-k="meal" class="${logType==='meal'?'on':''}">食事セラピー</button>
-      <button type="button" data-k="kapala" class="${logType==='kapala'?'on':''}">カパラバティ</button>
+      ${sb('lift','加圧トレ')}
+      ${sb('yoga','YOGA')}
+      ${sb('meal','食事セラピー')}
+      ${sb('kapala','カパラバティ')}
       <button type="button" data-k="cardio" class="${logType==='cardio'?'on':''}">有酸素</button>
       <button type="button" data-k="in" class="${logType==='in'?'on':''}">チェックイン</button>
     </div>
     <div id="form"></div>
   </div>
   <p class="muted">本番では、トレーナーが確認ボタンを押すとEXPが確定する流れにできます（不正防止と、声かけのきっかけになります）。</p>`;
-  document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{logType=b.dataset.k;window._gm=null;vLog()});
+  document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{if(b.dataset.lock){toast(`「${cName(b.dataset.k)}」は、トレーナーの許可が必要です`);return}logType=b.dataset.k;window._gm=null;vLog()});
   const f=$('#form');
   if(logType==='lift'){
     f.innerHTML=`<div class="stack">
@@ -2027,7 +2045,18 @@ function tevPanel(){if(!ADMIN||tab!=='guild'||document.getElementById('tev'))ret
   document.getElementById('tevsave').onclick=()=>{const vals={};TEV.forEach(([k])=>{if(moved[k])vals[k]=+document.getElementById('tev_'+k).value});if(!Object.keys(vals).length){toast('スライダーを1つ以上動かしてください');return}
     const m=byId(document.getElementById('tevm').value);m.tEval=m.tEval||[];m.tEval.push({t:Date.now(),tn:TN(),v:vals,memo:document.getElementById('tevmemo').value.trim()});save();
     TEV.forEach(([k])=>{delete moved[k];document.getElementById('tev_'+k).value=50;document.getElementById('tev_'+k+'v').textContent='—'});document.getElementById('tevmemo').value='';draw();toast(`${m.name}さんの評価を保存しました`)}}
-const _r4=render;render=function(){const r=_r4.apply(this,arguments);try{tevPanel()}catch(e){console.warn(e)}return r};
+function coursePanel(){if(!ADMIN||tab!=='guild'||document.getElementById('cpan'))return;const v=document.getElementById('view');const h=document.getElementById('tev')||[...v.querySelectorAll('h2')].find(x=>x.textContent.includes('宿題を出す'));if(!h)return;
+  const d=document.createElement('section');d.id='cpan';
+  d.innerHTML=`<h2>会員区別と記録の許可</h2><div class="card stack"><p class="muted" style="font-size:12px;margin:0">ゲストは、会員区別でえらんだ記録だけ使えます。ほかの記録を使ってほしいときは、ここで許可してください。</p>
+   <label>ゲスト<select id="cpm">${S.members.map(m=>`<option value="${m.id}" ${m.id===S.current?'selected':''}>${esc(m.name)}</option>`).join('')}</select></label><div id="cpb"></div></div>`;
+  v.insertBefore(d,h);
+  const draw=()=>{const m=byId(document.getElementById('cpm').value);const al=m.allow||[];
+    document.getElementById('cpb').innerHTML=`<label>会員区別<select id="cpc"><option value="">（まだえらんでいない）</option>${COURSES.map(([k,l])=>`<option value="${k}" ${m.course===k?'selected':''}>${l}</option>`).join('')}</select></label>
+     <div class="callow"><div style="font-size:13px;font-weight:700">ほかに記録を許可する</div>${COURSES.filter(c=>c[0]!==m.course).map(([k,l])=>`<label><input type="checkbox" data-al="${k}" ${al.includes(k)?'checked':''}> ${l}</label>`).join('')}</div>`;
+    document.getElementById('cpc').onchange=e=>{m.course=e.target.value||undefined;m.allow=(m.allow||[]).filter(k=>k!==m.course);save();toast(`${m.name}さん：会員区別を${m.course?cName(m.course):'未設定'}にしました`);draw()};
+    document.querySelectorAll('#cpb [data-al]').forEach(c=>c.onchange=()=>{const k=c.dataset.al;m.allow=(m.allow||[]).filter(x=>x!==k);if(c.checked)m.allow.push(k);save();toast(`${m.name}さん：「${cName(k)}」を${c.checked?'許可しました':'許可なしにしました'}`)})};
+  document.getElementById('cpm').onchange=draw;draw()}
+const _r4=render;render=function(){const r=_r4.apply(this,arguments);try{tevPanel();coursePanel()}catch(e){console.warn(e)}return r};
 // ===== 333GYMニュース（トレーナーが配信 → ゲスト全員に表示） =====
 function NEWS(){S.news=S.news||[];return S.news}
 function newsSorted(){return NEWS().slice().sort((a,b)=>(b.pin?1:0)-(a.pin?1:0)||b.t-a.t)}
