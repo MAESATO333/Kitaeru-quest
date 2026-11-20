@@ -367,6 +367,8 @@ body.adminv .pvsw a.on{background:#9b2f5e}
 .tlast{font-size:13px;margin:0 2px 8px;color:var(--muted)}
 .tplf{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 6px}.tplf button{font-size:12px;padding:3px 10px;border-radius:999px;border:2px solid #9ccc3c;background:#fff;color:#2f6d2a;font-weight:800}.tplf button.on{background:#2f6d2a;border-color:#2f6d2a;color:#fff}
 .expnote{font-size:12px;line-height:1.6;color:#4a5a3a;background:#f6fbe9;border:2px dashed #9ccc3c;border-radius:12px;padding:6px 10px;margin:8px 0}.expnote b:first-child{color:#2f6d2a;margin-right:4px}
+.tlist{display:flex;flex-direction:column;gap:6px}.trow{display:grid;grid-template-columns:44px 40px 1fr auto;align-items:center;gap:6px;padding:6px 8px;border-radius:12px;background:#fafdf3}.trow.mine{background:#fff7d6;box-shadow:inset 0 0 0 2px #f2c230}
+.trow .rk{font-size:12px;font-weight:800;color:#6a7a50}.trow .tic{width:36px;height:36px;image-rendering:pixelated}.tnm b{display:block;font-size:15px}.tnm small{font-size:11px;color:var(--muted)}.tnm em{font-style:normal;color:#b5651d;font-weight:800}.tpc{font-family:var(--display);font-size:20px}
 </style>
 
 </head>
@@ -419,24 +421,31 @@ const ANIMALS={
 };
 const FEMALE=new Set('ユイ,ハナ,ミサキ,サクラ,メイ,ナナ,アヤ,マオ,リナ,エマ,ミオ,ユナ,サキ,モモ,アカリ,ヒナ,マユ,チカ,アン,カホ,ミク,ルナ,シオリ,ユズ,コハル,ナツ,セナ,ワカ,アユ,ミズキ,ユキ,カナ,スミレ,ノゾミ,エリ,ミホ,ユリ'.split(','));
 const SHOW=30; // 1日に見える他の会員の人数
-const TEAMS={am:{name:'朝焼け団',color:'#e0a400',hex:'#f2c230'},kb:{name:'木もれ日団',color:'#2f8a3a',hex:'#5cb85c'},pm:{name:'月夜団',color:'var(--blue)',hex:'#3a7bea'}};
-const TEAM_KEYS=['am','kb','pm'],TEAM_GIFT=300;
+// チーム対抗：毎週 お野菜十勇士から5チーム＋トレーナー1名ずつ
+const TEAM_N=5,TEAM_GIFT=300,TEAM_TRAINERS=['石井麻美','佐藤みやこ','川満由希夫','佐々木美香','垣花 豊','前田悟'];
+const TEAM_TXT={daikon:'#8a7a50',cabbage:'#5e8f1e',shoga:'#9a7430'};
+const OLD_TEAMS={am:'朝焼け団',kb:'木もれ日団',pm:'月夜団'};
+function tName(k){const h=typeof HEROES!=='undefined'&&HEROES.find(h=>h.key===k);return h?h.name+'チーム':(OLD_TEAMS[k]||k)}
+function tHex(k){const h=HEROES.find(h=>h.key===k);return h?h.color:'#9ccc3c'}
+function tCol(k){return TEAM_TXT[k]||tHex(k)}
 // 週の番号：毎週土曜の朝4時（日本時間）で切りかわる。お試しの「翌日」ボタンにも合わせる
 function teamClock(){return Date.now()+((S&&S.dayShift)||0)*864e5+(9-4)*36e5}
 function weekNo(off=0){return Math.floor((teamClock()/864e5-2)/7)+off}
 function teamLeftMs(){return ((weekNo()+1)*7+2)*864e5-teamClock()}
-// 毎週ランダムに3チームへ（人数はほぼ同じ）
+function shuf(a,seed){const r=seeded(hashStr(seed));a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 const _teamCache={};
-function teamMap(wk){if(_teamCache[wk]&&_teamCache[wk].n===S.members.length)return _teamCache[wk].map;const ids=S.members.map(m=>m.id).sort(),r=seeded(hashStr('team'+wk));for(let i=ids.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[ids[i],ids[j]]=[ids[j],ids[i]]}const map={};ids.forEach((id,i)=>map[id]=TEAM_KEYS[i%3]);_teamCache[wk]={n:S.members.length,map};return map}
-function teamOf(m,wk){return teamMap(wk==null?weekNo():wk)[m.id]||'am'}
-function teamScores(wk){const map=teamMap(wk),sc={am:0,kb:0,pm:0};S.members.forEach(m=>sc[map[m.id]]+=m.weekXp);return sc}
-function teamWinner(sc){return TEAM_KEYS.slice().sort((a,b)=>sc[b]-sc[a])[0]}
+function teamDefs(wk){const hs=shuf(HEROES.map(h=>h.key),'th'+wk).slice(0,TEAM_N),ts=shuf(TEAM_TRAINERS,'tt'+wk).slice(0,TEAM_N);return hs.map((k,i)=>({k,tr:ts[i]}))}
+function teamKeys(wk){return teamDefs(wk==null?weekNo():wk).map(d=>d.k)}
+function teamMap(wk){if(_teamCache[wk]&&_teamCache[wk].n===S.members.length)return _teamCache[wk].map;const keys=teamKeys(wk),ids=shuf(S.members.map(m=>m.id).sort(),'team'+wk),map={};ids.forEach((id,i)=>map[id]=keys[i%keys.length]);_teamCache[wk]={n:S.members.length,map};return map}
+function teamOf(m,wk){return teamMap(wk==null?weekNo():wk)[m.id]}
+function teamScores(wk){const map=teamMap(wk),sc={};teamKeys(wk).forEach(k=>sc[k]=0);S.members.forEach(m=>sc[map[m.id]]+=m.weekXp);return sc}
+function teamWinner(sc){return Object.keys(sc).sort((a,b)=>sc[b]-sc[a])[0]}
 // 週が変わったら、先週の1位チームの全員に🎁ごほうび
-function teamSettle(){const wk=weekNo();if(S.teamWk==null){S.teamWk=wk;save();return}if(S.teamWk>=wk)return;const prev=wk-1,map=teamMap(prev),sc=teamScores(prev),win=teamWinner(sc);
+function teamSettle(){const wk=weekNo();if(S.teamWk==null){S.teamWk=wk;save();return}if(S.teamWk>=wk)return;const prev=wk-1,map=teamMap(prev),sc=teamScores(prev),win=teamWinner(sc),tr=(teamDefs(prev).find(d=>d.k===win)||{}).tr;
   const fk=Object.keys(FOODS),gift=fk[hashStr('gift'+prev)%fk.length];
   S.members.forEach(m=>{if(map[m.id]!==win)return;['str','end','tec','grit'].forEach(k=>m.stats[k]+=TEAM_GIFT/4);giveFood(m,gift)});
-  S.teamLast={wk:prev,win,gift,mine:map[S.current]===win,seen:false};
-  S.feed.unshift({id:S.nextId++,who:'trainer',tn:TN(),text:`先週のチーム対抗戦は「${TEAMS[win].name}」が1位！ メンバー全員に🎁 +${TEAM_GIFT} EXP と「${FOODS[gift].name}」をプレゼント`,xp:TEAM_GIFT,stat:'grit',t:Date.now(),cheers:[]});
+  S.teamLast={wk:prev,win,winName:tName(win),tr,gift,mine:map[S.current]===win,seen:false};
+  S.feed.unshift({id:S.nextId++,who:'trainer',tn:tr||TN(),text:`先週のチーム対抗戦は「${tName(win)}」（${tr}トレーナー）が1位！ メンバー全員に🎁 +${TEAM_GIFT} EXP と「${FOODS[gift].name}」をプレゼント`,xp:TEAM_GIFT,stat:'grit',t:Date.now(),cheers:[]});
   S.teamWk=wk;save()}
 const STAMPS=[
   {id:'form',label:'ナイスフォーム！',stat:'tec',xp:40},
@@ -949,7 +958,7 @@ function giveFood(m,key,n=1){m.foods=m.foods||{};m.foods[key]=(m.foods[key]||0)+
   return null;}
 function seeded(a){return()=>{a=(a+0x6D2B79F5)|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
 let visCache={};
-const TRAINERS=['川満由希夫','石井麻美','佐々木美香','垣花 豊','佐藤みやこ','團野有花'];
+const TRAINERS=['川満由希夫','石井麻美','佐々木美香','垣花 豊','佐藤みやこ','團野有花','前田悟'];
 function TN(){return S.tname&&TRAINERS.includes(S.tname)?S.tname:TRAINERS[0]}
 function KS(){return S.kensa!==false}
 function visibleIds(){
@@ -1310,7 +1319,7 @@ function vHero(){
     <div class="stack" style="gap:6px;min-width:0">
       <div class="name">${esc(m.name)}${L.lv>=100?` <span style="color:var(--accent)">${'★'.repeat(1+Math.floor((L.lv-100)/10))}</span>`:''}</div>
       <div class="muted" style="font-size:12px">姿：${nameHtml(evoInfo(m.look,stageOfLv(L.lv)))}</div>
-      <div class="cls">${classOf(m)} ／ <span style="color:${TEAMS[teamOf(m)].color}">${TEAMS[teamOf(m)].name}</span></div>
+      <div class="cls">${classOf(m)} ／ <span style="color:${tCol(teamOf(m))}">${tName(teamOf(m))}</span></div>
       <div style="display:flex;align-items:baseline;gap:8px"><span class="muted">Lv</span><span class="lv">${L.lv}</span></div>
       <div class="bar" aria-label="次のレベルまで"><i style="width:${L.into/L.need*100}%"></i></div>
       <div class="muted">次のレベルまで ${L.need-L.into} EXP</div>${EXPNOTE}
@@ -1470,22 +1479,21 @@ function vFeed(){
 function vRank(){
   const list=visibleMembers().sort((a,b)=>b.weekXp-a.weekXp);
   teamSettle();
-  const sc=teamScores(weekNo()),tot=Math.max(1,sc.am+sc.kb+sc.pm),win=teamWinner(sc),mt=teamOf(me()),order=TEAM_KEYS.slice().sort((a,b)=>sc[b]-sc[a]);
-  const pc={};let acc=0;order.forEach((k,i)=>{pc[k]=i<2?Math.round(sc[k]/tot*100):100-acc;acc+=pc[k]});
+  const wk=weekNo(),defs=teamDefs(wk),sc=teamScores(wk),tot=Math.max(1,Object.values(sc).reduce((a,b)=>a+b,0)),mt=teamOf(me()),order=defs.slice().sort((a,b)=>sc[b.k]-sc[a.k]);
   const lm=teamLeftMs(),ld=Math.floor(lm/864e5),lh=Math.ceil((lm%864e5)/36e5),left=ld?`${ld}日${lh?`と${lh}時間`:''}`:`${lh}時間`;
-  const L=S.teamLast;
+  const L=S.teamLast,LN=L?(L.winName||tName(L.win)):'';
   $('#view').innerHTML=`<h2>チーム対抗戦（今週）</h2>
-  ${L&&!L.seen&&L.mine?`<div class="card tgift"><b>🎁 先週は「${TEAMS[L.win].name}」が1位！</b><span>あなたもメンバーでした。全能力 +${TEAM_GIFT/4}（合計 +${TEAM_GIFT} EXP）と「${esc(FOODS[L.gift].name)}」をゲット！</span></div>`:L?`<div class="tlast">先週の1位：<b style="color:${TEAMS[L.win].color}">${TEAMS[L.win].name}</b></div>`:''}
-  <div class="card"><div class="vs3">${order.map((k,i)=>`<div class="${k===mt?'mine':''}"><div class="rk">${i+1}位${i===0?' 👑':''}</div><div class="big" style="color:${TEAMS[k].color}">${pc[k]}%</div><div class="muted">${TEAMS[k].name}</div>${k===mt?'<small>あなたのチーム</small>':''}</div>`).join('')}</div>
-    <div class="bar3">${TEAM_KEYS.map(k=>`<i style="width:${sc[k]/tot*100}%;background:${TEAMS[k].hex}"></i>`).join('')}</div>
-    <p class="tnote">チームは<b>毎週土曜の朝4時</b>に、ランダムで3つに分かれて発表されます。今週の1位チームのメンバー全員に <b>🎁 +${TEAM_GIFT} EXP ＋ごほうびごはん</b>！ 次の発表まであと${left}。</p>
+  ${L&&!L.seen&&L.mine?`<div class="card tgift"><b>🎁 先週は「${esc(LN)}」が1位！</b><span>あなたもメンバーでした。全能力 +${TEAM_GIFT/4}（合計 +${TEAM_GIFT} EXP）と「${esc(FOODS[L.gift].name)}」をゲット！</span></div>`:L?`<div class="tlast">先週の1位：<b>${esc(LN)}</b>${L.tr?`（${esc(L.tr)}トレーナー）`:''}</div>`:''}
+  <div class="card"><div class="tlist">${order.map((d,i)=>`<div class="trow ${d.k===mt?'mine':''}"><span class="rk">${i+1}位${i===0?'👑':''}</span><canvas class="tic" data-hero="${d.k}"></canvas><div class="tnm"><b style="color:${tCol(d.k)}">${tName(d.k)}</b><small>${esc(d.tr)}トレーナー${d.k===mt?' ・ <em>あなたのチーム</em>':''}</small></div><span class="tpc" style="color:${tCol(d.k)}">${Math.round(sc[d.k]/tot*100)}%</span></div>`).join('')}</div>
+    <div class="bar3">${defs.map(d=>`<i style="width:${sc[d.k]/tot*100}%;background:${tHex(d.k)}"></i>`).join('')}</div>
+    <p class="tnote">チームは<b>毎週土曜の朝4時</b>に発表。お野菜十勇士の名前の<b>5チーム</b>に、ゲストとトレーナー（各チーム1名）がランダムで分かれます。今週の1位チームのメンバー全員に <b>🎁 +${TEAM_GIFT} EXP ＋ごほうびごはん</b>！ 次の発表まであと${left}。</p>
     ${!window.AUTH||!AUTH.on||AUTH.role==='trainer'?'<button type="button" id="nextWeek" class="tnext">お試し：来週にしてみる</button>':''}
   </div>
   <h2>今日の顔ぶれ番付（今週のEXP）</h2>${EXPNOTE}
   <div class="card"><table>${list.map((m,i)=>`<tr class="${m.id===S.current?'me':''}"><td class="n">${i+1}</td><td>${esc(m.name)} <span class="muted">Lv${levelOf(total(m)).lv}</span></td><td class="r">${m.weekXp.toLocaleString()}</td></tr>`).join('')}</table>
   <p class="muted" style="margin:8px 0 0">顔ぶれは毎日入れ替わり、番付は毎週土曜の朝4時にリセット。ベテランも初心者も、毎週横一線から。</p></div>`;
   if(L&&!L.seen&&L.mine){L.seen=true;save()}
-  const nw=$('#nextWeek');if(nw)nw.onclick=()=>{S.dayShift=(S.dayShift||0)+Math.ceil(teamLeftMs()/864e5);save();render();const t=S.teamLast;if(t&&t.mine)overlay('🎁 チーム1位のごほうび！',`${TEAMS[t.win].name}が1位！ 全能力+${TEAM_GIFT/4}（合計+${TEAM_GIFT} EXP）と「${FOODS[t.gift].name}」をゲット`);else if(t)toast(`先週の1位は${TEAMS[t.win].name}。今週のチームが新しく決まりました`)};
+  const nw=$('#nextWeek');if(nw)nw.onclick=()=>{S.dayShift=(S.dayShift||0)+Math.ceil(teamLeftMs()/864e5);save();render();const t=S.teamLast;if(t&&t.mine)overlay('🎁 チーム1位のごほうび！',`${t.winName}が1位！ 全能力+${TEAM_GIFT/4}（合計+${TEAM_GIFT} EXP）と「${FOODS[t.gift].name}」をゲット`);else if(t)toast(`先週の1位は${t.winName}。今週のチームが新しく決まりました`)};
 }
 
 function vBoss(){
