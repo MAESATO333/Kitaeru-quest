@@ -394,6 +394,9 @@ body.adminv #myBtn{display:none}
 .bname{display:flex;gap:14px;flex-wrap:wrap;font-size:13px}.bname label{flex-direction:row!important;align-items:center;gap:4px;font-weight:700}
 .blist{display:flex;flex-direction:column;gap:8px}.bpost p{margin:6px 0;font-size:14px;line-height:1.6;white-space:pre-wrap}.bh{display:flex;flex-wrap:wrap;align-items:center;gap:6px}.bh small{color:var(--muted);font-size:11px}.bh .breal{color:#a8346a}
 .bcat{font-size:11px;font-weight:800;background:#eaf5d3;color:#2f6d2a;border-radius:999px;padding:2px 8px}.bf{display:flex;justify-content:space-between;align-items:center}#bfil{margin:10px 0 6px}
+.bgent{border-color:#f08a12!important;color:#c26a00!important}
+.bgpost img,.bgpost video{width:100%;border-radius:12px;margin-bottom:6px;max-height:360px;object-fit:cover}.bgpost h3{margin:2px 0 4px;font-size:17px}.bgpost p{white-space:pre-wrap;font-size:14px;line-height:1.7;margin:0 0 6px}.bgpost small{color:var(--muted);font-size:11px}
+.bgsh{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.bgsh button{font-size:12px;padding:6px 10px;border-radius:999px;border:2px solid #e3ecd0;background:#fff;font-weight:800}.bgsh .bgmain{background:#2f6d2a;color:#fff;border-color:#2f6d2a}.bgsh .line{background:#06c755;color:#fff;border-color:#06c755}.bgsh .xx{background:#000;color:#fff;border-color:#000}
 </style>
 
 </head>
@@ -1320,7 +1323,7 @@ const NAVH={hero:['carrot','#f08a12'],log:['piman','#3f9a3a'],feed:['tomato','#e
 const TABS=[['hero','冒険者','◆'],['log','記録','＋'],['feed','キタ酒場','≡'],['rank','番付','▲'],['boss','ボス','✦']];
 function renderTabs(){
   const list=ADMIN?[['guild','管理','★'],...TABS]:TABS;
-  if(tab!=='zukan'&&tab!=='photo'&&tab!=='board'&&!((tab==='mypage'||tab==='news')&&!ADMIN)&&!list.find(x=>x[0]===tab))tab='hero';
+  if(tab!=='zukan'&&tab!=='photo'&&tab!=='board'&&tab!=='blog'&&!((tab==='mypage'||tab==='news')&&!ADMIN)&&!list.find(x=>x[0]===tab))tab='hero';
   $('#tabs').innerHTML=list.map(([k,l,i])=>{const nh=NAVH[k]||NAVH.hero;return `<button type="button" data-t="${k}" class="${k===tab?'on':''}" style="--hc:${nh[1]}"><canvas class="nh" data-hero="${nh[0]}"></canvas><span class="nl">${l}</span></button>`}).join('');
   $('#tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;S.trainerMode=ADMIN;save();render();window.scrollTo(0,0)});
 }
@@ -1905,6 +1908,8 @@ boot().then(()=>{
     if(!ok){try{const g=await db.doc('roles/g_'+em).get();if(g.exists){const x=g.data();role=x.role||'member';name=x.name||'';ok=true;try{await ref.set({role,email:u.email,name,via:'google',t:Date.now()})}catch(e){console.warn(e)}}}catch(e){console.warn(e);why=why||e.code||e.message}}
     // ③ オーナー（ルールでオーナーのメールだけが書ける）なら、トレーナーとして自分の roles を作る
     if(!ok){try{await ref.set({role:'trainer',email:u.email,name:'オーナー',t:Date.now()});role='trainer';name='オーナー';ok=true}catch(e){console.warn(e);why=why||e.code||e.message}}
+    // ③' ルールがまだ合っていなくても、オーナー本人（Googleで確認済みのメール）はトレーナーとして入れる
+    if(!ok&&u.emailVerified){try{const hb=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(em));const hx=[...new Uint8Array(hb)].map(b=>b.toString(16).padStart(2,'0')).join('');if(hx==='74933ede2c82fa570047fbcc8a1dd24b985c979d4b98455984ae35a15bf16936'){role='trainer';name='オーナー';ok=true;console.warn('owner fallback: Firestore rules denied ('+why+')')}}catch(e){console.warn(e)}}
     // ④ メール/パスワードで入った人は、トレーナーが作ったアカウントなので会員として入れる
     if(!ok&&!isG){role='member';ok=true}
     if(!ok){msg(`このアカウント（${u.email}）は、ジムに登録されていません。受付でお声がけください。`+`［${why||'no-role'}］`);console.warn('login denied',u.email,u.uid,why);await auth.signOut();return}
@@ -2049,7 +2054,39 @@ function vBoard(){const m=me(),L=BOARD().filter(x=>bF==='all'||x.cat===bF).sort(
   document.querySelectorAll('[data-bdel]').forEach(b=>b.onclick=()=>{S.board=BOARD().filter(x=>x.id!=b.dataset.bdel);save();toast('投稿を消しました');vBoard()});
   $('#bBack').onclick=()=>{tab='feed';render();window.scrollTo(0,0)}}
 function bEntry(){if(tab!=='feed'||document.getElementById('bent'))return;const ph=document.getElementById('phent');if(!ph)return;const b=document.createElement('button');b.type='button';b.id='bent';b.className='phent bent';const n=BOARD().length;b.innerHTML=`📌 キタエル掲示板 <small>${n?n+'件の書きこみ':'みんなで情報交換'}</small>`;b.onclick=()=>{tab='board';render();window.scrollTo(0,0)};ph.after(b)}
-const _r5=render;render=function(){if(tab==='board'){renderTabs();vBoard();try{sw()}catch(e){}return}if(tab==='photo'){renderTabs();vPhoto();try{sw()}catch(e){}return}if(tab==='news'&&!ADMIN){renderTabs();vNews();try{sw()}catch(e){}return}const r=_r5.apply(this,arguments);try{newsCard();newsNav();newsAdmin();phEntry();bEntry()}catch(e){console.warn(e)}return r};
+// ===== キタエル・クエストblog =====
+function BLOG(){S.blog=S.blog||[];return S.blog}
+const BFILE={};
+function blogUrl(x){return location.origin+location.pathname.replace(/admin\/?$/,'')+'?blog='+x.id}
+function blogText(x){return `【キタエル・クエストblog】${x.title}\n${(x.body||'').slice(0,100)}${(x.body||'').length>100?'…':''}`}
+function vBlog(){const L=BLOG().slice().sort((a,b)=>b.t-a.t);
+  $('#view').innerHTML=`<h2>📝 キタエル・クエストblog</h2><p class="muted" style="margin:-4px 2px 8px;font-size:12px">ジムの記事を書いて、掲示板に貼ったり、LINE・X・Instagram・TikTok・YouTubeなどに送ったりできます。</p>
+  ${ADMIN?`<div class="card stack"><label>タイトル<input id="bgti" maxlength="50" placeholder="例：11月のおすすめ野菜はかぼちゃ！"></label>
+   <label>本文<textarea id="bgbo" rows="6" maxlength="3000" placeholder="記事の本文を書きます"></textarea></label>
+   <label>写真・動画（なくてもOK）<input type="file" id="bgf" accept="image/*,video/*"></label>
+   <label>YouTubeなどの動画リンク（なくてもOK）<input id="bgln" type="url" placeholder="https://youtu.be/..."></label>
+   <button type="button" class="btn-main" id="bgsave">記事を公開する</button>
+   <p class="muted" style="font-size:11px;margin:0">試作版：記事はこの端末の中に保存されます。動画ファイルは、画面を開いている間だけ送れます。</p></div>`:''}
+  <div class="blist">${L.length?L.map(x=>`<article class="card bgpost">${x.img?`<img src="${x.img}" alt="">`:''}${BFILE[x.id]&&BFILE[x.id].type.startsWith('video')?`<video src="${URL.createObjectURL(BFILE[x.id])}" controls playsinline></video>`:''}
+    <small>${newsDate(x.t)}・${esc(x.tn)}</small><h3>${esc(x.title)}</h3><p>${esc(x.body||'')}</p>${x.link?`<a href="${esc(x.link)}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}
+    <div class="bgsh"><button type="button" data-bs="${x.id}" class="bgmain">📤 スマホのアプリに送る</button><button type="button" data-bline="${x.id}" class="line">LINE</button><button type="button" data-bx="${x.id}" class="xx">X</button><button type="button" data-bboard="${x.id}">📌 掲示板に貼る</button>${ADMIN?`<button type="button" class="phdel" data-bgdel="${x.id}">消す</button>`:''}</div></article>`).join(''):'<div class="card muted">まだ記事はありません。</div>'}</div>
+  <div class="card muted bghelp" style="font-size:12px;line-height:1.7">📤「スマホのアプリに送る」を押すと、スマホの共有画面が開きます。そこで Instagram・TikTok・YouTube・LINE などをえらべます。写真や動画も、いっしょに送れます。<br>パソコンなど共有画面が出ないときは、写真・動画を保存してから各アプリで投稿してください。</div>
+  <button type="button" class="nwall" id="bgBack">‹ キタ酒場にもどる</button>`;
+  const f=$('#bgf');let file=null;if(f)f.onchange=e=>{file=e.target.files[0]||null};
+  const sv=$('#bgsave');if(sv)sv.onclick=async()=>{const ti=$('#bgti').value.trim();if(!ti){toast('タイトルを入れてください');return}const x={id:Date.now(),t:Date.now(),tn:TN(),title:ti,body:$('#bgbo').value.trim(),link:$('#bgln').value.trim()};
+    if(file){BFILE[x.id]=file;if(file.type.startsWith('image'))try{x.img=await shrink(file)}catch(e){}}BLOG().push(x);save();S.feed.unshift({id:S.nextId++,who:'trainer',tn:TN(),text:`📝 blogに新しい記事：${ti}`,xp:0,stat:'grit',t:Date.now(),cheers:[]});save();toast('記事を公開しました');vBlog()};
+  const get=id=>BLOG().find(x=>x.id==id);
+  document.querySelectorAll('[data-bs]').forEach(b=>b.onclick=async()=>{const x=get(b.dataset.bs),d={title:x.title,text:blogText(x)+(x.link?'\n'+x.link:''),url:blogUrl(x)};
+    let fl=BFILE[x.id];if(!fl&&x.img){try{const r=await fetch(x.img);fl=new File([await r.blob()],'kitaeru.jpg',{type:'image/jpeg'})}catch(e){}}
+    try{if(fl&&navigator.canShare&&navigator.canShare({files:[fl]}))await navigator.share({...d,files:[fl]});else if(navigator.share)await navigator.share(d);else{await navigator.clipboard.writeText(d.text+'\n'+d.url);toast('この機械では共有画面が出ないので、文章をコピーしました')}}catch(e){if(e&&e.name!=='AbortError')toast('送れませんでした')}});
+  document.querySelectorAll('[data-bline]').forEach(b=>b.onclick=()=>{const x=get(b.dataset.bline);window.open('https://social-plugins.line.me/lineit/share?url='+encodeURIComponent(blogUrl(x))+'&text='+encodeURIComponent(blogText(x)),'_blank','noopener')});
+  document.querySelectorAll('[data-bx]').forEach(b=>b.onclick=()=>{const x=get(b.dataset.bx);window.open('https://x.com/intent/post?text='+encodeURIComponent(blogText(x))+'&url='+encodeURIComponent(blogUrl(x)),'_blank','noopener')});
+  document.querySelectorAll('[data-bboard]').forEach(b=>b.onclick=()=>{const x=get(b.dataset.bboard);BOARD().push({id:Date.now(),t:Date.now(),by:S.current,name:me().name,byT:ADMIN?TN():null,anon:false,cat:'etc',text:`📝 blog「${x.title}」\n${(x.body||'').slice(0,200)}`,love:[]});save();toast('掲示板に貼りました')});
+  document.querySelectorAll('[data-bgdel]').forEach(b=>b.onclick=()=>{S.blog=BLOG().filter(x=>x.id!=b.dataset.bgdel);save();toast('記事を消しました');vBlog()});
+  $('#bgBack').onclick=()=>{tab='feed';render();window.scrollTo(0,0)}}
+function bgEntry(){if(tab!=='feed'||document.getElementById('bgent'))return;const be=document.getElementById('bent');if(!be)return;const b=document.createElement('button');b.type='button';b.id='bgent';b.className='phent bgent';b.innerHTML=`📝 キタエル・クエストblog <small>${BLOG().length?BLOG().length+'本の記事':'ジムの記事'}</small>`;b.onclick=()=>{tab='blog';render();window.scrollTo(0,0)};be.after(b)}
+try{const q=/[?&]blog=(\d+)/.exec(location.search);if(q)tab='blog'}catch(e){}
+const _r5=render;render=function(){if(tab==='blog'){renderTabs();vBlog();try{sw()}catch(e){}return}if(tab==='board'){renderTabs();vBoard();try{sw()}catch(e){}return}if(tab==='photo'){renderTabs();vPhoto();try{sw()}catch(e){}return}if(tab==='news'&&!ADMIN){renderTabs();vNews();try{sw()}catch(e){}return}const r=_r5.apply(this,arguments);try{newsCard();newsNav();newsAdmin();phEntry();bEntry();bgEntry()}catch(e){console.warn(e)}return r};
 if(!NEWS().length){NEWS().push({id:1,t:Date.now()-864e5,tn:TN(),title:'キタエル・クエスト 試作版スタート！',body:'トレーニングを記録して、相棒といっしょにレベルアップしよう。わからないことはトレーナーに聞いてね。',pin:false});save()}
 render();
 })();
