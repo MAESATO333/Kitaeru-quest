@@ -442,6 +442,7 @@ nav{flex-direction:column;align-items:center;gap:5px}
 .entrow button{display:flex;flex-direction:column;align-items:center;gap:1px;background:#fff;border:2.5px solid #a8346a;color:#a8346a;border-radius:12px;padding:7px 4px;font-weight:800;font-size:12.5px;line-height:1.25;cursor:pointer;min-width:0}
 .entrow button:nth-child(2){border-color:#4f7d2a;color:#4f7d2a}.entrow button:nth-child(3){border-color:#f39a1e;color:#c26a00}
 .entrow button b{font-size:12px;line-height:1.3}.entrow button small{font-size:10px;color:var(--muted);font-weight:700}.entrow button.on{background:#fffbe0}
+.rlsw{margin-left:6px;border:2px solid #4f7d2a;background:#f2fbe0;color:#33501a;border-radius:999px;padding:3px 8px;font-size:11px;font-weight:800;white-space:nowrap}
 </style>
 
 </head>
@@ -2053,6 +2054,8 @@ boot().then(()=>{
     const ref=db.doc('roles/'+u.uid),em=(u.email||'').toLowerCase();
     // ① 自分の roles があればそれを使う
     try{const d=await ref.get();if(d.exists){role=d.data().role||'member';name=d.data().name||'';ok=true}}catch(e){console.warn(e);why=e.code||e.message}
+    // ①' 先に会員として自分で登録していても、ジムがトレーナーとして登録していれば、トレーナーに切りかえる
+    if(ok&&role!=='trainer'&&em){try{const g=await db.doc('roles/g_'+em).get();if(g.exists&&g.data().role==='trainer'){role='trainer';name=g.data().name||name;try{await ref.update({role:'trainer',name})}catch(e){console.warn('role upgrade needs rules',e)}}}catch(e){console.warn(e)}}
     // ② Google用の事前登録（roles/g_メール）
     if(!ok){try{const g=await db.doc('roles/g_'+em).get();if(g.exists){const x=g.data();role=x.role||'member';name=x.name||'';ok=true;try{await ref.set({role,email:u.email,name,via:'google',t:Date.now()})}catch(e){console.warn(e)}}}catch(e){console.warn(e);why=why||e.code||e.message}}
     // ③ オーナー（ルールでオーナーのメールだけが書ける）なら、トレーナーとして自分の roles を作る
@@ -2090,7 +2093,11 @@ function acctPanel(){const v=document.getElementById('view');if(!v||document.get
     if(pw.length<6){am('仮パスワードは6文字以上にしてください（Googleで入る人は空でOK）');return}
     am('作っています…',1);try{const sec=firebase.apps.find(a=>a.name==='sec')||firebase.initializeApp(firebase.app().options,'sec');const c=await sec.auth().createUserWithEmailAndPassword(email,pw);await firebase.firestore().doc('roles/'+c.user.uid).set({role,email,name,t:Date.now()});await sec.auth().signOut();am(`${name||email} の${role==='trainer'?'トレーナー':'会員'}アカウントを作りました`,1);['an','ae','ap'].forEach(i=>document.getElementById(i).value='');listAcc()}catch(e){am(JA(e))}};
   document.getElementById('alist').ontoggle=e=>{if(e.target.open)listAcc()};
-  async function listAcc(){const ul=document.querySelector('#alist ul');try{const q=await firebase.firestore().collection('roles').get();const a=[];q.forEach(x=>a.push(x.data()));ul.innerHTML=a.sort((x,y)=>(x.t||0)-(y.t||0)).map(x=>`<li><small class="${x.role==='trainer'?'':'m'}">${x.role==='trainer'?'トレーナー':'会員'}</small><span>${esc(x.name||'')} ${esc(x.email||'')}${x.google||x.via==='google'?' <b class="gtag">Google</b>':''}</span>${x.google||x.via==='google'?'':`<button type="button" data-rs="${esc(x.email||'')}">再設定メール</button>`}</li>`).join('')||'<li>まだありません</li>';ul.querySelectorAll('[data-rs]').forEach(b=>b.onclick=()=>firebase.auth().sendPasswordResetEmail(b.dataset.rs).then(()=>am(`${b.dataset.rs} に再設定メールを送りました`,1)).catch(err=>am(JA(err))))}catch(e){ul.innerHTML=`<li>${JA(e)}</li>`}}
+  async function listAcc(){const ul=document.querySelector('#alist ul');try{const q=await firebase.firestore().collection('roles').get();const a=[];q.forEach(x=>a.push(Object.assign({_id:x.id},x.data())));ul.innerHTML=a.sort((x,y)=>(x.t||0)-(y.t||0)).map(x=>`<li><small class="${x.role==='trainer'?'':'m'}">${x.role==='trainer'?'トレーナー':'会員'}</small><span>${esc(x.name||'')} ${esc(x.email||'')}${x.google||x.via==='google'?' <b class="gtag">Google</b>':''}</span>${x.google||x.via==='google'?'':`<button type="button" data-rs="${esc(x.email||'')}">再設定メール</button>`}<button type="button" class="rlsw" data-rl="${esc(x._id)}" data-to="${x.role==='trainer'?'member':'trainer'}">${x.role==='trainer'?'会員にする':'トレーナーにする'}</button></li>`).join('')||'<li>まだありません</li>';
+    ul.querySelectorAll('[data-rl]').forEach(b=>b.onclick=async()=>{const to=b.dataset.to;if(!confirm(to==='trainer'?'このアカウントをトレーナーにしますか？（管理ページに入れるようになります）':'このアカウントを会員にもどしますか？'))return;
+      try{const db=firebase.firestore(),d=await db.doc('roles/'+b.dataset.rl).get(),em=((d.data()||{}).email||'').toLowerCase();await db.doc('roles/'+b.dataset.rl).update({role:to});
+        if(em){const qs=await db.collection('roles').where('email','==',em).get();const ps=[];qs.forEach(x=>{if(x.id!==b.dataset.rl&&x.data().role!==to)ps.push(x.ref.update({role:to}))});await Promise.all(ps)}
+        am(to==='trainer'?'トレーナーにしました。その人は一度ログアウトして入り直すと、管理ページに入れます':'会員にもどしました',1);listAcc()}catch(e){am(JA(e))}});ul.querySelectorAll('[data-rs]').forEach(b=>b.onclick=()=>firebase.auth().sendPasswordResetEmail(b.dataset.rs).then(()=>am(`${b.dataset.rs} に再設定メールを送りました`,1)).catch(err=>am(JA(err))))}catch(e){ul.innerHTML=`<li>${JA(e)}</li>`}}
 }
 })();
 </script><script>
