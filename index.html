@@ -353,6 +353,13 @@ body.adminv header{box-shadow:inset 0 -4px 0 #9b2f5e}
 .pvsw span{padding:3px 6px;color:#2f6d2a}.pvsw a{padding:3px 9px;border-radius:999px;color:#2f6d2a;text-decoration:none}.pvsw a.on{background:#2f6d2a;color:#fff}
 body.adminv .pvsw a.on{background:#9b2f5e}
 .admintro{background:#fbeef4;border:2px solid #e3b4cb;border-radius:14px;padding:8px 12px;font-size:12.5px;line-height:1.6;color:#5a2440;margin:10px 0 4px}
+.nbadge{position:absolute;top:2px;right:4px;min-width:20px;height:20px;border-radius:999px;background:#e8452c;color:#fff;font-style:normal;font-size:12px;font-weight:800;line-height:20px;text-align:center;padding:0 5px;box-shadow:0 0 0 2px #fff}#tabs button{position:relative!important}
+.nbadge.in{position:static;display:inline-block;margin-left:2px;box-shadow:none}
+.hmbar{display:block;width:100%;margin:10px 0 0;background:#fff0f4;border:2px solid #f28bb0;color:#a3264f;border-radius:14px;padding:9px 12px;font-weight:800;font-size:13px;text-align:left;cursor:pointer}
+.card.hw .chip{white-space:nowrap}
+.hwwhen{font-size:12px;color:#2f7d32;font-weight:700;margin-top:4px}.hmnote{font-size:12px;margin:-4px 2px 8px}
+.btn-main.hmbtn{background:#f06a9b!important;box-shadow:0 4px 0 #b83c6c!important;white-space:nowrap}
+.stampmark.hanamaru{font-size:26px;background:none!important;border:0!important;color:inherit}
 </style>
 
 </head>
@@ -1294,14 +1301,14 @@ function vHero(){
   <div class="heroes">${HEROES.map(h=>`<button type="button" class="vhero ${m.buddy===h.key?'on':''}" data-buddy="${h.key}"><canvas data-hero="${h.key}"></canvas><b>${h.name}</b><span>${h.role}・${h.stat}</span></button>`).join('')}</div>
   <h2>ごはん＆パワー図鑑 <small style="font-size:13px;color:var(--muted)">${Object.keys(FOODS).filter(k=>((m.foods||{})[k]||0)>0).length} / ${Object.keys(FOODS).length} しゅるい</small></h2>
   <div class="zktabs" id="zktabs"></div><div class="zkb">${[['野菜',k=>FSUB(k)==='veg'],['果物',k=>FSUB(k)==='fruit'],['豆',k=>FSUB(k)==='mame'],['穀物',k=>FSUB(k)==='koku'],['海藻',k=>FSUB(k)==='sou'],['食品',k=>FSUB(k)==='shoku'],['食事メニュー',k=>FSUB(k)==='menu'],['海の幸',k=>FOODS[k].cat==='sea'],['飲み物',k=>FOODS[k].cat==='drink'],['パワースポット',k=>FOODS[k].cat==='power'],['こころのパワー',k=>FOODS[k].cat==='heart'],['必殺技',k=>FOODS[k].cat==='move'],['ヨガのアーサナ',k=>FOODS[k].cat==='yoga'],['トレーナーの愛',k=>FOODS[k].cat==='energy'],['キレイ＆強く',k=>FOODS[k].cat==='beauty'],['ラッキー',k=>FOODS[k].cat==='luck'],['サプリ＆くすり',k=>FOODS[k].cat==='care']].map(([lab,fl],si)=>`<div class="zsec" data-zi="${si}" data-lab="${lab}" data-n="${Object.keys(FOODS).filter(fl).length}"><div class="shelf">${lab} <small>${Object.keys(FOODS).filter(fl).length}</small></div><div class="pantry">${Object.keys(FOODS).filter(fl).map(k=>{const f=FOODS[k],n=(m.foods||{})[k]||0;return `<div class="pc ${n||KS()?'':'none'} ${f.rare?'rare':''}"><canvas class="food" data-food="${k}"></canvas><b class="${(n||KS())&&f.name.length>6?'ln':''}">${n||KS()?f.name:'？？？'}</b><div class="ct">${n}<small>こ</small></div><div class="ef"><span class="st" style="background:${STAT[f.stat].c}">${STAT[f.stat].name}</span>+${fxp(f)}</div>${n>=10?`<div class="tt got">★${f.title}</div>`:''}</div>`}).join('')}</div></div>`).join('')}</div>
-  <p class="muted" style="margin:6px 2px 0">毎日のごはんと、宿題のスタンプでもらえます。キラキラのカードはめったに出ないレアです。お酒はEXP控えめです。</p>
+  <p class="muted" style="margin:6px 2px 0">毎日のごはんと、宿題の花マル🌸スタンプでもらえます。キラキラのカードはめったに出ないレアです。お酒はEXP控えめです。</p>
   <h2>今月のトレーニング</h2>
   ${monthCal(m)}
   ${(m.osusume||[]).length?`<h2>トレーナーからのおすすめ野菜</h2><div class="osu">${m.osusume.slice(-3).reverse().map(o=>`<div class="card osc"><canvas class="food" data-food="${o.k}"></canvas><div><b>${esc(FOODS[o.k]?FOODS[o.k].name:o.k)}</b><small>${esc(o.tn)}トレーナーより</small>${o.msg?`<p>${esc(o.msg)}</p>`:""}</div></div>`).join("")}</div>`:""}<h2>トレーナーからの宿題</h2>
   <div class="stack">${m.homework.length?m.homework.slice().reverse().map(h=>`
     <div class="card hw"><div style="min-width:0"><div class="${h.text.length>150?'hwlong':''}" style="font-weight:700">${esc(h.text)}</div>
-      <div class="muted">${h.status==='open'?'ジムの外でやってみよう':h.status==='done'?'トレーナーのスタンプ待ち':'スタンプ獲得！ パワーアップ済み'}</div></div>
-      ${h.status==='open'?`<button type="button" class="btn-main" data-hw="${h.id}">やった！</button>`:h.status==='done'?'<span class="chip">確認待ち</span>':'<span class="stampmark">済</span>'}
+      <div class="muted">${h.status==='open'?'家でもOK！ やったら「完了した！」を押そう':h.status==='done'?'トレーナーに届きました。花マル🌸スタンプ待ち':'花マル🌸スタンプ獲得！ パワーアップ済み'}</div></div>
+      ${h.status==='open'?`<button type="button" class="btn-main" data-hw="${h.id}">完了した！</button>`:h.status==='done'?'<span class="chip">確認待ち</span>':'<span class="stampmark hanamaru">🌸</span>'}
     </div>`).join(''):'<div class="card muted">今は宿題はありません。</div>'}</div>
   ${m.boost>0?`<div class="card" style="margin-top:10px;border-color:var(--accent)"><b style="color:var(--accent)">気合ブースト中</b>　次の筋トレ・有酸素 ${m.boost}回分のEXPが1.5倍</div>`:''}
   <h2>トレーナーからのクエスト</h2>
@@ -1316,7 +1323,7 @@ function vHero(){
   const bb=$('#bonus');if(bb)bb.onclick=()=>{const fk=foodOfDay(),f=FOODS[fk];S.bonusDay=dayKey();const t=giveFood(m,fk);gain(m,f.stat,fxp(f),`今日のごはん「${f.name}」を食べた`);if(t)overlay('称号ゲット！',`${f.name}を10こ集めて「${t}」になりました`);vHero();};
   $('#zk').onclick=()=>{tab='zukan';zLook=m.look||'m';render();window.scrollTo(0,0)};
   $('#lk').onchange=e=>{m.look=e.target.value;save();vHero()};
-  document.querySelectorAll('[data-hw]').forEach(b=>b.onclick=()=>{const h=m.homework.find(x=>x.id==b.dataset.hw);h.status='done';h.doneAt=Date.now();save();toast('報告しました！ トレーナーのスタンプを待とう');vHero()});
+  document.querySelectorAll('[data-hw]').forEach(b=>b.onclick=()=>{const h=m.homework.find(x=>x.id==b.dataset.hw);h.status='done';h.doneAt=Date.now();save();toast('トレーナーにお知らせしました！ 花マル🌸スタンプを待とう');vHero()});
   $('#nextDay').onclick=()=>{S.dayShift=(S.dayShift||0)+1;save();render();toast('顔ぶれが入れ替わりました')};
   $('#kensaBtn').onclick=()=>window.kensaToggle();
   $('#reset').onclick=()=>{S=seed();save();render();toast('デモを最初の状態に戻しました')};
@@ -1542,10 +1549,10 @@ function vGuild(){
     const G=$('#gtl');G.onclick=e=>{const b=e.target.closest('[data-tv]');if(!b)return;G.querySelectorAll('.on').forEach(x=>x.classList.remove('on'));b.classList.add('on');$('#gt').value=b.dataset.tv;$('#gpv').textContent=b.dataset.tv};
   },0);
   setTimeout(()=>{const x=$('#tnm');if(x)x.onchange=e=>{S.tname=e.target.value;save();toast(`${S.tname}さんとして操作します`)}},0);
-  const waiting=S.members.flatMap(m=>m.homework.filter(h=>h.status==='done').map(h=>({m,h})));
-  $('#view').innerHTML=`<label class="tnbox"><span class="tnl">担当トレーナー</span><select id="tnm">${TRAINERS.map(t=>`<option ${TN()===t?'selected':''}>${t}</option>`).join('')}</select></label><h2>宿題のスタンプ待ち（${waiting.length}件）</h2>
-  <div class="stack">${waiting.length?waiting.map(({m,h})=>`<div class="card hw"><div style="min-width:0"><div class="hwn"><small>ゲスト</small>${esc(m.name)}<span>さん</span></div><div class="muted">${esc(h.text)}</div></div>
-    <button type="button" class="btn-main" data-st="${m.id}:${h.id}">スタンプを押す</button></div>`).join(''):'<div class="card muted">スタンプ待ちの宿題はありません。</div>'}</div>
+  const waiting=S.members.flatMap(m=>m.homework.filter(h=>h.status==='done').map(h=>({m,h}))).sort((a,b)=>(b.h.doneAt||b.h.t||0)-(a.h.doneAt||a.h.t||0));
+  $('#view').innerHTML=`<label class="tnbox"><span class="tnl">担当トレーナー</span><select id="tnm">${TRAINERS.map(t=>`<option ${TN()===t?'selected':''}>${t}</option>`).join('')}</select></label><h2 id="hwnotice">🔔 宿題完了のお知らせ（${waiting.length}件）</h2><p class="muted hmnote">ゲストが家で宿題をやって「完了した！」を押すと、ここに届きます。ジムに来ていなくても、その場で花マル🌸スタンプを押してOKです。</p>
+  <div class="stack">${waiting.length?waiting.map(({m,h})=>`<div class="card hw"><div style="min-width:0"><div class="hwn"><small>ゲスト</small>${esc(m.name)}<span>さん</span></div><div class="muted">${esc(h.text)}</div><div class="hwwhen">✅ 完了の報告：${ago(h.doneAt||h.t||Date.now())}</div></div>
+    <button type="button" class="btn-main hmbtn" data-st="${m.id}:${h.id}">花マル🌸スタンプ</button></div>`).join(''):'<div class="card muted">新しい完了のお知らせはありません。</div>'}</div>
   <h2>宿題を出す</h2>
   <div class="card stack">
     <label>会員<select id="hm">${S.members.map(m=>`<option value="${m.id}">${esc(m.name)}</option>`).join('')}</select></label>
@@ -1597,10 +1604,10 @@ function vGuild(){
     const [mid,hid]=b.dataset.st.split(':'),m=byId(mid),h=m.homework.find(x=>x.id==hid);
     h.status='stamped';m.boost=(m.boost||0)+2;const hf=Object.keys(FOODS)[hashStr(String(h.id)+m.id)%Object.keys(FOODS).length];giveFood(m,hf);
     const before=levelOf(total(m)).lv;['str','end','tec','grit'].forEach(k=>m.stats[k]+=15);m.weekXp+=60;
-    S.feed.unshift({id:S.nextId++,who:'trainer',tn:TN(),to:m.id,text:`${m.name}さんの宿題「${h.text}」にスタンプ！ パワーアップ`,xp:60,stat:'grit',t:Date.now(),cheers:[]});save();
+    S.feed.unshift({id:S.nextId++,who:'trainer',tn:TN(),to:m.id,text:`${m.name}さんの宿題「${h.text}」に花マル🌸スタンプ！ パワーアップ`,xp:60,stat:'grit',t:Date.now(),cheers:[]});save();
     const after=levelOf(total(m)).lv;
-    if(m.id===S.current)overlay('POWER UP!',`全能力+15${after>before?`、レベル${after}に！`:''}　次の2回のトレーニングはEXP1.5倍　ごほうびに「${FOODS[hf].name}」も1こ`);
-    else toast(`${m.name}さんがパワーアップしました`);
+    if(m.id===S.current)overlay('花マル🌸スタンプ！',`POWER UP！ 全能力+15${after>before?`、レベル${after}に！`:''}　次の2回のトレーニングはEXP1.5倍　ごほうびに「${FOODS[hf].name}」も1こ`);
+    else toast(`${m.name}さんに花マル🌸スタンプ！ パワーアップしました`);
     vGuild()});
   let HQ=[];const hdraw=()=>{$('#hcnt').textContent=HQ.length;$('#hlist').innerHTML=HQ.length?HQ.map((t,i)=>`<li><span>${esc(t)}</span><button type="button" data-hu="${i}" aria-label="上へ" ${i?'':'disabled'}>▲</button><button type="button" data-hd="${i}" aria-label="下へ" ${i<HQ.length-1?'':'disabled'}>▼</button><button type="button" data-hx="${i}" aria-label="消す" class="x">✕</button></li>`).join(''):'<li class="emp">まだ項目がありません。上でえらんで「追加」を押してください。</li>'};
   $('#hadd').onclick=()=>{HQ.push($('#ht').value);hdraw();toast('宿題に追加しました')};
@@ -1815,7 +1822,14 @@ window.KQ_GUEST_URL=byQ?P:base;const adminUrl=base+'admin';
 function sw(){const show=!AUTH.on||AUTH.role==='trainer';let d=document.getElementById('pvsw');if(!show){if(d)d.remove();return}
   if(!d){d=document.createElement('div');d.id='pvsw';d.className='pvsw';document.body.appendChild(d)}
   d.innerHTML=`<span>${AUTH.on?'切替':'お試し'}</span><a href="${KQ_GUEST_URL}" class="${ADMIN?'':'on'}">ゲスト画面</a><a href="${byQ?P+'?admin=1':adminUrl}" class="${ADMIN?'on':''}">管理ページ</a>`}
-const _r2=render;render=function(){const r=_r2.apply(this,arguments);try{sw();if(ADMIN&&tab==='guild'&&!document.getElementById('admintro')){const v=document.getElementById('view');const d=document.createElement('div');d.id='admintro';d.className='admintro';d.innerHTML='<b>トレーナー管理ページ</b>：全ゲストの宿題スタンプ・宿題出し・称号やクエストの設定ができます。右上の「ゲスト」でだれでも選べて、下のメニューでその人の画面も見られます。';v.insertBefore(d,v.firstChild)}else if(ADMIN&&tab!=='guild'&&!document.getElementById('admintro')){const v=document.getElementById('view');const d=document.createElement('div');d.id='admintro';d.className='admintro';d.innerHTML=`いま <b>${esc(me().name)}</b> さんの画面を見ています（管理ページ）`;v.insertBefore(d,v.firstChild)}}catch(e){console.warn(e)}return r};
+const _r2=render;render=function(){const r=_r2.apply(this,arguments);try{sw();if(ADMIN&&tab==='guild'&&!document.getElementById('admintro')){const v=document.getElementById('view');const d=document.createElement('div');d.id='admintro';d.className='admintro';d.innerHTML='<b>トレーナー管理ページ</b>：全ゲストの宿題の花マル🌸スタンプ・宿題出し・称号やクエストの設定ができます。右上の「ゲスト」でだれでも選べて、下のメニューでその人の画面も見られます。';v.insertBefore(d,v.firstChild)}else if(ADMIN&&tab!=='guild'&&!document.getElementById('admintro')){const v=document.getElementById('view');const d=document.createElement('div');d.id='admintro';d.className='admintro';d.innerHTML=`いま <b>${esc(me().name)}</b> さんの画面を見ています（管理ページ）`;v.insertBefore(d,v.firstChild)}}catch(e){console.warn(e)}return r};
+function badge(){if(!ADMIN)return;const n=S.members.reduce((a,m)=>a+m.homework.filter(h=>h.status==='done').length,0);
+  const t=document.querySelector('#tabs [data-t="guild"]');if(t&&n){const b=document.createElement('i');b.className='nbadge';b.textContent=n;t.appendChild(b)}
+  const hb=document.getElementById('hwBtn');if(hb)hb.innerHTML=n?`宿題 <i class="nbadge in">${n}</i>`:'宿題';
+  let bar=document.getElementById('hmbar');if(!n||tab==='guild'){if(bar)bar.remove();return}
+  if(!bar){bar=document.createElement('button');bar.type='button';bar.id='hmbar';bar.className='hmbar';const v=document.getElementById('view');v.parentNode.insertBefore(bar,v)}
+  bar.textContent=`🔔 宿題完了のお知らせが ${n}件 あります → 花マル🌸スタンプを押す`;bar.onclick=()=>{tab='guild';render();window.scrollTo(0,0)}}
+const _r3=render;render=function(){const r=_r3.apply(this,arguments);try{badge()}catch(e){console.warn(e)}return r};
 render();
 })();
 </script></body>
