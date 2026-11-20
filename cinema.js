@@ -876,9 +876,13 @@ const css=`
 .mzbooks canvas{width:64px;height:52px;image-rendering:pixelated}
 .mzbooks small{font-size:11px;color:#6a7a4a}.mzbooks b{font-size:13px;line-height:1.35}
 .mzbooks .seen{position:absolute;top:4px;right:6px;font-size:11px;background:#4f9a2a;color:#fff;border-radius:999px;padding:1px 6px}
-.mzhall{background:#1a1420;border-radius:18px;padding:0 0 12px;overflow:hidden;position:relative;border:5px solid #33501a}
+.mzfull{position:fixed;inset:0;z-index:300;background:#1a1420;display:flex;flex-direction:column;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px);overscroll-behavior:contain;touch-action:manipulation}
+.mzfull .mztop{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;background:#33501a;color:#ffe600;font-weight:900;font-size:16px;flex:0 0 auto}
+.mzfull .mztop button{border:2px solid #ffe600;background:#e8452c;color:#fff;font-weight:900;border-radius:10px;padding:6px 12px;cursor:pointer;font-size:14px}
+.mzfull .mzhall{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;max-width:900px;width:100%;margin:0 auto;box-sizing:border-box;padding-bottom:10px}
+.mzhall{background:#1a1420;overflow:hidden;position:relative}
 .mzval{height:22px;background:radial-gradient(circle at 10px 0,#7fbf2a 9px,transparent 10px) 0 6px/20px 20px repeat-x,#4f9a2a}
-.mzscr{position:relative;margin:10px 12px 0;border:5px solid #ffe600;border-radius:6px;overflow:hidden;background:#000}
+.mzscr{position:relative;flex:0 0 auto;width:min(calc(100% - 24px),calc((100dvh - 330px) * 16 / 9));margin:10px auto 0;box-sizing:border-box;border:5px solid #ffe600;border-radius:6px;overflow:hidden;background:#000}
 .mzscr canvas{display:block;width:100%;aspect-ratio:16/9;image-rendering:pixelated}
 .mzcur{position:absolute;top:0;bottom:0;width:51%;background:repeating-linear-gradient(90deg,#9ccc3c 0 14px,#7fbf2a 14px 28px);transition:transform 1.6s cubic-bezier(.6,.05,.3,1);z-index:3;box-shadow:inset 0 -8px 0 #4f9a2a}
 .mzcur.l{left:0}.mzcur.r{right:0}
@@ -888,12 +892,12 @@ const css=`
 .mzov .sm{font-weight:900;font-size:clamp(12px,2.6vw,16px);color:#fff;background:#e8452c;border:2px solid #33501a;border-radius:999px;padding:2px 12px}
 .mzwait{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:900;text-shadow:0 2px 0 #33501a;gap:4px;text-align:center}
 .mzwait b{font-size:clamp(22px,6vw,40px);color:#ffe600;font-variant-numeric:tabular-nums}
-.mzsub{margin:10px 12px 0;background:#fffdf3;border-radius:12px;padding:10px 14px;font-size:clamp(15px,2.4vw,19px);line-height:1.9;min-height:5.6em;white-space:pre-line;color:#2c3a18}
+.mzsub{margin:10px 12px 0;background:#fffdf3;border-radius:12px;padding:10px 14px;font-size:clamp(15px,2.4vw,19px);line-height:1.9;height:6.4em;flex:0 0 auto;overflow-y:auto;white-space:pre-line;color:#2c3a18}
 .mzsub .q{color:#e8452c;font-weight:900}
 .mzend{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mzend>div{background:#fff;border-radius:10px;padding:8px 10px;min-width:0}
 .mzend h4{margin:0 0 4px;font-size:13px;color:#9b2f5e}.mzend dt{font-weight:900;color:#f39a1e;font-size:13px}.mzend dd{margin:0 0 4px;font-size:13px;line-height:1.6}
-.mzseat{display:block;width:100%;aspect-ratio:256/30;image-rendering:pixelated;margin-top:8px}
-.mzctl{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 12px 0;flex-wrap:wrap}
+.mzseat{flex:0 0 auto;display:block;width:100%;aspect-ratio:256/30;image-rendering:pixelated;margin-top:8px}
+.mzctl{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 12px 0;flex-wrap:wrap}
 .mzctl button{border:2px solid #ffe600;background:#33501a;color:#ffe600;font-weight:900;border-radius:10px;padding:8px 14px;cursor:pointer}
 .mzctl button:disabled{opacity:.4}
 .mzctl span{color:#f3f9dc;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
@@ -935,7 +939,7 @@ function back(){const b=document.createElement('button');b.type='button';b.id='s
   else if(C.scene==='lobby'){b.textContent='‹ 外に出る';b.onclick=()=>{C.scene='out';render();scrollTo(0,0)}}
   else{b.textContent='‹ ロビーへ';b.onclick=()=>{stopT();C.scene='lobby';render();scrollTo(0,0)}}
   return b}
-window.vCinema=function(){stopT();const v=document.getElementById('view');v.innerHTML='';v.appendChild(back());
+window.vCinema=function(){if(!document.getElementById('mzfull'))stopT();if(C.scene==='hall')C.scene='lobby';const v=document.getElementById('view');v.innerHTML='';v.appendChild(back());
   const w=document.createElement('div');w.className='mz';v.appendChild(w);
   if(C.scene==='out')vOut(w);else if(C.scene==='lobby')vLobby(w);else vHall(w);
   loadScr(false)};
@@ -960,17 +964,22 @@ function drawShows(){const ul=document.getElementById('mzshows');if(!ul)return;c
    :`<li><div>いまは予定がありません。${isTr()?'下から上映会を予約できます。':'絵本コーナーで、いつでも観られます。'}</div></li>`;
   ul.querySelectorAll('[data-mzshow]').forEach(b=>b.onclick=()=>{const s=SCR.find(x=>String(x.id)===b.dataset.mzshow);if(s)openShow(s)});
   ul.querySelectorAll('[data-mzdel]').forEach(b=>b.onclick=()=>{if(b.dataset.c){delScr(b.dataset.mzdel)}else{b.dataset.c=1;b.textContent='本当に取消'}})}
-function openFree(n){C.scene='hall';C.mode='free';C.ep=n;C.pi=0;C.auto=true;C.show=null;if(tab!=='cinema'){tab='cinema'}render();scrollTo(0,0)}
-function openShow(s){C.scene='hall';C.mode='show';C.ep=s.ep;C.show=s;C.pi=0;render();scrollTo(0,0)}
+function openFree(n){C.mode='free';C.ep=n;C.pi=0;C.auto=true;C.show=null;if(tab!=='cinema'){tab='cinema';C.scene='lobby';render()}openHall()}
+function openShow(s){C.mode='show';C.ep=s.ep;C.show=s;C.pi=0;openHall()}
+function hallOpen(){return !!document.getElementById('mzfull')}
+function closeHall(){stopT();const o=document.getElementById('mzfull');if(o)o.remove();document.documentElement.style.overflow='';document.body.style.overflow='';if(tab==='cinema'&&C.scene==='lobby')render()}
+function openHall(){stopT();let o=document.getElementById('mzfull');if(!o){o=document.createElement('div');o.id='mzfull';o.className='mzfull';o.setAttribute('role','dialog');o.setAttribute('aria-label','ミドリ座 上映室');document.body.appendChild(o)}
+  document.documentElement.style.overflow='hidden';document.body.style.overflow='hidden';vHall(o)}
+addEventListener('keydown',ev=>{if(ev.key==='Escape'&&hallOpen())closeHall()});
 window.KQ_openEhon=openFree;
 function pagesOf(e){return [{kind:'title'},...e.pages,{kind:'end'}]}
 function vHall(w){const e=EP(C.ep),pages=pagesOf(e);
-  w.innerHTML=`<h2 class="mzh">🎬 ${C.mode==='show'?'上映会':'自由上映'}：第${e.no}話</h2>
+  w.innerHTML=`<div class="mztop"><span>🎬 ミドリ座 ${C.mode==='show'?'上映会':'自由上映'}：第${e.no}話</span><button type="button" id="mzx">✕ ロビーへ</button></div>
   <div class="mzhall" id="mzhall"><div class="mzval"></div><div class="mzscr"><canvas id="mzsc" width="256" height="144" aria-label="場面の絵"></canvas><div class="mzov" id="mzov" hidden></div><div class="mzcur l"></div><div class="mzcur r"></div><div class="mzwait" id="mzwait" hidden></div></div>
   <div class="mzsub" id="mzsub"></div>
   <div class="mzctl">${C.mode==='free'?`<button type="button" id="mzpv">‹ 前へ</button><button type="button" id="mzau"></button><span id="mzpg"></span><button type="button" id="mznx">次へ ›</button>`:`<span id="mzpg"></span><span>みんなで同じ場面を観ています</span>`}</div>
   <canvas class="mzseat" id="mzseat" width="256" height="30" aria-hidden="true"></canvas></div>`;
-  drawSeats(w.querySelector('#mzseat').getContext('2d'));
+  drawSeats(w.querySelector('#mzseat').getContext('2d'));w.querySelector('#mzx').onclick=closeHall;
   const hall=w.querySelector('#mzhall'),cv=w.querySelector('#mzsc'),ctx=cv.getContext('2d');let shown=-2;
   function paint(i){if(i===shown)return;shown=i;const p=pages[i],ov=w.querySelector('#mzov'),sub=w.querySelector('#mzsub');ART.use(ctx,e.no*100+i);ctx.clearRect(0,0,256,144);
     if(p.kind==='title'||p.kind==='end'){epCover(e);ov.hidden=false;ov.innerHTML=p.kind==='title'?`<div class="big">${E(e.title)}</div><div class="sm">第${e.no}話・${HN[e.hero]}</div>`:`<div class="big">お仕舞い</div><div class="sm">第${e.no}話「${E(e.title)}」</div>`}
@@ -982,14 +991,14 @@ function vHall(w){const e=EP(C.ep),pages=pagesOf(e);
     if(C.mode==='free'){w.querySelector('#mzpv').disabled=i===0;w.querySelector('#mznx').textContent=i===pages.length-1?(EP(e.no+1)?'次の話 ›':'ロビーへ ›'):'次へ ›'}}
   if(C.mode==='free'){
     const au=w.querySelector('#mzau'),setAu=()=>{au.textContent=C.auto?'⏸ 止める':'▶ 自動で進む'};setAu();
-    const go=d=>{if(d>0&&C.pi===pages.length-1){const n=EP(e.no+1);if(n){C.ep=n.no;C.pi=0;render()}else{C.scene='lobby';render()}scrollTo(0,0);return}C.pi=Math.max(0,Math.min(pages.length-1,C.pi+d));tick=Date.now();paint(C.pi)};
+    const go=d=>{if(d>0&&C.pi===pages.length-1){const n=EP(e.no+1);if(n){C.ep=n.no;C.pi=0;openHall()}else closeHall();return}C.pi=Math.max(0,Math.min(pages.length-1,C.pi+d));tick=Date.now();paint(C.pi)};
     let tick=Date.now();w.querySelector('#mzpv').onclick=()=>{C.auto=false;setAu();go(-1)};w.querySelector('#mznx').onclick=()=>{go(1)};au.onclick=()=>{C.auto=!C.auto;tick=Date.now();setAu()};
     let sx=null;const sc=w.querySelector('.mzscr');sc.addEventListener('touchstart',ev=>sx=ev.touches[0].clientX,{passive:true});sc.addEventListener('touchend',ev=>{if(sx==null)return;const dx=ev.changedTouches[0].clientX-sx;if(Math.abs(dx)>40){C.auto=false;setAu();go(dx<0?1:-1)}sx=null});
     paint(C.pi);setTimeout(()=>hall.classList.add('open'),250);
-    C.timer=setInterval(()=>{if(tab!=='cinema'||C.scene!=='hall'){stopT();return}if(C.auto&&C.pi<pages.length-1&&Date.now()-tick>=PAGE_MS)go(1)},400);
+    C.timer=setInterval(()=>{if(!hallOpen()){stopT();return}if(C.auto&&C.pi<pages.length-1&&Date.now()-tick>=PAGE_MS)go(1)},400);
   }else{
     const s=C.show,wait=w.querySelector('#mzwait');
-    const step=()=>{if(tab!=='cinema'||C.scene!=='hall'){stopT();return}const el=Date.now()-s.at;
+    const step=()=>{if(!hallOpen()){stopT();return}const el=Date.now()-s.at;
       if(el<0){hall.classList.remove('open');wait.hidden=false;const r=Math.ceil(-el/1000);wait.innerHTML=`<span>開演まで</span><b>${r>=3600?Math.floor(r/3600)+'時間'+P2(Math.floor(r%3600/60))+'分':P2(Math.floor(r/60))+':'+P2(r%60)}</b><span>${when(s.at)}</span>`;paint(0);return}
       wait.hidden=true;hall.classList.add('open');const i=Math.min(pages.length-1,Math.floor(el/PAGE_MS));paint(i);
       if(i===pages.length-1){const pg=w.querySelector('#mzpg');if(pg)pg.textContent='上映終了。ご来場ありがとうございました！'}};
