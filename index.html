@@ -61,7 +61,7 @@ header::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:6px
 .pantry{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
 .pc{background:#fff;border:2px solid var(--line);border-radius:14px;padding:6px 3px;text-align:center;min-width:0;box-shadow:0 3px 0 #c9df82}
 .pc .food{width:40px;height:40px;display:block;margin:0 auto}
-.pc.none .food{filter:brightness(0) opacity(.18)}
+.pc.none .food{filter:saturate(.55) opacity(.6)}.pc.none{position:relative}.pc.none::after{content:'まだ';position:absolute;top:4px;right:4px;font-size:9px;font-weight:800;background:#fff;border:1.5px solid #ccc;color:#888;border-radius:999px;padding:0 5px}
 .pc.none b{color:var(--muted)}
 .pc.rare{background:linear-gradient(160deg,#fffbe0,#ffe9f2 60%,#e9f7ff);border-color:#f5c518}
 .heroes{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
@@ -189,7 +189,7 @@ tr.me td{color:var(--tomato);font-weight:700}
 .zk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .zc{background:var(--panel);border:1.5px solid var(--line);border-radius:16px;padding:8px;text-align:center;min-width:0}
 .zc canvas{width:100%;max-width:96px;aspect-ratio:1;image-rendering:pixelated;background:var(--stage);border-radius:10px;display:block;margin:0 auto}
-.zc.lock canvas{opacity:.7}
+.zc.lock canvas{opacity:1}
 .zc.now{border-color:var(--tomato);box-shadow:0 0 0 2px var(--lemon)}
 .zl{font-family:var(--display);color:var(--beet);font-size:13px;margin-top:4px}
 .zy{font-size:10px;color:var(--muted);line-height:1.3;word-break:break-all}
@@ -1425,7 +1425,7 @@ function vHero(){
   <p class="muted" style="margin:-4px 2px 8px;font-size:12px">タップして相棒をえらぶと、島にいっしょに立ちます。相棒の得意な能力は、EXPが1.1倍。${ADMIN?'':(m.buddy&&m.buddyDay===dayKey()?'<b>今日はもう変えました。また明日えらべます。</b>':'<b>相棒を変えられるのは1日1回まで。</b>')}</p>
   <div class="heroes">${HEROES.map(h=>`<button type="button" class="vhero ${m.buddy===h.key?'on':''}" data-buddy="${h.key}"><canvas data-hero="${h.key}"></canvas><b>${h.name}</b><span>${h.role}・${h.stat}</span></button>`).join('')}</div>
   <h2>ごはん＆パワー図鑑 <small style="font-size:13px;color:var(--muted)">${Object.keys(FOODS).filter(k=>((m.foods||{})[k]||0)>0).length} / ${Object.keys(FOODS).length} しゅるい</small></h2>
-  <div class="zktabs" id="zktabs"></div><div class="zkb">${[['野菜',k=>FSUB(k)==='veg'],['果物',k=>FSUB(k)==='fruit'],['豆',k=>FSUB(k)==='mame'],['穀物',k=>FSUB(k)==='koku'],['海藻',k=>FSUB(k)==='sou'],['食品',k=>FSUB(k)==='shoku'],['食事メニュー',k=>FSUB(k)==='menu'],['海の幸',k=>FOODS[k].cat==='sea'],['飲み物',k=>FOODS[k].cat==='drink'],['パワースポット',k=>FOODS[k].cat==='power'],['こころのパワー',k=>FOODS[k].cat==='heart'],['必殺技',k=>FOODS[k].cat==='move'],['ヨガのアーサナ',k=>FOODS[k].cat==='yoga'],['トレーナーの愛',k=>FOODS[k].cat==='energy'],['キレイ＆強く',k=>FOODS[k].cat==='beauty'],['ラッキー',k=>FOODS[k].cat==='luck'],['サプリ＆くすり',k=>FOODS[k].cat==='care']].map(([lab,fl],si)=>`<div class="zsec" data-zi="${si}" data-lab="${lab}" data-n="${Object.keys(FOODS).filter(fl).length}"><div class="shelf">${lab} <small>${Object.keys(FOODS).filter(fl).length}</small></div><div class="pantry">${Object.keys(FOODS).filter(fl).map(k=>{const f=FOODS[k],n=(m.foods||{})[k]||0;return `<div class="pc ${n||KS()?'':'none'} ${f.rare?'rare':''}" data-fk="${k}"><canvas class="food" data-food="${k}"></canvas><b class="${(n||KS())&&f.name.length>6?'ln':''}">${n||KS()?f.name:'？？？'}</b><div class="ct">${n}<small>こ</small></div><div class="ef"><span class="st" style="background:${STAT[f.stat].c}">${STAT[f.stat].name}</span>+${fxp(f)}</div>${n>=10?`<div class="tt got">★${f.title}</div>`:''}</div>`}).join('')}</div></div>`).join('')}</div>
+  <div class="zktabs" id="zktabs"></div><div class="zkb">${[['野菜',k=>FSUB(k)==='veg'],['果物',k=>FSUB(k)==='fruit'],['豆',k=>FSUB(k)==='mame'],['穀物',k=>FSUB(k)==='koku'],['海藻',k=>FSUB(k)==='sou'],['食品',k=>FSUB(k)==='shoku'],['食事メニュー',k=>FSUB(k)==='menu'],['海の幸',k=>FOODS[k].cat==='sea'],['飲み物',k=>FOODS[k].cat==='drink'],['パワースポット',k=>FOODS[k].cat==='power'],['こころのパワー',k=>FOODS[k].cat==='heart'],['必殺技',k=>FOODS[k].cat==='move'],['ヨガのアーサナ',k=>FOODS[k].cat==='yoga'],['トレーナーの愛',k=>FOODS[k].cat==='energy'],['キレイ＆強く',k=>FOODS[k].cat==='beauty'],['ラッキー',k=>FOODS[k].cat==='luck'],['サプリ＆くすり',k=>FOODS[k].cat==='care']].map(([lab,fl],si)=>`<div class="zsec" data-zi="${si}" data-lab="${lab}" data-n="${Object.keys(FOODS).filter(fl).length}"><div class="shelf">${lab} <small>${Object.keys(FOODS).filter(fl).length}</small></div><div class="pantry">${Object.keys(FOODS).filter(fl).map(k=>{const f=FOODS[k],n=(m.foods||{})[k]||0;return `<div class="pc ${n||KS()?'':'none'} ${f.rare?'rare':''}" data-fk="${k}"><canvas class="food" data-food="${k}"></canvas><b class="${f.name.length>6?'ln':''}">${f.name}</b><div class="ct">${n}<small>こ</small></div><div class="ef"><span class="st" style="background:${STAT[f.stat].c}">${STAT[f.stat].name}</span>+${fxp(f)}</div>${n>=10?`<div class="tt got">★${f.title}</div>`:''}</div>`}).join('')}</div></div>`).join('')}</div>
   <p class="zkhint">👆 カードをタップすると、<b>🍽 食べた！と記録</b>したり、<b>🎁 プレゼント</b>したりできます。</p>
   <p class="muted" style="margin:6px 2px 0">毎日のごはんと、宿題の花マル🌸スタンプでもらえます。キラキラのカードはめったに出ないレアです。お酒はEXP控えめです。</p>
   <h2>今月のトレーニング</h2>
@@ -1495,7 +1495,7 @@ function foodSheet(k){const m=me(),f=FOODS[k];if(!f)return;const n=(m.foods||{})
     m.foods[k]--;m.stats.grit+=3;let toName;
     if(to.startsWith('g:')){const r=byId(to.slice(2));if(!r)return;giveFood(r,k);r.stats.grit+=3;toName=r.name+'さん'}else{toName=to.slice(2)+(to.includes('看護師')?'':'トレーナー');S.gifts=S.gifts||[];S.gifts.push({t:Date.now(),from:m.id,to:to.slice(2),k,msg})}
     S.feed.unshift({id:S.nextId++,who:m.id,text:`🎁 ${toName}に「${f.name}」をプレゼント！${msg?'「'+msg+'」':''}`,xp:0,stat:'grit',t:Date.now(),cheers:[]});save();toast(`${toName}に「${f.name}」をプレゼントしました　根性+3`);close();render()}}
-document.addEventListener('click',e=>{const c=e.target.closest('.zkb .pc[data-fk]');if(!c||c.classList.contains('none')&&!KS())return;foodSheet(c.dataset.fk)});
+document.addEventListener('click',e=>{const c=e.target.closest('.zkb .pc[data-fk]');if(!c)return;foodSheet(c.dataset.fk)});
 // ===== 📸 相棒と記念撮影：マイページに保存・トレーナーに送る =====
 function snapCompose(m){const W=640,H=400,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');x.imageSmoothingEnabled=false;
   const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,'#eaf7c4');g.addColorStop(1,'#fff6d6');x.fillStyle=g;x.fillRect(0,0,W,H);
