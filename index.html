@@ -1882,7 +1882,7 @@ window.AUTH={on:ON,user:null,role:null};
 if(!ON)return;
 document.body.classList.add('locked');if(ADMIN){const gs=document.querySelector('#gate .gs');if(gs)gs.textContent='トレーナー専用 管理ページ';}
 const $g=id=>document.getElementById(id),msg=(t,ok)=>{const m=$g('gmsg');m.textContent=t||'';m.className='gm'+(ok?' ok':'')};
-const JA=e=>{const c=(e&&e.code)||'';const t={'auth/popup-closed-by-user':'Googleのログインが途中で閉じられました','auth/cancelled-popup-request':'Googleのログインが途中で閉じられました','auth/unauthorized-domain':'このアドレスはGoogleログインの許可がまだです（Firebaseの設定が必要です）','auth/account-exists-with-different-credential':'このメールはパスワードで登録済みです。メールとパスワードで入ってください','auth/invalid-credential':'メールアドレスかパスワードがちがいます','auth/wrong-password':'メールアドレスかパスワードがちがいます','auth/user-not-found':'メールアドレスかパスワードがちがいます','auth/invalid-email':'メールアドレスの形がちがいます','auth/too-many-requests':'何度も失敗したので、しばらく待ってからお試しください','auth/network-request-failed':'インターネットにつながっていません','auth/email-already-in-use':'このメールアドレスはもう登録されています','auth/weak-password':'パスワードは6文字以上にしてください','auth/operation-not-allowed':'ログイン方法がまだ有効になっていません（Firebaseの設定が必要です）','auth/configuration-not-found':'ログイン機能がまだ有効になっていません（Firebaseの設定が必要です）','permission-denied':'権限がありません（Firestoreのルール設定を確認してください）'}[c];return t?t+'［'+c+'］':('エラー：'+(c||e&&e.message||e))};
+const JA=e=>{const c=(e&&e.code)||'';const t={'auth/popup-closed-by-user':'Googleのログインが途中で閉じられました','auth/cancelled-popup-request':'Googleのログインが途中で閉じられました','auth/unauthorized-domain':'このアドレスはGoogleログインの許可がまだです（Firebaseの設定が必要です）','auth/account-exists-with-different-credential':'このメールはパスワードで登録済みです。メールとパスワードで入ってください','auth/invalid-credential':'メールアドレスかパスワードがちがいます','auth/wrong-password':'メールアドレスかパスワードがちがいます','auth/user-not-found':'メールアドレスかパスワードがちがいます','auth/invalid-email':'メールアドレスの形がちがいます','auth/too-many-requests':'何度も失敗したので、しばらく待ってからお試しください','auth/network-request-failed':'インターネットにつながっていません','auth/email-already-in-use':'このメールアドレスはもう登録されています','auth/weak-password':'パスワードは6文字以上にしてください','auth/operation-not-allowed':'ログイン方法がまだ有効になっていません（Firebaseの設定が必要です）','auth/configuration-not-found':'ログイン機能がまだ有効になっていません（Firebaseの設定が必要です）','permission-denied':'権限がありません（Firestoreのルール設定を確認してください）','unavailable':'データベースにつながりません（Firestoreが作られているか確認してください）','failed-precondition':'データベースの準備ができていません'}[c];return t?t+'［'+c+'］':('エラー：'+(c||e&&e.message||e))};
 window.AUTH.ja=JA;
 const V='10.12.2',load=src=>new Promise((r,j)=>{const s=document.createElement('script');s.src=src;s.onload=r;s.onerror=()=>j(new Error('load '+src));document.head.appendChild(s)});
 const boot=window.__FB_BOOT||(()=>load(`/__/firebase/${V}/firebase-app-compat.js`).then(()=>Promise.all([load(`/__/firebase/${V}/firebase-auth-compat.js`),load(`/__/firebase/${V}/firebase-firestore-compat.js`)])).then(()=>load('/__/firebase/init.js')));
@@ -1907,7 +1907,7 @@ boot().then(()=>{
     if(!ok){try{await ref.set({role:'trainer',email:u.email,name:'オーナー',t:Date.now()});role='trainer';name='オーナー';ok=true}catch(e){console.warn(e);why=why||e.code||e.message}}
     // ④ メール/パスワードで入った人は、トレーナーが作ったアカウントなので会員として入れる
     if(!ok&&!isG){role='member';ok=true}
-    if(!ok){msg(`このアカウント（${u.email}）は、ジムに登録されていません。受付でお声がけください。`+(why&&why!=='permission-denied'?`［${why}］`:''));await auth.signOut();return}
+    if(!ok){msg(`このアカウント（${u.email}）は、ジムに登録されていません。受付でお声がけください。`+`［${why||'no-role'}］`);console.warn('login denied',u.email,u.uid,why);await auth.signOut();return}
     AUTH.role=role;AUTH.name=name;document.body.classList.remove('locked');applyRole();
   });
 }).catch(e=>{msg('ログインの準備ができませんでした。通信を確認して、もう一度開いてください');console.warn(e)});
