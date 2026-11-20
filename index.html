@@ -2079,7 +2079,7 @@ function acctPanel(){const v=document.getElementById('view');if(!v||document.get
   <input id="ae" type="email" placeholder="メールアドレス"><input id="ap" type="text" placeholder="パスワード（Googleで入る人は空のまま）" maxlength="40">
   <button type="button" class="btn-main" id="amk">トレーナーとして登録</button><div class="gm" id="amsg" style="font-size:13px"></div>
   <details id="alist"><summary style="cursor:pointer;font-size:13px;color:#2f6d2a;font-weight:700">登録されているアカウントを見る</summary><ul></ul></details>`;
-  v.insertBefore(d,v.firstChild);
+  v.appendChild(d);
   const rqs=document.createElement('section');rqs.id='rqlist';rqs.className='acct rqlist';rqs.innerHTML='<h3>📨 登録の申請</h3><ul><li class="muted">読みこみ中…</li></ul>';d.before(rqs);loadReq();
   async function loadReq(){const ul=rqs.querySelector('ul'),db=firebase.firestore();try{const q=await db.collection('requests').get();const a=[];q.forEach(x=>a.push({id:x.id,...x.data()}));a.sort((x,y)=>(x.t||0)-(y.t||0));
     rqs.querySelector('h3').innerHTML=`📨 登録の申請${a.length?` <i class="nbadge in">${a.length}</i>`:''}`;
