@@ -944,7 +944,7 @@ window.vCinema=function(){if(!document.getElementById('mzfull'))stopT();if(C.sce
   if(C.scene==='out')vOut(w);else if(C.scene==='lobby')vLobby(w);else vHall(w);
   loadScr(false)};
 function vOut(w){const nx=upcoming()[0];
-  w.innerHTML=`<h2 class="mzh">🎬 ミドリ座</h2><canvas class="mzc" id="mzc" width="256" height="144" aria-label="ミドリ座の外観"></canvas>
+  w.innerHTML=`<h2 class="mzh">🎬 絵本映画館 ミドリ座</h2><canvas class="mzc" id="mzc" width="256" height="144" aria-label="ミドリ座の外観"></canvas>
   ${nx?`<div class="mzbox"><h3>🎟 次の上映会</h3><p class="mzlead"><b>${when(nx.at)}</b>〜 第${nx.ep}話「${E(EP(nx.ep).title)}」</p></div>`:''}
   <button type="button" class="mzgo" id="mzin">🚪 扉を開けて、中へ入る</button>
   <p class="mzlead">畑の真ん中に建つ、南瓜の形の小さな映画館。「畑の国の お野菜十勇士」の絵本を、映画のように上映しています。</p>`;
