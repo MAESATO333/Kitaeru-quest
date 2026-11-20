@@ -2014,7 +2014,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.s
 <div class="gn">はじめての方は「Googleでログイン」か、メールとパスワードを入れて「新しく登録する」を押してください。お名前を入れると、すぐに使えます。<br>※トレーナーのアカウントは、ジムが登録したものだけです。</div>
 </form></div><script>
 (function(){
-const LOCK=false;let ON=/[?&]login=1/.test(location.search);try{if(ON)localStorage.setItem('kq-login','1');if(/[?&]login=0/.test(location.search))localStorage.removeItem('kq-login');ON=ON||localStorage.getItem('kq-login')==='1'}catch(e){}ON=ON||(LOCK&&/\.web\.app$|\.firebaseapp\.com$/.test(location.hostname));
+const LOCK=false;let ON=/[?&]login=1/.test(location.search);try{if(ON)localStorage.setItem('kq-login','1');if(/[?&]login=0/.test(location.search))localStorage.removeItem('kq-login');ON=ON||localStorage.getItem('kq-login')==='1'}catch(e){}ON=ON||(LOCK&&/\.web\.app$|\.firebaseapp\.com$/.test(location.hostname))||(ADMIN&&!/^(localhost|127\.)/.test(location.hostname));
 window.AUTH={on:ON,user:null,role:null};
 if(!ON)return;
 document.body.classList.add('locked');if(ADMIN){const gs=document.querySelector('#gate .gs');if(gs)gs.textContent='トレーナー専用 管理ページ';}
@@ -2074,24 +2074,29 @@ const hb=document.querySelector('header');if(hb&&!$g('logoutBtn')){const b=docum
 // trainer account panel
 const _r=render;render=function(){const r=_r.apply(this,arguments);try{if(AUTH.role==='trainer'&&tab==='guild')acctPanel()}catch(e){console.warn(e)}return r};
 function acctPanel(){const v=document.getElementById('view');if(!v||document.getElementById('acct'))return;const d=document.createElement('div');d.className='acct';d.id='acct';
-  d.innerHTML=`<h3>ログインのアカウントを作る</h3><div class="muted" style="font-size:12px">会員さん・トレーナーのログインをここで作ります。仮パスワードを伝えて、あとで「パスワードを忘れたとき」から自分で変えてもらえます。</div>
-  <div class="r2"><input id="an" placeholder="名前（例：ゲスト）" maxlength="30"><select id="ar"><option value="member">会員</option><option value="trainer">トレーナー</option></select></div>
-  <input id="ae" type="email" placeholder="メールアドレス"><input id="ap" type="text" placeholder="仮パスワード（6文字以上）※Googleで入る人は空でOK" maxlength="40">
-  <button type="button" class="btn-main" id="amk">アカウントを作る</button><div class="gm" id="amsg" style="font-size:13px"></div>
+  d.innerHTML=`<h3>👔 トレーナーを登録する</h3><div class="muted" style="font-size:12px">ジムのトレーナーは、ここで登録した人だけが管理ページに入れます。<br>① 名前と、その人のメールアドレス（Gmailなら Gmail）を入れる → ②「トレーナーとして登録」を押す → ③ その人は「Googleでログイン」で入るだけ。<br>先にお客さんとして登録していても、トレーナーに切りかわります。</div>
+  <div class="r2"><input id="an" placeholder="名前（例：佐藤みやこ）" maxlength="30"><select id="ar"><option value="trainer" selected>トレーナー</option><option value="member">会員</option></select></div>
+  <input id="ae" type="email" placeholder="メールアドレス"><input id="ap" type="text" placeholder="パスワード（Googleで入る人は空のまま）" maxlength="40">
+  <button type="button" class="btn-main" id="amk">トレーナーとして登録</button><div class="gm" id="amsg" style="font-size:13px"></div>
   <details id="alist"><summary style="cursor:pointer;font-size:13px;color:#2f6d2a;font-weight:700">登録されているアカウントを見る</summary><ul></ul></details>`;
   v.insertBefore(d,v.firstChild);
   const rqs=document.createElement('section');rqs.id='rqlist';rqs.className='acct rqlist';rqs.innerHTML='<h3>📨 登録の申請</h3><ul><li class="muted">読みこみ中…</li></ul>';d.before(rqs);loadReq();
   async function loadReq(){const ul=rqs.querySelector('ul'),db=firebase.firestore();try{const q=await db.collection('requests').get();const a=[];q.forEach(x=>a.push({id:x.id,...x.data()}));a.sort((x,y)=>(x.t||0)-(y.t||0));
     rqs.querySelector('h3').innerHTML=`📨 登録の申請${a.length?` <i class="nbadge in">${a.length}</i>`:''}`;
-    ul.innerHTML=a.length?a.map(x=>`<li><span><b>${esc(x.name||'')}</b> ${esc(x.email||'')}${x.msg?`<br><span class="rqm">「${esc(x.msg)}」</span>`:''}</span><span class="rqbtn"><button type="button" class="ok" data-ok="${esc(x.id)}">承認</button><button type="button" data-ng="${esc(x.id)}">見送る</button></span></li>`).join(''):'<li class="muted">いま、申請はありません。</li>';
+    ul.innerHTML=a.length?a.map(x=>`<li><span><b>${esc(x.name||'')}</b> ${esc(x.email||'')}${x.msg?`<br><span class="rqm">「${esc(x.msg)}」</span>`:''}</span><span class="rqbtn"><button type="button" class="ok" data-ok="${esc(x.id)}">承認</button><button type="button" data-ng="${esc(x.id)}">見送る</button></span></li>`).join(''):'<li class="muted">いま、申請はありません。</li>';rqs.hidden=!a.length;
     ul.querySelectorAll('[data-ok]').forEach(b=>b.onclick=async()=>{const x=a.find(y=>y.id===b.dataset.ok);b.disabled=true;try{await db.doc('roles/'+x.id).set({role:'member',email:x.email||'',name:x.name||'',via:'request',t:Date.now()});await db.doc('requests/'+x.id).delete();toast(`${x.name||x.email} さんを承認しました`);loadReq()}catch(e){toast(JA(e));b.disabled=false}});
     ul.querySelectorAll('[data-ng]').forEach(b=>b.onclick=async()=>{const x=a.find(y=>y.id===b.dataset.ng);if(!confirm(`${x.name||x.email} さんの申請を見送りますか？`))return;try{await db.doc('requests/'+x.id).delete();loadReq()}catch(e){toast(JA(e))}})
   }catch(e){ul.innerHTML=`<li class="muted">申請を読めませんでした（Firebaseのルールの更新が必要かもしれません）［${esc(e.code||e.message)}］</li>`}}
   const am=(t,ok)=>{const m=document.getElementById('amsg');m.textContent=t;m.style.color=ok?'#2f6d2a':'#c0392b'};
+  document.getElementById('ar').onchange=e=>{document.getElementById('amk').textContent=e.target.value==='trainer'?'トレーナーとして登録':'会員として登録'};
   document.getElementById('amk').onclick=async()=>{const name=document.getElementById('an').value.trim(),role=document.getElementById('ar').value,email=document.getElementById('ae').value.trim(),pw=document.getElementById('ap').value;if(!email){am('メールアドレスを入れてください');return}
-    if(!pw){am('登録しています…',1);try{await firebase.firestore().doc('roles/g_'+email.toLowerCase()).set({role,email:email.toLowerCase(),name,google:true,t:Date.now()});am(`${name||email} を登録しました。このGmailで「Googleでログイン」から入れます`,1);['an','ae','ap'].forEach(i=>document.getElementById(i).value='');listAcc()}catch(e){am(JA(e))}return}
+    const RL=role==='trainer'?'トレーナー':'会員',em=email.toLowerCase(),db=firebase.firestore();
+    const invite=async()=>{await db.doc('roles/g_'+em).set({role,email:em,name,google:true,t:Date.now()});let n=0;try{const qs=await db.collection('roles').where('email','==',em).get();const ps=[];qs.forEach(x=>{if(x.id!=='g_'+em&&x.data().role!==role){n++;ps.push(x.ref.update({role,name:name||x.data().name||''}))}});await Promise.all(ps)}catch(e){console.warn(e)}return n};
+    if(!pw){am('登録しています…',1);try{const n=await invite();am(`${name||email} を${RL}として登録しました。${n?'（すでにあったアカウントも'+RL+'に切りかえました）':''}この人は「Googleでログイン」で入れます。もう開いていたら、一度ログアウトして入り直してもらってください`,1);['an','ae','ap'].forEach(i=>document.getElementById(i).value='');listAcc()}catch(e){am(JA(e))}return}
     if(pw.length<6){am('仮パスワードは6文字以上にしてください（Googleで入る人は空でOK）');return}
-    am('作っています…',1);try{const sec=firebase.apps.find(a=>a.name==='sec')||firebase.initializeApp(firebase.app().options,'sec');const c=await sec.auth().createUserWithEmailAndPassword(email,pw);await firebase.firestore().doc('roles/'+c.user.uid).set({role,email,name,t:Date.now()});await sec.auth().signOut();am(`${name||email} の${role==='trainer'?'トレーナー':'会員'}アカウントを作りました`,1);['an','ae','ap'].forEach(i=>document.getElementById(i).value='');listAcc()}catch(e){am(JA(e))}};
+    am('作っています…',1);try{const sec=firebase.apps.find(a=>a.name==='sec')||firebase.initializeApp(firebase.app().options,'sec');let c=null;try{c=await sec.auth().createUserWithEmailAndPassword(email,pw)}catch(e){if(e.code!=='auth/email-already-in-use')throw e}
+      if(c){await db.doc('roles/'+c.user.uid).set({role,email:em,name,t:Date.now()});await sec.auth().signOut()}const n=await invite();
+      am(c?`${name||email} の${RL}アカウントを作りました`:`このメールはもう使われていたので、そのアカウントを${RL}にしました${n?'':'（まだ一度も入っていなければ、入ったときに切りかわります）'}`,1);['an','ae','ap'].forEach(i=>document.getElementById(i).value='');listAcc()}catch(e){am(JA(e))}};
   document.getElementById('alist').ontoggle=e=>{if(e.target.open)listAcc()};
   async function listAcc(){const ul=document.querySelector('#alist ul');try{const q=await firebase.firestore().collection('roles').get();const a=[];q.forEach(x=>a.push(Object.assign({_id:x.id},x.data())));ul.innerHTML=a.sort((x,y)=>(x.t||0)-(y.t||0)).map(x=>`<li><small class="${x.role==='trainer'?'':'m'}">${x.role==='trainer'?'トレーナー':'会員'}</small><span>${esc(x.name||'')} ${esc(x.email||'')}${x.google||x.via==='google'?' <b class="gtag">Google</b>':''}</span>${x.google||x.via==='google'?'':`<button type="button" data-rs="${esc(x.email||'')}">再設定メール</button>`}<button type="button" class="rlsw" data-rl="${esc(x._id)}" data-to="${x.role==='trainer'?'member':'trainer'}">${x.role==='trainer'?'会員にする':'トレーナーにする'}</button></li>`).join('')||'<li>まだありません</li>';
     ul.querySelectorAll('[data-rl]').forEach(b=>b.onclick=async()=>{const to=b.dataset.to;if(!confirm(to==='trainer'?'このアカウントをトレーナーにしますか？（管理ページに入れるようになります）':'このアカウントを会員にもどしますか？'))return;
