@@ -412,6 +412,10 @@ nav{flex-direction:column;align-items:center;gap:5px}
 .bname .btr select{margin-left:4px;padding:3px 6px;border-radius:8px;border:2px solid #d6e6b0;font-size:13px}
 .mbtn{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mbtn button{padding:14px 8px;border-radius:14px;border:2.5px solid #33501a;background:#ffe600;color:#33501a;font-weight:900;font-size:15px;box-shadow:0 3px 0 #33501a}.mbtn button+button{background:#ffd0c8}
 .bmed{width:100%;max-height:360px;object-fit:cover;border-radius:12px;margin:4px 0}
+.bline{margin-top:6px;background:#fdf0f5}.bline .nlh{color:#9b2f5e}
+.bnew{display:inline-block;font-style:normal;background:#e8452c;color:#fff;font-size:11px;font-weight:900;border-radius:999px;padding:1px 7px;margin-left:4px;vertical-align:middle}
+.bgpost{position:relative}.bgpost>.bnew{position:absolute;top:10px;right:10px;z-index:1}.bgpost.focus{outline:3px solid #f39a1e}
+#tabs2 button{position:relative}
 </style>
 
 </head>
@@ -1348,6 +1352,7 @@ function renderTabs2(){const el=document.getElementById('tabs2');if(!el)return;
   const L=ADMIN?[['photo','写真館','📷','#f39a1e'],['board','掲示板','📌','#e8452c'],['blog','blog','📝','#9b2f5e'],['zukan','図鑑','🥕','#4f7d2a']]
     :[['photo','写真館','📷','#f39a1e'],['board','掲示板','📌','#e8452c'],['blog','blog','📝','#9b2f5e'],['zukan','図鑑','🥕','#4f7d2a'],['mypage','マイページ','🙋','#2f8fb0']];
   el.innerHTML=L.map(([k,l,i,c])=>`<button type="button" data-t2="${k}" class="${k===tab?'on':''}" style="--hc:${c}"><b class="nh2">${i}</b><span class="nl">${l}</span></button>`).join('');
+  try{const u=!ADMIN&&window.KQblogUnseen&&KQblogUnseen();const bb=el.querySelector('[data-t2="blog"]');if(u&&bb){const i=document.createElement('i');i.className='nbadge';i.textContent='新';bb.appendChild(i)}}catch(e){}
   el.querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t2;render();window.scrollTo(0,0)});
   requestAnimationFrame(()=>{const n=document.querySelector('nav'),a=document.querySelector('.app');if(n&&a)a.style.paddingBottom=(n.offsetHeight+20)+'px';const pv=document.getElementById('pvsw');if(n&&pv)pv.style.bottom=(n.offsetHeight+8)+'px'})}
 function render(){
@@ -2031,10 +2036,15 @@ function newsCard(){newsLine();return;if(ADMIN||tab!=='hero'||document.getElemen
   v.insertBefore(d,v.firstChild);document.getElementById('newsAll').onclick=()=>{tab='news';render();window.scrollTo(0,0)}}
 function vNews(){const m=me(),L=newsSorted();$('#view').innerHTML=`<h2>📣 333GYMニュース</h2><div class="card"><ul class="newsl">${L.length?L.map(n=>newsItem(n,true)).join(''):'<li class="muted">まだニュースはありません。</li>'}</ul></div><button type="button" class="nwall" id="newsBack">‹ 冒険者にもどる</button>`;
   $('#newsBack').onclick=()=>{tab='hero';render();window.scrollTo(0,0)};if(m){m.newsSeen=Date.now();save()}}
-function newsLine(){const old=document.getElementById('nline');if(ADMIN){if(old)old.remove();return}const L=newsSorted();if(!L.length){if(old)old.remove();return}
+function newsLine(){const old=document.getElementById('nline');if(ADMIN){if(old)old.remove();return}const L=newsSorted();if(!L.length){if(old)old.remove();blogLine();return}
   const n=L[0],u=newsUnread(),d=old||document.createElement('button');d.type='button';d.id='nline';d.className='nline'+(tab==='news'?' on':'');
   d.innerHTML=`<span class="nlh">📣 ニュース${u?`<i class="nbadge in">${u}</i>`:''}</span><span class="nlt">${n.pin?'📌 ':''}${esc(n.title)}</span><span class="nlm">›</span>`;d.onclick=()=>{tab='news';render();window.scrollTo(0,0)};
-  if(!old){const h=document.querySelector('header');h.after(d)}}
+  if(!old){const h=document.querySelector('header');h.after(d)}blogLine()}
+window.KQblogUnseen=()=>blogUnseen();function blogUnseen(){const m=me();return BLOG().filter(x=>x.t>((m&&m.blogSeen)||0)).length}
+function blogLine(){const old=document.getElementById('bline');if(ADMIN){if(old)old.remove();return}const L=BLOG().slice().sort((a,b)=>b.t-a.t);if(!L.length){if(old)old.remove();return}
+  const x=L[0],u=blogUnseen(),d=old||document.createElement('button');d.type='button';d.id='bline';d.className='nline bline';
+  d.innerHTML=`<span class="nlh">📝 blog${u?'<i class="bnew">新着</i>':''}</span><span class="nlt">${esc(x.title)}</span><span class="nlm">›</span>`;d.onclick=()=>{blogFocus=x.id;tab='blog';render();window.scrollTo(0,0)};
+  if(!old){const n=document.getElementById('nline')||document.querySelector('header');n.after(d)}}
 function newsNav(){return;if(ADMIN)return;const u=newsUnread(),t=document.querySelector('#tabs2 [data-t2="news"]');if(t&&u&&!t.querySelector('.nbadge')){const b=document.createElement('i');b.className='nbadge';b.textContent=u;t.appendChild(b)}}
 function newsAdmin(){if(!ADMIN||tab!=='guild'||document.getElementById('nwadm'))return;const v=document.getElementById('view');const h=[...v.querySelectorAll('h2')].find(x=>x.textContent.includes('宿題を出す'));if(!h)return;
   const d=document.createElement('section');d.id='nwadm';
@@ -2117,17 +2127,17 @@ function BLOG(){S.blog=S.blog||[];return S.blog}
 const BFILE={};
 function blogUrl(x){return location.origin+location.pathname.replace(/admin\/?$/,'')+'?blog='+x.id}
 function blogText(x){return `【キタエル・クエストblog】${x.title}\n${(x.body||'').slice(0,100)}${(x.body||'').length>100?'…':''}`}
-function vBlog(){const L=BLOG().slice().sort((a,b)=>b.t-a.t);
+function vBlog(){const L=BLOG().slice().sort((a,b)=>b.t-a.t),CAN=ADMIN||!!(window.AUTH&&AUTH.on&&AUTH.role==='trainer'),bm=me(),seen0=(bm&&bm.blogSeen)||0;
   $('#view').innerHTML=`<h2>📝 キタエル・クエストblog</h2><p class="muted" style="margin:-4px 2px 8px;font-size:12px">ジムの記事を書いて、掲示板に貼ったり、LINE・X・Instagram・TikTok・YouTubeなどに送ったりできます。</p>
-  ${ADMIN?`<div class="card stack"><label>タイトル<input id="bgti" maxlength="50" placeholder="例：11月のおすすめ野菜はかぼちゃ！"></label>
+  ${CAN?`<div class="card stack"><label>タイトル<input id="bgti" maxlength="50" placeholder="例：11月のおすすめ野菜はかぼちゃ！"></label>
    <label>本文<textarea id="bgbo" rows="6" maxlength="3000" placeholder="記事の本文を書きます"></textarea></label>
    <label>写真・動画（なくてもOK）<input type="file" id="bgf" accept="image/*,video/*"></label>
    <label>YouTubeなどの動画リンク（なくてもOK）<input id="bgln" type="url" placeholder="https://youtu.be/..."></label>
    <button type="button" class="btn-main" id="bgsave">記事を公開する</button>
    <p class="muted" style="font-size:11px;margin:0">試作版：記事はこの端末の中に保存されます。動画ファイルは、画面を開いている間だけ送れます。</p></div>`:''}
-  <div class="blist">${L.length?L.map(x=>`<article class="card bgpost">${x.img?`<img src="${x.img}" alt="">`:''}${BFILE[x.id]&&BFILE[x.id].type.startsWith('video')?`<video src="${URL.createObjectURL(BFILE[x.id])}" controls playsinline></video>`:''}
+  <div class="blist">${L.length?L.map(x=>`<article class="card bgpost${x.id==blogFocus?' focus':''}" id="bg-${x.id}">${!ADMIN&&x.t>seen0?'<i class="bnew">新着</i>':''}${x.img?`<img src="${x.img}" alt="">`:''}${BFILE[x.id]&&BFILE[x.id].type.startsWith('video')?`<video src="${URL.createObjectURL(BFILE[x.id])}" controls playsinline></video>`:''}
     <small>${newsDate(x.t)}・${esc(x.tn)}</small><h3>${esc(x.title)}</h3><p>${esc(x.body||'')}</p>${x.link?`<a href="${esc(x.link)}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}
-    <div class="bgsh"><button type="button" data-bs="${x.id}" class="bgmain">📤 スマホのアプリに送る</button><button type="button" data-bline="${x.id}" class="line">LINE</button><button type="button" data-bx="${x.id}" class="xx">X</button><button type="button" data-bboard="${x.id}">📌 掲示板に貼る</button>${ADMIN?`<button type="button" class="phdel" data-bgdel="${x.id}">消す</button>`:''}</div></article>`).join(''):'<div class="card muted">まだ記事はありません。</div>'}</div>
+    <div class="bgsh"><button type="button" data-bs="${x.id}" class="bgmain">📤 スマホのアプリに送る</button><button type="button" data-bline="${x.id}" class="line">LINE</button><button type="button" data-bx="${x.id}" class="xx">X</button>${CAN?`<button type="button" data-bboard="${x.id}">📌 掲示板に貼る</button>`:''}${ADMIN?`<button type="button" class="phdel" data-bgdel="${x.id}">消す</button>`:''}</div></article>`).join(''):'<div class="card muted">まだ記事はありません。</div>'}</div>
   <div class="card muted bghelp" style="font-size:12px;line-height:1.7">📤「スマホのアプリに送る」を押すと、スマホの共有画面が開きます。そこで Instagram・TikTok・YouTube・LINE などをえらべます。写真や動画も、いっしょに送れます。<br>パソコンなど共有画面が出ないときは、写真・動画を保存してから各アプリで投稿してください。</div>
   <button type="button" class="nwall" id="bgBack">‹ キタ酒場にもどる</button>`;
   const f=$('#bgf');let file=null;if(f)f.onchange=e=>{file=e.target.files[0]||null};
@@ -2143,7 +2153,9 @@ function vBlog(){const L=BLOG().slice().sort((a,b)=>b.t-a.t);
   document.querySelectorAll('[data-bgdel]').forEach(b=>b.onclick=()=>{S.blog=BLOG().filter(x=>x.id!=b.dataset.bgdel);save();toast('記事を消しました');vBlog()});
   $('#bgBack').onclick=()=>{tab='feed';render();window.scrollTo(0,0)}}
 function bgEntry(){if(tab!=='feed'||document.getElementById('bgent'))return;const be=document.getElementById('bent');if(!be)return;const b=document.createElement('button');b.type='button';b.id='bgent';b.className='phent bgent';b.innerHTML=`📝 キタエル・クエストblog <small>${BLOG().length?BLOG().length+'本の記事':'ジムの記事'}</small>`;b.onclick=()=>{tab='blog';render();window.scrollTo(0,0)};be.after(b)}
-try{const q=/[?&]blog=(\d+)/.exec(location.search);if(q)tab='blog'}catch(e){}
+let blogFocus=null;try{const q=/[?&]blog=(\d+)/.exec(location.search);if(q){tab='blog';blogFocus=+q[1]}const rt=(location.pathname.match(/^\/(blog|photo|board|news)\/?$/)||[])[1];if(rt)tab=rt}catch(e){}
+// blogを開いたら既読にして、えらんだ記事までスクロール
+{const _vb=vBlog;vBlog=function(){const r=_vb.apply(this,arguments);if(blogFocus){const el=document.getElementById('bg-'+blogFocus);if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),60);blogFocus=null}const m=me();if(m&&!ADMIN){m.blogSeen=Date.now();save();const b=document.getElementById('bline');if(b){const i=b.querySelector('.bnew');if(i)i.remove()}const t2=document.querySelector('[data-t2="blog"] .nbadge');if(t2)t2.remove()}return r}}
 // ===== 冒険者ページ上の入口アイコン =====
 function qNav(){if(tab!=='hero'||document.getElementById('qnav'))return;const v=document.getElementById('view');if(!v)return;
   const it=[['news','📣','ニュース',ADMIN?0:newsUnread()],['photo','📷','写真館',0],['board','📌','掲示板',0],['blog','📝','blog',0]];

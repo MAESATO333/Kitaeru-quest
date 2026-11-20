@@ -31,6 +31,22 @@
       {
         "source": "/admin",
         "destination": "/index.html"
+      },
+      {
+        "source": "/blog",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/photo",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/board",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/news",
+        "destination": "/index.html"
       }
     ]
   }
