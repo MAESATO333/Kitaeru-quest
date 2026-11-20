@@ -428,6 +428,13 @@ nav{flex-direction:column;align-items:center;gap:5px}
 .hform{display:flex;flex-direction:column;gap:8px;border-top:2px dashed #9cc3e6;padding-top:10px;margin-top:4px}.hform textarea{border:2px solid #d6e6b0;border-radius:10px;padding:8px;font-size:15px}
 .hkb{display:inline-block;background:#1f5f8b;color:#fff;font-size:11px;font-weight:900;border-radius:999px;padding:2px 9px;margin-right:6px;vertical-align:middle}
 .lkn{font-size:12px;line-height:1.7;color:#33501a;background:#f3f9dc;border-radius:10px;padding:6px 10px;margin:-2px 0 6px}
+.zkb .pc[data-fk]{cursor:pointer}.zkhint{font-size:12px;background:#fffbe0;border:2px dashed #f39a1e;border-radius:10px;padding:6px 10px;margin:8px 0 0}
+.fsheet{position:fixed;inset:0;z-index:80;background:rgba(30,40,10,.45);display:flex;align-items:flex-end;justify-content:center}
+.fsc{position:relative;background:#fff;width:100%;max-width:520px;border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;max-height:90vh;overflow:auto}
+.fsc h3{margin:0;font-size:20px}.fsx{position:absolute;top:8px;right:10px;border:0;background:none;font-size:26px;color:#666}.fsn{font-size:14px}
+.fsc .btn-main{width:100%}.fslock{font-size:13px;background:#f3f3f3;border-radius:10px;padding:8px 10px}
+.fsgift{width:100%;display:flex;flex-direction:column;gap:8px;text-align:left;border-top:2px dashed #f39a1e;padding-top:10px;margin-top:4px}.fsh{font-weight:900;color:#c26a00}
+.fsgift select,.fsgift input{width:100%;padding:10px;border-radius:10px;border:2px solid #d6e6b0;font-size:15px;box-sizing:border-box}.fsgo{background:#f39a1e!important;border-color:#f39a1e!important}
 </style>
 
 </head>
@@ -1333,7 +1340,7 @@ function drawHero(cv,h){
 ;return {HEROES,drawHero};})();
 const BUDDY_ST={'力':'str','持久':'end','技':'tec','根性':'grit'};
 new MutationObserver(()=>document.querySelectorAll('canvas[data-hero]:not([data-d])').forEach(c=>{c.dataset.d=1;const h=HEROES.find(h=>h.key===c.dataset.hero);if(h)drawHero(c,h)})).observe(document.documentElement,{childList:true,subtree:true});
-document.addEventListener('click',e=>{const b=e.target.closest('[data-buddy]');if(!b)return;const m=me(),k=b.dataset.buddy,h=HEROES.find(x=>x.key===k);if(m.buddy===k){m.buddy=null;toast('相棒をはずしました')}else{m.buddy=k;toast(`${h.name}が相棒になりました！`)}save();render();});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-buddy]');if(!b)return;const m=me(),k=b.dataset.buddy,h=HEROES.find(x=>x.key===k);if(!ADMIN&&m.buddy&&m.buddyDay===dayKey()){toast('相棒を変えられるのは1日1回までです。また明日えらべます');return}if(!ADMIN)m.buddyDay=dayKey();if(m.buddy===k){m.buddy=null;toast('相棒をはずしました')}else{m.buddy=k;toast(`${h.name}が相棒になりました！`)}save();render();});
 function gain(m,stat,xp,text,extra={}){
   let boosted=false;
   if(!extra.by&&m.buddy){const h=HEROES.find(h=>h.key===m.buddy);if(h&&BUDDY_ST[h.stat]===stat){xp=Math.round(xp*1.1);text+=`（相棒${h.name}×1.1）`;}}
@@ -1406,10 +1413,11 @@ function vHero(){
   </div>
   ${m.titles.length?`<div class="titles">${m.titles.map(t=>`<span class="chip gold">${esc(t)}</span>`).join('')}</div>`:''}
   <h2>お野菜十勇士</h2>
-  <p class="muted" style="margin:-4px 2px 8px;font-size:12px">タップして相棒をえらぶと、島にいっしょに立ちます。相棒の得意な能力は、EXPが1.1倍。</p>
+  <p class="muted" style="margin:-4px 2px 8px;font-size:12px">タップして相棒をえらぶと、島にいっしょに立ちます。相棒の得意な能力は、EXPが1.1倍。${ADMIN?'':(m.buddy&&m.buddyDay===dayKey()?'<b>今日はもう変えました。また明日えらべます。</b>':'<b>相棒を変えられるのは1日1回まで。</b>')}</p>
   <div class="heroes">${HEROES.map(h=>`<button type="button" class="vhero ${m.buddy===h.key?'on':''}" data-buddy="${h.key}"><canvas data-hero="${h.key}"></canvas><b>${h.name}</b><span>${h.role}・${h.stat}</span></button>`).join('')}</div>
   <h2>ごはん＆パワー図鑑 <small style="font-size:13px;color:var(--muted)">${Object.keys(FOODS).filter(k=>((m.foods||{})[k]||0)>0).length} / ${Object.keys(FOODS).length} しゅるい</small></h2>
-  <div class="zktabs" id="zktabs"></div><div class="zkb">${[['野菜',k=>FSUB(k)==='veg'],['果物',k=>FSUB(k)==='fruit'],['豆',k=>FSUB(k)==='mame'],['穀物',k=>FSUB(k)==='koku'],['海藻',k=>FSUB(k)==='sou'],['食品',k=>FSUB(k)==='shoku'],['食事メニュー',k=>FSUB(k)==='menu'],['海の幸',k=>FOODS[k].cat==='sea'],['飲み物',k=>FOODS[k].cat==='drink'],['パワースポット',k=>FOODS[k].cat==='power'],['こころのパワー',k=>FOODS[k].cat==='heart'],['必殺技',k=>FOODS[k].cat==='move'],['ヨガのアーサナ',k=>FOODS[k].cat==='yoga'],['トレーナーの愛',k=>FOODS[k].cat==='energy'],['キレイ＆強く',k=>FOODS[k].cat==='beauty'],['ラッキー',k=>FOODS[k].cat==='luck'],['サプリ＆くすり',k=>FOODS[k].cat==='care']].map(([lab,fl],si)=>`<div class="zsec" data-zi="${si}" data-lab="${lab}" data-n="${Object.keys(FOODS).filter(fl).length}"><div class="shelf">${lab} <small>${Object.keys(FOODS).filter(fl).length}</small></div><div class="pantry">${Object.keys(FOODS).filter(fl).map(k=>{const f=FOODS[k],n=(m.foods||{})[k]||0;return `<div class="pc ${n||KS()?'':'none'} ${f.rare?'rare':''}"><canvas class="food" data-food="${k}"></canvas><b class="${(n||KS())&&f.name.length>6?'ln':''}">${n||KS()?f.name:'？？？'}</b><div class="ct">${n}<small>こ</small></div><div class="ef"><span class="st" style="background:${STAT[f.stat].c}">${STAT[f.stat].name}</span>+${fxp(f)}</div>${n>=10?`<div class="tt got">★${f.title}</div>`:''}</div>`}).join('')}</div></div>`).join('')}</div>
+  <div class="zktabs" id="zktabs"></div><div class="zkb">${[['野菜',k=>FSUB(k)==='veg'],['果物',k=>FSUB(k)==='fruit'],['豆',k=>FSUB(k)==='mame'],['穀物',k=>FSUB(k)==='koku'],['海藻',k=>FSUB(k)==='sou'],['食品',k=>FSUB(k)==='shoku'],['食事メニュー',k=>FSUB(k)==='menu'],['海の幸',k=>FOODS[k].cat==='sea'],['飲み物',k=>FOODS[k].cat==='drink'],['パワースポット',k=>FOODS[k].cat==='power'],['こころのパワー',k=>FOODS[k].cat==='heart'],['必殺技',k=>FOODS[k].cat==='move'],['ヨガのアーサナ',k=>FOODS[k].cat==='yoga'],['トレーナーの愛',k=>FOODS[k].cat==='energy'],['キレイ＆強く',k=>FOODS[k].cat==='beauty'],['ラッキー',k=>FOODS[k].cat==='luck'],['サプリ＆くすり',k=>FOODS[k].cat==='care']].map(([lab,fl],si)=>`<div class="zsec" data-zi="${si}" data-lab="${lab}" data-n="${Object.keys(FOODS).filter(fl).length}"><div class="shelf">${lab} <small>${Object.keys(FOODS).filter(fl).length}</small></div><div class="pantry">${Object.keys(FOODS).filter(fl).map(k=>{const f=FOODS[k],n=(m.foods||{})[k]||0;return `<div class="pc ${n||KS()?'':'none'} ${f.rare?'rare':''}" data-fk="${k}"><canvas class="food" data-food="${k}"></canvas><b class="${(n||KS())&&f.name.length>6?'ln':''}">${n||KS()?f.name:'？？？'}</b><div class="ct">${n}<small>こ</small></div><div class="ef"><span class="st" style="background:${STAT[f.stat].c}">${STAT[f.stat].name}</span>+${fxp(f)}</div>${n>=10?`<div class="tt got">★${f.title}</div>`:''}</div>`}).join('')}</div></div>`).join('')}</div>
+  <p class="zkhint">👆 カードをタップすると、<b>🍽 食べた！と記録</b>したり、<b>🎁 プレゼント</b>したりできます。</p>
   <p class="muted" style="margin:6px 2px 0">毎日のごはんと、宿題の花マル🌸スタンプでもらえます。キラキラのカードはめったに出ないレアです。お酒はEXP控えめです。</p>
   <h2>今月のトレーニング</h2>
   ${monthCal(m)}
@@ -1463,6 +1471,22 @@ function lookNote(m,lv){const n=lookLeft(m,lv);if(ADMIN)return '';if(n===Infinit
   if(!m.lookN)return '🐑 好きな姿をえらんでスタート！ えらんだあとは、<b>Lv'+KAMI_LV+'になるまでに1回だけ</b>変えられます。';
   if(n>0)return '見た目を変えられるのは、<b>あと1回だけ</b>です（Lv'+KAMI_LV+'になると、また自由に変えられます）。';
   return '🔒 見た目の変更は使いきりました。<b>Lv'+KAMI_LV+'</b>になると、また自由に変えられます（八百万の神もえらべます）。'}
+// ===== パワー図鑑：食べたものの記録 と プレゼント =====
+const EATCAT=k=>['veg','fruit','mame','koku','sou','shoku','menu'].includes(FSUB(k))||['sea','drink'].includes(FOODS[k].cat);
+function foodSheet(k){const m=me(),f=FOODS[k];if(!f)return;const n=(m.foods||{})[k]||0,eat=EATCAT(k),canEat=canRec(m,'meal');
+  const vis=visibleIds(),others=S.members.filter(x=>x.id!==m.id&&vis.has(x.id));
+  let d=document.getElementById('fsheet');if(d)d.remove();d=document.createElement('div');d.id='fsheet';d.className='fsheet';
+  d.innerHTML=`<div class="fsc"><button type="button" class="fsx" aria-label="閉じる">×</button><canvas class="food" data-food="${k}" style="width:72px;height:72px"></canvas><h3>${esc(f.name)}</h3><div class="muted" style="font-size:13px">${esc(f.eff||'')}</div><div class="fsn">持っている数：<b>${n}</b>こ</div>
+   ${eat?(canEat?`<button type="button" class="btn-main" id="fseat">🍽 食べた！と記録する（${STAT[f.stat].name} +${fxp(f)} EXP）</button>`:`<div class="fslock">🔒 食べたものの記録は「食事セラピー」です。トレーナーの許可で使えます。</div>`):''}
+   <div class="fsgift"><div class="fsh">🎁 プレゼントする</div>${n>0?`<label>だれに？<select id="fsto"><optgroup label="トレーナー・スタッフ">${TRAINERS.map(t=>`<option value="t:${esc(t)}">${esc(t)}</option>`).join('')}</optgroup>${others.length?`<optgroup label="今日の顔ぶれ">${others.map(x=>`<option value="g:${x.id}">${esc(x.name)}さん</option>`).join('')}</optgroup>`:''}</select></label>
+    <input id="fsmsg" maxlength="40" placeholder="ひとこと（例：いつもありがとう！）"><button type="button" class="btn-main fsgo" id="fsgo">🎁 1こプレゼントする</button><small class="muted">プレゼントすると、あなたの図鑑から1こ減ります。贈った人も、もらった人も 根性+3。</small>`:'<div class="muted" style="font-size:13px">まだ持っていないので、プレゼントできません。ごはんや花マル🌸でゲットしよう！</div>'}</div></div>`;
+  document.body.appendChild(d);try{paintFood(d.querySelector('canvas.food'),k)}catch(e){}const close=()=>d.remove();d.onclick=e=>{if(e.target===d)close()};d.querySelector('.fsx').onclick=close;
+  const ea=document.getElementById('fseat');if(ea)ea.onclick=()=>{giveFood(m,k);gain(m,f.stat,fxp(f),`食事セラピー ${f.name}（図鑑から）`);close();render()};
+  const go=document.getElementById('fsgo');if(go)go.onclick=()=>{const to=document.getElementById('fsto').value,msg=document.getElementById('fsmsg').value.trim();if(((m.foods||{})[k]||0)<1)return;
+    m.foods[k]--;m.stats.grit+=3;let toName;
+    if(to.startsWith('g:')){const r=byId(to.slice(2));if(!r)return;giveFood(r,k);r.stats.grit+=3;toName=r.name+'さん'}else{toName=to.slice(2)+(to.includes('看護師')?'':'トレーナー');S.gifts=S.gifts||[];S.gifts.push({t:Date.now(),from:m.id,to:to.slice(2),k,msg})}
+    S.feed.unshift({id:S.nextId++,who:m.id,text:`🎁 ${toName}に「${f.name}」をプレゼント！${msg?'「'+msg+'」':''}`,xp:0,stat:'grit',t:Date.now(),cheers:[]});save();toast(`${toName}に「${f.name}」をプレゼントしました　根性+3`);close();render()}}
+document.addEventListener('click',e=>{const c=e.target.closest('.zkb .pc[data-fk]');if(!c||c.classList.contains('none')&&!KS())return;foodSheet(c.dataset.fk)});
 function vLog(){
   const m=me();
   if(!ADMIN&&!m.course){vCourse(m);return}
