@@ -339,6 +339,12 @@ header .whol .ddb::after{right:8px!important}
 header>.hbr{flex-basis:100%;height:0;margin:-6px 0 0}
 header .whol>.dd{background:none!important;padding:0!important;border-radius:999px}header .logo{min-width:max-content!important}.tnbox{flex-direction:row!important;align-items:center!important}.tnbox>.dd{background:none;padding:0}
 .tnbox{display:inline-flex!important;padding:3px 4px 3px 3px!important;border-width:2px!important;border-radius:999px!important;gap:4px!important;margin:12px 0 6px!important;flex-wrap:nowrap!important}.tnbox .tnl{font-size:11px!important;padding:2px 8px!important}.tnbox select,.tnbox .ddb{font-size:14px!important;padding:3px 8px!important;border:0!important;min-width:0!important;flex:0 1 auto!important}
+.gmbox{border:2px solid #f0d6a8;background:#fff8ec;border-radius:14px;padding:10px 12px;margin:8px 0;display:flex;flex-direction:column;gap:6px}.gmh{font-weight:800;font-size:13px;color:#b5651d}
+.gmr{display:flex!important;flex-direction:row!important;align-items:center;gap:8px;font-size:14px;color:var(--ink)}.gmr span{width:4em;font-weight:800}.gmr input{flex:1;accent-color:#e8452c}.gmr b{width:3.2em;text-align:right}.gmn{font-size:12px;color:var(--muted)}
+.gmsty{border:2px solid #9ccc3c;border-radius:12px;padding:8px 10px;background:#f6fbe9;margin:4px 0 8px}.gmsty label{font-weight:800;color:#2f6d2a;font-size:13px}.gmsty select{font-size:15px}.gmsty p{font-size:12px;color:var(--ink);margin:6px 0 0;line-height:1.6}
+.gmcyc{margin:4px 0 8px;border:2px dashed #9ccc3c;border-radius:12px;padding:6px 10px;background:#fff}.gmcyc summary{cursor:pointer;font-weight:800;font-size:13px;color:#2f6d2a}.gmc{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin:8px 0 4px}.gmc span{background:#eaf5d3;border-radius:999px;padding:3px 9px;font-size:12px;font-weight:700}.gmc i{font-style:normal;color:#9ccc3c;font-size:11px}.gmcyc p{font-size:12px;color:var(--muted);margin:4px 0}
+.hwlong{font-weight:500!important;font-size:14px;line-height:1.75;max-height:22em;overflow:auto;white-space:pre-wrap;background:#fffdf5;border-radius:10px;padding:8px 10px;margin-bottom:6px}.card.hw:has(.hwlong){flex-direction:column;align-items:stretch}
+header #modeBtn,header>.hbr{display:none!important}body.member nav [data-t="guild"]{display:none!important}.tnbox{display:flex!important;width:fit-content;margin-left:auto!important}
 </style>
 
 </head>
@@ -1235,10 +1241,10 @@ let tab='hero', logType='lift';
 const NAVH={hero:['carrot','#f08a12'],log:['piman','#3f9a3a'],feed:['tomato','#e8452c'],rank:['broccoli','#2f7d32'],boss:['onion','#c99a00'],guild:['imo','#9b2f5e']};
 const TABS=[['hero','冒険者','◆'],['log','記録','＋'],['feed','キタ酒場','≡'],['rank','番付','▲'],['boss','ボス','✦']];
 function renderTabs(){
-  const list=(S.trainerMode||KS())?[...TABS,['guild','評価','★']]:TABS;
+  const list=[...TABS,['guild','評価','★']];
   if(tab!=='zukan'&&!list.find(x=>x[0]===tab))tab='hero';
   $('#tabs').innerHTML=list.map(([k,l,i])=>{const nh=NAVH[k]||NAVH.hero;return `<button type="button" data-t="${k}" class="${k===tab?'on':''}" style="--hc:${nh[1]}"><canvas class="nh" data-hero="${nh[0]}"></canvas><span class="nl">${l}</span></button>`}).join('');
-  $('#tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;render();window.scrollTo(0,0)});
+  $('#tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;S.trainerMode=tab==='guild';save();render();window.scrollTo(0,0)});
 }
 function render(){
   $('#who').innerHTML=visibleMembers().map(m=>`<option value="${m.id}" ${m.id===S.current?'selected':''}>${esc(m.name)}</option>`).join('');
@@ -1281,7 +1287,7 @@ function vHero(){
   ${monthCal(m)}
   ${(m.osusume||[]).length?`<h2>トレーナーからのおすすめ野菜</h2><div class="osu">${m.osusume.slice(-3).reverse().map(o=>`<div class="card osc"><canvas class="food" data-food="${o.k}"></canvas><div><b>${esc(FOODS[o.k]?FOODS[o.k].name:o.k)}</b><small>${esc(o.tn)}トレーナーより</small>${o.msg?`<p>${esc(o.msg)}</p>`:""}</div></div>`).join("")}</div>`:""}<h2>トレーナーからの宿題</h2>
   <div class="stack">${m.homework.length?m.homework.slice().reverse().map(h=>`
-    <div class="card hw"><div style="min-width:0"><div style="font-weight:700">${esc(h.text)}</div>
+    <div class="card hw"><div style="min-width:0"><div class="${h.text.length>150?'hwlong':''}" style="font-weight:700">${esc(h.text)}</div>
       <div class="muted">${h.status==='open'?'ジムの外でやってみよう':h.status==='done'?'トレーナーのスタンプ待ち':'スタンプ獲得！ パワーアップ済み'}</div></div>
       ${h.status==='open'?`<button type="button" class="btn-main" data-hw="${h.id}">やった！</button>`:h.status==='done'?'<span class="chip">確認待ち</span>':'<span class="stampmark">済</span>'}
     </div>`).join(''):'<div class="card muted">今は宿題はありません。</div>'}</div>
@@ -1463,7 +1469,7 @@ function vZukan(){
 
 const KDESC={'カパラバティ':'火の呼吸。おなかで短く強く吐きます。','バストリカ（ふいごの呼吸）':'吸う・吐くを力強く速く。体が温まります。','ナーディショーダナ（片鼻交互呼吸）':'左右の鼻で交互に呼吸。心が落ち着きます。','アヌロマ・ヴィロマ':'片鼻ずつ吸って吐く、バランスの呼吸。','ウジャイ呼吸':'のどを少しせばめて、波の音のように呼吸。','ブラーマリー（蜂の呼吸）':'ハミングしながら吐く。リラックス効果。','シータリー（冷却の呼吸）':'丸めた舌から吸って、体をクールダウン。','シータカーリー':'歯のすき間から吸う、冷却の呼吸。','スーリヤベーダナ（右鼻呼吸）':'右鼻から吸って、体を元気に。','チャンドラベーダナ（左鼻呼吸）':'左鼻から吸って、心を静かに。','ライオンの呼吸':'舌を出して「ハーッ」と吐く。顔と喉のストレッチ。','腹式呼吸':'おなかをふくらませて、ゆっくり深く。','完全呼吸（三段呼吸）':'おなか→胸→鎖骨の順に満たす呼吸。','ボックス呼吸（4-4-4-4）':'吸う・止める・吐く・止めるを4秒ずつ。','4-7-8呼吸':'4秒吸って7秒止め、8秒で吐く。眠りの前に。','火の呼吸 × クンバク':'カパラバティのあとに息止めを組み合わせます。','アヌロマヴィローマ（4：8：16）':'吸う4・止める8・吐く16の比率で片鼻呼吸。','アヌロマヴィローマ（5：10：20）':'吸う5・止める10・吐く20。','アヌロマヴィローマ（6：12：24）':'吸う6・止める12・吐く24。','アヌロマヴィローマ（7：14：28）':'吸う7・止める14・吐く28。上級。','魔法の呼吸音でウォークイン練習':'呼吸音を聞きながら、深いリラックスに入る練習。','首のポール呼吸（吸って4・吐いて4）':'ポールで首の中央をゆるめながら呼吸。'};
 const KAPALA=Object.keys(KDESC);
-const MEALT=['水分 1.5L／日','常温の水 1L','アルコールは週2回まで','飲み会のお酒はトータル4杯まで','夜ごはんは野菜中心・炭水化物半分','朝は温かい豆乳','朝ごはんを抜かない','血糖値の講義を受ける','おつまみは野菜・豆腐・キムチ中心','断食','16時間断食','半日断食（朝食抜き）','ファスティング（酵素ドリンク）','糖質オフ','白米を玄米に','腹八分目','よく噛む（ひと口30回）','野菜から先に食べる','間食なし','夜8時以降は食べない','タンパク質を毎食とる','水を1日2L飲む','発酵食品をとる','揚げ物なし','甘い飲み物なし','お酒なし','ベジタリアンデー','塩分ひかえめ','朝ごはんをしっかり'];
+const MEALT=['お食事日記をつける','水分 1.5L／日','ジュースDAYの水 500ml','いつも通り、美味しく食べる','手帳を探す','宿題シートを書く','我慢度・満足度を書く','水分トータル1.5L（ハーブティー＋水）','朝は炭水化物を控える','ベジファースト','ナッツ8粒を先に食べる','ベジミートチャレンジ（お肉を抜く）','1日2食（食べ過ぎた翌日は1.5食）','タンパク質65g（1食40g以下）','サプリ（ビタミンD）','お魚と植物性タンパク質を中心に','常温の水 1L','アルコールは週2回まで','飲み会のお酒はトータル4杯まで','夜ごはんは野菜中心・炭水化物半分','朝は温かい豆乳','朝ごはんを抜かない','血糖値の講義を受ける','おつまみは野菜・豆腐・キムチ中心','断食','16時間断食','半日断食（朝食抜き）','ファスティング（酵素ドリンク）','糖質オフ','白米を玄米に','腹八分目','よく噛む（ひと口30回）','野菜から先に食べる','間食なし','夜8時以降は食べない','タンパク質を毎食とる','水を1日2L飲む','発酵食品をとる','揚げ物なし','甘い飲み物なし','お酒なし','ベジタリアンデー','塩分ひかえめ','朝ごはんをしっかり'];
 const MEALRE=/断食|ファスティング|糖質|食べ|食事|間食|腹八分|玄米|ベジ|塩分/;
 function migMeal(){const e=CX('ex'),mt=CX('mealt');for(let i=e.length-1;i>=0;i--)if(MEALRE.test(e[i])){if(!MEALT.includes(e[i])&&!mt.includes(e[i]))mt.push(e[i]);e.splice(i,1)}}
 function mealTask(){if(logType!=='meal')return;const f=$('#form');if(!f)return;window._mm=window._mm||'task';if(window._mm==='food'){const ml=$('#mlist');if(ml&&!$('#mfree')){ml.insertAdjacentHTML('afterend','<label class="mmemo" style="margin-top:8px">リストにないもの（お肉・お魚料理・外食なども自由に）<input id="mfree" maxlength="60" placeholder="例：チキン南蛮定食／焼き魚とごはん"></label>')}const g=$('#go');if(g){const og=g.onclick;g.onclick=()=>{const v=($('#mfree')||{value:''}).value.trim();if(v){const mm=($('#mmemo')||{value:''}).value.trim();gain(me(),'end',10,`食事セラピー ${v}`+(mm?`／メモ：${mm}`:''));tab='hero';render();return}return og()}}}
@@ -1718,6 +1724,25 @@ function cxTidy(){document.querySelectorAll('#view .cxdel').forEach(box=>{const 
   box.querySelectorAll('[data-hbi]').forEach(b=>b.onclick=()=>{const v=hd.splice(+b.dataset.hbi,1)[0];save();vLog();const d=document.querySelector(`#view .cxdel[data-cxfor="${box.dataset.cxfor}"] details`);if(d)d.open=true;toast(`「${v.replace(/^cx:/,'')}」をリストに戻しました`)});
 })}
 const _vLogT=vLog;vLog=function(){const r=_vLogT.apply(this,arguments);try{cxTidy()}catch(e){console.error(e)}return r};
+</script><script>
+try{HWTPL0.push(...[["⑥食事セラピー（心の筋肉・お食事日記）", "今回の1番のポイントは、\nお食事の報告により、\n「苦手だな〜」という部分をご自分で、\n見続けることになります。\n\nまた、第三者（トレーナー）にも\n見せることにもなります。\n\n実はこれが、実際に、\n「心の筋肉」を強靭にする行動となります！！\n\nですので、「心の筋肉」を育てるためにも、\nぜひ、安心しながら、\nお食事のアップお願いいたします。\n\nご自分のお食事を見続けるだけで・・・・・・・\nめちゃくちゃ、「心の筋肉」がついてきているので、\n安心して続けてください😊\n\n第一歩目として、\n食事に向き合う！！\nこの意識が、大きな成果に繋がります。\n\nまた、「現状維持メカニズム」が働きますので、\n無意識に色々な理由をつけて、\nもう見たくないとなる日もあると思います。\n\n無意識に、今までの自分を、\n「保ちたい」「守りたい」「維持したい」と、\n潜在意識は現状を守ろうとします。\n\nこの手に乗らないためにも、\n潜在意識の仕組みをしっかりと理解しながら、\n一緒に、進めていけたらと思います。\n\nだからこそ、\n食事も一気に変えないように、\n小さい小さなアクションを積み上げていきましょう！！\n\n━━━━━━━━━━━━━\n【「宿題シート」を活用しましょう！】\n▼▼▼▼\n手書きの「宿題シート」は、\n潜在意識を活用した習慣化をサポートするための\n実践ツールになります。\n\n繰り返し書いたり読み返したりすることで、\n潜在意識にも繰り返し意識づけるきっかけになります。\n\n◾手書きで明確にする\n　▼▼▼▼\n◾繰り返し意識する\n　▼▼▼▼\n◾行動する\n　▼▼▼▼\n◾習慣にする\n\nこのサイクルを「宿題シート」を通して実践していきましょう😊\n\n【宿題】\n▼▼▼▼\n① お食事日記をつけましょう。\n② 水→1,500ml\n③ ジュースDAYの時の水→500ml\n④ いつも通り、美味しく食べましょう！\n\n我慢度や満足度は、何%でしょうか？\n▼▼▼\n◾我慢度→00%\n◾満足度→00%\n※我慢度100%がMAXです。\n※満足度100%がMAXです。"], ["⑦食事セラピー（遊びの空間・手帳さがし）", "○○さん、こんばんは😊\n\n本日は、食事セラピーのセッション、\nお疲れ様でした✨\n\nセラピーでは私（トレーナー）という、\n第三者の目が入っていきます。\n\nこの第三者の目を意識することにより、\n「今日は別にそれほど食べたくないし、\nもう、食べるのやめとこっかな」といった気持ちが\n自然に湧いてきます。\n\n無理のない範囲で\n「コントロールできる自分」の成功体験を\nたくさん積んでいただけたら嬉しいです。\n\n「０か100か」の意識が強く働いてしまうと、\n何かの理由で少しでも出来なくなると、\n継続していたことを、やめてしまいたくなったり、\n少しでも崩れてしまうと、\n一気に「反転作用」が強目に働いてしまいます。\n\n今は、その「反転作用」が起こらないように.........\n「達成できなくてもOK😊」\nという部分である、\n「遊び（あそび）」の空間を意識して入れています！\n\n━━━━━━━━━━━━━\n⚠お食事では、\nこの「遊び」の空間が\nとても重要な鍵になってきます！\n━━━━━━━━━━━━━\n\n建物を建てる時も、「遊び（あそび）」といって、\n地震の揺れや温度変化による膨張・収縮を吸収して、\n建物が壊れるのを防ぐために\n意図的に「隙間（空間）」や「ゆとり」をつくり出します。\n\n人間にも「遊び」の空間が必要で、\nまるで、クッションの様な働きをしてくれます😊\n\nこの「遊び」の空間を意識的に作り出すことで、\n食事での、新しい習慣が誕生していきます。\n\n○○さんが気にいるような、\n「可愛い手帳」「使いやすい手帳」を\n探していただけたら、嬉しいです✨✨✨\n\n今後とも、どうぞ宜しくお願いいたします。\n\n【宿題】\n▼▼▼▼\n① 手帳を探す！\n② 水→1,500ml\n③ 満足度%・我慢度%\nーーーーーーーー\n④ ジュースDAYの時の水→500ml"], ["⑧食事セラピー（ペスカタリアン・1日2食）", "○○さんが目指すのは、\n「ベジタリアン」ではなく\n【ペスカタリアン】になります😊\n\nベジタリアンでは・・・・・・\n・ビタミンB12\n・鉄\n・亜鉛\n・ビタミンD\n・オメガ3（EPA・DHA）\nなどが、不足すると言われています。\nですので、サプリを飲んでいる方が多いです。\n\nですが、【ペスカタリアン】の場合は・・・・・・\nお魚を意識してしっかりと食べてくださっていれば、\n・ビタミンB12\n・鉄\n・亜鉛\n・カルシウム\n・ビタミンD\n・オメガ3（EPA・DHA）\nなども、特に問題ありません😊\n\nーーーーーーーー\nスープの元にも、動物の脂質まで考えると・・・・・・\n↓↓↓↓↓\n全く外食ができなくなるので、\nここはあまり気にしないようにしてくださいね😊\nーーーーーーーー\n\nお魚は動物性になります。\nですので、お魚と植物性タンパク質を\n中心にしていただければと思います。\n\nまた、お食事は、基本は２食として考えてください。\n例えば前の日に食べ過ぎてしまった場合は、\n1.5食にするなどして工夫をお願いします😊\n\n【今週の宿題内容】\n▼▼▼▼\n①水分トータル量1.5L（ハーブティー500ml・お水1000ml）\nコーヒーは抜いた量です。\n\n⭕②【朝】は、炭水化物を控える！\n・ベジファースト\n・バナナ最後\n・プロテインバー前に、クルミかアーモンドを８つ食べる\n\n③ベジミートチャレンジ！\n・○月いっぱいは、お肉を抜きましょう\n\n④ビタミンD→8000IU（２粒）\n⭕○/○〜○/○→２粒\n⭕○/○〜→1粒\n\n⑤タンパク質量→⭕65g（お蕎麦・フィッシュコラーゲン・ガンモなど）\n⭕1食あたり40g以下で！"]]);}catch(e){}
+window._gm=null;
+function gmBox(){const go=document.querySelector('#view #go');if(logType!=='meal'||!go||document.getElementById('gmbox'))return;
+  const v=window._gm||{g:null,s:null};
+  go.insertAdjacentHTML('beforebegin',`<div id="gmbox" class="gmbox"><div class="gmh">今日の気持ち（どちらも100%がMAX）</div>
+   <label class="gmr"><span>我慢度</span><input type="range" id="gmg" min="0" max="100" step="10" value="${v.g??0}"><b id="gmgv">${v.g==null?'—':v.g+'%'}</b></label>
+   <label class="gmr"><span>満足度</span><input type="range" id="gms" min="0" max="100" step="10" value="${v.s??0}"><b id="gmsv">${v.s==null?'—':v.s+'%'}</b></label>
+   <div class="gmn">書けない日・できない日もOK。「遊び」の空間です😊</div></div>`);
+  const up=(k,id)=>{const i=document.getElementById(id);i.oninput=()=>{window._gm=window._gm||{g:null,s:null};window._gm[k]=+i.value;document.getElementById(id+'v').textContent=i.value+'%'}};up('g','gmg');up('s','gms')}
+const FSTY={'ベジタリアン':'お肉・お魚なし。ビタミンB12・鉄・亜鉛・ビタミンD・オメガ3が不足しやすいので、サプリも相談しましょう。','ペスカタリアン':'お肉なし・お魚OK。お魚をしっかり食べれば、B12・鉄・亜鉛・カルシウム・ビタミンD・オメガ3も安心です。','フレキシタリアン':'野菜中心で、ときどきお肉・お魚も。','こだわらない':'今の食事のまま、少しずつ整えていきましょう。'};
+function gmStyle(){if(logType!=='meal')return;const c=document.getElementById('gmcyc');if(!c||document.getElementById('gmsty'))return;const m=me();const v=m.foodStyle||'';
+  c.insertAdjacentHTML('beforebegin',`<div id="gmsty" class="gmsty"><label>目指す食スタイル<select id="gmss"><option value="">（えらぶ）</option>${Object.keys(FSTY).map(k=>`<option ${v===k?'selected':''}>${k}</option>`).join('')}</select></label>${v?`<p>${FSTY[v]}<br>スープの素など細かい動物性の材料までは気にしなくて大丈夫です。</p>`:''}</div>`);
+  document.getElementById('gmss').onchange=e=>{m.foodStyle=e.target.value;save();vLog()}}
+function gmCycle(){if(logType!=='meal')return;const f=document.querySelector('#view .mmode');if(!f||document.getElementById('gmcyc'))return;
+  f.insertAdjacentHTML('beforebegin',`<details id="gmcyc" class="gmcyc"><summary>📝 宿題シートのサイクル</summary><div class="gmc"><span>手書きで明確にする</span><i>▶</i><span>繰り返し意識する</span><i>▶</i><span>行動する</span><i>▶</i><span>習慣にする</span></div><p>お食事を見続けるだけで「心の筋肉」がついてきます。一気に変えず、小さな小さなアクションを積み上げましょう。</p></details>`)}
+document.addEventListener('click',e=>{if(e.target.closest('#tplc [data-tpl]'))setTimeout(()=>{const t=document.getElementById('hwt'),h=document.getElementById('hm');if(!t||!h)return;const m=byId(h.value);if(m)t.value=t.value.split('○○さん').join(m.name+'さん')},0)});
+const _vLogG=vLog;vLog=function(){const r=_vLogG.apply(this,arguments);try{gmCycle();gmStyle();gmBox()}catch(e){console.error(e)}return r};
+const _gainG=gain;gain=function(m,stat,xp,text,...rest){if(logType==='meal'&&window._gm&&typeof text==='string'){const g=window._gm;const p=[g.g!=null?`我慢度${g.g}%`:'',g.s!=null?`満足度${g.s}%`:''].filter(Boolean).join('・');if(p)text+=`（${p}）`;window._gm=null}return _gainG.call(this,m,stat,xp,text,...rest)};
 // ホーム画面アプリ用：オフラインでも開けるようにする
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').then(r=>r.update()).catch(()=>{});let rl=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(rl)return;rl=true;location.reload()})});}
 </script>
