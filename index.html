@@ -449,6 +449,9 @@ nav{flex-direction:column;align-items:center;gap:5px}
 .seg button.hkseg{color:#1f6fa8;border-color:#7fb8e0;background:#eef7ff}
 .mytr .mth{font-size:15px}.mtx{display:flex;flex-direction:column;gap:4px;font-size:12px;line-height:1.5}.mtx>div{padding:5px 8px;border-radius:8px;background:rgba(255,255,255,.7);color:#555}.mtx>div.cur{background:#fff;color:#222;outline:2px solid currentColor}.mytr.on .mtx>div.cur{color:#c26a00}.mytr:not(.on) .mtx>div.cur{color:#a8346a}
 body.trmode header{background:linear-gradient(180deg,#ffd27a,#ffe9b0)!important}body.trmode #admBadge::after{content:'・自分のトレーニング中'}
+.bsub{margin:6px 2px 6px;font-size:17px;color:#33501a}.bsub small{font-size:12px;color:var(--muted)}
+.bwrite{margin:14px 0 8px}.bwrite>summary{cursor:pointer;list-style:none;text-align:center;padding:13px;border-radius:999px;background:#4f7d2a;color:#fff;font-weight:900;font-size:16px;box-shadow:0 3px 0 #2c4a14}.bwrite>summary small{font-size:11px;opacity:.85}.bwrite[open]>summary{background:#fff;color:#4f7d2a;border:2.5px solid #4f7d2a;box-shadow:none}
+.nwgo{margin-top:6px;border:2px solid #4f7d2a;background:#f2fbe0;color:#33501a;border-radius:999px;padding:5px 12px;font-weight:800;font-size:12px}
 </style>
 
 </head>
@@ -2191,18 +2194,20 @@ function coursePanel(){if(!ADMIN||tab!=='guild'||document.getElementById('cpan')
 const _r4=render;render=function(){const r=_r4.apply(this,arguments);try{tevPanel();coursePanel();kenkoPanel();snapInbox()}catch(e){console.warn(e)}return r};
 // ===== 333GYMニュース（トレーナーが配信 → ゲスト全員に表示） =====
 function NEWS(){S.news=S.news||[];return S.news}
-function newsSorted(){return NEWS().slice().sort((a,b)=>(b.pin?1:0)-(a.pin?1:0)||b.t-a.t)}
-function newsUnread(){const m=me(),seen=m&&m.newsSeen||0;return NEWS().filter(n=>n.t>seen).length}
+// 写真館・掲示板に投稿されたら、ニュースにも自動でのせる（ゲストの名前は出さない）
+function autoNews(link,title,body,tn){NEWS().push({id:Date.now()+Math.random(),t:Date.now(),tn:tn||'キタエル・クエスト',title,body:body||'',auto:link});const a=NEWS().filter(n=>n.auto);if(a.length>40){const old=new Set(a.slice(0,a.length-40).map(n=>n.id));S.news=NEWS().filter(n=>!old.has(n.id))}save();setTimeout(()=>{try{newsLine()}catch(e){}},0)}
+function newsSorted(){const m=me();return NEWS().filter(n=>!n.auto||canSee(m,myKind((n.body||'')+' '+n.title))).slice().sort((a,b)=>(b.pin?1:0)-(a.pin?1:0)||b.t-a.t)}
+function newsUnread(){const m=me(),seen=m&&m.newsSeen||0;return newsSorted().filter(n=>n.t>seen).length}
 function newsDate(t){const d=new Date(t);return `${d.getMonth()+1}/${d.getDate()}`}
-function newsItem(n,full){const m=me(),isNew=n.t>(m.newsSeen||0);return `<li class="${n.pin?'pin':''}"><div class="nwh">${n.pin?'<span class="nwp">📌 重要</span>':''}${isNew?'<span class="nwn">NEW</span>':''}<small>${newsDate(n.t)}・${esc(n.tn)}</small></div><b>${esc(n.title)}</b>${full&&n.body?`<p>${esc(n.body)}</p>`:''}</li>`}
+function newsItem(n,full){const m=me(),isNew=n.t>(m.newsSeen||0);return `<li class="${n.pin?'pin':''}"><div class="nwh">${n.pin?'<span class="nwp">📌 重要</span>':''}${isNew?'<span class="nwn">NEW</span>':''}<small>${newsDate(n.t)}・${esc(n.tn)}</small></div><b>${esc(n.title)}</b>${full&&n.body?`<p>${esc(n.body)}</p>`:''}${full&&n.auto?`<button type="button" class="nwgo" data-ngo="${n.auto}">${n.auto==='photo'?'📷 写真館で見る':'📌 掲示板で見る'} ›</button>`:''}</li>`}
 function newsCard(){newsLine();return;if(ADMIN||tab!=='hero'||document.getElementById('newsc'))return;const L=newsSorted();if(!L.length)return;const v=document.getElementById('view');
   const d=document.createElement('div');d.id='newsc';d.className='card newsc';const u=newsUnread();
   d.innerHTML=`<div class="nwt">📣 333GYMニュース${u?` <i class="nbadge in">${u}</i>`:''}</div><ul>${L.slice(0,3).map(n=>newsItem(n,false)).join('')}</ul><button type="button" id="newsAll" class="nwall">${L.length>3?`ぜんぶ見る（${L.length}件）`:'くわしく見る'} ›</button>`;
   v.insertBefore(d,v.firstChild);document.getElementById('newsAll').onclick=()=>{tab='news';render();window.scrollTo(0,0)}}
 function vNews(){const m=me(),L=newsSorted();$('#view').innerHTML=`<h2>📣 333GYMニュース</h2><div class="card"><ul class="newsl">${L.length?L.map(n=>newsItem(n,true)).join(''):'<li class="muted">まだニュースはありません。</li>'}</ul></div><button type="button" class="nwall" id="newsBack">‹ 冒険者にもどる</button>`;
-  $('#newsBack').onclick=()=>{tab='hero';render();window.scrollTo(0,0)};if(m){m.newsSeen=Date.now();save()}}
+  $('#newsBack').onclick=()=>{tab='hero';render();window.scrollTo(0,0)};document.querySelectorAll('[data-ngo]').forEach(b=>b.onclick=()=>{tab=b.dataset.ngo;render();window.scrollTo(0,0)});if(m){m.newsSeen=Date.now();save()}}
 function newsLine(){const old=document.getElementById('nline');if(ADMIN){if(old)old.remove();return}const L=newsSorted();if(!L.length){if(old)old.remove();blogLine();return}
-  const n=L[0],u=newsUnread(),d=old||document.createElement('button');d.type='button';d.id='nline';d.className='nline'+(tab==='news'?' on':'');
+  const sn=(me()||{}).newsSeen||0,n=L.filter(x=>x.t>sn).sort((a,b)=>b.t-a.t)[0]||L[0],u=newsUnread(),d=old||document.createElement('button');d.type='button';d.id='nline';d.className='nline'+(tab==='news'?' on':'');
   d.innerHTML=`<span class="nlh">📣 ニュース${u?`<i class="nbadge in">${u}</i>`:''}</span><span class="nlt">${n.pin?'📌 ':''}${esc(n.title)}</span><span class="nlm">›</span>`;d.onclick=()=>{tab='news';render();window.scrollTo(0,0)};
   if(!old){const h=document.querySelector('header');h.after(d)}blogLine()}
 window.KQblogUnseen=()=>blogUnseen();function blogUnseen(){const m=me();return BLOG().filter(x=>x.t>((m&&m.blogSeen)||0)).length}
@@ -2250,6 +2255,7 @@ function vPhoto(){const m=me(),pub=PH.filter(x=>x.st==='ok').sort((a,b)=>b.t-a.t
     try{if(x.kind==='video'){PVID[x.id]=URL.createObjectURL(file)}else{x.src=await shrink(file)}}catch(e){toast('読みこめませんでした');return}
     PH.push(x);if(!phSave()){PH.pop();return}
     if(ADMIN)S.feed.unshift({id:S.nextId++,who:'trainer',tn:TN(),text:`📷 写真館に新しい${x.kind==='video'?'動画':'写真'}：${x.cap||''}`,xp:0,stat:'grit',t:Date.now(),cheers:[]}),save();
+    autoNews('photo',`📷 写真館に新しい${x.kind==='video'?'動画':'写真'}がアップされました`,x.cap||'',x.byT?x.byT+'トレーナー':'ゲストさん');
     toast('写真館に公開しました');vPhoto()};
   $('#phBack').onclick=()=>{tab=ADMIN?'guild':'feed';render();window.scrollTo(0,0)};
   phBind()}
@@ -2265,12 +2271,15 @@ const BVID={};const BCAT=[['hw','📝 宿題','どんな宿題をやってる？
 function BOARD(){S.board=S.board||[];return S.board}
 function vBoard(){const m=me(),L=BOARD().filter(x=>bF==='all'||x.cat===bF).sort((a,b)=>b.t-a.t);const cn=k=>(BCAT.find(c=>c[0]===k)||BCAT[3])[1];
   $('#view').innerHTML=`<h2>📌 キタエル・クエスト掲示板</h2><p class="muted" style="margin:-4px 2px 8px;font-size:12px">宿題のこと、近くのいいお店、差し入れのお礼など、みんなに伝えたいことを書けます。名前を出すか「匿名」かをえらべます。</p>
-  <div class="card stack"><div class="tplf" id="bcat">${BCAT.map(([k,l],i)=>`<button type="button" data-bc="${k}" class="${i?'':'on'}">${l}</button>`).join('')}</div>
+  <details class="bwrite" id="bwrite"><summary>✏️ 掲示板に書きこむ <small>（タップで開く）</small></summary>
+  <div class="card stack" style="margin-top:8px"><div class="tplf" id="bcat">${BCAT.map(([k,l],i)=>`<button type="button" data-bc="${k}" class="${i?'':'on'}">${l}</button>`).join('')}</div>
    <textarea id="btx" rows="3" maxlength="300" placeholder="例：最近、駅前に野菜たっぷりの定食屋さんができました！"></textarea>
    <div class="mbtn"><button type="button" data-bpick="image">📷 写真をつける</button><button type="button" data-bpick="video">🎥 動画をつける</button></div><input type="file" id="bfile" hidden><div id="bpv" class="phpv"></div>
    <div class="bname">${ADMIN?'':`<label><input type="radio" name="bn" value="name" checked> ${esc(m.name)} として</label>`}${(ADMIN||(window.AUTH&&AUTH.role==='trainer')||!(window.AUTH&&AUTH.on))?`<label class="btr"><input type="radio" name="bn" value="tr" ${ADMIN?'checked':''}> トレーナーとして <select id="btrn">${TRAINERS.map(t=>`<option ${t===TN()?'selected':''}>${esc(t)}</option>`).join('')}</select></label>`:''}${(ADMIN||(window.AUTH&&AUTH.role==='trainer')||!(window.AUTH&&AUTH.on))?`<label><input type="radio" name="bn" value="hk"> 🩺 健康管理室として</label>`:''}<label><input type="radio" name="bn" value="anon"> 匿名で</label></div>
    <button type="button" class="btn-main" id="bsend">掲示板に投稿する</button>
    <p class="muted" style="font-size:11px;margin:0">匿名でも、トレーナーには だれの投稿か分かります。ルールに合わない投稿はトレーナーが消すことがあります。</p></div>
+  </details>
+  <h3 class="bsub">📋 みんなの投稿 <small>${L.length}件</small></h3>
   <div class="tplf" id="bfil"><button type="button" data-bf="all" class="${bF==='all'?'on':''}">すべて</button>${BCAT.map(([k,l])=>`<button type="button" data-bf="${k}" class="${bF===k?'on':''}">${l}</button>`).join('')}</div>
   <div class="blist">${L.length?L.map(x=>{const own=x.by===S.current&&!x.byT,on=(x.love||[]).includes(S.current);return `<div class="card bpost"><div class="bh"><span class="bcat">${cn(x.cat)}</span><b>${x.hk?'<span class="hkb">🩺 健康管理室</span>':x.byT?esc(x.byT)+'トレーナー':x.anon?'匿名さん':esc(x.name)}</b>${ADMIN&&x.anon?`<small class="breal">（本人：${esc(x.name)}）</small>`:''}<small>${newsDate(x.t)}</small></div><p>${esc(x.text)}</p>${x.img?`<img class="bmed" src="${x.img}" alt="">`:''}${BVID[x.id]?`<video class="bmed" src="${BVID[x.id]}" controls playsinline></video>`:x.vid?'<p class="muted" style="font-size:11px">🎥 動画（投稿した端末で、画面を開いている間だけ見られます）</p>':''}
     <div class="bf"><button type="button" class="phlove ${on?'on':''}" data-bl="${x.id}" ${on||own?'disabled':''}>💗 愛だね！ <b>${(x.love||[]).length}</b></button>${own||ADMIN?`<button type="button" class="phdel" data-bdel="${x.id}">消す</button>`:''}</div></div>`}).join(''):'<div class="card muted">まだ投稿はありません。最初の書きこみをどうぞ！</div>'}</div>
@@ -2281,7 +2290,8 @@ function vBoard(){const m=me(),L=BOARD().filter(x=>bF==='all'||x.cat===bF).sort(
   $('#bsend').onclick=async()=>{const t=$('#btx').value.trim();if(!t&&!bfile){toast('書く内容を入れてください');return}const bv=document.querySelector('input[name=bn]:checked').value,anon=bv==='anon',trn=bv==='tr'?(($('#btrn')||{}).value||TN()):bv==='hk'?'健康管理室':null,hk=bv==='hk';
     const x={id:Date.now(),t:Date.now(),by:S.current,name:m.name,byT:trn,hk,anon,cat,text:t,love:[]};
     if(bfile){if(bfile.type.startsWith('video')){BVID[x.id]=URL.createObjectURL(bfile);x.vid=1}else{try{x.img=await shrink(bfile)}catch(e){toast('写真を読みこめませんでした');return}}}
-    BOARD().push(x);try{save()}catch(e){BOARD().pop();toast('写真が大きすぎて保存できませんでした');return}toast('掲示板に投稿しました');vBoard()};
+    BOARD().push(x);try{save()}catch(e){BOARD().pop();toast('写真が大きすぎて保存できませんでした');return}{const cl=(BCAT.find(c=>c[0]===cat)||BCAT[3])[1];autoNews('board',`📌 掲示板に新しい書きこみ（${cl}）`,(t||'').slice(0,60)+((t||'').length>60?'…':'')+(x.img||x.vid?'（写真・動画つき）':''),hk?'健康管理室':trn?trn+'トレーナー':'ゲストさん')}
+    toast('掲示板に投稿しました');vBoard()};
   document.querySelectorAll('[data-bf]').forEach(b=>b.onclick=()=>{bF=b.dataset.bf;vBoard()});
   document.querySelectorAll('[data-bl]').forEach(b=>b.onclick=()=>{const x=BOARD().find(x=>x.id==b.dataset.bl);x.love=x.love||[];if(x.love.includes(S.current))return;x.love.push(S.current);m.stats.grit+=2;const to=!x.byT&&byId(x.by);if(to&&to!==m)to.stats.grit+=2;save();toast('💗 愛だね！を送りました　根性+2');vBoard()});
   document.querySelectorAll('[data-bdel]').forEach(b=>b.onclick=()=>{S.board=BOARD().filter(x=>x.id!=b.dataset.bdel);save();toast('投稿を消しました');vBoard()});
