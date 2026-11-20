@@ -461,6 +461,10 @@ body.trmode header{background:linear-gradient(180deg,#ffd27a,#ffe9b0)!important}
 .stag>ul{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:8px}.stag>ul>li{background:#fff;border:2px solid #f3c9bf;border-radius:12px;padding:8px 10px;display:flex!important;flex-direction:column;gap:6px}.stag>ul>li.mine{border-color:#e8452c;box-shadow:0 2px 0 #e8452c}
 .stc{font-size:12px;background:#ffe7df;color:#a03020;border-radius:999px;padding:1px 8px;font-weight:800}.str{margin:4px 0 0;padding-left:18px;font-size:12px;color:#6a4a40}
 .sta{display:flex;gap:6px;flex-wrap:wrap}.sta select{flex:1;min-width:120px;padding:6px;border-radius:10px;border:2px solid #f3c9bf;font-size:13px}.sta button{border:2px solid #4f7d2a;background:#f2fbe0;color:#33501a;border-radius:999px;padding:5px 12px;font-weight:800;font-size:12px}.sta button.see{border-color:#a8346a;background:#fff4fa;color:#a8346a}
+.rqst{margin:8px 0;padding:8px;background:#fff;border-radius:10px;text-align:left;font-size:13px;line-height:1.8}
+.rq2{flex-direction:column;align-items:stretch!important}.rqs2{display:flex;flex-direction:column;gap:4px;margin-top:6px}.rqs2 i{font-style:normal;font-size:12px;background:#fff7e6;border-radius:8px;padding:3px 8px}.rqs2 i.y{background:#eaf7d8}.rqs2 select{font-size:12px;padding:2px 4px}
+.rqbtn button[disabled]{opacity:.45}.rqdid{font-size:12px;color:#4f7d2a;font-weight:800;align-self:center}.rqhow{font-size:12px}
+#rqlist ul,#memp ul{max-height:none!important;overflow:visible!important}.rqlist li.rqhow{display:block!important}.rqlist li.rq2{display:flex!important;flex-direction:column!important;align-items:stretch!important}.rq2>span{flex:none!important}.rq2 .rqbtn{justify-content:flex-end}.rq2 small{background:none!important;color:var(--muted)!important;padding:0!important}
 </style>
 
 </head>
@@ -2056,13 +2060,16 @@ let reqWatch=null;
 async function showReq(u,db,auth){const box=$g('greq');if(!box)return;$g('gform').classList.add('reqmode');box.hidden=false;msg('');
   const rq=db.doc('requests/'+u.uid);let has=false;try{const d=await rq.get();has=d.exists}catch(e){console.warn(e)}
   const out=`<button type="button" class="gl" id="rqout">別のアカウントで入る（ログアウト）</button>`;
-  if(has){box.innerHTML=`<div class="rqok">📨 入会の申しこみを受けつけました！<br><b>${esc(u.email||'')}</b><br>トレーナーが「承認」すると、正式に入会です。<br>承認されると、この画面から自動で入れます。<br>（受付でひと声かけてもらうと早いです）</div>${out}`}
+  if(has){let x={};try{x=(await rq.get()).data()||{}}catch(e){}const ok=x.ok||{},HKN='團野有花',c=x.coach||'';
+    box.innerHTML=`<div class="rqok">📨 入会の申しこみを受けつけました！<br><b>${esc(u.email||'')}</b><br>2人が「承認」すると正式に入会です。<div class="rqst"><div>${ok[c]?'✅':'⏳'} 担当トレーナー：${esc(c||'未選択')}</div><div>${ok[HKN]&&(c!==HKN||Object.keys(ok).length>1)?'✅':'⏳'} 健康管理室：團野有花</div></div>承認されると、この画面から自動で入れます。<br>（受付でひと声かけてもらうと早いです）</div><button type="button" class="gl" id="rqre">承認の状態を見なおす</button>${out}`;$g('rqre').onclick=()=>showReq(u,db,auth)}
   else{box.innerHTML=`<div class="rqh">ようこそ333GYMへ！<br><b>${esc(u.email||'')}</b> で入会を申しこみます。<br>お名前を入れて「入会を申しこむ」を押してください。</div>
     <label>お名前（ジムで呼ばれている名前）<input id="rqname" maxlength="20" value="${esc(u.displayName||'')}"></label>
+    <label>担当トレーナー<select id="rqcoach"><option value="">えらんでください</option>${TRAINERS.map(t=>`<option>${esc(t)}</option>`).join('')}</select></label>
     <label>ひとこと（なくてもOK）<input id="rqmsg" maxlength="60" placeholder="例：体験に来た○○です／火曜に通っています"></label>
     <button type="button" class="gb" id="rqsend">入会を申しこむ</button>${out}`;
     $g('rqsend').onclick=async()=>{const name=$g('rqname').value.trim();if(!name){msg('お名前を入れてください');return}$g('rqsend').disabled=true;
-      try{await rq.set({email:(u.email||'').toLowerCase(),name,msg:$g('rqmsg').value.trim(),t:Date.now()});showReq(u,db,auth)}catch(e){console.warn(e);msg('申しこみできませんでした。受付でお声がけください。［'+(e.code||e.message)+'］');$g('rqsend').disabled=false}}}
+      const coach=$g('rqcoach').value;if(!coach){msg('担当トレーナーをえらんでください（わからなければ受付で聞いてください）');$g('rqsend').disabled=false;return}
+      try{await rq.set({email:(u.email||'').toLowerCase(),name,msg:$g('rqmsg').value.trim(),coach,t:Date.now()});showReq(u,db,auth)}catch(e){console.warn(e);msg('申しこみできませんでした。受付でお声がけください。［'+(e.code||e.message)+'］');$g('rqsend').disabled=false}}}
   $g('rqout').onclick=()=>auth.signOut();
   // 承認されたら自動で入る
   if(reqWatch)reqWatch();const ref=db.doc('roles/'+u.uid);if(ref.onSnapshot)reqWatch=ref.onSnapshot(d=>{if(d.exists){reqWatch&&reqWatch();reqWatch=null;const x=d.data();AUTH.role=x.role||'member';AUTH.name=x.name||'';box.hidden=true;box.innerHTML='';$g('gform').classList.remove('reqmode');if(JOIN){location.replace(window.KQ_GUEST_URL||'/');return}document.body.classList.remove('locked');applyRole()}},e=>console.warn(e))}
@@ -2081,7 +2088,7 @@ boot().then(()=>{
     const isG=(u.providerData||[]).some(p=>p&&p.providerId==='google.com')&&!(u.providerData||[]).some(p=>p&&p.providerId==='password');let ok=false,why='';
     const ref=db.doc('roles/'+u.uid),em=(u.email||'').toLowerCase();
     // ① 自分の roles があればそれを使う
-    try{const d=await ref.get();if(d.exists){role=d.data().role||'member';name=d.data().name||'';ok=true}}catch(e){console.warn(e);why=e.code||e.message}
+    try{const d=await ref.get();if(d.exists){role=d.data().role||'member';name=d.data().name||'';ok=true;const co=d.data().coach;if(co)try{const m0=S.members.find(x=>x.id==='me');if(m0&&!m0.coach){m0.coach=co;save()}}catch(e){}}}catch(e){console.warn(e);why=e.code||e.message}
     if(ok&&role==='pause'){msg('いまは休会中です。記録とEXPは1年間そのまま残っています。再開するときは、受付でお声がけください。');await auth.signOut();return}
     if(ok&&role==='left'){msg('このアカウントは退会の手続きがされています。また通う場合は、受付でお声がけください。');await auth.signOut();return}
     if(ok&&role==='member'){try{await ref.update({lastSeen:Date.now()})}catch(e){}}
@@ -2115,8 +2122,17 @@ function acctPanel(){const v=document.getElementById('view');if(!v||document.get
   const rqs=document.createElement('section');rqs.id='rqlist';rqs.className='acct rqlist';rqs.innerHTML='<h3>📨 入会の申しこみ（承認まち）</h3><ul><li class="muted">読みこみ中…</li></ul>';v.insertBefore(rqs,v.firstChild);loadReq();memPanel(v);
   async function loadReq(){const ul=rqs.querySelector('ul'),db=firebase.firestore();try{const q=await db.collection('requests').get();const a=[];q.forEach(x=>a.push({id:x.id,...x.data()}));a.sort((x,y)=>(x.t||0)-(y.t||0));
     rqs.querySelector('h3').innerHTML=`📨 入会の申しこみ（承認まち）${a.length?` <i class="nbadge in">${a.length}</i>`:''}`;
-    ul.innerHTML=a.length?a.map(x=>`<li><span><b>${esc(x.name||'')}</b> ${esc(x.email||'')}${x.msg?`<br><span class="rqm">「${esc(x.msg)}」</span>`:''}</span><span class="rqbtn"><button type="button" class="ok" data-ok="${esc(x.id)}">承認</button><button type="button" data-ng="${esc(x.id)}">見送る</button></span></li>`).join(''):'<li class="muted">いま、申請はありません。</li>';rqs.hidden=!a.length;
-    ul.querySelectorAll('[data-ok]').forEach(b=>b.onclick=async()=>{const x=a.find(y=>y.id===b.dataset.ok);b.disabled=true;try{await db.doc('roles/'+x.id).set({role:'member',email:x.email||'',name:x.name||'',via:'request',t:Date.now()});await db.doc('requests/'+x.id).delete();toast(`${x.name||x.email} さんの入会を承認しました`);loadReq();memPanel(v,1)}catch(e){toast(JA(e));b.disabled=false}});
+    const HKN='團野有花',me0=TN(),done=x=>{const ok=x.ok||{},c=x.coach||'';return !!(c&&ok[c]&&ok[HKN]&&(c!==HKN||Object.keys(ok).length>1))},
+      role=x=>{const c=x.coach||'';return me0===c?'担当トレーナー':me0===HKN?'健康管理室':''};
+    ul.innerHTML=a.length?`<li class="muted rqhow">入会は <b>①担当トレーナー</b> と <b>②健康管理室（團野有花）</b> の2人の承認で決まります。いまの操作者：<b>${esc(me0)}</b>（上の「担当トレーナー」で切りかえ）</li>`+a.map(x=>{const ok=x.ok||{},c=x.coach||'',mine=role(x),did=!!ok[me0];
+      return `<li class="rq2"><span><b>${esc(x.name||'')}</b> ${esc(x.email||'')}${x.msg?`<br><span class="rqm">「${esc(x.msg)}」</span>`:''}
+       <span class="rqs2"><i class="${ok[c]?'y':''}">${ok[c]?'✅':'⏳'} 担当：<select data-rc="${esc(x.id)}">${TRAINERS.map(t=>`<option ${t===c?'selected':''}>${esc(t)}</option>`).join('')}</select></i><i class="${ok[HKN]&&(c!==HKN||Object.keys(ok).length>1)?'y':''}">${ok[HKN]?'✅':'⏳'} 健康管理室：團野有花</i></span>
+       ${c===HKN?'<small class="muted">担当が團野さんのときは、もう1人のトレーナーの承認も必要です</small>':''}</span>
+       <span class="rqbtn">${did?'<span class="rqdid">承認ずみ</span>':`<button type="button" class="ok" data-ok="${esc(x.id)}" ${mine||(c===HKN&&ok[HKN])?'':'disabled'} title="${mine?'':'担当トレーナーか團野さんが承認します'}">${esc(me0)}として承認</button>`}<button type="button" data-ng="${esc(x.id)}">見送る</button></span></li>`}).join(''):'<li class="muted">いま、申請はありません。</li>';rqs.hidden=!a.length;
+    ul.querySelectorAll('[data-rc]').forEach(sl=>sl.onchange=async()=>{try{await db.doc('requests/'+sl.dataset.rc).update({coach:sl.value});toast('担当トレーナーを変えました');loadReq()}catch(e){toast(JA(e))}});
+    ul.querySelectorAll('[data-ok]').forEach(b=>b.onclick=async()=>{const x=a.find(y=>y.id===b.dataset.ok);b.disabled=true;const ok=Object.assign({},x.ok||{},{[me0]:Date.now()}),y=Object.assign({},x,{ok});
+      try{if(done(y)){await db.doc('roles/'+x.id).set({role:'member',email:x.email||'',name:x.name||'',coach:x.coach||'',via:'request',okBy:Object.keys(ok),t:Date.now()});await db.doc('requests/'+x.id).delete();toast(`🎉 ${x.name||x.email} さんの入会が決まりました（2人の承認）`);memPanel(v,1)}
+        else{await db.doc('requests/'+x.id).update({ok});const c=x.coach||'',wait=!ok[c]?c+'トレーナー':!ok[HKN]?'健康管理室の團野有花さん':'もう1人のトレーナー';toast(`承認しました。あと ${wait} の承認で入会です`)}loadReq()}catch(e){toast(JA(e));b.disabled=false}});
     ul.querySelectorAll('[data-ng]').forEach(b=>b.onclick=async()=>{const x=a.find(y=>y.id===b.dataset.ng);if(!confirm(`${x.name||x.email} さんの申請を見送りますか？`))return;try{await db.doc('requests/'+x.id).delete();loadReq()}catch(e){toast(JA(e))}})
   }catch(e){console.warn('requests',e);rqs.hidden=true}}
   const am=(t,ok)=>{const m=document.getElementById('amsg');m.textContent=t;m.style.color=ok?'#2f6d2a':'#c0392b'};
