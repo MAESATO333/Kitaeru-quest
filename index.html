@@ -369,6 +369,8 @@ body.adminv .pvsw a.on{background:#9b2f5e}
 .expnote{font-size:12px;line-height:1.6;color:#4a5a3a;background:#f6fbe9;border:2px dashed #9ccc3c;border-radius:12px;padding:6px 10px;margin:8px 0}.expnote b:first-child{color:#2f6d2a;margin-right:4px}
 .tlist{display:flex;flex-direction:column;gap:6px}.trow{display:grid;grid-template-columns:44px 40px 1fr auto;align-items:center;gap:6px;padding:6px 8px;border-radius:12px;background:#fafdf3}.trow.mine{background:#fff7d6;box-shadow:inset 0 0 0 2px #f2c230}
 .trow .rk{font-size:12px;font-weight:800;color:#6a7a50}.trow .tic{width:36px;height:36px;image-rendering:pixelated}.tnm b{display:block;font-size:15px}.tnm small{font-size:11px;color:var(--muted)}.tnm em{font-style:normal;color:#b5651d;font-weight:800}.tpc{font-family:var(--display);font-size:20px}
+.tevbox .gmr span{width:5.6em}.tevh{border-top:2px dashed #e3ecd0;padding-top:8px}.tevht{font-size:12px;font-weight:800;color:#2f6d2a;margin-bottom:4px}
+#tevlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}#tevlist li{background:#fafdf3;border-radius:10px;padding:6px 10px;font-size:12px}.tevd{font-weight:800;color:#4a5a3a}.tevv{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:2px}.tevv b{color:#e8452c}.tevm{margin-top:2px;color:var(--muted)}
 </style>
 
 </head>
@@ -1872,6 +1874,25 @@ function badge(){if(!ADMIN)return;const n=S.members.reduce((a,m)=>a+m.homework.f
   if(!bar){bar=document.createElement('button');bar.type='button';bar.id='hmbar';bar.className='hmbar';const v=document.getElementById('view');v.parentNode.insertBefore(bar,v)}
   bar.textContent=`🔔 宿題完了のお知らせが ${n}件 あります → 花マル🌸スタンプを押す`;bar.onclick=()=>{tab='guild';render();window.scrollTo(0,0)}}
 const _r3=render;render=function(){const r=_r3.apply(this,arguments);try{badge()}catch(e){console.warn(e)}return r};
+// トレーナーがゲストごとにつける評価（日付ごとに残る）
+const TEV=[['gb','頑張り度'],['kz','継続度'],['is','意識度'],['sk','宿題度'],['mk','目標実現度'],['nk','仲良し度']];
+function tevPanel(){if(!ADMIN||tab!=='guild'||document.getElementById('tev'))return;const v=document.getElementById('view');const h=[...v.querySelectorAll('h2')].find(x=>x.textContent.includes('宿題を出す'));if(!h)return;
+  const sel=S.current;const d=document.createElement('section');d.id='tev';
+  const hist=m=>{const L=(m.tEval||[]).slice(-5).reverse();return L.length?L.map(e=>`<li><div class="tevd">${new Date(e.t).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric'})}　${esc(e.tn)}トレーナー</div><div class="tevv">${TEV.map(([k,l])=>e.v[k]==null?'':`<span>${l} <b>${e.v[k]}%</b></span>`).join('')}</div>${e.memo?`<div class="tevm">${esc(e.memo)}</div>`:''}</li>`).join(''):'<li class="muted">まだ記録はありません。</li>'};
+  d.innerHTML=`<h2>ゲストの評価をつける</h2><div class="card stack tevc"><p class="muted" style="font-size:12px;margin:0">トレーナーだけが見られます。ゲストのその日の様子を、0〜100%で残しておけます（日付ごとに保存）。</p>
+   <label>ゲスト<select id="tevm">${S.members.map(m=>`<option value="${m.id}" ${m.id===sel?'selected':''}>${esc(m.name)}</option>`).join('')}</select></label>
+   <div class="gmbox tevbox">${TEV.map(([k,l])=>`<label class="gmr"><span>${l}</span><input type="range" id="tev_${k}" min="0" max="100" step="10" value="50"><b id="tev_${k}v">—</b></label>`).join('')}</div>
+   <label>ひとことメモ（なくてもOK）<input id="tevmemo" maxlength="120" placeholder="例：今日はフォームがとても安定していました"></label>
+   <button type="button" class="btn-main" id="tevsave">この評価を保存する</button>
+   <div class="tevh"><div class="tevht">これまでの評価（新しい順・5件）</div><ul id="tevlist"></ul></div></div>`;
+  v.insertBefore(d,h);
+  const moved={};const draw=()=>{const m=byId(document.getElementById('tevm').value);document.getElementById('tevlist').innerHTML=hist(m)};draw();
+  TEV.forEach(([k])=>{const i=document.getElementById('tev_'+k);i.oninput=()=>{moved[k]=1;document.getElementById('tev_'+k+'v').textContent=i.value+'%'}});
+  document.getElementById('tevm').onchange=draw;
+  document.getElementById('tevsave').onclick=()=>{const vals={};TEV.forEach(([k])=>{if(moved[k])vals[k]=+document.getElementById('tev_'+k).value});if(!Object.keys(vals).length){toast('スライダーを1つ以上動かしてください');return}
+    const m=byId(document.getElementById('tevm').value);m.tEval=m.tEval||[];m.tEval.push({t:Date.now(),tn:TN(),v:vals,memo:document.getElementById('tevmemo').value.trim()});save();
+    TEV.forEach(([k])=>{delete moved[k];document.getElementById('tev_'+k).value=50;document.getElementById('tev_'+k+'v').textContent='—'});document.getElementById('tevmemo').value='';draw();toast(`${m.name}さんの評価を保存しました`)}}
+const _r4=render;render=function(){const r=_r4.apply(this,arguments);try{tevPanel()}catch(e){console.warn(e)}return r};
 render();
 })();
 </script></body>
