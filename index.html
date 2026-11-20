@@ -1829,7 +1829,7 @@ window.AUTH={on:ON,user:null,role:null};
 if(!ON)return;
 document.body.classList.add('locked');if(ADMIN){const gs=document.querySelector('#gate .gs');if(gs)gs.textContent='トレーナー専用 管理ページ';}
 const $g=id=>document.getElementById(id),msg=(t,ok)=>{const m=$g('gmsg');m.textContent=t||'';m.className='gm'+(ok?' ok':'')};
-const JA=e=>{const c=(e&&e.code)||'';return {'auth/popup-closed-by-user':'Googleのログインが途中で閉じられました','auth/cancelled-popup-request':'Googleのログインが途中で閉じられました','auth/unauthorized-domain':'このアドレスはGoogleログインの許可がまだです（Firebaseの設定が必要です）','auth/account-exists-with-different-credential':'このメールはパスワードで登録済みです。メールとパスワードで入ってください','auth/invalid-credential':'メールアドレスかパスワードがちがいます','auth/wrong-password':'メールアドレスかパスワードがちがいます','auth/user-not-found':'メールアドレスかパスワードがちがいます','auth/invalid-email':'メールアドレスの形がちがいます','auth/too-many-requests':'何度も失敗したので、しばらく待ってからお試しください','auth/network-request-failed':'インターネットにつながっていません','auth/email-already-in-use':'このメールアドレスはもう登録されています','auth/weak-password':'パスワードは6文字以上にしてください','auth/operation-not-allowed':'ログイン方法がまだ有効になっていません（Firebaseの設定が必要です）','auth/configuration-not-found':'ログイン機能がまだ有効になっていません（Firebaseの設定が必要です）','permission-denied':'権限がありません（Firestoreのルール設定を確認してください）'}[c]||('エラー：'+(c||e&&e.message||e))};
+const JA=e=>{const c=(e&&e.code)||'';const t={'auth/popup-closed-by-user':'Googleのログインが途中で閉じられました','auth/cancelled-popup-request':'Googleのログインが途中で閉じられました','auth/unauthorized-domain':'このアドレスはGoogleログインの許可がまだです（Firebaseの設定が必要です）','auth/account-exists-with-different-credential':'このメールはパスワードで登録済みです。メールとパスワードで入ってください','auth/invalid-credential':'メールアドレスかパスワードがちがいます','auth/wrong-password':'メールアドレスかパスワードがちがいます','auth/user-not-found':'メールアドレスかパスワードがちがいます','auth/invalid-email':'メールアドレスの形がちがいます','auth/too-many-requests':'何度も失敗したので、しばらく待ってからお試しください','auth/network-request-failed':'インターネットにつながっていません','auth/email-already-in-use':'このメールアドレスはもう登録されています','auth/weak-password':'パスワードは6文字以上にしてください','auth/operation-not-allowed':'ログイン方法がまだ有効になっていません（Firebaseの設定が必要です）','auth/configuration-not-found':'ログイン機能がまだ有効になっていません（Firebaseの設定が必要です）','permission-denied':'権限がありません（Firestoreのルール設定を確認してください）'}[c];return t?t+'［'+c+'］':('エラー：'+(c||e&&e.message||e))};
 window.AUTH.ja=JA;
 const V='10.12.2',load=src=>new Promise((r,j)=>{const s=document.createElement('script');s.src=src;s.onload=r;s.onerror=()=>j(new Error('load '+src));document.head.appendChild(s)});
 const boot=window.__FB_BOOT||(()=>load(`/__/firebase/${V}/firebase-app-compat.js`).then(()=>Promise.all([load(`/__/firebase/${V}/firebase-auth-compat.js`),load(`/__/firebase/${V}/firebase-firestore-compat.js`)])).then(()=>load('/__/firebase/init.js')));
@@ -1844,11 +1844,17 @@ boot().then(()=>{
   auth.onAuthStateChanged(async u=>{
     if(!u){AUTH.user=null;document.body.classList.remove('signed','member');document.body.classList.add('locked');return}
     AUTH.user=u;let role='member',name='';
-    const isG=(u.providerData||[]).some(p=>p&&p.providerId==='google.com')&&!(u.providerData||[]).some(p=>p&&p.providerId==='password');let ok=true;
-    try{const ref=db.doc('roles/'+u.uid),d=await ref.get();if(d.exists){role=d.data().role||'member';name=d.data().name||''}
-      else if(isG){ok=false;try{const em=(u.email||'').toLowerCase();const g=await db.doc('roles/g_'+em).get();if(g.exists){const x=g.data();role=x.role||'member';name=x.name||'';ok=true;try{await ref.set({role,email:u.email,name,via:'google',t:Date.now()})}catch(e){}}}catch(e){console.warn(e)}}
-      else{try{await ref.set({role:'trainer',email:u.email,name:'オーナー',t:Date.now()});role='trainer'}catch(e){}}}catch(e){console.warn(e)}
-    if(!ok){msg('このGoogleアカウントは、ジムに登録されていません。受付でお声がけください。');await auth.signOut();return}
+    const isG=(u.providerData||[]).some(p=>p&&p.providerId==='google.com')&&!(u.providerData||[]).some(p=>p&&p.providerId==='password');let ok=false,why='';
+    const ref=db.doc('roles/'+u.uid),em=(u.email||'').toLowerCase();
+    // ① 自分の roles があればそれを使う
+    try{const d=await ref.get();if(d.exists){role=d.data().role||'member';name=d.data().name||'';ok=true}}catch(e){console.warn(e);why=e.code||e.message}
+    // ② Google用の事前登録（roles/g_メール）
+    if(!ok){try{const g=await db.doc('roles/g_'+em).get();if(g.exists){const x=g.data();role=x.role||'member';name=x.name||'';ok=true;try{await ref.set({role,email:u.email,name,via:'google',t:Date.now()})}catch(e){console.warn(e)}}}catch(e){console.warn(e);why=why||e.code||e.message}}
+    // ③ オーナー（ルールでオーナーのメールだけが書ける）なら、トレーナーとして自分の roles を作る
+    if(!ok){try{await ref.set({role:'trainer',email:u.email,name:'オーナー',t:Date.now()});role='trainer';name='オーナー';ok=true}catch(e){console.warn(e);why=why||e.code||e.message}}
+    // ④ メール/パスワードで入った人は、トレーナーが作ったアカウントなので会員として入れる
+    if(!ok&&!isG){role='member';ok=true}
+    if(!ok){msg(`このアカウント（${u.email}）は、ジムに登録されていません。受付でお声がけください。`+(why&&why!=='permission-denied'?`［${why}］`:''));await auth.signOut();return}
     AUTH.role=role;AUTH.name=name;document.body.classList.remove('locked');applyRole();
   });
 }).catch(e=>{msg('ログインの準備ができませんでした。通信を確認して、もう一度開いてください');console.warn(e)});
