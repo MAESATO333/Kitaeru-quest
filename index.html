@@ -1457,7 +1457,7 @@ const NAVH={hero:['carrot','#f08a12'],log:['piman','#3f9a3a'],feed:['tomato','#e
 const TABS=[['hero','冒険者','◆'],['log','記録','＋'],['feed','キタ酒場','≡'],['rank','番付','▲'],['boss','ボス','✦']];
 function renderTabs(){
   const list=ADMIN?[['guild','管理','★'],...TABS]:TABS;
-  if(tab!=='zukan'&&tab!=='photo'&&tab!=='board'&&tab!=='blog'&&!((tab==='mypage'||tab==='news')&&!ADMIN)&&!list.find(x=>x[0]===tab))tab='hero';
+  if(tab!=='zukan'&&tab!=='cinema'&&tab!=='photo'&&tab!=='board'&&tab!=='blog'&&!((tab==='mypage'||tab==='news')&&!ADMIN)&&!list.find(x=>x[0]===tab))tab='hero';
   $('#tabs').innerHTML=list.map(([k,l,i])=>{const nh=NAVH[k]||NAVH.hero;return `<button type="button" data-t="${k}" class="${k===tab?'on':''}" style="--hc:${nh[1]}"><canvas class="nh" data-hero="${nh[0]}"></canvas><span class="nl">${l}</span></button>`}).join('');
   $('#tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;S.trainerMode=ADMIN;save();render();window.scrollTo(0,0)});
   try{renderTabs2()}catch(e){console.warn(e)}
@@ -2643,7 +2643,7 @@ function vBlog(){const L=BLOG().slice().sort((a,b)=>b.t-a.t),CAN=ADMIN||!!(windo
   document.querySelectorAll('[data-bgdel]').forEach(b=>b.onclick=()=>{S.blog=BLOG().filter(x=>x.id!=b.dataset.bgdel);save();toast('記事を消しました');vBlog()});
   $('#bgBack').onclick=()=>{tab='feed';render();window.scrollTo(0,0)}}
 function bgEntry(){if(tab!=='feed'||document.getElementById('bgent'))return;const be=document.getElementById('bent');if(!be)return;const b=document.createElement('button');b.type='button';b.id='bgent';b.className='phent bgent';b.innerHTML=`📝 キタエル・クエストblog <small>${BLOG().length?BLOG().length+'本の記事':'ジムの記事'}</small>`;b.onclick=()=>{tab='blog';render();window.scrollTo(0,0)};be.after(b)}
-let blogFocus=null;try{const q=/[?&]blog=(\d+)/.exec(location.search);if(q){tab='blog';blogFocus=+q[1]}const rt=(location.pathname.match(/^\/(blog|photo|board|news)\/?$/)||[])[1];if(rt)tab=rt}catch(e){}
+let blogFocus=null;try{const q=/[?&]blog=(\d+)/.exec(location.search);if(q){tab='blog';blogFocus=+q[1]}const rt=(location.pathname.match(/^\/(blog|photo|board|news|cinema)\/?$/)||[])[1];if(rt)tab=rt}catch(e){}
 // blogを開いたら既読にして、えらんだ記事までスクロール
 {const _vb=vBlog;vBlog=function(){const r=_vb.apply(this,arguments);if(blogFocus){const el=document.getElementById('bg-'+blogFocus);if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),60);blogFocus=null}const m=me();if(m&&!ADMIN){m.blogSeen=Date.now();save();const b=document.getElementById('bline');if(b){const i=b.querySelector('.bnew');if(i)i.remove()}const t2=document.querySelector('[data-t2="blog"] .nbadge');if(t2)t2.remove()}return r}}
 // ===== 冒険者ページ上の入口アイコン =====
@@ -2653,12 +2653,12 @@ function qNav(){if(tab!=='hero'||document.getElementById('qnav'))return;const v=
   v.insertBefore(d,v.firstChild);d.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{tab=b.dataset.q;render();window.scrollTo(0,0)})}
 function entRow(){let d=document.getElementById('entrow');if(!d){d=document.createElement('div');d.id='entrow';d.className='entrow'}
   const nb=BOARD().length,ng=BLOG().length;
-  d.innerHTML=`<button type="button" data-ent="photo" class="${tab==='photo'?'on':''}">📷<b>キタエル・クエスト<br>写真館</b><small>写真・動画</small></button><button type="button" data-ent="board" class="${tab==='board'?'on':''}">📌<b>キタエル・クエスト<br>掲示板</b><small>${nb?nb+'件':'情報交換'}</small></button><button type="button" data-ent="blog" class="${tab==='blog'?'on':''}">📝<b>キタエル・クエスト<br>blog</b><small>${ng?ng+'本の記事':'ジムの記事'}</small></button>`;
+  d.innerHTML=`<button type="button" data-ent="photo" class="${tab==='photo'?'on':''}">📷<b>キタエル・クエスト<br>写真館</b><small>写真・動画</small></button><button type="button" data-ent="board" class="${tab==='board'?'on':''}">📌<b>キタエル・クエスト<br>掲示板</b><small>${nb?nb+'件':'情報交換'}</small></button><button type="button" data-ent="blog" class="${tab==='blog'?'on':''}">📝<b>キタエル・クエスト<br>blog</b><small>${ng?ng+'本の記事':'ジムの記事'}</small></button><button type="button" data-ent="cinema" class="${tab==='cinema'?'on':''}">🎬<b>映画館<br>ミドリ座</b><small>絵本の映画館</small></button>`;d.classList.add('e4');
   const at=document.getElementById('bline')||document.getElementById('nline')||document.querySelector('header');if(at.nextElementSibling!==d)at.after(d);
   d.querySelectorAll('[data-ent]').forEach(b=>b.onclick=()=>{tab=b.dataset.ent;render();window.scrollTo(0,0)})}
-const _r5=render;render=function(){if(tab==='blog'){renderTabs();vBlog();try{newsLine();entRow();sw()}catch(e){}return}if(tab==='board'){renderTabs();vBoard();try{newsLine();entRow();sw()}catch(e){}return}if(tab==='photo'){renderTabs();vPhoto();try{newsLine();entRow();sw()}catch(e){}return}if(tab==='news'&&!ADMIN){renderTabs();vNews();try{newsLine();entRow();sw()}catch(e){}return}const r=_r5.apply(this,arguments);try{newsCard();newsNav();newsAdmin();entRow()}catch(e){console.warn(e)}return r};
+const _r5=render;render=function(){if(tab==='cinema'){renderTabs();if(window.vCinema)vCinema();else{const v=document.getElementById('view');if(v)v.innerHTML='<p style="padding:20px">ミドリ座を準備中…</p>'}try{newsLine();entRow();sw()}catch(e){}return}if(tab==='blog'){renderTabs();vBlog();try{newsLine();entRow();sw()}catch(e){}return}if(tab==='board'){renderTabs();vBoard();try{newsLine();entRow();sw()}catch(e){}return}if(tab==='photo'){renderTabs();vPhoto();try{newsLine();entRow();sw()}catch(e){}return}if(tab==='news'&&!ADMIN){renderTabs();vNews();try{newsLine();entRow();sw()}catch(e){}return}const r=_r5.apply(this,arguments);try{newsCard();newsNav();newsAdmin();entRow()}catch(e){console.warn(e)}return r};
 // ===== サブページの「もどる」ボタン =====
-const SUBP=['photo','board','blog','news','zukan','mypage'];let lastMain='hero';
+const SUBP=['photo','board','blog','news','zukan','mypage','cinema'];let lastMain='hero';window.KQ_SUB={last:()=>lastMain};
 const _r6=render;render=function(){if(!SUBP.includes(tab))lastMain=tab;const r=_r6.apply(this,arguments);try{backBtn()}catch(e){console.warn(e)}return r};
 {const _b=vBoard,_g=vBlog,_p=vPhoto,_n=vNews;vBoard=function(){const r=_b.apply(this,arguments);backBtn();return r};vBlog=function(){const r=_g.apply(this,arguments);backBtn();return r};vPhoto=function(){const r=_p.apply(this,arguments);backBtn();return r};vNews=function(){const r=_n.apply(this,arguments);backBtn();return r}}
 function backBtn(){if(!SUBP.includes(tab)||document.getElementById('subback'))return;const v=document.getElementById('view');if(!v)return;
@@ -2841,6 +2841,6 @@ window.bkRefresh=()=>{if(ADMIN)loadAdmin(1);else loadGuest(1)};
 const _rY=render;render=function(){const r=_rY.apply(this,arguments);try{panelA();panelG()}catch(e){console.warn(e)}return r};
 let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='trainer'||AUTH.role==='member')&&AUTH.user){clearInterval(w);try{render()}catch(e){}}if(tries>40)clearInterval(w)},500);
 })();
-</script>
+</script><script src="cinema.js"></script>
 </body>
 </html>
