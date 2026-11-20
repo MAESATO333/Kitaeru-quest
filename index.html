@@ -511,6 +511,9 @@ body.trmode header{background:linear-gradient(180deg,#ffd27a,#ffe9b0)!important}
 .yrm{background:#fffbe0;border:3px solid #f5a524;border-radius:14px;padding:8px 10px;margin-bottom:10px}.yrm h3{margin:0 0 6px;font-size:14px;color:#a85a00}.yrmi{background:#fff;border-radius:10px;padding:8px;margin-top:6px;display:flex;flex-direction:column;gap:4px}.yrmi p,.gyrm p{margin:0;font-weight:800;color:#33501a;line-height:1.5}
 .gyrm{background:#fffbe0;border:3px solid #f5a524;border-radius:16px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}.gyrm p{font-size:16px}.gyrm small{color:#6f7a5c}
 .yai{font-size:13px;font-weight:900;color:#c2185b;background:#ffeaf3;border-radius:999px;padding:3px 10px;align-self:flex-start}.yaib{background:#e0457b!important;box-shadow:0 3px 0 #9c2452!important;align-self:flex-start}
+.ypill.bk-cxl{background:#b3261e;color:#fff}.yrow.bk-cxl{border-color:#b3261e;background:#fff1ef}
+.gyli{flex-direction:column;align-items:stretch!important}.gyl1{display:flex;gap:8px;align-items:center}.gyl2{display:flex;gap:6px;flex-wrap:wrap}.gyl2 .yb{padding:5px 10px;font-size:12px}
+.gyreq{display:flex;flex-direction:column;gap:6px;background:#fffbe6;border-radius:10px;padding:8px;margin-top:4px}.gyreq b{font-size:13px;color:#8a5200}.gyreq label{display:flex;flex-direction:column;font-size:12px;font-weight:800;color:#6f7a5c}.gyreq input,.gyreq select,.gyreq textarea{font:inherit;font-size:15px;border:2px solid #d7e7b4;border-radius:10px;padding:6px;width:100%;box-sizing:border-box;background:#fff}.gydw{color:#e8452c;font-weight:800}
 </style>
 
 </head>
@@ -2589,9 +2592,9 @@ render();
 (function(){
 const SD=[['3Bスタジオ',2],['第一スタジオ',2],['4Fスタジオ',1]],cap=n=>(SD.find(x=>x[0]===n)||[0,1])[1];
 const PRG=['加圧トレ','マシントレーニング','YOGA','食事セラピー','カパラバティ','有酸素'];
-const WD='日月火水木金土',CLOSE='22:00',LIVE=['kari','gok','kaku','hen'];
+const WD='日月火水木金土',CLOSE='22:00',LIVE=['kari','gok','kaku','hen','cxl'];
 const SLOTS=(()=>{const a=[];for(let m=9*60;m<22*60;m+=15)a.push(`${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`);return a})();
-const ST={kari:['仮予約・ゲスト承認まち','bk-kari'],gok:['ゲスト承認ずみ・最終承認まち','bk-gok'],kaku:['本予約','bk-kaku'],hen:['変更のお願い','bk-hen'],tori:['取り消し','bk-tori'],rai:['来館','bk-rai'],fu:['不在','bk-fu']};
+const ST={kari:['仮予約・ゲスト承認まち','bk-kari'],gok:['ゲスト承認ずみ・最終承認まち','bk-gok'],kaku:['本予約','bk-kaku'],hen:['日時の変更希望','bk-hen'],cxl:['キャンセル申請','bk-cxl'],tori:['取り消し','bk-tori'],rai:['来館','bk-rai'],fu:['不在','bk-fu']};
 const P2=n=>String(n).padStart(2,'0'),iso=d=>`${d.getFullYear()}-${P2(d.getMonth()+1)}-${P2(d.getDate())}`,today=()=>iso(new Date());
 const jp=(date,time)=>{const d=new Date(date+'T00:00');return `${d.getMonth()+1}月${d.getDate()}日（${WD[d.getDay()]}）${time?' '+time:''}`};
 const end=(t,min)=>{const [h,m]=t.split(':').map(Number),x=h*60+m+min;return `${P2(Math.floor(x/60))}:${P2(x%60)}`};
@@ -2636,7 +2639,8 @@ function drawAdmin(){const s=document.getElementById('yoy');if(!s)return;
    <div class="ysum">
     <button type="button" data-bf="" class="${!f?'on':''}">すべて <b>${up.length}</b></button>
     <button type="button" data-bf="gok" class="${f==='gok'?'on':''} ${n('gok')?'hot':''}">最終承認まち <b>${n('gok')}</b></button>
-    <button type="button" data-bf="hen" class="${f==='hen'?'on':''} ${n('hen')?'hot':''}">変更のお願い <b>${n('hen')}</b></button>
+    <button type="button" data-bf="hen" class="${f==='hen'?'on':''} ${n('hen')?'hot':''}">日時の変更希望 <b>${n('hen')}</b></button>
+    <button type="button" data-bf="cxl" class="${f==='cxl'?'on':''} ${n('cxl')?'hot':''}">キャンセル申請 <b>${n('cxl')}</b></button>
     <button type="button" data-bf="kari" class="${f==='kari'?'on':''}">ゲスト承認まち <b>${n('kari')}</b></button>
     <button type="button" data-bf="kaku" class="${f==='kaku'?'on':''}">本予約 <b>${n('kaku')}</b>${nT?`<i>今日 ${nT}</i>`:''}</button></div>
    ${(()=>{const R=up.filter(remindOn);return R.length?`<div class="yrm"><h3>🔔 2日前のお知らせ（ゲストにも同じものが届いています）</h3>${R.map(r=>`<div class="yrmi"><b>${E(r.gname)}さん・担当 ${E(r.tr)}</b><p>${E(rmText(r))}</p>${aiLine(r)}${r.aiT?'':`<button type="button" class="yb yaib" data-ait="${r.id}">💗 愛だね！を返す</button>`}</div>`).join('')}</div>`:''})()}
@@ -2649,21 +2653,33 @@ function drawAdmin(){const s=document.getElementById('yoy');if(!s)return;
   form();bindRows(s)}
 function row(r){const[s,c]=ST[r.st]||[r.st,''],act=LIVE.includes(r.st),td=r.date===today();
   return `<li class="yrow ${c}"><div class="yr1"><span class="ypill ${c}">${s}</span><b>${E(r.gname)}さん</b></div>
-   <div class="yr2"><b>${jp(r.date,r.time)}〜${end(r.time,r.min)}</b>${td?' <i class="ytd">今日</i>':''}<br>🏠 ${E(r.studio)}・${E(r.prog)}・担当 ${E(r.tr)}${r.memo?`<br><small>メモ：${E(r.memo)}</small>`:''}${r.req?`<br><small class="yreq">💬 ゲストより：${E(r.req)}</small>`:''}${r.cwhy?`<br><small>取り消し理由：${E(r.cwhy)}</small>`:''}${r.finBy?`<br><small>最終承認：${E(r.finBy)}</small>`:''}</div>
-   <div class="yr3">${r.st==='gok'?`<button type="button" class="yb yfin" data-fin="${r.id}">✅ 最終承認して本予約にする</button>`:''}
+   <div class="yr2"><b>${jp(r.date,r.time)}〜${end(r.time,r.min)}</b>${td?' <i class="ytd">今日</i>':''}<br>🏠 ${E(r.studio)}・${E(r.prog)}・担当 ${E(r.tr)}${r.memo?`<br><small>メモ：${E(r.memo)}</small>`:''}${r.want?`<br><small class="yreq">🗓 ゲストの希望：${jp(r.want.date,r.want.time)}〜${end(r.want.time,r.min)}</small>`:''}${r.req?`<br><small class="yreq">💬 ゲストより：${E(r.req)}</small>`:''}${r.cwhy?`<br><small class="${r.st==='cxl'?'yreq':''}">${r.st==='cxl'?'キャンセルの理由':'取り消し理由'}：${E(r.cwhy)}</small>`:''}${r.finBy?`<br><small>最終承認：${E(r.finBy)}</small>`:''}</div>
+   <div class="yr3">${r.st==='hen'&&r.want?`<button type="button" class="yb yfin" data-wok="${r.id}">✅ この希望で承認（本予約）</button><button type="button" class="yb w" data-wno="${r.id}">お断りする</button>`:''}
+    ${r.st==='cxl'?`<button type="button" class="yb yfin" data-cok="${r.id}">✅ キャンセルを承認</button><button type="button" class="yb w" data-cno="${r.id}">お断りする（予約のまま）</button>`:''}
+    ${r.st==='gok'?`<button type="button" class="yb yfin" data-fin="${r.id}">✅ 最終承認して本予約にする</button>`:''}
     ${r.st==='kaku'&&r.date<=today()?`<button type="button" class="yb yin" data-rin="${r.id}">🚪 来館（入室）</button><button type="button" class="yb w" data-rfu="${r.id}">不在</button>`:''}
-    ${act?`<button type="button" class="yb w" data-red="${r.id}">組みなおす</button><button type="button" class="yb w" data-rcn="${r.id}">取り消す</button>`:''}</div>
+    ${act&&r.st!=='cxl'?`<button type="button" class="yb w" data-red="${r.id}">組みなおす</button><button type="button" class="yb w" data-rcn="${r.id}">取り消す</button>`:''}</div>
    <div class="ywhy" data-rw="${r.id}" hidden></div></li>`}
 function askWhy(id,q,done){const box=document.querySelector(`[data-rw="${id}"]`);if(!box)return;box.hidden=false;
   box.innerHTML=`<input type="text" placeholder="${E(q)}" aria-label="${E(q)}"><button type="button" class="yb">決定</button><button type="button" class="yb w">やめる</button><small hidden>理由を書いてください</small>`;
   const [i,ok,no]=box.querySelectorAll('input,button');i.focus();ok.onclick=()=>{const w=i.value.trim();if(!w){box.querySelector('small').hidden=false;return}done(w)};no.onclick=()=>{box.hidden=true}}
 function bindRows(s){const F=id=>BK.find(x=>x.id===id);
+  s.querySelectorAll('[data-wok]').forEach(b=>b.onclick=async()=>{const r=F(b.dataset.wok),f=Object.assign({},r,{date:r.want.date,time:r.want.time});
+    const c=BK.find(x=>x.id!==r.id&&x.tr===f.tr&&ov(x,f)),g=BK.find(x=>x.id!==r.id&&x.uid===f.uid&&ov(x,f)),fu=BK.filter(x=>x.id!==r.id&&x.studio===f.studio&&ov(x,f)).length>=cap(f.studio);
+    const ng=closed(f.date)?'火曜・水曜はお休みです':end(f.time,f.min)>CLOSE?'22:00をこえます':new Date(f.date+'T'+f.time)<new Date()?'過去の日時です':c?`${f.tr}さんはその時間に${c.gname}さんの予約があります（トレーナー1人にゲスト1人）`:g?'そのゲストはその時間に別の予約があります':fu?`${f.studio}はその時間もう${cap(f.studio)}名です`:'';
+    if(ng){alert('この希望では組めません：'+ng+'\n「組みなおす」で別の日時を送ってください。');return}
+    if(!confirm(`${r.gname}さんの予約を\n${jp(f.date,f.time)}〜${end(f.time,f.min)}　${f.studio}　${f.prog}　担当 ${f.tr}\nに変えて、本予約にしますか？`))return;
+    try{await upd(r.id,{date:f.date,time:f.time,st:'kaku',finBy:tnm(),finAt:Date.now(),want:null,req:'',prevSt:null,aiG:null,aiT:null,hist:(r.hist||[]).concat([`${jp(r.date,r.time)}→${jp(f.date,f.time)}（ゲストの希望・承認 ${tnm()}）`])});
+      news('booking',`📅 日時の変更を承認：${r.gname}さん ${jp(r.date,r.time)} → ${jp(f.date,f.time)} ${f.studio}（${tnm()}）`);say('本予約になりました')}catch(e){alert('保存できませんでした：'+(e.code||e))}loadAdmin(1)});
+  s.querySelectorAll('[data-wno]').forEach(b=>b.onclick=()=>{const r=F(b.dataset.wno);askWhy(r.id,'お断りの理由（ゲストに届きます）',async w=>{try{await upd(r.id,{st:r.prevSt||'kari',want:null,req:'',prevSt:null,nwhy:w});news('booking',`📅 日時の変更希望をお断り：${r.gname}さん（理由：${w}／${tnm()}）`)}catch(e){alert('保存できませんでした：'+(e.code||e))}loadAdmin(1)})});
+  s.querySelectorAll('[data-cok]').forEach(b=>b.onclick=async()=>{const r=F(b.dataset.cok);if(!confirm(`${r.gname}さんの ${jp(r.date,r.time)} の予約のキャンセルを承認しますか？`))return;try{await upd(r.id,{st:'tori',cBy:tnm(),cAt:Date.now(),prevSt:null});news('booking',`📅 キャンセルを承認：${r.gname}さん ${jp(r.date,r.time)} ${r.studio}（理由：${r.cwhy||''}／${tnm()}）`);say('キャンセルを承認しました')}catch(e){alert('保存できませんでした：'+(e.code||e))}loadAdmin(1)});
+  s.querySelectorAll('[data-cno]').forEach(b=>b.onclick=()=>{const r=F(b.dataset.cno);askWhy(r.id,'お断りの理由（ゲストに届きます）',async w=>{try{await upd(r.id,{st:r.prevSt||'kaku',cwhy:'',prevSt:null,nwhy:w});news('booking',`📅 キャンセル申請をお断り：${r.gname}さん ${jp(r.date,r.time)}（理由：${w}／${tnm()}）`)}catch(e){alert('保存できませんでした：'+(e.code||e))}loadAdmin(1)})});
   s.querySelectorAll('[data-fin]').forEach(b=>b.onclick=async()=>{const r=F(b.dataset.fin);b.disabled=true;try{await upd(r.id,{st:'kaku',finBy:tnm(),finAt:Date.now()});news('booking',`📅 本予約が成立：${r.gname}さん ${jp(r.date,r.time)} ${r.studio}（${r.prog}・担当 ${r.tr}／最終承認 ${tnm()}）`);say('本予約になりました')}catch(e){alert('保存できませんでした：'+(e.code||e))}loadAdmin(1)});
   s.querySelectorAll('[data-rin]').forEach(b=>b.onclick=async()=>{const r=F(b.dataset.rin);try{await upd(r.id,{st:'rai',inAt:Date.now(),inBy:tnm()});const ms=(S.members||[]).filter(m=>!m.tr&&m.name===r.gname);if(ms.length===1&&!ms[0].visits?.includes?.(ymd(new Date()))){const sc=S.current;doCheckin(ms[0]);S.current=sc;save()}say(`🚪 ${r.gname}さん 来館しました`)}catch(e){alert('保存できませんでした：'+(e.code||e))}loadAdmin(1)});
   s.querySelectorAll('[data-rfu]').forEach(b=>b.onclick=async()=>{const r=F(b.dataset.rfu);if(!confirm(`${r.gname}さんを「不在（来なかった）」にしますか？`))return;try{await upd(r.id,{st:'fu',fuBy:tnm()});news('booking',`📅 不在：${r.gname}さん ${jp(r.date,r.time)}（担当 ${r.tr}）`)}catch(e){alert('保存できませんでした：'+(e.code||e))}loadAdmin(1)});
   s.querySelectorAll('[data-rcn]').forEach(b=>b.onclick=()=>{const r=F(b.dataset.rcn);askWhy(r.id,'取り消す理由（ゲストにも届きます）',async w=>{try{await upd(r.id,{st:'tori',cwhy:w,cBy:tnm(),cAt:Date.now()});news('booking',`📅 予約の取り消し：${r.gname}さん ${jp(r.date,r.time)}（理由：${w}／${tnm()}）`);say('取り消しました')}catch(e){alert('保存できませんでした：'+(e.code||e))}loadAdmin(1)})});
   s.querySelectorAll('[data-red]').forEach(b=>b.onclick=()=>{const r=F(b.dataset.red),go=w=>{window._bkEdit={id:r.id,why:w};window._bkD=Object.assign({},r,{_back:1});drawAdmin();document.getElementById('yform').scrollIntoView({behavior:'smooth',block:'start'})};
-    if(r.st==='hen')go('ゲストからの変更のお願い（'+(r.req||'')+'）');else askWhy(r.id,r.st==='kari'?'組みなおす理由（ゲストに届きます）':'承認ずみの予約を変える理由（ゲストに届きます）',go)})}
+    if(r.st==='hen')go('ゲストからの変更の希望'+(r.want?'（'+jp(r.want.date,r.want.time)+'）':'')+(r.req?'：'+r.req:''));else askWhy(r.id,r.st==='kari'?'組みなおす理由（ゲストに届きます）':'承認ずみの予約を変える理由（ゲストに届きます）',go)})}
 function form(){const A=document.getElementById('yform');if(!A)return;const ed=window._bkEdit,D=window._bkD;
   if(!D){A.innerHTML=`<button type="button" class="ynew" id="ynew">＋ 予約を組む</button>`;A.querySelector('#ynew').onclick=()=>{window._bkD={_back:1};drawAdmin()};return}
   if(!D._back){const f=D,skip=ed&&ed.id,c=BK.find(r=>r.id!==skip&&r.tr===f.tr&&ov(r,f)),me2=BK.find(r=>r.id!==skip&&r.uid===f.uid&&ov(r,f)),fu=BK.filter(r=>r.id!==skip&&r.studio===f.studio&&ov(r,f)),full=fu.length>=cap(f.studio),
@@ -2717,23 +2733,30 @@ function panelG(){if(ADMIN||tab!=='hero')return;if(!window.AUTH||!AUTH.user||AUT
   let s=document.getElementById('gyoy');if(!s){s=document.createElement('section');s.id='gyoy';s.className='gyoy';v.insertBefore(s,v.firstChild)}
   if(!GB)loadGuest(1);drawGuest()}
 function drawGuest(){const s=document.getElementById('gyoy');if(!s||!GB)return;const t0=today(),mine=GB.filter(r=>r.date>=t0).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)),
-   wait=mine.filter(r=>r.st==='kari'),gw=mine.filter(r=>r.st==='gok'),fx=mine.filter(r=>r.st==='kaku'),oth=mine.filter(r=>['hen','tori'].includes(r.st));
+   wait=mine.filter(r=>r.st==='kari'),gw=mine.filter(r=>r.st==='gok'),fx=mine.filter(r=>r.st==='kaku'),oth=mine.filter(r=>['hen','cxl','tori'].includes(r.st));
   if(!mine.length){s.innerHTML='';s.hidden=true;return}s.hidden=false;
   try{const k='kq-rm-'+today();if(mine.some(remindOn)&&!localStorage.getItem(k)){localStorage.setItem(k,'1');setTimeout(()=>say('🔔 トレーニングのお知らせが届いています'),500)}}catch(e){}
   const line=r=>`<b>${jp(r.date,r.time)}〜${end(r.time,r.min)}</b><br><small>🏠 ${E(r.studio)}・${E(r.prog)}・担当 ${E(r.tr)}</small>`;
   const RM=mine.filter(remindOn);
-  s.innerHTML=`${RM.map(r=>`<div class="gyrm"><div class="gyh">🔔 トレーニングのお知らせ</div><p>${E(rmText(r))}</p><small>担当：${E(r.tr)}トレーナー</small>${aiLine(r)}${r.aiG?'':`<button type="button" class="yb yaib" data-aig="${r.id}">💗 愛だね！を返す</button>`}</div>`).join('')}${wait.map(r=>`<div class="gyn"><div class="gyh">🔔 予約の確認をお願いします</div><div class="gyw">${jp(r.date,r.time)}〜${end(r.time,r.min)}<small>🏠 ${E(r.studio)}　${E(r.prog)}　担当：${E(r.tr)}${r.memo?'<br>ひとこと：'+E(r.memo):''}${r.why?'<br>変更の理由：'+E(r.why):''}</small></div>
+  s.innerHTML=`${RM.map(r=>`<div class="gyrm"><div class="gyh">🔔 トレーニングのお知らせ</div><p>${E(rmText(r))}</p><small>担当：${E(r.tr)}トレーナー</small>${aiLine(r)}${r.aiG?'':`<button type="button" class="yb yaib" data-aig="${r.id}">💗 愛だね！を返す</button>`}</div>`).join('')}${wait.map(r=>`<div class="gyn"><div class="gyh">🔔 予約の確認をお願いします</div><div class="gyw">${jp(r.date,r.time)}〜${end(r.time,r.min)}<small>🏠 ${E(r.studio)}　${E(r.prog)}　担当：${E(r.tr)}${r.memo?'<br>ひとこと：'+E(r.memo):''}${r.why?'<br>変更の理由：'+E(r.why):''}${r.nwhy?'<br>トレーナーより：'+E(r.nwhy):''}</small></div>
      <div class="yrow3"><button type="button" class="yb yok" data-gok="${r.id}">✅ 承認する</button><button type="button" class="yb w" data-gch="${r.id}">日時を変えてほしい</button></div><div data-gcf="${r.id}" hidden></div>
      <small class="muted">1件ずつ「承認する」を押してください。そのあとトレーナーが最終承認すると「本予約」になります。</small></div>`).join('')}
    <div class="gyl"><h3>📅 わたしの予約</h3>
-    ${fx.length?`<ul>${fx.map(r=>`<li class="bk-kaku"><span class="ypill bk-kaku">本予約</span><span>${line(r)}</span></li>`).join('')}</ul>`:'<p class="muted">本予約はまだありません。</p>'}
-    ${gw.length?`<h4>⏳ トレーナーの最終承認まち</h4><ul>${gw.map(r=>`<li class="bk-gok"><span class="ypill bk-gok">承認しました</span><span>${line(r)}</span></li>`).join('')}</ul>`:''}
-    ${oth.length?`<h4>おしらせ</h4><ul>${oth.map(r=>`<li class="${ST[r.st][1]}"><span class="ypill ${ST[r.st][1]}">${r.st==='hen'?'変更をお願い中':'取り消し'}</span><span>${line(r)}${r.st==='tori'&&r.cwhy?`<br><small>理由：${E(r.cwhy)}</small>`:''}</span></li>`).join('')}</ul>`:''}</div>`;
+    ${fx.length?`<ul>${fx.map(r=>`<li class="bk-kaku gyli"><div class="gyl1"><span class="ypill bk-kaku">本予約</span><span>${line(r)}${r.nwhy?`<br><small>トレーナーより：${E(r.nwhy)}</small>`:''}</span></div><div class="gyl2"><button type="button" class="yb w" data-gch="${r.id}">🗓 日時を変えたい</button><button type="button" class="yb w" data-gcx="${r.id}">キャンセル申請</button></div><div data-gcf="${r.id}" hidden></div></li>`).join('')}</ul>`:'<p class="muted">本予約はまだありません。</p>'}
+    ${gw.length?`<h4>⏳ トレーナーの最終承認まち</h4><ul>${gw.map(r=>`<li class="bk-gok gyli"><div class="gyl1"><span class="ypill bk-gok">承認しました</span><span>${line(r)}</span></div><div class="gyl2"><button type="button" class="yb w" data-gch="${r.id}">🗓 日時を変えたい</button><button type="button" class="yb w" data-gcx="${r.id}">キャンセル申請</button></div><div data-gcf="${r.id}" hidden></div></li>`).join('')}</ul>`:''}
+    ${oth.length?`<h4>おしらせ</h4><ul>${oth.map(r=>`<li class="${ST[r.st][1]}"><span class="ypill ${ST[r.st][1]}">${r.st==='hen'?'変更の希望を送信中':r.st==='cxl'?'キャンセル申請中':'取り消し'}</span><span>${line(r)}${r.st==='hen'&&r.want?`<br><small>希望：${jp(r.want.date,r.want.time)}〜（トレーナーの承認まち）</small>`:''}${r.st==='cxl'?'<br><small>トレーナーが承認すると、キャンセルになります</small>':''}${r.st==='tori'&&r.cwhy?`<br><small>理由：${E(r.cwhy)}</small>`:''}</span></li>`).join('')}</ul>`:''}</div>`;
   s.querySelectorAll('[data-aig]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{await upd(b.dataset.aig,{aiG:Date.now()});say('💗 愛だね！を返しました')}catch(e){alert('送れませんでした：'+(e.code||e));b.disabled=false}loadGuest(1)});
   s.querySelectorAll('[data-gok]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{await upd(b.dataset.gok,{st:'gok',gAt:Date.now()});say('✅ 承認しました！トレーナーの最終承認をお待ちください')}catch(e){alert('送れませんでした：'+(e.code||e));b.disabled=false}loadGuest(1)});
-  s.querySelectorAll('[data-gch]').forEach(b=>b.onclick=()=>{const id=b.dataset.gch,box=s.querySelector(`[data-gcf="${id}"]`);box.hidden=false;
-    box.innerHTML=`<textarea rows="2" maxlength="80" placeholder="例：木曜の夕方だとうれしいです" aria-label="希望の日時"></textarea><button type="button" class="yb">トレーナーに送る</button>`;
-    box.querySelector('button').onclick=async()=>{const t=box.querySelector('textarea').value.trim()||'別の日時を希望します';try{await upd(id,{st:'hen',req:t,gAt:Date.now()});say('トレーナーに送りました')}catch(e){alert('送れませんでした：'+(e.code||e))}loadGuest(1)}})}
+  const R0=id=>GB.find(x=>x.id===id);
+  s.querySelectorAll('[data-gch]').forEach(b=>b.onclick=()=>{const id=b.dataset.gch,r=R0(id),box=s.querySelector(`[data-gcf="${id}"]`);box.hidden=false;box.className='gyreq';
+    box.innerHTML=`<b>🗓 希望の日と時間をトレーナーに送る</b><div class="yg2"><label>希望日<input type="date" min="${today()}" value="${r.date}"></label><label>開始<select>${SLOTS.map(t=>`<option ${t===r.time?'selected':''}>${t}</option>`).join('')}</select></label></div><small class="gydw"></small><textarea rows="2" maxlength="80" placeholder="ひとこと（なくてもOK）" aria-label="ひとこと"></textarea><div class="yrow3"><button type="button" class="yb w">やめる</button><button type="button" class="yb">トレーナーに送る</button></div><small class="muted">トレーナーが承認すると、新しい日時で予約が決まります。</small>`;
+    const di=box.querySelector('input'),ti=box.querySelector('select'),dw=box.querySelector('.gydw'),[no,go]=box.querySelectorAll('.yrow3 button'),chk=()=>{const c=closed(di.value),l=end(ti.value,r.min)>CLOSE;dw.textContent=c?'⛔ 火曜・水曜はお休みです':l?'⛔ 22:00までに終わる時間を選んでください':'';go.disabled=!di.value||c||l};di.oninput=chk;ti.onchange=chk;chk();
+    no.onclick=()=>{box.hidden=true};
+    go.onclick=async()=>{go.disabled=true;try{await upd(id,{st:'hen',want:{date:di.value,time:ti.value},req:box.querySelector('textarea').value.trim(),prevSt:r.st,gAt:Date.now()});say('🗓 希望をトレーナーに送りました')}catch(e){alert('送れませんでした：'+(e.code||e));go.disabled=false}loadGuest(1)}});
+  s.querySelectorAll('[data-gcx]').forEach(b=>b.onclick=()=>{const id=b.dataset.gcx,r=R0(id),box=s.querySelector(`[data-gcf="${id}"]`);box.hidden=false;box.className='gyreq';
+    box.innerHTML=`<b>キャンセル申請（${jp(r.date,r.time)}）</b><textarea rows="2" maxlength="80" placeholder="理由（例：体調がすぐれないため）" aria-label="キャンセルの理由"></textarea><div class="yrow3"><button type="button" class="yb w">やめる</button><button type="button" class="yb">キャンセル申請を送る</button></div><small class="muted">トレーナーが承認すると、キャンセルが成立します。</small>`;
+    const [no,go]=box.querySelectorAll('.yrow3 button'),ta=box.querySelector('textarea');no.onclick=()=>{box.hidden=true};
+    go.onclick=async()=>{const w=ta.value.trim();if(!w){ta.focus();ta.placeholder='理由を書いてください';return}go.disabled=true;try{await upd(id,{st:'cxl',cwhy:w,prevSt:r.st,gAt:Date.now()});say('キャンセル申請を送りました')}catch(e){alert('送れませんでした：'+(e.code||e));go.disabled=false}loadGuest(1)}})}
 window.bkRefresh=()=>{if(ADMIN)loadAdmin(1);else loadGuest(1)};
 const _rY=render;render=function(){const r=_rY.apply(this,arguments);try{panelA();panelG()}catch(e){console.warn(e)}return r};
 let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='trainer'||AUTH.role==='member')&&AUTH.user){clearInterval(w);try{render()}catch(e){}}if(tries>40)clearInterval(w)},500);
