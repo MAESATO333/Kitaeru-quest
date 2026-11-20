@@ -1846,7 +1846,7 @@ boot().then(()=>{
     AUTH.user=u;let role='member',name='';
     const isG=(u.providerData||[]).some(p=>p&&p.providerId==='google.com')&&!(u.providerData||[]).some(p=>p&&p.providerId==='password');let ok=true;
     try{const ref=db.doc('roles/'+u.uid),d=await ref.get();if(d.exists){role=d.data().role||'member';name=d.data().name||''}
-      else if(isG){ok=false;try{const em=(u.email||'').toLowerCase();const q=await db.collection('roles').where('email','in',[u.email,em]).limit(1).get();if(!q.empty){const x=q.docs[0].data();role=x.role||'member';name=x.name||'';ok=true;try{await ref.set({role,email:u.email,name,via:'google',t:Date.now()})}catch(e){}}}catch(e){console.warn(e)}}
+      else if(isG){ok=false;try{const em=(u.email||'').toLowerCase();const g=await db.doc('roles/g_'+em).get();if(g.exists){const x=g.data();role=x.role||'member';name=x.name||'';ok=true;try{await ref.set({role,email:u.email,name,via:'google',t:Date.now()})}catch(e){}}}catch(e){console.warn(e)}}
       else{try{await ref.set({role:'trainer',email:u.email,name:'オーナー',t:Date.now()});role='trainer'}catch(e){}}}catch(e){console.warn(e)}
     if(!ok){msg('このGoogleアカウントは、ジムに登録されていません。受付でお声がけください。');await auth.signOut();return}
     AUTH.role=role;AUTH.name=name;document.body.classList.remove('locked');applyRole();
