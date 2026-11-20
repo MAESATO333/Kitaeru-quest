@@ -329,7 +329,7 @@ canvas.buddy{position:absolute!important;inset:auto 0% 2% auto!important;width:2
 header .whol{order:9;flex-basis:100%;display:flex;flex-direction:row;gap:8px;align-items:center;background:#fff;border:3px solid #2f6d2a;border-radius:14px;padding:6px 10px;margin-top:2px}header .whol .dd{flex:1;display:block}header .whol select{flex:1}.whol>span{background:#2f6d2a;color:#fff;font-size:12px;font-weight:800;border-radius:999px;padding:4px 10px;white-space:nowrap}.whol select,.whol .dd .ddb{font-size:18px!important;font-weight:800}
 .tnbox{margin:16px 0 8px;display:flex!important;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:3px solid #3f9a3a;border-radius:14px;padding:10px 12px}.tnbox .tnl{background:#3f9a3a;color:#fff;font-weight:800;font-size:14px;border-radius:999px;padding:4px 12px}.tnbox select{font-size:20px;font-weight:800;flex:1;min-width:140px;color:var(--ink);background:#fff;border:2px solid #3f9a3a;border-radius:12px;padding:8px 10px}
 .hwn{font-weight:800;font-size:19px;display:flex;align-items:center;gap:6px;margin-bottom:2px}.hwn small{background:#e8a33c;color:#fff;font-size:11px;border-radius:999px;padding:2px 8px}.hwn span{font-size:13px;font-weight:600;color:var(--muted)}
-body.member .whol{display:none!important}
+
 .cxtrash{display:block;width:100%;margin:6px 0 4px;border:2px solid #e8452c;color:#e8452c;background:#fff;border-radius:12px;padding:9px 12px;font-weight:800;font-size:14px;cursor:pointer;text-align:center}.cxtrash.armed{background:#e8452c;color:#fff}
 .cxback summary{cursor:pointer;font-size:12px;color:var(--muted);text-decoration:underline;margin:2px 0 4px}.cxback ul{list-style:none;margin:6px 0;padding:6px 8px;border:1px solid #eee;border-radius:10px;background:#fff;max-height:180px;overflow:auto}.cxback li{display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid #f2f2f2;font-size:14px}.cxback li span{flex:1}.cxback li button{border:1px solid #3f9a3a;color:#3f9a3a;background:#fff;border-radius:8px;padding:3px 8px;font-size:12px}
 header .whol{order:0!important;flex-basis:auto!important;flex:0 0 auto;padding:2px 3px 2px 3px!important;border-width:2px!important;border-radius:999px!important;margin:0!important;gap:4px!important;max-width:220px}
@@ -345,6 +345,14 @@ header .whol>.dd{background:none!important;padding:0!important;border-radius:999
 .gmcyc{margin:4px 0 8px;border:2px dashed #9ccc3c;border-radius:12px;padding:6px 10px;background:#fff}.gmcyc summary{cursor:pointer;font-weight:800;font-size:13px;color:#2f6d2a}.gmc{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin:8px 0 4px}.gmc span{background:#eaf5d3;border-radius:999px;padding:3px 9px;font-size:12px;font-weight:700}.gmc i{font-style:normal;color:#9ccc3c;font-size:11px}.gmcyc p{font-size:12px;color:var(--muted);margin:4px 0}
 .hwlong{font-weight:500!important;font-size:14px;line-height:1.75;max-height:22em;overflow:auto;white-space:pre-wrap;background:#fffdf5;border-radius:10px;padding:8px 10px;margin-bottom:6px}.card.hw:has(.hwlong){flex-direction:column;align-items:stretch}
 header #modeBtn,header>.hbr{display:none!important}body.member nav [data-t="guild"]{display:none!important}.tnbox{display:flex!important;width:fit-content;margin-left:auto!important}
+body.guestv header .whol>.dd,body.guestv #who{display:none!important}body.adminv #whoName{display:none}
+.whon{font-size:14px;font-weight:800;color:var(--ink,#2b3a1e);padding:3px 12px 3px 6px;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis}
+.admb{display:none}body.adminv .admb{display:inline-block;order:-1;background:#7a2350;color:#fff;font-size:11px;font-weight:800;border-radius:999px;padding:3px 10px;white-space:nowrap;align-self:center}
+body.adminv header{box-shadow:inset 0 -4px 0 #9b2f5e}
+.pvsw{position:fixed;left:8px;bottom:96px;z-index:60;display:flex;gap:2px;background:#fff;border:2px solid #2f6d2a;border-radius:999px;padding:2px;font-size:11px;font-weight:800;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.pvsw span{padding:3px 6px;color:#2f6d2a}.pvsw a{padding:3px 9px;border-radius:999px;color:#2f6d2a;text-decoration:none}.pvsw a.on{background:#2f6d2a;color:#fff}
+body.adminv .pvsw a.on{background:#9b2f5e}
+.admintro{background:#fbeef4;border:2px solid #e3b4cb;border-radius:14px;padding:8px 12px;font-size:12.5px;line-height:1.6;color:#5a2440;margin:10px 0 4px}
 </style>
 
 </head>
@@ -352,7 +360,7 @@ header #modeBtn,header>.hbr{display:none!important}body.member nav [data-t="guil
 <div class="app">
   <header>
     <div class="logo"><div class="vlogo" role="img" aria-label="キタエル・クエスト"><b>キタエル・クエスト</b><span>KITAERU <i>●</i> QUEST</span></div><small style="color:var(--leaf);font-weight:700">試作版</small></div>
-    <label class="whol"><span>ゲスト</span><select id="who" aria-label="表示するゲスト"></select></label>
+    <span id="admBadge" class="admb">トレーナー管理ページ</span><label class="whol"><span>ゲスト</span><select id="who" aria-label="表示するゲスト"></select><b id="whoName" class="whon"></b></label>
     <button id="hwBtn" class="mode" type="button">宿題</button><i class="hbr"></i><button id="modeBtn" class="mode" type="button">トレーナー</button>
   </header>
   <main id="view"></main>
@@ -461,6 +469,9 @@ function seed(){
 let S;
 try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 if(!S||!S.members)S=seed();
+// 管理ページ（/admin）か、ゲストのふつうの画面か
+const ADMIN=/^\/admin\/?$/.test(location.pathname)||/[?&]admin=1/.test(location.search);
+document.body.classList.add(ADMIN?'adminv':'guestv');S.trainerMode=ADMIN;
 S.members.forEach(x=>{if(x.id==='me'&&x.name==='あなた')x.name='ゲスト会員';if(x.titles)x.titles=x.titles.filter(t=>t!=='カレー狂い人間')});
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 
@@ -1237,17 +1248,18 @@ function gain(m,stat,xp,text,extra={}){
 }
 
 // ---------- views ----------
-let tab='hero', logType='lift';
+let tab=ADMIN?'guild':'hero', logType='lift';
 const NAVH={hero:['carrot','#f08a12'],log:['piman','#3f9a3a'],feed:['tomato','#e8452c'],rank:['broccoli','#2f7d32'],boss:['onion','#c99a00'],guild:['imo','#9b2f5e']};
 const TABS=[['hero','冒険者','◆'],['log','記録','＋'],['feed','キタ酒場','≡'],['rank','番付','▲'],['boss','ボス','✦']];
 function renderTabs(){
-  const list=[...TABS,['guild','評価','★']];
+  const list=ADMIN?[['guild','管理','★'],...TABS]:TABS;
   if(tab!=='zukan'&&!list.find(x=>x[0]===tab))tab='hero';
   $('#tabs').innerHTML=list.map(([k,l,i])=>{const nh=NAVH[k]||NAVH.hero;return `<button type="button" data-t="${k}" class="${k===tab?'on':''}" style="--hc:${nh[1]}"><canvas class="nh" data-hero="${nh[0]}"></canvas><span class="nl">${l}</span></button>`}).join('');
-  $('#tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;S.trainerMode=tab==='guild';save();render();window.scrollTo(0,0)});
+  $('#tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;S.trainerMode=ADMIN;save();render();window.scrollTo(0,0)});
 }
 function render(){
-  $('#who').innerHTML=visibleMembers().map(m=>`<option value="${m.id}" ${m.id===S.current?'selected':''}>${esc(m.name)}</option>`).join('');
+  $('#whoName').textContent=me().name;
+  $('#who').innerHTML=(ADMIN?S.members:[me()]).map(m=>`<option value="${m.id}" ${m.id===S.current?'selected':''}>${esc(m.name)}</option>`).join('');
   $('#modeBtn').classList.toggle('on',S.trainerMode);document.body.classList.toggle('kensa',KS());
   renderTabs();
   ({hero:vHero,log:vLog,feed:vFeed,rank:vRank,boss:vBoss,guild:vGuild,zukan:vZukan})[tab]();
@@ -1298,7 +1310,7 @@ function vHero(){
     <div class="bar" style="margin:8px 0 4px"><i style="width:${Math.min(1,visits/S.quest.goal)*100}%;background:var(--green)"></i></div>
     <div class="muted">${Math.min(visits,S.quest.goal)} / ${S.quest.goal} 回　達成で 称号チャンス＋100 EXP</div>
   </div>
-  <div class="demo">試作版です。 <button type="button" id="nextDay" style="font-size:12px;padding:3px 8px">翌日の顔ぶれを見る</button><br>会員データはデモ用で、このブラウザの中にだけ保存されます。上のメニューで会員を切り替えると、他の人の画面も見られます。 <button type="button" id="reset" style="font-size:12px;padding:3px 8px;margin-left:4px">初期化</button> <button type="button" id="kensaBtn" style="font-size:12px;padding:3px 8px;margin-left:4px">${KS()?'検査モードを終える':'検査モード（全表示）'}</button></div>`;
+  <div class="demo">試作版です。 <button type="button" id="nextDay" style="font-size:12px;padding:3px 8px">翌日の顔ぶれを見る</button><br>会員データはデモ用で、このブラウザの中にだけ保存されます。ほかのゲストの画面は、トレーナーの管理ページから見られます。 <button type="button" id="reset" style="font-size:12px;padding:3px 8px;margin-left:4px">初期化</button> <button type="button" id="kensaBtn" style="font-size:12px;padding:3px 8px;margin-left:4px">${KS()?'検査モードを終える':'検査モード（全表示）'}</button></div>`;
   drawScene($('#sp'),m);
   document.querySelectorAll('canvas[data-food]').forEach(c=>paintFood(c,c.dataset.food));
   const bb=$('#bonus');if(bb)bb.onclick=()=>{const fk=foodOfDay(),f=FOODS[fk];S.bonusDay=dayKey();const t=giveFood(m,fk);gain(m,f.stat,fxp(f),`今日のごはん「${f.name}」を食べた`);if(t)overlay('称号ゲット！',`${f.name}を10こ集めて「${t}」になりました`);vHero();};
@@ -1611,8 +1623,8 @@ function vGuild(){
 
 $('#who').onchange=e=>{S.current=e.target.value;save();render()};
 window.kensaToggle=()=>{S.kensa=!KS();save();render();toast(KS()?'検査モード：ぜんぶ表示します':'ふつうの表示にもどしました')};
-$('#hwBtn').onclick=()=>{const tr=S.trainerMode;tab=tr?'guild':'hero';render();setTimeout(()=>{const h=[...document.querySelectorAll('#view h2')].find(x=>x.textContent.includes(tr?'宿題を出す':'トレーナーからの宿題'));if(h)h.scrollIntoView({behavior:'smooth',block:'start'})},80)};
-$('#modeBtn').onclick=()=>{S.trainerMode=!S.trainerMode;if(S.trainerMode)tab='guild';save();render()};
+$('#hwBtn').onclick=()=>{const tr=ADMIN;tab=tr?'guild':'hero';render();setTimeout(()=>{const h=[...document.querySelectorAll('#view h2')].find(x=>x.textContent.includes(tr?'宿題を出す':'トレーナーからの宿題'));if(h)h.scrollIntoView({behavior:'smooth',block:'start'})},80)};
+$('#modeBtn').onclick=()=>{};
 render();
 
 // ===== まとめて記録（1回のトレーニングで複数種目） =====
@@ -1759,13 +1771,13 @@ if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.s
 const LOCK=false;let ON=/[?&]login=1/.test(location.search);try{if(ON)localStorage.setItem('kq-login','1');if(/[?&]login=0/.test(location.search))localStorage.removeItem('kq-login');ON=ON||localStorage.getItem('kq-login')==='1'}catch(e){}ON=ON||(LOCK&&/\.web\.app$|\.firebaseapp\.com$/.test(location.hostname));
 window.AUTH={on:ON,user:null,role:null};
 if(!ON)return;
-document.body.classList.add('locked');
+document.body.classList.add('locked');if(ADMIN){const gs=document.querySelector('#gate .gs');if(gs)gs.textContent='トレーナー専用 管理ページ';}
 const $g=id=>document.getElementById(id),msg=(t,ok)=>{const m=$g('gmsg');m.textContent=t||'';m.className='gm'+(ok?' ok':'')};
 const JA=e=>{const c=(e&&e.code)||'';return {'auth/invalid-credential':'メールアドレスかパスワードがちがいます','auth/wrong-password':'メールアドレスかパスワードがちがいます','auth/user-not-found':'メールアドレスかパスワードがちがいます','auth/invalid-email':'メールアドレスの形がちがいます','auth/too-many-requests':'何度も失敗したので、しばらく待ってからお試しください','auth/network-request-failed':'インターネットにつながっていません','auth/email-already-in-use':'このメールアドレスはもう登録されています','auth/weak-password':'パスワードは6文字以上にしてください','auth/operation-not-allowed':'ログイン方法がまだ有効になっていません（Firebaseの設定が必要です）','auth/configuration-not-found':'ログイン機能がまだ有効になっていません（Firebaseの設定が必要です）','permission-denied':'権限がありません（Firestoreのルール設定を確認してください）'}[c]||('エラー：'+(c||e&&e.message||e))};
 window.AUTH.ja=JA;
 const V='10.12.2',load=src=>new Promise((r,j)=>{const s=document.createElement('script');s.src=src;s.onload=r;s.onerror=()=>j(new Error('load '+src));document.head.appendChild(s)});
 const boot=window.__FB_BOOT||(()=>load(`/__/firebase/${V}/firebase-app-compat.js`).then(()=>Promise.all([load(`/__/firebase/${V}/firebase-auth-compat.js`),load(`/__/firebase/${V}/firebase-firestore-compat.js`)])).then(()=>load('/__/firebase/init.js')));
-function applyRole(){const tr=AUTH.role==='trainer';document.body.classList.add('signed');document.body.classList.toggle('member',!tr);if(!tr){S.trainerMode=false;S.kensa=false;S.current='me';const me0=S.members.find(x=>x.id==='me');if(me0&&AUTH.name)me0.name=AUTH.name;if(tab==='guild')tab='hero';save()}render()}
+function applyRole(){const tr=AUTH.role==='trainer';if(ADMIN&&!tr){alert('ここはトレーナー専用の管理ページです。ゲストの画面にもどります。');location.replace(window.KQ_GUEST_URL);return}document.body.classList.add('signed');document.body.classList.toggle('member',!tr);if(!tr){S.trainerMode=false;S.kensa=false;S.current='me';const me0=S.members.find(x=>x.id==='me');if(me0&&AUTH.name)me0.name=AUTH.name;if(tab==='guild')tab='hero';save()}render()}
 boot().then(()=>{
   const auth=firebase.auth(),db=firebase.firestore();
   $g('gform').onsubmit=e=>{e&&e.preventDefault&&e.preventDefault();const em=$g('gemail').value.trim(),pw=$g('gpass').value;if(!em||!pw){msg('メールアドレスとパスワードを入れてください');return false}$g('glogin').disabled=true;msg('ログインしています…',1);auth.signInWithEmailAndPassword(em,pw).catch(err=>msg(JA(err))).finally(()=>$g('glogin').disabled=false);return false};
@@ -1794,6 +1806,17 @@ function acctPanel(){const v=document.getElementById('view');if(!v||document.get
   document.getElementById('alist').ontoggle=e=>{if(e.target.open)listAcc()};
   async function listAcc(){const ul=document.querySelector('#alist ul');try{const q=await firebase.firestore().collection('roles').get();const a=[];q.forEach(x=>a.push(x.data()));ul.innerHTML=a.sort((x,y)=>(x.t||0)-(y.t||0)).map(x=>`<li><small class="${x.role==='trainer'?'':'m'}">${x.role==='trainer'?'トレーナー':'会員'}</small><span>${esc(x.name||'')} ${esc(x.email||'')}</span><button type="button" data-rs="${esc(x.email||'')}">再設定メール</button></li>`).join('')||'<li>まだありません</li>';ul.querySelectorAll('[data-rs]').forEach(b=>b.onclick=()=>firebase.auth().sendPasswordResetEmail(b.dataset.rs).then(()=>am(`${b.dataset.rs} に再設定メールを送りました`,1)).catch(err=>am(JA(err))))}catch(e){ul.innerHTML=`<li>${JA(e)}</li>`}}
 }
+})();
+</script><script>
+// お試し切替（ログインが本番になるまで／トレーナーだけ表示）と管理ページの説明
+(function(){
+const P=location.pathname,base=P.replace(/admin\/?$/,'').replace(/[^/]*$/,''),byQ=/[?&]admin=1/.test(location.search);
+window.KQ_GUEST_URL=byQ?P:base;const adminUrl=base+'admin';
+function sw(){const show=!AUTH.on||AUTH.role==='trainer';let d=document.getElementById('pvsw');if(!show){if(d)d.remove();return}
+  if(!d){d=document.createElement('div');d.id='pvsw';d.className='pvsw';document.body.appendChild(d)}
+  d.innerHTML=`<span>${AUTH.on?'切替':'お試し'}</span><a href="${KQ_GUEST_URL}" class="${ADMIN?'':'on'}">ゲスト画面</a><a href="${byQ?P+'?admin=1':adminUrl}" class="${ADMIN?'on':''}">管理ページ</a>`}
+const _r2=render;render=function(){const r=_r2.apply(this,arguments);try{sw();if(ADMIN&&tab==='guild'&&!document.getElementById('admintro')){const v=document.getElementById('view');const d=document.createElement('div');d.id='admintro';d.className='admintro';d.innerHTML='<b>トレーナー管理ページ</b>：全ゲストの宿題スタンプ・宿題出し・称号やクエストの設定ができます。右上の「ゲスト」でだれでも選べて、下のメニューでその人の画面も見られます。';v.insertBefore(d,v.firstChild)}else if(ADMIN&&tab!=='guild'&&!document.getElementById('admintro')){const v=document.getElementById('view');const d=document.createElement('div');d.id='admintro';d.className='admintro';d.innerHTML=`いま <b>${esc(me().name)}</b> さんの画面を見ています（管理ページ）`;v.insertBefore(d,v.firstChild)}}catch(e){console.warn(e)}return r};
+render();
 })();
 </script></body>
 </html>
