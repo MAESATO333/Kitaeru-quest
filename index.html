@@ -472,6 +472,12 @@ body.trmode header{background:linear-gradient(180deg,#ffd27a,#ffe9b0)!important}
 .pzq{background:#fff;border:2px dashed #7a6bb0;border-radius:10px;padding:6px 8px;font-size:13px;margin-top:6px}.pzq .rqbtn{display:flex;gap:6px;justify-content:flex-end;margin-top:6px}.pzq .rqbtn button{border:2px solid #7a6bb0;background:#fff;color:#5b4b96;border-radius:999px;padding:4px 10px;font-weight:800;font-size:12px}.pzq .rqbtn button.ok{background:#5b4b96;color:#fff}
 .pfd{margin-top:6px}.pfd summary{cursor:pointer;font-size:12px;font-weight:800;color:#2f6d2a}.pff{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}.pff label{display:flex;flex-direction:column;font-size:11px;font-weight:700;color:#33501a;gap:2px}.pff label:has(textarea){grid-column:1/-1}.pff input,.pff select,.pff textarea{border:2px solid #e3efc8;border-radius:8px;padding:5px;font-size:13px;font-family:inherit;width:100%;box-sizing:border-box}.pff .pfs{grid-column:1/-1;border:0!important;background:#33501a!important;color:#fff!important;border-radius:999px;padding:8px!important;font-weight:800;font-size:13px}.pff>small{grid-column:1/-1;font-size:11px}
 .snl li>span.snk{flex:none!important}.snl li small{background:none!important;color:#8a7fa8!important;padding:0!important}.pfd summary,.pzq{color:#33501a}.roster li small{background:none!important;color:var(--muted)!important;padding:0!important}
+.nyu{background:#fffdf0;border:3px solid #33501a;border-radius:16px;padding:10px 12px;margin:0 0 12px}.nyu h3{margin:0 0 6px;color:#33501a;font-size:17px}.nyu h3 small{font-size:11px;color:var(--muted);font-weight:600}
+.nyin{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;margin-bottom:8px}.nyin>b{width:100%;color:#2f6d2a}.nyc{background:#eaf7d8;border:2px solid #7cb342;border-radius:999px;padding:2px 4px 2px 10px;font-weight:700;display:inline-flex;align-items:center;gap:4px}.nyc small{color:var(--muted);font-weight:600}.nyc button{border:0;background:#fff;border-radius:50%;width:22px;height:22px;color:#c0392b;font-weight:800;padding:0}
+#nyq{width:100%;box-sizing:border-box;border:2px solid #cfe3a8;border-radius:12px;padding:8px 10px;font-size:15px;margin-bottom:6px}
+.nyl{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}.nyl li{background:#fff;border:2px solid #e3efc8;border-radius:12px;padding:6px 8px}.nyr{display:flex;align-items:center;gap:6px}.nyr span{flex:1;font-size:14px}.nyr small{color:var(--muted);font-size:11px}
+.nygo{border:0;background:#e8452c;color:#fff;font-weight:900;font-size:16px;border-radius:12px;padding:10px 18px;box-shadow:0 3px 0 #a8301c}.nygo:active{transform:translateY(2px);box-shadow:0 1px 0 #a8301c}.nyc2{border:2px solid #cfe3a8;background:#fff;border-radius:10px;padding:6px 8px;font-size:15px}
+.ncal{margin-top:8px;background:#f9fdf1;border-radius:10px;padding:6px}.nch{font-size:13px;font-weight:800;color:#33501a;margin-bottom:4px}.nch small{font-weight:600;color:var(--muted);font-size:11px}.ncw{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}.ncw i{font-style:normal;text-align:center;font-size:11px;border-radius:6px;padding:4px 0;background:#fff;color:#999}.ncw i.w{background:none;font-weight:800;color:#33501a}.ncw i.e{background:none}.ncw i.on{background:#7cb342;color:#fff;font-weight:800}.ncw i.on::after{content:'●';display:block;font-size:8px}.ncw i.off::after{content:'×';display:block;font-size:9px;color:#d08070}.ncw i.td{outline:2px solid #e8452c}
 </style>
 
 </head>
@@ -1503,7 +1509,7 @@ function vCourse(m){$('#view').innerHTML=`<h2>会員区別をえらぶ</h2><div 
   <p class="muted" style="font-size:12px;margin:0">あとから変えたいときは、トレーナーに伝えてください。</p></div>`;
   document.querySelectorAll('[data-cs]').forEach(b=>b.onclick=()=>{if(!confirm(`会員区別を「${cName(b.dataset.cs)}」にしますか？`))return;m.course=b.dataset.cs;logType=m.course;save();toast(`会員区別：${cName(m.course)}`);vLog()})}
 function checkedIn(m){return !!m.streak[(new Date().getDay()+6)%7]}
-function doCheckin(m){const today=(new Date().getDay()+6)%7;m.streak[today]=1;m.visits=m.visits||[];const vk=ymd(new Date());if(!m.visits.includes(vk))m.visits.push(vk);m.times=m.times||{};if(!m.times[vk]){const n=new Date(),st=n.getHours()*60+n.getMinutes();m.times[vk]=[hm(st),hm(Math.min(st+90,23*60+59))]}gain(m,'grit',20,'ジムにチェックイン')}
+function doCheckin(m){const today=(new Date().getDay()+6)%7;m.streak[today]=1;m.visits=m.visits||[];const vk=ymd(new Date());if(!m.visits.includes(vk))m.visits.push(vk);m.times=m.times||{};if(!m.times[vk]){const n=new Date(),st=n.getHours()*60+n.getMinutes();m.times[vk]=[hm(st),hm(Math.min(st+90,23*60+59))]}m.inAt=m.inAt||{};if(!m.inAt[vk])m.inAt[vk]={t:Date.now(),by:(typeof TN==='function'&&ADMIN)?TN():''};gain(m,'grit',20,'ジムに入室')}
 // ===== 健康管理室のメモ（トレーナー・看護師だけが読める。ゲストの画面には出さない） =====
 const HPROG=[['all','全体'],['lift','加圧トレ'],['yoga','YOGA'],['kapala','カパラバティ'],['meal','食事セラピー'],['cardio','有酸素']];
 const hpName=k=>(HPROG.find(x=>x[0]===k)||[,'全体'])[1];
@@ -2255,11 +2261,35 @@ function badge(){if(!ADMIN)return;const n=S.members.reduce((a,m)=>a+m.homework.f
 const _r3=render;render=function(){const r=_r3.apply(this,arguments);try{badge()}catch(e){console.warn(e)}return r};
 // トレーナーがゲストごとにつける評価（日付ごとに残る）
 const TEV=[['gb','頑張り度'],['kz','継続度'],['is','意識度'],['sk','宿題度'],['mk','目標実現度'],['nk','仲良し度']];
+// ===== 入室ボタン（トレーナーが押す）・出欠カレンダー =====
+function vDate(v){const a=String(v).split('-').map(Number);return new Date(a[0],a[1]-1,a[2],12).getTime()}
+function inToday(m){return (m.visits||[]).includes(ymd(new Date()))}
+function nyuPanel(){if(!ADMIN||tab!=='guild'||document.getElementById('nyu'))return;const v=document.getElementById('view');if(!v)return;
+  const d=document.createElement('section');d.id='nyu';d.className='nyu';v.insertBefore(d,v.firstChild);
+  const q0=()=>(document.getElementById('nyq')||{}).value||'';
+  const cal=m=>{const now=new Date(),y=now.getFullYear(),mo=now.getMonth(),days=new Date(y,mo+1,0).getDate(),first=(new Date(y,mo,1).getDay()+6)%7,vs=new Set(m.visits||[]),td=now.getDate();let n=0,c='';
+    for(let i=0;i<first;i++)c+='<i class="e"></i>';for(let dd=1;dd<=days;dd++){const k=`${y}-${mo+1}-${dd}`,on=vs.has(k);if(on)n++;c+=`<i class="${on?'on':dd<td?'off':'fu'}${dd===td?' td':''}">${dd}</i>`}
+    return `<div class="ncal"><div class="nch">📅 ${mo+1}月の出欠 <b>${n}回</b> <small>●来た　×お休み</small></div><div class="ncw">${['月','火','水','木','金','土','日'].map(w=>`<i class="w">${w}</i>`).join('')}${c}</div></div>`};
+  const draw=()=>{const q=q0(),vk=ymd(new Date()),G=S.members.filter(m=>!m.tr&&!m.left),inn=G.filter(inToday).sort((a,b)=>((b.inAt||{})[vk]||{}).t-((a.inAt||{})[vk]||{}).t),
+      lastV=m=>{const a=(m.visits||[]).map(vDate).filter(x=>!isNaN(x));return a.length?Math.max(...a):0},
+      L=G.filter(m=>!inToday(m)&&(!q||m.name.includes(q))).sort((a,b)=>lastV(b)-lastV(a)),SH=q||window._nyAll?L:L.slice(0,10),ago=m=>{const t=lastV(m);return t?Math.floor((Date.now()-t)/864e5):-1},op=window._nyCal;
+    d.innerHTML=`<h3>🚪 今日の入室 <small>ゲストが来たら「入室」を押してください</small></h3>
+     <div class="nyin">${inn.length?`<b>今日来た人 ${inn.length}人</b>${inn.map(m=>{const a=(m.inAt||{})[vk];return `<span class="nyc">✅ ${esc(m.name)}さん${a?` <small>${new Date(a.t).getHours()}:${String(new Date(a.t).getMinutes()).padStart(2,'0')}</small>`:''}<button type="button" data-nyx="${m.id}" title="入室を取り消す">×</button></span>`}).join('')}`:'<span class="muted">まだ今日入室した人はいません。</span>'}</div>
+     <input id="nyq" type="search" placeholder="🔍 名前でさがす" value="${esc(q)}">
+     <ul class="nyl">${SH.map(m=>{const a=ago(m);return `<li><div class="nyr"><span><b>${esc(m.name)}さん</b><br><small>${a<0?'まだ来館の記録がありません':a===0?'今日':`最後に来た日：${a}日前`}${a>=10?' ⚠️':''}</small></span><button type="button" class="nyc2" data-cal="${m.id}">📅</button><button type="button" class="nygo" data-ny="${m.id}">入室</button></div>${op===m.id?cal(m):''}</li>`}).join('')||'<li class="muted">見つかりません。</li>'}</ul>
+     ${!q&&L.length>10?`<button type="button" class="nwall" id="nyall">${window._nyAll?'少なく表示':`ぜんぶ表示（${L.length}人）`}</button>`:''}
+     ${op&&inn.some(m=>m.id===op)?cal(byId(op)):''}`;
+    const qi=document.getElementById('nyq');qi.oninput=()=>{const pos=qi.selectionStart;draw();const n=document.getElementById('nyq');n.focus();try{n.setSelectionRange(pos,pos)}catch(e){}};
+    d.querySelectorAll('[data-ny]').forEach(b=>b.onclick=()=>{const m=byId(b.dataset.ny),sc=S.current;doCheckin(m);S.current=sc;save();toast(`🚪 ${m.name}さん 入室しました　根性+20`);document.getElementById('nyq').value='';draw()});
+    d.querySelectorAll('[data-nyx]').forEach(b=>b.onclick=()=>{const m=byId(b.dataset.nyx);if(!confirm(`${m.name}さんの今日の入室を取り消しますか？（押しまちがい用）`))return;const vk=ymd(new Date());m.visits=(m.visits||[]).filter(x=>x!==vk);m.streak[(new Date().getDay()+6)%7]=0;if(m.inAt)delete m.inAt[vk];if(m.times)delete m.times[vk];save();toast('入室を取り消しました');draw()});
+    d.querySelectorAll('[data-cal]').forEach(b=>b.onclick=()=>{window._nyCal=window._nyCal===b.dataset.cal?0:b.dataset.cal;draw()});
+    const al=document.getElementById('nyall');if(al)al.onclick=()=>{window._nyAll=!window._nyAll;draw()}};
+  draw()}
 // ===== 活動の停滞アラート（10日）：担当トレーナー名つき =====
 const STAG_D=10;
 function coachOf(m){if(m.coach&&TRAINERS.includes(m.coach))return m.coach;const h=(m.homework||[]).slice().reverse().find(x=>x.tn||x.stT);return h?(h.tn||h.stT):''}
 function stagOf(m){const D=864e5,now=Date.now(),r=[],ago=t=>Math.floor((now-t)/D);
-  const vs=(m.visits||[]).map(v=>new Date(v+'T12:00:00').getTime()).filter(x=>!isNaN(x)),td=(new Date().getDay()+6)%7;(m.streak||[]).forEach((x,i)=>{if(x&&i<=td)vs.push(now-(td-i)*D)});const lv=vs.length?Math.max(...vs):0;
+  const vs=(m.visits||[]).map(vDate).filter(x=>!isNaN(x)),td=(new Date().getDay()+6)%7;(m.streak||[]).forEach((x,i)=>{if(x&&i<=td)vs.push(now-(td-i)*D)});const lv=vs.length?Math.max(...vs):0;
   if(!lv)r.push('来館の記録がまだありません');else if(ago(lv)>=STAG_D)r.push(`トレーニングに${ago(lv)}日来ていません`);
   const hw=m.homework||[];if(hw.length){const first=Math.min(...hw.map(h=>h.t||now));
     const ld=Math.max(0,...hw.map(h=>h.doneAt||0));const base=ld||first;if(ago(base)>=STAG_D)r.push(ld?`宿題の報告が${ago(ld)}日ありません`:`宿題の報告が一度もありません（${ago(first)}日）`);
@@ -2297,7 +2327,7 @@ function tevPanel(){if(!ADMIN||tab!=='guild'||document.getElementById('tev'))ret
     TEV.forEach(([k])=>{delete moved[k];document.getElementById('tev_'+k).value=50;document.getElementById('tev_'+k+'v').textContent='—'});document.getElementById('tevmemo').value='';draw();toast(`${m.name}さんの評価を保存しました`)}}
 function kenkoPanel(){if(!ADMIN||tab!=='guild'||document.getElementById('kenko'))return;const v=document.getElementById('view');const h=document.getElementById('cpan')||document.getElementById('tev')||[...v.querySelectorAll('h2')].find(x=>x.textContent.includes('宿題を出す'));if(!h)return;
   const d=document.createElement('section');d.id='kenko';
-  d.innerHTML=`<h2>🩺 健康管理室</h2><div class="card stack"><p class="muted" style="font-size:12px;margin:0">すべてのプログラムを健康管理室がサポートします。来館したらここでチェックイン（根性 +20 EXP・週3回でクエスト達成）。健康メモは、各プログラムの記録ページにも表示されます（トレーナー・看護師だけ）。</p>
+  d.innerHTML=`<h2>🩺 健康管理室</h2><div class="card stack"><p class="muted" style="font-size:12px;margin:0">すべてのプログラムを健康管理室がサポートします。来館の「入室」は、管理タブいちばん上の「🚪 今日の入室」からも押せます（根性 +20 EXP・週3回でクエスト達成）。健康メモは、各プログラムの記録ページにも表示されます（トレーナー・看護師だけ）。</p>
    <label>ゲスト<select id="kkm">${S.members.map(m=>`<option value="${m.id}" ${m.id===S.current?'selected':''}>${esc(m.name)}</option>`).join('')}</select></label><div id="kkb"></div>
    <div class="hform"><div class="hnt">📝 健康メモを書く <small>トレーナー・看護師だけが読めます（ゲストには見えません）</small></div>
    <div class="r2"><label>プログラム<select id="hkp">${HPROG.map(([k,l])=>`<option value="${k}">${l}</option>`).join('')}</select></label><label>書いた人<select id="hkn">${TRAINERS.map(t=>`<option ${t===TN()?'selected':''}>${esc(t)}</option>`).join('')}</select></label></div>
@@ -2305,8 +2335,8 @@ function kenkoPanel(){if(!ADMIN||tab!=='guild'||document.getElementById('kenko')
    <button type="button" class="btn-main" id="hksave">メモを保存する</button><ul class="hlist" id="hkl"></ul></div></div>`;
   v.insertBefore(d,h);
   const draw=()=>{const m=byId(document.getElementById('kkm').value),dn=checkedIn(m);
-    document.getElementById('kkb').innerHTML=`<button type="button" class="btn-main" id="kkgo" ${dn?'disabled style="opacity:.5"':''}>${dn?`✅ ${esc(m.name)}さんは今日チェックイン済み`:`${esc(m.name)}さんをチェックインする`}</button>`;
-    if(!dn)document.getElementById('kkgo').onclick=()=>{const sc=S.current;doCheckin(m);S.current=sc;save();toast(`${m.name}さんをチェックインしました　根性+20`);draw()}};
+    document.getElementById('kkb').innerHTML=`<button type="button" class="btn-main" id="kkgo" ${dn?'disabled style="opacity:.5"':''}>${dn?`✅ ${esc(m.name)}さんは今日入室済み`:`🚪 ${esc(m.name)}さん 入室`}</button>`;
+    if(!dn)document.getElementById('kkgo').onclick=()=>{const sc=S.current;doCheckin(m);S.current=sc;save();toast(`🚪 ${m.name}さん 入室しました　根性+20`);draw()}};
   const hdraw=()=>{const m=byId(document.getElementById('kkm').value),L=(m.health||[]).slice().sort((a,b)=>b.t-a.t);document.getElementById('hkl').innerHTML=L.length?L.map(x=>`<li><div class="hnm">${new Date(x.t).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric'})}・${esc(x.tn)}・<b>${hpName(x.prog)}</b><button type="button" class="phdel" data-hdel="${x.id}">消す</button></div><p>${esc(x.text)}</p></li>`).join(''):'<li class="muted">まだメモはありません。</li>';
     document.querySelectorAll('[data-hdel]').forEach(b=>b.onclick=()=>{if(!confirm('このメモを消しますか？'))return;m.health=(m.health||[]).filter(x=>x.id!=b.dataset.hdel);save();hdraw()})};
   document.getElementById('hksave').onclick=()=>{const t=document.getElementById('hkt').value.trim();if(!t){toast('メモを書いてください');return}const m=byId(document.getElementById('kkm').value);m.health=m.health||[];m.health.push({id:Date.now(),t:Date.now(),tn:document.getElementById('hkn').value,prog:document.getElementById('hkp').value,text:t});save();document.getElementById('hkt').value='';toast(`${m.name}さんの健康メモを保存しました`);hdraw()};
@@ -2322,7 +2352,7 @@ function coursePanel(){if(!ADMIN||tab!=='guild'||document.getElementById('cpan')
     document.getElementById('cpc').onchange=e=>{m.course=e.target.value||undefined;m.allow=(m.allow||[]).filter(k=>k!==m.course);save();toast(`${m.name}さん：会員区別を${m.course?cName(m.course):'未設定'}にしました`);draw()};
     document.querySelectorAll('#cpb [data-al]').forEach(c=>c.onchange=()=>{const k=c.dataset.al;m.allow=(m.allow||[]).filter(x=>x!==k);if(c.checked)m.allow.push(k);save();toast(`${m.name}さん：「${cName(k)}」を${c.checked?'許可しました':'許可なしにしました'}`)})};
   document.getElementById('cpm').onchange=draw;draw()}
-const _r4=render;render=function(){const r=_r4.apply(this,arguments);try{tevPanel();coursePanel();kenkoPanel();snapInbox();stagPanel()}catch(e){console.warn(e)}return r};
+const _r4=render;render=function(){const r=_r4.apply(this,arguments);try{tevPanel();coursePanel();kenkoPanel();snapInbox();stagPanel();nyuPanel()}catch(e){console.warn(e)}return r};
 // ===== 333GYMニュース（トレーナーが配信 → ゲスト全員に表示） =====
 function NEWS(){S.news=S.news||[];return S.news}
 // 写真館・掲示板に投稿されたら、ニュースにも自動でのせる（ゲストの名前は出さない）
