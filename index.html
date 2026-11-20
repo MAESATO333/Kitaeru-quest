@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-title" content="キタエル">
 <style>html{-webkit-text-size-adjust:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}button{-webkit-tap-highlight-color:transparent}
 #gate{position:fixed;inset:0;z-index:9999;background:linear-gradient(180deg,#e9f6c9,#fdf7d8);display:none;align-items:center;justify-content:center;padding:16px;overflow:auto}
-body.locked #gate{display:flex}body.locked>*:not(#gate):not(script){visibility:hidden}
+body.locked #gate{display:flex}body.authwait #gate .gc{display:none}#gate .gwait{display:none;flex-direction:column;align-items:center;gap:10px;color:#33501a;font-weight:800;font-size:16px}body.authwait #gate .gwait{display:flex}#gate .gwait i{width:42px;height:42px;border-radius:50%;border:5px solid #cfe3a8;border-top-color:#33501a;animation:gwspin .8s linear infinite}@keyframes gwspin{to{transform:rotate(360deg)}}body.locked>*:not(#gate):not(script){visibility:hidden}
 #gate .gc{width:100%;max-width:380px;background:#fff;border:3px solid #3f9a3a;border-radius:20px;padding:22px 18px;box-shadow:0 8px 0 #2f6d2a;display:flex;flex-direction:column;gap:12px}
 #gate h1{margin:0;font-size:26px;color:#2f6d2a;text-align:center;font-family:var(--display,inherit)}#gate .gs{text-align:center;color:#5a6a4a;font-size:13px;margin:-6px 0 4px}
 #gate label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:#4a5a3a;font-weight:700}#gate input{font-size:16px;padding:12px;border-radius:12px;border:2px solid #cfe6a8}
@@ -2054,7 +2054,7 @@ const _gainG=gain;gain=function(m,stat,xp,text,...rest){if(GMT.includes(logType)
 // ホーム画面アプリ用：オフラインでも開けるようにする
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').then(r=>r.update()).catch(()=>{});let rl=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(rl)return;rl=true;location.reload()})});}
 </script>
-<div id="gate" role="dialog" aria-label="ログイン"><form class="gc" id="gform" onsubmit="return false">
+<div id="gate" role="dialog" aria-label="ログイン"><div class="gwait"><i></i>キタエル・クエスト<small style="font-weight:600;font-size:12px">読みこみ中…</small></div><form class="gc" id="gform" onsubmit="return false">
 <h1>キタエル・クエスト</h1><div class="gs">333GYM 会員・トレーナー専用</div>
 <label>メールアドレス<input id="gemail" type="email" autocomplete="username" inputmode="email" required></label>
 <label>パスワード<input id="gpass" type="password" autocomplete="current-password" required></label>
@@ -2071,10 +2071,10 @@ if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.s
 const LOCK=false;let ON=/[?&]login=1/.test(location.search);try{if(ON)localStorage.setItem('kq-login','1');if(/[?&]login=0/.test(location.search))localStorage.removeItem('kq-login');ON=ON||localStorage.getItem('kq-login')==='1'}catch(e){}const JOIN=/^\/join\/?$/.test(location.pathname)||/[?&]join=1/.test(location.search);ON=ON||JOIN||(LOCK&&/\.web\.app$|\.firebaseapp\.com$/.test(location.hostname))||(ADMIN&&!/^(localhost|127\.)/.test(location.hostname));
 window.AUTH={on:ON,user:null,role:null};
 if(!ON)return;
-document.body.classList.add('locked');if(ADMIN){const gs=document.querySelector('#gate .gs');if(gs)gs.textContent='トレーナー専用 管理ページ';}
+document.body.classList.add('locked','authwait');setTimeout(()=>document.body.classList.remove('authwait'),8000);if(ADMIN){const gs=document.querySelector('#gate .gs');if(gs)gs.textContent='トレーナー専用 管理ページ';}
 if(JOIN){const gs=document.querySelector('#gate .gs');if(gs)gs.innerHTML='🌱 入会の申しこみ<br><small>Googleか、メールとパスワードで登録してください</small>';
   if(/Line\//i.test(navigator.userAgent)){const g=document.getElementById('gmsg');if(g){g.style.color='#c0392b';g.innerHTML='LINEの中のブラウザでは、Googleログインが使えません。右下の「…」→「ブラウザで開く」（Safari/Chrome）で開き直してください。'}}}
-const $g=id=>document.getElementById(id),msg=(t,ok)=>{const m=$g('gmsg');m.textContent=t||'';m.className='gm'+(ok?' ok':'')};
+const $g=id=>document.getElementById(id),msg=(t,ok)=>{if(t)document.body.classList.remove('authwait');const m=$g('gmsg');m.textContent=t||'';m.className='gm'+(ok?' ok':'')};
 const JA=e=>{const c=(e&&e.code)||'';const t={'auth/popup-closed-by-user':'Googleのログインが途中で閉じられました','auth/cancelled-popup-request':'Googleのログインが途中で閉じられました','auth/unauthorized-domain':'このアドレスはGoogleログインの許可がまだです（Firebaseの設定が必要です）','auth/account-exists-with-different-credential':'このメールはパスワードで登録済みです。メールとパスワードで入ってください','auth/invalid-credential':'メールアドレスかパスワードがちがいます','auth/wrong-password':'メールアドレスかパスワードがちがいます','auth/user-not-found':'メールアドレスかパスワードがちがいます','auth/invalid-email':'メールアドレスの形がちがいます','auth/too-many-requests':'何度も失敗したので、しばらく待ってからお試しください','auth/network-request-failed':'インターネットにつながっていません','auth/email-already-in-use':'このメールアドレスはもう登録されています','auth/weak-password':'パスワードは6文字以上にしてください','auth/operation-not-allowed':'ログイン方法がまだ有効になっていません（Firebaseの設定が必要です）','auth/configuration-not-found':'ログイン機能がまだ有効になっていません（Firebaseの設定が必要です）','permission-denied':'権限がありません（Firestoreのルール設定を確認してください）','unavailable':'データベースにつながりません（Firestoreが作られているか確認してください）','failed-precondition':'データベースの準備ができていません'}[c];return t?t+'［'+c+'］':('エラー：'+(c||e&&e.message||e))};
 window.AUTH.ja=JA;
 const V='10.12.2',load=src=>new Promise((r,j)=>{const s=document.createElement('script');s.src=src;s.onload=r;s.onerror=()=>j(new Error('load '+src));document.head.appendChild(s)});
@@ -2082,7 +2082,7 @@ const boot=window.__FB_BOOT||(()=>load(`/__/firebase/${V}/firebase-app-compat.js
 function applyRole(){const tr=AUTH.role==='trainer';if(ADMIN&&!tr){alert('ここはトレーナー専用の管理ページです。ゲストの画面にもどります。');location.replace(window.KQ_GUEST_URL);return}document.body.classList.add('signed');document.body.classList.toggle('member',!tr);if(!tr){S.trainerMode=false;S.kensa=false;S.current='me';const me0=S.members.find(x=>x.id==='me');if(me0&&AUTH.name)me0.name=AUTH.name;if(tab==='guild')tab='hero';save()}render()}
 // 登録の申請（Googleで入ったが、まだ登録されていない人）
 let reqWatch=null;
-async function showReq(u,db,auth){const box=$g('greq');if(!box)return;$g('gform').classList.add('reqmode');box.hidden=false;msg('');
+async function showReq(u,db,auth){const box=$g('greq');if(!box)return;document.body.classList.remove('authwait');$g('gform').classList.add('reqmode');box.hidden=false;msg('');
   const rq=db.doc('requests/'+u.uid);let has=false;try{const d=await rq.get();has=d.exists}catch(e){console.warn(e)}
   const out=`<button type="button" class="gl" id="rqout">別のアカウントで入る（ログアウト）</button>`;
   if(has){let x={};try{x=(await rq.get()).data()||{}}catch(e){}const ok=x.ok||{},HKN='團野有花',c=x.coach||'';
@@ -2108,7 +2108,7 @@ boot().then(()=>{
     auth.createUserWithEmailAndPassword(em,pw).catch(err=>msg(err.code==='auth/email-already-in-use'?'このメールはもう登録されています。上の「ログイン」で入ってください':JA(err))).finally(()=>$g('gsignup').disabled=false)};
   $g('gforgot').onclick=()=>{const em=$g('gemail').value.trim();if(!em){msg('上にメールアドレスを入れてから押してください');return}auth.sendPasswordResetEmail(em).then(()=>msg('パスワード再設定のメールを送りました',1)).catch(err=>msg(JA(err)))};
   auth.onAuthStateChanged(async u=>{
-    if(!u){if(reqWatch){reqWatch();reqWatch=null}{const r=$g('greq');if(r){r.hidden=true;r.innerHTML=''}$g('gform').classList.remove('reqmode')}AUTH.user=null;document.body.classList.remove('signed','member');document.body.classList.add('locked');return}
+    if(!u){document.body.classList.remove('authwait');if(reqWatch){reqWatch();reqWatch=null}{const r=$g('greq');if(r){r.hidden=true;r.innerHTML=''}$g('gform').classList.remove('reqmode')}AUTH.user=null;document.body.classList.remove('signed','member');document.body.classList.add('locked');return}
     AUTH.user=u;let role='member',name='';
     const isG=(u.providerData||[]).some(p=>p&&p.providerId==='google.com')&&!(u.providerData||[]).some(p=>p&&p.providerId==='password');let ok=false,why='';
     const ref=db.doc('roles/'+u.uid),em=(u.email||'').toLowerCase();
@@ -2130,7 +2130,7 @@ boot().then(()=>{
     if(!ok){msg(`このアカウント（${u.email}）は、ジムに登録されていません。受付でお声がけください。`+`［${why||'no-role'}］`);console.warn('login denied',u.email,u.uid,why);await auth.signOut();return}
     {const r=$g('greq');if(r){r.hidden=true;r.innerHTML=''}$g('gform').classList.remove('reqmode')}
     if(JOIN){location.replace(role==='trainer'?'/admin':(window.KQ_GUEST_URL||'/'));return}
-    AUTH.role=role;AUTH.name=name;document.body.classList.remove('locked');applyRole();
+    AUTH.role=role;AUTH.name=name;document.body.classList.remove('locked','authwait');applyRole();
   });
 }).catch(e=>{msg('ログインの準備ができませんでした。通信を確認して、もう一度開いてください');console.warn(e)});
 // header logout
