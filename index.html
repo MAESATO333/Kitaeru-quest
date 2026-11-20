@@ -421,7 +421,12 @@ nav{flex-direction:column;align-items:center;gap:5px}
 .cgrid button:nth-child(1){background:#ffd0c8}.cgrid button:nth-child(2){background:#e4f3a6}.cgrid button:nth-child(3){background:#d8eefc}.cgrid button:nth-child(4){background:#ffe9a8}
 .cnow{background:#fff;border:2px solid #d6e6b0;border-radius:12px;padding:8px 12px;margin:0 0 10px;font-size:14px}.cnow small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
 .seg button.lock{opacity:.5;text-decoration:none}
+.hnote{margin-bottom:12px}
 .callow{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}.callow label{display:flex!important;flex-direction:row!important;align-items:center;gap:6px;font-size:14px;background:#f3f9dc;border-radius:999px;padding:6px 12px}.callow input{width:auto!important;margin:0}.callow>div{flex-basis:100%}
+.hnote{background:#f2f8ff;border:2px solid #9cc3e6}.hnt{font-weight:900;color:#1f5f8b;font-size:14px;margin-bottom:6px}.hnt small{display:block;font-weight:700;color:#5b7f99;font-size:11px}
+.hnote ul,.hlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}.hnote li,.hlist li{display:block!important;background:#fff;border-radius:10px;padding:8px 10px}.hnm{font-size:11px;color:#5b7f99;display:flex;align-items:center;gap:6px;flex-wrap:wrap}.hnm .phdel{margin-left:auto}.hnote p,.hlist p{margin:2px 0 0;font-size:14px;white-space:pre-wrap;line-height:1.6}
+.hform{display:flex;flex-direction:column;gap:8px;border-top:2px dashed #9cc3e6;padding-top:10px;margin-top:4px}.hform textarea{border:2px solid #d6e6b0;border-radius:10px;padding:8px;font-size:15px}
+.hkb{display:inline-block;background:#1f5f8b;color:#fff;font-size:11px;font-weight:900;border-radius:999px;padding:2px 9px;margin-right:6px;vertical-align:middle}
 </style>
 
 </head>
@@ -1011,7 +1016,7 @@ function giveFood(m,key,n=1){m.foods=m.foods||{};m.foods[key]=(m.foods[key]||0)+
   return null;}
 function seeded(a){return()=>{a=(a+0x6D2B79F5)|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
 let visCache={};
-const TRAINERS=['川満由希夫','石井麻美','佐々木美香','垣花 豊','佐藤みやこ','團野有花','前田悟'];
+const TRAINERS=['川満由希夫','石井麻美','佐々木美香','垣花 豊','佐藤みやこ','團野有花','前田悟','看護師 有花'];
 function TN(){return S.tname&&TRAINERS.includes(S.tname)?S.tname:TRAINERS[0]}
 function KS(){return S.kensa!==false}
 function visibleIds(){
@@ -1441,6 +1446,11 @@ function vCourse(m){$('#view').innerHTML=`<h2>会員区別をえらぶ</h2><div 
   document.querySelectorAll('[data-cs]').forEach(b=>b.onclick=()=>{if(!confirm(`会員区別を「${cName(b.dataset.cs)}」にしますか？`))return;m.course=b.dataset.cs;logType=m.course;save();toast(`会員区別：${cName(m.course)}`);vLog()})}
 function checkedIn(m){return !!m.streak[(new Date().getDay()+6)%7]}
 function doCheckin(m){const today=(new Date().getDay()+6)%7;m.streak[today]=1;m.visits=m.visits||[];const vk=ymd(new Date());if(!m.visits.includes(vk))m.visits.push(vk);m.times=m.times||{};if(!m.times[vk]){const n=new Date(),st=n.getHours()*60+n.getMinutes();m.times[vk]=[hm(st),hm(Math.min(st+90,23*60+59))]}gain(m,'grit',20,'ジムにチェックイン')}
+// ===== 健康管理室のメモ（トレーナー・看護師だけが読める。ゲストの画面には出さない） =====
+const HPROG=[['all','全体'],['lift','加圧トレ'],['yoga','YOGA'],['kapala','カパラバティ'],['meal','食事セラピー'],['cardio','有酸素']];
+const hpName=k=>(HPROG.find(x=>x[0]===k)||[,'全体'])[1];
+function hNotesBox(m,prog){if(!ADMIN)return '';const L=(m.health||[]).filter(x=>x.prog==='all'||x.prog===prog).slice().sort((a,b)=>b.t-a.t).slice(0,5);
+  return `<div class="card hnote"><div class="hnt">🩺 健康管理室より <small>トレーナー・看護師だけが読めます</small></div>${L.length?`<ul>${L.map(x=>`<li><div class="hnm">${new Date(x.t).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric'})}・${esc(x.tn)}・<b>${hpName(x.prog)}</b></div><p>${esc(x.text)}</p></li>`).join('')}</ul>`:'<p class="muted" style="margin:0;font-size:13px">このプログラムへのメモはまだありません。管理タブの「健康管理室」で書けます。</p>'}</div>`}
 function vLog(){
   const m=me();
   if(!ADMIN&&!m.course){vCourse(m);return}
@@ -1449,7 +1459,7 @@ function vLog(){
   const sb=(k,l)=>{const lk=!canRec(m,k);return `<button type="button" data-k="${k}" class="${logType===k?'on':''}${lk?' lock':''}" ${lk?'data-lock="1"':''}>${lk?'🔒 ':''}${l}</button>`};
   $('#view').innerHTML=`
   <h2>今日のトレーニングを記録</h2>
-  ${ADMIN?'':`<div class="cnow">会員区別：<b>${cName(m.course)}</b>${(m.allow||[]).length?`　＋ 許可：${m.allow.map(cName).join('・')}`:''}<small>🔒の記録は、トレーナーが許可すると使えます</small></div>`}
+  ${ADMIN?hNotesBox(m,logType):''}${ADMIN?'':`<div class="cnow">会員区別：<b>${cName(m.course)}</b>${(m.allow||[]).length?`　＋ 許可：${m.allow.map(cName).join('・')}`:''}<small>🔒の記録は、トレーナーが許可すると使えます</small></div>`}
   <div class="card stack">
     <div class="seg">
       ${sb('lift','加圧トレ')}
@@ -2049,13 +2059,20 @@ function tevPanel(){if(!ADMIN||tab!=='guild'||document.getElementById('tev'))ret
     TEV.forEach(([k])=>{delete moved[k];document.getElementById('tev_'+k).value=50;document.getElementById('tev_'+k+'v').textContent='—'});document.getElementById('tevmemo').value='';draw();toast(`${m.name}さんの評価を保存しました`)}}
 function kenkoPanel(){if(!ADMIN||tab!=='guild'||document.getElementById('kenko'))return;const v=document.getElementById('view');const h=document.getElementById('cpan')||document.getElementById('tev')||[...v.querySelectorAll('h2')].find(x=>x.textContent.includes('宿題を出す'));if(!h)return;
   const d=document.createElement('section');d.id='kenko';
-  d.innerHTML=`<h2>🩺 健康管理室</h2><div class="card stack"><p class="muted" style="font-size:12px;margin:0">ゲストが来館したら、トレーナーがここでチェックインを押します（根性 +20 EXP・週3回でクエスト達成）。</p>
-   <label>ゲスト<select id="kkm">${S.members.map(m=>`<option value="${m.id}" ${m.id===S.current?'selected':''}>${esc(m.name)}</option>`).join('')}</select></label><div id="kkb"></div></div>`;
+  d.innerHTML=`<h2>🩺 健康管理室</h2><div class="card stack"><p class="muted" style="font-size:12px;margin:0">すべてのプログラムを健康管理室がサポートします。来館したらここでチェックイン（根性 +20 EXP・週3回でクエスト達成）。健康メモは、各プログラムの記録ページにも表示されます（トレーナー・看護師だけ）。</p>
+   <label>ゲスト<select id="kkm">${S.members.map(m=>`<option value="${m.id}" ${m.id===S.current?'selected':''}>${esc(m.name)}</option>`).join('')}</select></label><div id="kkb"></div>
+   <div class="hform"><div class="hnt">📝 健康メモを書く <small>トレーナー・看護師だけが読めます（ゲストには見えません）</small></div>
+   <div class="r2"><label>プログラム<select id="hkp">${HPROG.map(([k,l])=>`<option value="${k}">${l}</option>`).join('')}</select></label><label>書いた人<select id="hkn">${TRAINERS.map(t=>`<option ${t===TN()?'selected':''}>${esc(t)}</option>`).join('')}</select></label></div>
+   <textarea id="hkt" rows="3" maxlength="400" placeholder="例：血圧がやや高め。加圧は弱めの設定で。水分をこまめに。"></textarea>
+   <button type="button" class="btn-main" id="hksave">メモを保存する</button><ul class="hlist" id="hkl"></ul></div></div>`;
   v.insertBefore(d,h);
   const draw=()=>{const m=byId(document.getElementById('kkm').value),dn=checkedIn(m);
     document.getElementById('kkb').innerHTML=`<button type="button" class="btn-main" id="kkgo" ${dn?'disabled style="opacity:.5"':''}>${dn?`✅ ${esc(m.name)}さんは今日チェックイン済み`:`${esc(m.name)}さんをチェックインする`}</button>`;
     if(!dn)document.getElementById('kkgo').onclick=()=>{const sc=S.current;doCheckin(m);S.current=sc;save();toast(`${m.name}さんをチェックインしました　根性+20`);draw()}};
-  document.getElementById('kkm').onchange=draw;draw()}
+  const hdraw=()=>{const m=byId(document.getElementById('kkm').value),L=(m.health||[]).slice().sort((a,b)=>b.t-a.t);document.getElementById('hkl').innerHTML=L.length?L.map(x=>`<li><div class="hnm">${new Date(x.t).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric'})}・${esc(x.tn)}・<b>${hpName(x.prog)}</b><button type="button" class="phdel" data-hdel="${x.id}">消す</button></div><p>${esc(x.text)}</p></li>`).join(''):'<li class="muted">まだメモはありません。</li>';
+    document.querySelectorAll('[data-hdel]').forEach(b=>b.onclick=()=>{if(!confirm('このメモを消しますか？'))return;m.health=(m.health||[]).filter(x=>x.id!=b.dataset.hdel);save();hdraw()})};
+  document.getElementById('hksave').onclick=()=>{const t=document.getElementById('hkt').value.trim();if(!t){toast('メモを書いてください');return}const m=byId(document.getElementById('kkm').value);m.health=m.health||[];m.health.push({id:Date.now(),t:Date.now(),tn:document.getElementById('hkn').value,prog:document.getElementById('hkp').value,text:t});save();document.getElementById('hkt').value='';toast(`${m.name}さんの健康メモを保存しました`);hdraw()};
+  document.getElementById('kkm').onchange=()=>{draw();hdraw()};draw();hdraw()}
 function coursePanel(){if(!ADMIN||tab!=='guild'||document.getElementById('cpan'))return;const v=document.getElementById('view');const h=document.getElementById('tev')||[...v.querySelectorAll('h2')].find(x=>x.textContent.includes('宿題を出す'));if(!h)return;
   const d=document.createElement('section');d.id='cpan';
   d.innerHTML=`<h2>会員区別と記録の許可</h2><div class="card stack"><p class="muted" style="font-size:12px;margin:0">ゲストは、会員区別でえらんだ記録だけ使えます。ほかの記録を使ってほしいときは、ここで許可してください。</p>
@@ -2147,18 +2164,18 @@ function vBoard(){const m=me(),L=BOARD().filter(x=>bF==='all'||x.cat===bF).sort(
   <div class="card stack"><div class="tplf" id="bcat">${BCAT.map(([k,l],i)=>`<button type="button" data-bc="${k}" class="${i?'':'on'}">${l}</button>`).join('')}</div>
    <textarea id="btx" rows="3" maxlength="300" placeholder="例：最近、駅前に野菜たっぷりの定食屋さんができました！"></textarea>
    <div class="mbtn"><button type="button" data-bpick="image">📷 写真をつける</button><button type="button" data-bpick="video">🎥 動画をつける</button></div><input type="file" id="bfile" hidden><div id="bpv" class="phpv"></div>
-   <div class="bname">${ADMIN?'':`<label><input type="radio" name="bn" value="name" checked> ${esc(m.name)} として</label>`}${(ADMIN||(window.AUTH&&AUTH.role==='trainer')||!(window.AUTH&&AUTH.on))?`<label class="btr"><input type="radio" name="bn" value="tr" ${ADMIN?'checked':''}> トレーナーとして <select id="btrn">${TRAINERS.map(t=>`<option ${t===TN()?'selected':''}>${esc(t)}</option>`).join('')}</select></label>`:''}<label><input type="radio" name="bn" value="anon"> 匿名で</label></div>
+   <div class="bname">${ADMIN?'':`<label><input type="radio" name="bn" value="name" checked> ${esc(m.name)} として</label>`}${(ADMIN||(window.AUTH&&AUTH.role==='trainer')||!(window.AUTH&&AUTH.on))?`<label class="btr"><input type="radio" name="bn" value="tr" ${ADMIN?'checked':''}> トレーナーとして <select id="btrn">${TRAINERS.map(t=>`<option ${t===TN()?'selected':''}>${esc(t)}</option>`).join('')}</select></label>`:''}${(ADMIN||(window.AUTH&&AUTH.role==='trainer')||!(window.AUTH&&AUTH.on))?`<label><input type="radio" name="bn" value="hk"> 🩺 健康管理室として</label>`:''}<label><input type="radio" name="bn" value="anon"> 匿名で</label></div>
    <button type="button" class="btn-main" id="bsend">掲示板に投稿する</button>
    <p class="muted" style="font-size:11px;margin:0">匿名でも、トレーナーには だれの投稿か分かります。ルールに合わない投稿はトレーナーが消すことがあります。</p></div>
   <div class="tplf" id="bfil"><button type="button" data-bf="all" class="${bF==='all'?'on':''}">すべて</button>${BCAT.map(([k,l])=>`<button type="button" data-bf="${k}" class="${bF===k?'on':''}">${l}</button>`).join('')}</div>
-  <div class="blist">${L.length?L.map(x=>{const own=x.by===S.current&&!x.byT,on=(x.love||[]).includes(S.current);return `<div class="card bpost"><div class="bh"><span class="bcat">${cn(x.cat)}</span><b>${x.byT?esc(x.byT)+'トレーナー':x.anon?'匿名さん':esc(x.name)}</b>${ADMIN&&x.anon?`<small class="breal">（本人：${esc(x.name)}）</small>`:''}<small>${newsDate(x.t)}</small></div><p>${esc(x.text)}</p>${x.img?`<img class="bmed" src="${x.img}" alt="">`:''}${BVID[x.id]?`<video class="bmed" src="${BVID[x.id]}" controls playsinline></video>`:x.vid?'<p class="muted" style="font-size:11px">🎥 動画（投稿した端末で、画面を開いている間だけ見られます）</p>':''}
+  <div class="blist">${L.length?L.map(x=>{const own=x.by===S.current&&!x.byT,on=(x.love||[]).includes(S.current);return `<div class="card bpost"><div class="bh"><span class="bcat">${cn(x.cat)}</span><b>${x.hk?'<span class="hkb">🩺 健康管理室</span>':x.byT?esc(x.byT)+'トレーナー':x.anon?'匿名さん':esc(x.name)}</b>${ADMIN&&x.anon?`<small class="breal">（本人：${esc(x.name)}）</small>`:''}<small>${newsDate(x.t)}</small></div><p>${esc(x.text)}</p>${x.img?`<img class="bmed" src="${x.img}" alt="">`:''}${BVID[x.id]?`<video class="bmed" src="${BVID[x.id]}" controls playsinline></video>`:x.vid?'<p class="muted" style="font-size:11px">🎥 動画（投稿した端末で、画面を開いている間だけ見られます）</p>':''}
     <div class="bf"><button type="button" class="phlove ${on?'on':''}" data-bl="${x.id}" ${on||own?'disabled':''}>💗 愛だね！ <b>${(x.love||[]).length}</b></button>${own||ADMIN?`<button type="button" class="phdel" data-bdel="${x.id}">消す</button>`:''}</div></div>`}).join(''):'<div class="card muted">まだ投稿はありません。最初の書きこみをどうぞ！</div>'}</div>
   <button type="button" class="nwall" id="bBack">‹ キタ酒場にもどる</button>`;
   let cat='hw';$('#bcat').onclick=e=>{const b=e.target.closest('[data-bc]');if(!b)return;cat=b.dataset.bc;$('#bcat').querySelectorAll('.on').forEach(x=>x.classList.remove('on'));b.classList.add('on');$('#btx').placeholder=(BCAT.find(c=>c[0]===cat)||[])[2]||''};
   let bfile=null;document.querySelectorAll('[data-bpick]').forEach(b=>b.onclick=()=>{const f=$('#bfile');f.accept=b.dataset.bpick+'/*';f.click()});
   $('#bfile').onchange=e=>{bfile=e.target.files[0]||null;const pv=$('#bpv');if(!bfile){pv.innerHTML='';return}const u=URL.createObjectURL(bfile);pv.innerHTML=(bfile.type.startsWith('video')?`<video src="${u}" controls playsinline></video>`:`<img src="${u}" alt="">`)+'<button type="button" class="phdel" id="bpx">はずす</button>';$('#bpx').onclick=()=>{bfile=null;$('#bfile').value='';pv.innerHTML=''}};
-  $('#bsend').onclick=async()=>{const t=$('#btx').value.trim();if(!t&&!bfile){toast('書く内容を入れてください');return}const bv=document.querySelector('input[name=bn]:checked').value,anon=bv==='anon',trn=bv==='tr'?(($('#btrn')||{}).value||TN()):null;
-    const x={id:Date.now(),t:Date.now(),by:S.current,name:m.name,byT:trn,anon,cat,text:t,love:[]};
+  $('#bsend').onclick=async()=>{const t=$('#btx').value.trim();if(!t&&!bfile){toast('書く内容を入れてください');return}const bv=document.querySelector('input[name=bn]:checked').value,anon=bv==='anon',trn=bv==='tr'?(($('#btrn')||{}).value||TN()):bv==='hk'?'健康管理室':null,hk=bv==='hk';
+    const x={id:Date.now(),t:Date.now(),by:S.current,name:m.name,byT:trn,hk,anon,cat,text:t,love:[]};
     if(bfile){if(bfile.type.startsWith('video')){BVID[x.id]=URL.createObjectURL(bfile);x.vid=1}else{try{x.img=await shrink(bfile)}catch(e){toast('写真を読みこめませんでした');return}}}
     BOARD().push(x);try{save()}catch(e){BOARD().pop();toast('写真が大きすぎて保存できませんでした');return}toast('掲示板に投稿しました');vBoard()};
   document.querySelectorAll('[data-bf]').forEach(b=>b.onclick=()=>{bF=b.dataset.bf;vBoard()});
@@ -2177,15 +2194,15 @@ function vBlog(){const L=BLOG().slice().sort((a,b)=>b.t-a.t),CAN=ADMIN||!!(windo
    <label>本文<textarea id="bgbo" rows="6" maxlength="3000" placeholder="記事の本文を書きます"></textarea></label>
    <label>写真・動画（なくてもOK）<input type="file" id="bgf" accept="image/*,video/*"></label>
    <label>YouTubeなどの動画リンク（なくてもOK）<input id="bgln" type="url" placeholder="https://youtu.be/..."></label>
-   <button type="button" class="btn-main" id="bgsave">記事を公開する</button>
+   <label class="nwchk"><input type="checkbox" id="bghk"> 🩺 健康管理室として書く</label><button type="button" class="btn-main" id="bgsave">記事を公開する</button>
    <p class="muted" style="font-size:11px;margin:0">試作版：記事はこの端末の中に保存されます。動画ファイルは、画面を開いている間だけ送れます。</p></div>`:''}
   <div class="blist">${L.length?L.map(x=>`<article class="card bgpost${x.id==blogFocus?' focus':''}" id="bg-${x.id}">${!ADMIN&&x.t>seen0?'<i class="bnew">新着</i>':''}${x.img?`<img src="${x.img}" alt="">`:''}${BFILE[x.id]&&BFILE[x.id].type.startsWith('video')?`<video src="${URL.createObjectURL(BFILE[x.id])}" controls playsinline></video>`:''}
-    <small>${newsDate(x.t)}・${esc(x.tn)}</small><h3>${esc(x.title)}</h3><p>${esc(x.body||'')}</p>${x.link?`<a href="${esc(x.link)}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}
+    ${x.hk?'<span class="hkb">🩺 健康管理室</span>':''}<small>${newsDate(x.t)}・${esc(x.tn)}</small><h3>${esc(x.title)}</h3><p>${esc(x.body||'')}</p>${x.link?`<a href="${esc(x.link)}" target="_blank" rel="noopener">▶ 動画を見る</a>`:''}
     <div class="bgsh"><button type="button" data-bs="${x.id}" class="bgmain">📤 スマホのアプリに送る</button><button type="button" data-bline="${x.id}" class="line">LINE</button><button type="button" data-bx="${x.id}" class="xx">X</button>${CAN?`<button type="button" data-bboard="${x.id}">📌 掲示板に貼る</button>`:''}${ADMIN?`<button type="button" class="phdel" data-bgdel="${x.id}">消す</button>`:''}</div></article>`).join(''):'<div class="card muted">まだ記事はありません。</div>'}</div>
   <div class="card muted bghelp" style="font-size:12px;line-height:1.7">📤「スマホのアプリに送る」を押すと、スマホの共有画面が開きます。そこで Instagram・TikTok・YouTube・LINE などをえらべます。写真や動画も、いっしょに送れます。<br>パソコンなど共有画面が出ないときは、写真・動画を保存してから各アプリで投稿してください。</div>
   <button type="button" class="nwall" id="bgBack">‹ キタ酒場にもどる</button>`;
   const f=$('#bgf');let file=null;if(f)f.onchange=e=>{file=e.target.files[0]||null};
-  const sv=$('#bgsave');if(sv)sv.onclick=async()=>{const ti=$('#bgti').value.trim();if(!ti){toast('タイトルを入れてください');return}const x={id:Date.now(),t:Date.now(),tn:TN(),title:ti,body:$('#bgbo').value.trim(),link:$('#bgln').value.trim()};
+  const sv=$('#bgsave');if(sv)sv.onclick=async()=>{const ti=$('#bgti').value.trim();if(!ti){toast('タイトルを入れてください');return}const hk=!!($('#bghk')&&$('#bghk').checked);const x={id:Date.now(),t:Date.now(),tn:TN(),hk,title:ti,body:$('#bgbo').value.trim(),link:$('#bgln').value.trim()};
     if(file){BFILE[x.id]=file;if(file.type.startsWith('image'))try{x.img=await shrink(file)}catch(e){}}BLOG().push(x);save();S.feed.unshift({id:S.nextId++,who:'trainer',tn:TN(),text:`📝 blogに新しい記事：${ti}`,xp:0,stat:'grit',t:Date.now(),cheers:[]});save();toast('記事を公開しました');vBlog()};
   const get=id=>BLOG().find(x=>x.id==id);
   document.querySelectorAll('[data-bs]').forEach(b=>b.onclick=async()=>{const x=get(b.dataset.bs),d={title:x.title,text:blogText(x)+(x.link?'\n'+x.link:''),url:blogUrl(x)};
