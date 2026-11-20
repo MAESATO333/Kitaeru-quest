@@ -446,6 +446,7 @@ nav{flex-direction:column;align-items:center;gap:5px}
 .acct:has(>.acctd:not([open])){padding:8px 12px!important}.acctd>summary{cursor:pointer;font-size:13px;font-weight:800;color:#33501a;list-style:revert}.acctd>summary small{font-weight:600;color:var(--muted);font-size:11px}.acctd[open]>summary{margin-bottom:6px}
 .mytr{display:flex;flex-direction:column;gap:6px;margin:0 0 12px;padding:10px 12px;border-radius:14px;border:3px solid #a8346a;background:#fff4fa}.mytr span{font-size:12px;color:var(--muted)}
 .mytr button{border:0;border-radius:999px;padding:12px;font-weight:900;font-size:15px;background:#a8346a;color:#fff;box-shadow:0 3px 0 #6d1f45}.mytr.on{background:#fffbe0;border-color:#f39a1e}.mytr.on button{background:#fff;color:#a8346a;border:2px solid #a8346a;box-shadow:none;font-size:13px;padding:8px}
+.seg button.hkseg{color:#1f6fa8;border-color:#7fb8e0;background:#eef7ff}
 </style>
 
 </head>
@@ -1543,11 +1544,12 @@ function vLog(){
       ${sb('meal','食事セラピー')}
       ${sb('kapala','カパラバティ')}
       <button type="button" data-k="cardio" class="${logType==='cardio'?'on':''}">有酸素</button>
+      ${ADMIN?'<button type="button" data-hk="1" class="hkseg">🩺 健康管理室</button>':''}
     </div>
     <div id="form"></div>
   </div>
   <p class="muted">本番では、トレーナーが確認ボタンを押すとEXPが確定する流れにできます（不正防止と、声かけのきっかけになります）。</p>`;
-  document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{if(b.dataset.lock){toast(`「${cName(b.dataset.k)}」は、トレーナーの許可が必要です`);return}logType=b.dataset.k;window._gm=null;vLog()});
+  document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{if(b.dataset.hk){tab='guild';render();setTimeout(()=>{const k=document.getElementById('kenko');if(k)k.scrollIntoView({behavior:'smooth',block:'start'})},120);return}if(b.dataset.lock){toast(`「${cName(b.dataset.k)}」は、トレーナーの許可が必要です`);return}logType=b.dataset.k;window._gm=null;vLog()});
   const f=$('#form');
   if(logType==='lift'){
     f.innerHTML=`<div class="stack">
