@@ -309,6 +309,7 @@ canvas.buddy{position:absolute!important;inset:auto 0% 2% auto!important;width:2
 .plbox{margin-top:10px;padding:10px;border:2px dashed #e8a33c;border-radius:12px;background:#fff8ec;display:flex;flex-direction:column;gap:8px}.plh{font-weight:800;color:#b5651d;font-size:14px}
 .plt{display:flex;align-items:center;gap:6px}.plt select{flex:1;font-size:15px}.plbox textarea{width:100%;box-sizing:border-box;font-size:15px;border-radius:10px;border:2px solid #f0d6a8;padding:8px;font-family:inherit}
 .plb{display:flex;gap:8px;align-items:center}.plb .btn-main{flex:1}.pldel{border:0;background:none;color:var(--muted);text-decoration:underline;cursor:pointer}.plv{margin-top:6px;font-size:13px;color:#b5651d}
+.cxdel details{margin:-2px 0 4px}.cxdel summary{cursor:pointer;font-size:12px;color:var(--muted);text-decoration:underline}.cxdel ul{list-style:none;margin:6px 0 0;padding:6px 8px;border:1px solid #eee;border-radius:10px;background:#fff;max-height:180px;overflow:auto}.cxdel li{display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid #f2f2f2;font-size:14px}.cxdel li span{flex:1;min-width:0}.cxdel li button{border:1px solid #e8452c;color:#e8452c;background:#fff;border-radius:8px;padding:3px 8px;font-size:12px;cursor:pointer}
 </style>
 
 </head>
@@ -1448,7 +1449,7 @@ function putOpt(k,sel,v){const S2=$(sel);if(!S2)return false;let o=[...S2.option
 function preFree(){for(const id in FA){const i=$('#'+id);if(!i||!i.value.trim())continue;const [k,sel]=FA[id];putOpt(k,sel,i.value.trim());i.value=''}}
 function CX(k){S.custom=S.custom||{};return S.custom[k]=S.custom[k]||[]}
 function EXGALL(){migMeal();const c=CX('ex');return c.length?[...EXG,['追加した種目',c]]:EXG}
-function addRow(id){return `<div class="addx"><input id="${id}" placeholder="リストにない種目を入力して追加" maxlength="30"><button type="button" id="${id}b">＋追加</button></div>`}
+function addRow(id){return `<div class="cxdel" data-cxfor="${id}"></div><div class="addx"><input id="${id}" placeholder="リストにない種目を入力して追加" maxlength="30"><button type="button" id="${id}b">＋追加</button></div>`}
 function bindAdd(id,k){const go=()=>{const v=$('#'+id).value.trim();if(!v){toast('種目名を入れてください');return}if(k==='ex'&&MEALRE.test(v)){const mt=CX('mealt');if(!MEALT.includes(v)&&!mt.includes(v))mt.push(v);save();logType='meal';window._mm='task';window._pick=v;vLog();toast(`「${v}」は食事トレの種目に入れました`);return}const all=k==='yoga'?[...Object.keys(FOODS).filter(x=>FOODS[x].cat==='yoga').map(x=>FOODS[x].name),...CX('yoga')]:k==='mealt'?[...MEALT,...CX('mealt')]:k==='ex'?EXGALL().flatMap(g=>g[1]):k==='kapala'?[...KAPALA,...CX('kapala')]:[...CARDIO,...CX('cardio')];if(!all.includes(v))CX(k).push(v);const fa=FA[id];if(fa&&putOpt(fa[0],fa[1],v)){$('#'+id).value='';toast(`「${v}」を追加しました。続けて内容を書いて、下のボタンで記録できます`);return}save();window._pick=v;vLog();toast(`「${v}」を追加しました。次からリストに出ます`)};$('#'+id+'b').onclick=go;$('#'+id).onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing)go()}}
 function HWGROUPS(){return [['おうちの宿題','fix',HOMEWORK],...EXGALL().map(([g,xs])=>['加圧トレ・'+g,'ex',xs]),...YG.map(([gk,gl])=>['YOGA・'+gl,'yoga',Object.keys(FOODS).filter(k=>FOODS[k].cat==='yoga'&&yg(k)===gk).map(k=>FOODS[k].name)]),...(CX('yoga').length?[['YOGA・追加した種目','yoga',CX('yoga')]]:[]),['食事トレ','mealt',(migMeal(),[...MEALT,...CX('mealt')])],['有酸素','cardio',[...CARDIO,...CX('cardio')]],['カパラバティ・呼吸法','kapala',[...KAPALA,...CX('kapala')]],...(CX('other').length?[['その他（トレーナー登録）','fix',CX('other')]]:[])]}
 function ymd(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
@@ -1571,6 +1572,9 @@ vLog=function(){
     const cg=d.querySelector('#cgo');if(cg)cg.onclick=()=>{const m=me();const n=cart.length;cart.forEach(c=>{c.f.forEach(k=>_give0(m,k));c.g.forEach(([st,xp,tx,ex])=>_gain0(m,st,xp,tx,ex))});S.cart=[];save();tab='hero';render();toast(`${n}種目をまとめて記録しました！`)};
     const cc=d.querySelector('#cclr');if(cc)cc.onclick=()=>{S.cart=[];save();vLog()};
   }
+  document.querySelectorAll('#view .cxdel').forEach(box=>{const fa=FA[box.dataset.cxfor];if(!fa)return;const k=fa[0],a=CX(k);if(!a.length){box.innerHTML='';return}
+    box.innerHTML=`<details><summary>自分で追加した種目（${a.length}）を消す</summary><ul>${a.map((v,i)=>`<li><span>${esc(v)}</span><button type="button" data-cxk="${k}" data-cxi="${i}">✕ 消す</button></li>`).join('')}</ul></details>`;
+    box.querySelectorAll('[data-cxi]').forEach(b=>b.onclick=()=>{const v=a[+b.dataset.cxi];a.splice(+b.dataset.cxi,1);save();vLog();const d=document.querySelector(`#view .cxdel[data-cxfor="${box.dataset.cxfor}"] details`);if(d)d.open=true;toast(`「${v}」を消しました`)})});
   const go0=$('#go');if(go0&&go0.onclick){const og=go0.onclick;go0.onclick=()=>{preFree();return og()}}
   const go=$('#go');
   if(go&&logType!=='in'&&!go.disabled){const a=document.createElement('button');a.type='button';a.className='cadd';a.id='cadd';a.textContent='＋メニューに追加（あとでまとめて記録）';go.before(a);
