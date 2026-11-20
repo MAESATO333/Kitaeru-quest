@@ -12,7 +12,20 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="キタエル">
-<style>html{-webkit-text-size-adjust:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}button{-webkit-tap-highlight-color:transparent}</style>
+<style>html{-webkit-text-size-adjust:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}button{-webkit-tap-highlight-color:transparent}
+#gate{position:fixed;inset:0;z-index:9999;background:linear-gradient(180deg,#e9f6c9,#fdf7d8);display:none;align-items:center;justify-content:center;padding:16px;overflow:auto}
+body.locked #gate{display:flex}body.locked>*:not(#gate):not(script){visibility:hidden}
+#gate .gc{width:100%;max-width:380px;background:#fff;border:3px solid #3f9a3a;border-radius:20px;padding:22px 18px;box-shadow:0 8px 0 #2f6d2a;display:flex;flex-direction:column;gap:12px}
+#gate h1{margin:0;font-size:26px;color:#2f6d2a;text-align:center;font-family:var(--display,inherit)}#gate .gs{text-align:center;color:#5a6a4a;font-size:13px;margin:-6px 0 4px}
+#gate label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:#4a5a3a;font-weight:700}#gate input{font-size:16px;padding:12px;border-radius:12px;border:2px solid #cfe6a8}
+#gate .gb{background:#e8452c;color:#fff;border:0;border-radius:14px;padding:14px;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 #b5321e}#gate .gb:disabled{opacity:.6}
+#gate .gl{background:none;border:0;color:#5a6a4a;text-decoration:underline;font-size:13px;cursor:pointer}#gate .gm{min-height:1.4em;font-size:13px;color:#c0392b;text-align:center;line-height:1.5}#gate .gm.ok{color:#2f6d2a}
+#gate .gn{font-size:12px;color:#7a8a6a;text-align:center;line-height:1.6}
+#logoutBtn{display:none}body.signed #logoutBtn{display:inline-block}
+body.member #modeBtn,body.member #kensaBtn,body.member #who{display:none!important}
+.acct{border:2px solid #3f9a3a;border-radius:14px;background:#f4fbe8;padding:12px;display:flex;flex-direction:column;gap:8px;margin-bottom:12px}.acct h3{margin:0;font-size:16px;color:#2f6d2a}.acct .r2{display:grid;grid-template-columns:1fr 1fr;gap:6px}.acct input,.acct select{font-size:15px;width:100%;box-sizing:border-box}
+.acct ul{list-style:none;margin:0;padding:0;max-height:220px;overflow:auto}.acct li{display:flex;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid #dcebc4;font-size:13px}.acct li span{flex:1;min-width:0;word-break:break-all}.acct li small{background:#3f9a3a;color:#fff;border-radius:6px;padding:1px 6px}.acct li small.m{background:#e8a33c}.acct li button{border:1px solid #3f9a3a;background:#fff;color:#2f6d2a;border-radius:8px;padding:3px 6px;font-size:11px;cursor:pointer}
+</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;800&family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
 <style>
@@ -313,6 +326,12 @@ canvas.buddy{position:absolute!important;inset:auto 0% 2% auto!important;width:2
 .osu{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}.osc{display:flex;gap:10px;align-items:center;border:2px solid #7fbf3a!important;background:#f4fbe8!important}.osc canvas{width:56px;height:56px;flex:none;image-rendering:pixelated}.osc b{display:block;font-size:16px}.osc small{color:var(--muted);font-size:12px}.osc p{margin:4px 0 0;font-size:14px}
 .hwfree{border:2px solid #3f9a3a;border-radius:12px;padding:10px;background:#f4fbe8;display:flex;flex-direction:column;gap:8px}.hwfree .hft{font-weight:800;color:#2f6d2a;font-size:14px}.tplc{display:flex;flex-wrap:wrap;gap:6px}.tplc button{border:2px solid #b9dc8f;background:#fff;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;text-align:left}.tplc button.on{background:#3f9a3a;color:#fff;border-color:#3f9a3a}.tplc small{font-size:10px;opacity:.7}#hwt{width:100%;box-sizing:border-box;font-size:15px;line-height:1.7;border-radius:10px;border:2px solid #b9dc8f;padding:10px;font-family:inherit;resize:vertical;min-height:260px}.hws{display:flex;gap:6px}.hws input{flex:1;min-width:0;font-size:14px}.hws button{flex:none;border:2px solid #3f9a3a;background:#fff;color:#2f6d2a;border-radius:10px;padding:6px 10px;font-weight:700;cursor:pointer}
 .hlist li span{white-space:pre-line}
+header .whol{order:9;flex-basis:100%;display:flex;flex-direction:row;gap:8px;align-items:center;background:#fff;border:3px solid #2f6d2a;border-radius:14px;padding:6px 10px;margin-top:2px}header .whol .dd{flex:1;display:block}header .whol select{flex:1}.whol>span{background:#2f6d2a;color:#fff;font-size:12px;font-weight:800;border-radius:999px;padding:4px 10px;white-space:nowrap}.whol select,.whol .dd .ddb{font-size:18px!important;font-weight:800}
+.tnbox{margin:16px 0 8px;display:flex!important;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:3px solid #3f9a3a;border-radius:14px;padding:10px 12px}.tnbox .tnl{background:#3f9a3a;color:#fff;font-weight:800;font-size:14px;border-radius:999px;padding:4px 12px}.tnbox select{font-size:20px;font-weight:800;flex:1;min-width:140px;color:var(--ink);background:#fff;border:2px solid #3f9a3a;border-radius:12px;padding:8px 10px}
+.hwn{font-weight:800;font-size:19px;display:flex;align-items:center;gap:6px;margin-bottom:2px}.hwn small{background:#e8a33c;color:#fff;font-size:11px;border-radius:999px;padding:2px 8px}.hwn span{font-size:13px;font-weight:600;color:var(--muted)}
+body.member .whol{display:none!important}
+.cxtrash{display:block;width:100%;margin:6px 0 4px;border:2px solid #e8452c;color:#e8452c;background:#fff;border-radius:12px;padding:9px 12px;font-weight:800;font-size:14px;cursor:pointer;text-align:center}.cxtrash.armed{background:#e8452c;color:#fff}
+.cxback summary{cursor:pointer;font-size:12px;color:var(--muted);text-decoration:underline;margin:2px 0 4px}.cxback ul{list-style:none;margin:6px 0;padding:6px 8px;border:1px solid #eee;border-radius:10px;background:#fff;max-height:180px;overflow:auto}.cxback li{display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid #f2f2f2;font-size:14px}.cxback li span{flex:1}.cxback li button{border:1px solid #3f9a3a;color:#3f9a3a;background:#fff;border-radius:8px;padding:3px 8px;font-size:12px}
 </style>
 
 </head>
@@ -320,7 +339,7 @@ canvas.buddy{position:absolute!important;inset:auto 0% 2% auto!important;width:2
 <div class="app">
   <header>
     <div class="logo"><div class="vlogo" role="img" aria-label="キタエル・クエスト"><b>キタエル・クエスト</b><span>KITAERU <i>●</i> QUEST</span></div><small style="color:var(--leaf);font-weight:700">試作版</small></div>
-    <select id="who" aria-label="表示する会員"></select>
+    <label class="whol"><span>ゲスト</span><select id="who" aria-label="表示するゲスト"></select></label>
     <button id="modeBtn" class="mode" type="button">トレーナー</button><button id="hwBtn" class="mode" type="button">宿題</button>
   </header>
   <main id="view"></main>
@@ -1499,8 +1518,8 @@ function vGuild(){
   },0);
   setTimeout(()=>{const x=$('#tnm');if(x)x.onchange=e=>{S.tname=e.target.value;save();toast(`${S.tname}さんとして操作します`)}},0);
   const waiting=S.members.flatMap(m=>m.homework.filter(h=>h.status==='done').map(h=>({m,h})));
-  $('#view').innerHTML=`<label style="margin:18px 0 6px;display:block">担当トレーナー<select id="tnm">${TRAINERS.map(t=>`<option ${TN()===t?'selected':''}>${t}</option>`).join('')}</select></label><h2>宿題のスタンプ待ち（${waiting.length}件）</h2>
-  <div class="stack">${waiting.length?waiting.map(({m,h})=>`<div class="card hw"><div style="min-width:0"><div style="font-weight:700">${esc(m.name)}</div><div class="muted">${esc(h.text)}</div></div>
+  $('#view').innerHTML=`<label class="tnbox"><span class="tnl">担当トレーナー</span><select id="tnm">${TRAINERS.map(t=>`<option ${TN()===t?'selected':''}>${t}</option>`).join('')}</select></label><h2>宿題のスタンプ待ち（${waiting.length}件）</h2>
+  <div class="stack">${waiting.length?waiting.map(({m,h})=>`<div class="card hw"><div style="min-width:0"><div class="hwn"><small>ゲスト</small>${esc(m.name)}<span>さん</span></div><div class="muted">${esc(h.text)}</div></div>
     <button type="button" class="btn-main" data-st="${m.id}:${h.id}">スタンプを押す</button></div>`).join(''):'<div class="card muted">スタンプ待ちの宿題はありません。</div>'}</div>
   <h2>宿題を出す</h2>
   <div class="card stack">
@@ -1677,8 +1696,72 @@ function build(sel){if(sel.dataset.dd||sel.options.length<MIN)return;sel.dataset
 document.addEventListener('click',e=>{if(!e.target.closest('.dd'))document.querySelectorAll('.dd.open').forEach(x=>x.classList.remove('open'))});
 const scan=()=>document.querySelectorAll('select:not([data-dd])').forEach(build);
 new MutationObserver(scan).observe(document.documentElement,{childList:true,subtree:true});scan();
-})();// ホーム画面アプリ用：オフラインでも開けるようにする
+})();</script><script>
+function HIDE(k){S.hideEx=S.hideEx||{};return S.hideEx[k]=S.hideEx[k]||[]}
+function cxTidy(){document.querySelectorAll('#view .cxdel').forEach(box=>{const fa=FA[box.dataset.cxfor];if(!fa)return;const [k,sid]=fa,sel=document.querySelector('#view '+sid);if(!sel)return;
+  const hd=HIDE(k);[...sel.options].forEach(o=>{if(hd.includes(o.value))o.remove()});[...sel.querySelectorAll('optgroup')].forEach(g=>{if(!g.children.length)g.remove()});const lb=sel.closest('label');if(lb)lb.childNodes.forEach(n=>{if(n.nodeType===3&&/（\d+種）/.test(n.textContent))n.textContent=n.textContent.replace(/（\d+種）/,`（${[...sel.options].filter(o=>o.value).length}種）`)});
+  const nm=o=>o?o.textContent.replace(/^[★☆]\s*/,''):'';
+  box.innerHTML=`<button type="button" class="cxtrash"></button>${hd.length?`<details class="cxback"><summary>消した種目を戻す（${hd.length}）</summary><ul>${hd.map((v,i)=>`<li><span>${esc(v.replace(/^cx:/,''))}</span><button type="button" data-hbi="${i}">↩ 戻す</button></li>`).join('')}</ul></details>`:''}`;
+  const tb=box.querySelector('.cxtrash');let armed=false;
+  const upd=()=>{const o=sel.options[sel.selectedIndex];armed=false;tb.classList.remove('armed');tb.style.display=o&&o.value?'':'none';tb.innerHTML=`🗑 「${esc(nm(o))}」をリストから消す`};upd();
+  sel.addEventListener('change',upd);
+  tb.onclick=()=>{const o=sel.options[sel.selectedIndex];if(!o)return;if(!armed){armed=true;tb.classList.add('armed');tb.innerHTML=`本当に消す？ もう一度タップで「${esc(nm(o))}」を消します`;setTimeout(()=>{if(armed)upd()},4000);return}
+    const v=o.value,name=v.replace(/^cx:/,''),a=CX(k);let i=a.indexOf(name);if(i<0)i=a.indexOf(v);
+    if(i>=0)a.splice(i,1);else if(!hd.includes(v))hd.push(v);save();vLog();toast(`「${nm(o)}」をリストから消しました`)};
+  box.querySelectorAll('[data-hbi]').forEach(b=>b.onclick=()=>{const v=hd.splice(+b.dataset.hbi,1)[0];save();vLog();const d=document.querySelector(`#view .cxdel[data-cxfor="${box.dataset.cxfor}"] details`);if(d)d.open=true;toast(`「${v.replace(/^cx:/,'')}」をリストに戻しました`)});
+})}
+const _vLogT=vLog;vLog=function(){const r=_vLogT.apply(this,arguments);try{cxTidy()}catch(e){console.error(e)}return r};
+// ホーム画面アプリ用：オフラインでも開けるようにする
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').then(r=>r.update()).catch(()=>{});let rl=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(rl)return;rl=true;location.reload()})});}
 </script>
-</body>
+<div id="gate" role="dialog" aria-label="ログイン"><form class="gc" id="gform" onsubmit="return false">
+<h1>キタエル・クエスト</h1><div class="gs">333GYM 会員・トレーナー専用</div>
+<label>メールアドレス<input id="gemail" type="email" autocomplete="username" inputmode="email" required></label>
+<label>パスワード<input id="gpass" type="password" autocomplete="current-password" required></label>
+<button class="gb" id="glogin" type="submit">ログイン</button>
+<div class="gm" id="gmsg"></div>
+<button class="gl" id="gforgot" type="button">パスワードを忘れたとき</button>
+<div class="gn">ログインのアカウントは、ジムのトレーナーが作ります。<br>お持ちでない方は、受付でお声がけください。</div>
+</form></div><script>
+(function(){
+const LOCK=false;let ON=/[?&]login=1/.test(location.search);try{if(ON)localStorage.setItem('kq-login','1');if(/[?&]login=0/.test(location.search))localStorage.removeItem('kq-login');ON=ON||localStorage.getItem('kq-login')==='1'}catch(e){}ON=ON||(LOCK&&/\.web\.app$|\.firebaseapp\.com$/.test(location.hostname));
+window.AUTH={on:ON,user:null,role:null};
+if(!ON)return;
+document.body.classList.add('locked');
+const $g=id=>document.getElementById(id),msg=(t,ok)=>{const m=$g('gmsg');m.textContent=t||'';m.className='gm'+(ok?' ok':'')};
+const JA=e=>{const c=(e&&e.code)||'';return {'auth/invalid-credential':'メールアドレスかパスワードがちがいます','auth/wrong-password':'メールアドレスかパスワードがちがいます','auth/user-not-found':'メールアドレスかパスワードがちがいます','auth/invalid-email':'メールアドレスの形がちがいます','auth/too-many-requests':'何度も失敗したので、しばらく待ってからお試しください','auth/network-request-failed':'インターネットにつながっていません','auth/email-already-in-use':'このメールアドレスはもう登録されています','auth/weak-password':'パスワードは6文字以上にしてください','auth/operation-not-allowed':'ログイン方法がまだ有効になっていません（Firebaseの設定が必要です）','auth/configuration-not-found':'ログイン機能がまだ有効になっていません（Firebaseの設定が必要です）','permission-denied':'権限がありません（Firestoreのルール設定を確認してください）'}[c]||('エラー：'+(c||e&&e.message||e))};
+window.AUTH.ja=JA;
+const V='10.12.2',load=src=>new Promise((r,j)=>{const s=document.createElement('script');s.src=src;s.onload=r;s.onerror=()=>j(new Error('load '+src));document.head.appendChild(s)});
+const boot=window.__FB_BOOT||(()=>load(`/__/firebase/${V}/firebase-app-compat.js`).then(()=>Promise.all([load(`/__/firebase/${V}/firebase-auth-compat.js`),load(`/__/firebase/${V}/firebase-firestore-compat.js`)])).then(()=>load('/__/firebase/init.js')));
+function applyRole(){const tr=AUTH.role==='trainer';document.body.classList.add('signed');document.body.classList.toggle('member',!tr);if(!tr){S.trainerMode=false;S.kensa=false;S.current='me';const me0=S.members.find(x=>x.id==='me');if(me0&&AUTH.name)me0.name=AUTH.name;if(tab==='guild')tab='hero';save()}render()}
+boot().then(()=>{
+  const auth=firebase.auth(),db=firebase.firestore();
+  $g('gform').onsubmit=e=>{e&&e.preventDefault&&e.preventDefault();const em=$g('gemail').value.trim(),pw=$g('gpass').value;if(!em||!pw){msg('メールアドレスとパスワードを入れてください');return false}$g('glogin').disabled=true;msg('ログインしています…',1);auth.signInWithEmailAndPassword(em,pw).catch(err=>msg(JA(err))).finally(()=>$g('glogin').disabled=false);return false};
+  $g('gforgot').onclick=()=>{const em=$g('gemail').value.trim();if(!em){msg('上にメールアドレスを入れてから押してください');return}auth.sendPasswordResetEmail(em).then(()=>msg('パスワード再設定のメールを送りました',1)).catch(err=>msg(JA(err)))};
+  auth.onAuthStateChanged(async u=>{
+    if(!u){AUTH.user=null;document.body.classList.remove('signed','member');document.body.classList.add('locked');return}
+    AUTH.user=u;let role='member',name='';
+    try{const ref=db.doc('roles/'+u.uid),d=await ref.get();if(d.exists){role=d.data().role||'member';name=d.data().name||''}else{try{await ref.set({role:'trainer',email:u.email,name:'オーナー',t:Date.now()});role='trainer'}catch(e){}}}catch(e){console.warn(e)}
+    AUTH.role=role;AUTH.name=name;document.body.classList.remove('locked');applyRole();
+  });
+}).catch(e=>{msg('ログインの準備ができませんでした。通信を確認して、もう一度開いてください');console.warn(e)});
+// header logout
+const hb=document.querySelector('header');if(hb&&!$g('logoutBtn')){const b=document.createElement('button');b.id='logoutBtn';b.className='mode';b.type='button';b.textContent='ログアウト';b.onclick=()=>{if(window.firebase)firebase.auth().signOut().then(()=>{msg('ログアウトしました',1)})};hb.appendChild(b)}
+// trainer account panel
+const _r=render;render=function(){const r=_r.apply(this,arguments);try{if(AUTH.role==='trainer'&&tab==='guild')acctPanel()}catch(e){console.warn(e)}return r};
+function acctPanel(){const v=document.getElementById('view');if(!v||document.getElementById('acct'))return;const d=document.createElement('div');d.className='acct';d.id='acct';
+  d.innerHTML=`<h3>ログインのアカウントを作る</h3><div class="muted" style="font-size:12px">会員さん・トレーナーのログインをここで作ります。仮パスワードを伝えて、あとで「パスワードを忘れたとき」から自分で変えてもらえます。</div>
+  <div class="r2"><input id="an" placeholder="名前（例：ゲスト）" maxlength="30"><select id="ar"><option value="member">会員</option><option value="trainer">トレーナー</option></select></div>
+  <input id="ae" type="email" placeholder="メールアドレス"><input id="ap" type="text" placeholder="仮パスワード（6文字以上）" maxlength="40">
+  <button type="button" class="btn-main" id="amk">アカウントを作る</button><div class="gm" id="amsg" style="font-size:13px"></div>
+  <details id="alist"><summary style="cursor:pointer;font-size:13px;color:#2f6d2a;font-weight:700">登録されているアカウントを見る</summary><ul></ul></details>`;
+  v.insertBefore(d,v.firstChild);
+  const am=(t,ok)=>{const m=document.getElementById('amsg');m.textContent=t;m.style.color=ok?'#2f6d2a':'#c0392b'};
+  document.getElementById('amk').onclick=async()=>{const name=document.getElementById('an').value.trim(),role=document.getElementById('ar').value,email=document.getElementById('ae').value.trim(),pw=document.getElementById('ap').value;if(!email||pw.length<6){am('メールアドレスと6文字以上の仮パスワードを入れてください');return}
+    am('作っています…',1);try{const sec=firebase.apps.find(a=>a.name==='sec')||firebase.initializeApp(firebase.app().options,'sec');const c=await sec.auth().createUserWithEmailAndPassword(email,pw);await firebase.firestore().doc('roles/'+c.user.uid).set({role,email,name,t:Date.now()});await sec.auth().signOut();am(`${name||email} の${role==='trainer'?'トレーナー':'会員'}アカウントを作りました`,1);['an','ae','ap'].forEach(i=>document.getElementById(i).value='');listAcc()}catch(e){am(JA(e))}};
+  document.getElementById('alist').ontoggle=e=>{if(e.target.open)listAcc()};
+  async function listAcc(){const ul=document.querySelector('#alist ul');try{const q=await firebase.firestore().collection('roles').get();const a=[];q.forEach(x=>a.push(x.data()));ul.innerHTML=a.sort((x,y)=>(x.t||0)-(y.t||0)).map(x=>`<li><small class="${x.role==='trainer'?'':'m'}">${x.role==='trainer'?'トレーナー':'会員'}</small><span>${esc(x.name||'')} ${esc(x.email||'')}</span><button type="button" data-rs="${esc(x.email||'')}">再設定メール</button></li>`).join('')||'<li>まだありません</li>';ul.querySelectorAll('[data-rs]').forEach(b=>b.onclick=()=>firebase.auth().sendPasswordResetEmail(b.dataset.rs).then(()=>am(`${b.dataset.rs} に再設定メールを送りました`,1)).catch(err=>am(JA(err))))}catch(e){ul.innerHTML=`<li>${JA(e)}</li>`}}
+}
+})();
+</script></body>
 </html>
