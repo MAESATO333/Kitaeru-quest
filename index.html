@@ -435,6 +435,9 @@ nav{flex-direction:column;align-items:center;gap:5px}
 .fsc .btn-main{width:100%}.fslock{font-size:13px;background:#f3f3f3;border-radius:10px;padding:8px 10px}
 .fsgift{width:100%;display:flex;flex-direction:column;gap:8px;text-align:left;border-top:2px dashed #f39a1e;padding-top:10px;margin-top:4px}.fsh{font-weight:900;color:#c26a00}
 .fsgift select,.fsgift input{width:100%;padding:10px;border-radius:10px;border:2px solid #d6e6b0;font-size:15px;box-sizing:border-box}.fsgo{background:#f39a1e!important;border-color:#f39a1e!important}
+.snapbtn{display:block;width:100%;margin:10px 0 0;padding:12px;border-radius:999px;border:2.5px solid #33501a;background:#ffe600;color:#33501a;font-weight:900;font-size:15px;box-shadow:0 3px 0 #33501a}
+.snimg{width:100%;border-radius:12px;border:3px solid #33501a}.snrow{display:flex;gap:8px;width:100%}.snbtn{flex:1;text-align:center;padding:10px;border-radius:999px;border:2px solid #d6e6b0;background:#fff;font-weight:800;font-size:13px;color:#33501a;text-decoration:none}.snbtn.del{color:#c0392b}
+.albm{display:grid;grid-template-columns:1fr 1fr;gap:8px}.albm button,.albm .snit{border:2px solid #d6e6b0;background:#fff;border-radius:12px;padding:4px;display:flex;flex-direction:column;gap:2px;text-align:left}.albm img{width:100%;border-radius:8px;display:block}.albm small{font-size:11px;color:var(--muted);padding:0 4px 2px}
 </style>
 
 </head>
@@ -1393,6 +1396,7 @@ function vHero(){
   <div class="scene"><span class="cloud" style="left:8%;top:12%;width:64px;height:18px"></span><span class="cloud" style="right:10%;top:26%;width:46px;height:14px;animation-duration:24s"></span>
     <canvas id="sp" width="320" height="200" aria-label="冒険者の姿"></canvas>
     <div class="nametag">${esc(m.name)}<small>Lv${L.lv}</small></div>${m.buddy?`<canvas class="buddy" data-hero="${m.buddy}"></canvas>`:''}</div>
+  ${ADMIN?'':`<button type="button" class="snapbtn" id="snapgo">📸 ${m.buddy?'相棒と':''}記念撮影する</button>`}
   ${S.bonusDay!==dayKey()?(()=>{const fk=foodOfDay(),f=FOODS[fk];return `<div class="bonus"><div class="bt">${FSUB(fk)==="veg"?"今日のおすすめ野菜が とどきました":`今日の${f.cat==="drink"?"飲み物":f.cat==="power"||f.cat==="heart"?"パワー":f.cat==="move"?"必殺技":f.cat==="yoga"?"アーサナ":f.cat==="energy"||f.cat==="luck"||f.cat==="beauty"||f.cat==="care"?"パワー":"ごはん"}が とどきました`}</div><div class="fd"><canvas class="food" data-food="${fk}"></canvas><div class="fn">${f.name}<small>${f.eff}</small></div><div class="bv">+${fxp(f)} <small>${STAT[f.stat].name}</small></div></div><button type="button" class="btn-main" id="bonus" style="width:100%">${f.cat==="drink"?"飲む！":f.cat==="power"?"お参りする！":f.cat==="heart"?"受けとる！":f.cat==="move"?"くり出す！":f.cat==="yoga"?"ポーズをとる！":f.cat==="energy"?"チャージ！":f.cat==="beauty"||f.cat==="luck"||f.cat==="care"?"受けとる！":"食べる！"}</button></div>`})():''}
   <div class="card" style="margin-top:12px">
     <div class="stack" style="gap:6px;min-width:0">
@@ -1487,6 +1491,29 @@ function foodSheet(k){const m=me(),f=FOODS[k];if(!f)return;const n=(m.foods||{})
     if(to.startsWith('g:')){const r=byId(to.slice(2));if(!r)return;giveFood(r,k);r.stats.grit+=3;toName=r.name+'さん'}else{toName=to.slice(2)+(to.includes('看護師')?'':'トレーナー');S.gifts=S.gifts||[];S.gifts.push({t:Date.now(),from:m.id,to:to.slice(2),k,msg})}
     S.feed.unshift({id:S.nextId++,who:m.id,text:`🎁 ${toName}に「${f.name}」をプレゼント！${msg?'「'+msg+'」':''}`,xp:0,stat:'grit',t:Date.now(),cheers:[]});save();toast(`${toName}に「${f.name}」をプレゼントしました　根性+3`);close();render()}}
 document.addEventListener('click',e=>{const c=e.target.closest('.zkb .pc[data-fk]');if(!c||c.classList.contains('none')&&!KS())return;foodSheet(c.dataset.fk)});
+// ===== 📸 相棒と記念撮影：マイページに保存・トレーナーに送る =====
+function snapCompose(m){const W=640,H=400,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');x.imageSmoothingEnabled=false;
+  const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,'#eaf7c4');g.addColorStop(1,'#fff6d6');x.fillStyle=g;x.fillRect(0,0,W,H);
+  const sp=document.getElementById('sp');if(sp)x.drawImage(sp,40,40,sp.width*1.6>W-80?W-80:sp.width*1.6,(sp.width*1.6>W-80?(W-80)/sp.width:1.6)*sp.height);
+  const bd=document.querySelector('.scene canvas.buddy');if(bd&&bd.width){const bh=150,bw=bd.width*bh/bd.height;x.drawImage(bd,W-bw-50,H-bh-70,bw,bh)}
+  const stripe=['#e8452c','#f39a1e','#f5d63d','#9ccc3c','#4f7d2a','#9b2f5e'];stripe.forEach((col,i)=>{x.fillStyle=col;x.fillRect(i*W/6,H-14,W/6,14)});
+  x.fillStyle='rgba(255,255,255,.82)';x.fillRect(0,H-92,W,78);x.fillStyle='#33501a';x.font='bold 26px "M PLUS Rounded 1c",sans-serif';x.fillText(m.name+(m.buddy?' と '+((HEROES.find(h=>h.key===m.buddy)||{}).name||''):''),24,H-56);
+  x.font='bold 16px sans-serif';x.fillStyle='#5a6b3a';const d=new Date();x.fillText(`Lv${levelOf(total(m)).lv}　${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}　キタエル・クエスト`,24,H-28);
+  return c.toDataURL('image/jpeg',0.85)}
+function snapSheet(m,a){let d=document.getElementById('snsheet');if(d)d.remove();d=document.createElement('div');d.id='snsheet';d.className='fsheet';
+  d.innerHTML=`<div class="fsc"><button type="button" class="fsx" aria-label="閉じる">×</button><h3>📸 記念写真</h3><img class="snimg" src="${a.src}" alt="記念写真"><div class="muted" style="font-size:12px">マイページの「相棒アルバム」に保存されています。</div>
+   <div class="fsgift"><div class="fsh">📮 トレーナーに送る</div><label>だれに？<select id="snto"><option value="all">トレーナー全員</option>${TRAINERS.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('')}</select></label>
+   <input id="snmsg" maxlength="40" placeholder="ひとこと（例：相棒といっしょにがんばってます！）"><button type="button" class="btn-main fsgo" id="snsend">📮 送る</button></div>
+   <div class="snrow"><a class="snbtn" download="kitaeru-${a.id}.jpg" href="${a.src}">📥 スマホに保存</a><button type="button" class="snbtn del" id="sndel">🗑 アルバムから消す</button></div></div>`;
+  document.body.appendChild(d);const close=()=>d.remove();d.onclick=e=>{if(e.target===d)close()};d.querySelector('.fsx').onclick=close;
+  document.getElementById('snsend').onclick=()=>{const to=document.getElementById('snto').value,msg=document.getElementById('snmsg').value.trim();S.snapIn=S.snapIn||[];S.snapIn.push({id:Date.now(),t:Date.now(),from:m.id,name:m.name,to,msg,src:a.src});if(S.snapIn.length>40)S.snapIn=S.snapIn.slice(-40);a.sent=1;save();toast(to==='all'?'トレーナー全員に送りました':`${to}に送りました`);close();render()};
+  document.getElementById('sndel').onclick=()=>{if(!confirm('この写真をアルバムから消しますか？'))return;m.album=(m.album||[]).filter(x=>x.id!==a.id);save();close();render()}}
+document.addEventListener('click',e=>{const b=e.target.closest('#snapgo');if(b){const m=me();let src;try{src=snapCompose(m)}catch(err){toast('撮影できませんでした');return}m.album=m.album||[];const a={id:Date.now(),t:Date.now(),src};m.album.push(a);if(m.album.length>20)m.album=m.album.slice(-20);save();toast('📸 パシャ！ マイページに保存しました');snapSheet(m,a);return}
+  const al=e.target.closest('[data-alb]');if(al){const m=me(),a=(m.album||[]).find(x=>x.id==al.dataset.alb);if(a)snapSheet(m,a)}});
+function snapInbox(){if(!ADMIN||tab!=='guild'||document.getElementById('snin'))return;const v=document.getElementById('view');const h=document.getElementById('kenko')||document.getElementById('cpan')||[...v.querySelectorAll('h2')].find(x=>x.textContent.includes('宿題を出す'));if(!h)return;
+  const L=(S.snapIn||[]).filter(x=>x.to==='all'||x.to===TN()).slice().reverse();const d=document.createElement('section');d.id='snin';
+  d.innerHTML=`<h2>📸 ゲストからの記念写真${L.length?` <small style="font-size:13px">${L.length}枚</small>`:''}</h2>${L.length?`<div class="albm">${L.map(x=>`<div class="snit"><img src="${x.src}" alt=""><small><b>${esc(x.name)}さん</b> → ${x.to==='all'?'トレーナー全員':esc(x.to)}<br>${new Date(x.t).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric'})}${x.msg?'「'+esc(x.msg)+'」':''}</small></div>`).join('')}</div>`:'<div class="card muted" style="font-size:13px">まだ届いていません（「担当トレーナー」あて・全員あての写真がここに出ます）。</div>'}`;
+  v.insertBefore(d,h)}
 function vLog(){
   const m=me();
   if(!ADMIN&&!m.course){vCourse(m);return}
@@ -1659,6 +1686,8 @@ function vMy(){const m=me(),L=levelOf(total(m)),fd=new Date();
     <textarea id="mytx" rows="3" maxlength="400" placeholder="例：はじめてプランク1分できた！ 体が軽くなってきた。トレーナーさんにほめられた。"></textarea>
     <button type="button" class="btn-main" id="mysave">ノートに残す</button>
     <ul class="mydia">${dia.length?dia.map(d=>`<li><span class="mdm">${d.mood||'😊'}</span><div><small>${esc(d.date||ds(d.t))}</small><p>${esc(d.text)}</p></div><button type="button" data-dd="${d.t}" aria-label="消す">✕</button></li>`).join(''):'<li class="muted">まだありません。うれしかったこと、がんばったこと、からだの変化など、なんでも残せます。</li>'}</ul></div>
+  <h2>📸 相棒アルバム</h2>
+  ${(m.album||[]).length?`<div class="albm">${m.album.slice().reverse().map(a=>`<button type="button" data-alb="${a.id}"><img src="${a.src}" alt="記念写真"><small>${ds(a.t)}${a.sent?' ・ 送った':''}</small></button>`).join('')}</div>`:'<div class="card muted" style="font-size:13px">まだ写真はありません。冒険者ページの「📸 記念撮影する」で、自分と相棒の写真がとれます。</div>'}
   <h2>わたしの記録</h2>
   <div class="tplf myf">${MYF.map(([k,l])=>`<button type="button" data-mf="${k}" class="${k===myF?'on':''}">${l}</button>`).join('')}</div>
   <div class="card"><ul class="myrec">${recs.length?recs.slice(0,60).map(p=>`<li><small>${ds(p.t)}</small><span>${esc(p.text)}</span>${p.xp?`<b>+${p.xp}</b>`:''}</li>`).join(''):'<li class="muted">まだ記録がありません。「記録」タブから記録すると、ここにたまっていきます。</li>'}</ul></div>
@@ -2120,7 +2149,7 @@ function coursePanel(){if(!ADMIN||tab!=='guild'||document.getElementById('cpan')
     document.getElementById('cpc').onchange=e=>{m.course=e.target.value||undefined;m.allow=(m.allow||[]).filter(k=>k!==m.course);save();toast(`${m.name}さん：会員区別を${m.course?cName(m.course):'未設定'}にしました`);draw()};
     document.querySelectorAll('#cpb [data-al]').forEach(c=>c.onchange=()=>{const k=c.dataset.al;m.allow=(m.allow||[]).filter(x=>x!==k);if(c.checked)m.allow.push(k);save();toast(`${m.name}さん：「${cName(k)}」を${c.checked?'許可しました':'許可なしにしました'}`)})};
   document.getElementById('cpm').onchange=draw;draw()}
-const _r4=render;render=function(){const r=_r4.apply(this,arguments);try{tevPanel();coursePanel();kenkoPanel()}catch(e){console.warn(e)}return r};
+const _r4=render;render=function(){const r=_r4.apply(this,arguments);try{tevPanel();coursePanel();kenkoPanel();snapInbox()}catch(e){console.warn(e)}return r};
 // ===== 333GYMニュース（トレーナーが配信 → ゲスト全員に表示） =====
 function NEWS(){S.news=S.news||[];return S.news}
 function newsSorted(){return NEWS().slice().sort((a,b)=>(b.pin?1:0)-(a.pin?1:0)||b.t-a.t)}
