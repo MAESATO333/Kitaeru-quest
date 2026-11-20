@@ -397,6 +397,12 @@ body.adminv #myBtn{display:none}
 .bgent{border-color:#f08a12!important;color:#c26a00!important}
 .bgpost img,.bgpost video{width:100%;border-radius:12px;margin-bottom:6px;max-height:360px;object-fit:cover}.bgpost h3{margin:2px 0 4px;font-size:17px}.bgpost p{white-space:pre-wrap;font-size:14px;line-height:1.7;margin:0 0 6px}.bgpost small{color:var(--muted);font-size:11px}
 .bgsh{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.bgsh button{font-size:12px;padding:6px 10px;border-radius:999px;border:2px solid #e3ecd0;background:#fff;font-weight:800}.bgsh .bgmain{background:#2f6d2a;color:#fff;border-color:#2f6d2a}.bgsh .line{background:#06c755;color:#fff;border-color:#06c755}.bgsh .xx{background:#000;color:#fff;border-color:#000}
+.qnav{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 12px}.qnav button{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 4px 8px;border-radius:16px;border:2px solid #33501a;background:#fff;box-shadow:0 3px 0 #33501a;font-weight:800;font-size:12px;color:#33501a}.qnav button b{font-size:24px;line-height:1}.qnav button:nth-child(1){background:#ffe600}.qnav button:nth-child(2){background:#ffd9a8}.qnav button:nth-child(3){background:#ffd0c8}.qnav button:nth-child(4){background:#e4f3a6}.qnav .nbadge{position:absolute;top:-6px;right:-4px}
+nav{flex-direction:column;align-items:center;gap:5px}
+#tabs2 .nh2{font-size:23px;line-height:29px;height:29px;display:block;font-style:normal}
+@media (max-width:400px){#tabs2 .nh2{font-size:20px;line-height:24px;height:24px}}
+.nline{display:flex;align-items:center;gap:8px;width:100%;margin:2px 0 4px;padding:8px 12px;border-radius:12px;border:2px solid #33501a;background:#fffbe0;color:#33501a;font-weight:800;font-size:13px;text-align:left;box-shadow:0 2px 0 #33501a}
+.nline .nlh{flex:none;color:#c26a00;display:flex;align-items:center;gap:4px}.nline .nlt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nline .nlm{flex:none;font-size:16px}.nline .nbadge{position:static}
 </style>
 
 </head>
@@ -409,7 +415,7 @@ body.adminv #myBtn{display:none}
   </header>
   <main id="view"></main>
 </div>
-<nav><div class="in" id="tabs"></div></nav>
+<nav><div class="in" id="tabs2"></div><div class="in" id="tabs"></div></nav>
 <div id="ov" class="ov" hidden></div>
 <div id="toast" class="toast" hidden></div>
 
@@ -1326,7 +1332,15 @@ function renderTabs(){
   if(tab!=='zukan'&&tab!=='photo'&&tab!=='board'&&tab!=='blog'&&!((tab==='mypage'||tab==='news')&&!ADMIN)&&!list.find(x=>x[0]===tab))tab='hero';
   $('#tabs').innerHTML=list.map(([k,l,i])=>{const nh=NAVH[k]||NAVH.hero;return `<button type="button" data-t="${k}" class="${k===tab?'on':''}" style="--hc:${nh[1]}"><canvas class="nh" data-hero="${nh[0]}"></canvas><span class="nl">${l}</span></button>`}).join('');
   $('#tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;S.trainerMode=ADMIN;save();render();window.scrollTo(0,0)});
+  try{renderTabs2()}catch(e){console.warn(e)}
 }
+// 下メニューの上の段（ニュース・写真館・掲示板・blog・マイページ）
+function renderTabs2(){const el=document.getElementById('tabs2');if(!el)return;
+  const L=ADMIN?[['photo','写真館','📷','#f39a1e'],['board','掲示板','📌','#e8452c'],['blog','blog','📝','#9b2f5e'],['zukan','図鑑','🥕','#4f7d2a']]
+    :[['photo','写真館','📷','#f39a1e'],['board','掲示板','📌','#e8452c'],['blog','blog','📝','#9b2f5e'],['zukan','図鑑','🥕','#4f7d2a'],['mypage','マイページ','🙋','#2f8fb0']];
+  el.innerHTML=L.map(([k,l,i,c])=>`<button type="button" data-t2="${k}" class="${k===tab?'on':''}" style="--hc:${c}"><b class="nh2">${i}</b><span class="nl">${l}</span></button>`).join('');
+  el.querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t2;render();window.scrollTo(0,0)});
+  requestAnimationFrame(()=>{const n=document.querySelector('nav'),a=document.querySelector('.app');if(n&&a)a.style.paddingBottom=(n.offsetHeight+20)+'px';const pv=document.getElementById('pvsw');if(n&&pv)pv.style.bottom=(n.offsetHeight+8)+'px'})}
 function render(){
   $('#whoName').textContent=me().name;
   $('#who').innerHTML=(ADMIN?S.members:[me()]).map(m=>`<option value="${m.id}" ${m.id===S.current?'selected':''}>${esc(m.name)}</option>`).join('');
@@ -1977,13 +1991,17 @@ function newsSorted(){return NEWS().slice().sort((a,b)=>(b.pin?1:0)-(a.pin?1:0)|
 function newsUnread(){const m=me(),seen=m&&m.newsSeen||0;return NEWS().filter(n=>n.t>seen).length}
 function newsDate(t){const d=new Date(t);return `${d.getMonth()+1}/${d.getDate()}`}
 function newsItem(n,full){const m=me(),isNew=n.t>(m.newsSeen||0);return `<li class="${n.pin?'pin':''}"><div class="nwh">${n.pin?'<span class="nwp">📌 重要</span>':''}${isNew?'<span class="nwn">NEW</span>':''}<small>${newsDate(n.t)}・${esc(n.tn)}</small></div><b>${esc(n.title)}</b>${full&&n.body?`<p>${esc(n.body)}</p>`:''}</li>`}
-function newsCard(){if(ADMIN||tab!=='hero'||document.getElementById('newsc'))return;const L=newsSorted();if(!L.length)return;const v=document.getElementById('view');
+function newsCard(){newsLine();return;if(ADMIN||tab!=='hero'||document.getElementById('newsc'))return;const L=newsSorted();if(!L.length)return;const v=document.getElementById('view');
   const d=document.createElement('div');d.id='newsc';d.className='card newsc';const u=newsUnread();
   d.innerHTML=`<div class="nwt">📣 333GYMニュース${u?` <i class="nbadge in">${u}</i>`:''}</div><ul>${L.slice(0,3).map(n=>newsItem(n,false)).join('')}</ul><button type="button" id="newsAll" class="nwall">${L.length>3?`ぜんぶ見る（${L.length}件）`:'くわしく見る'} ›</button>`;
   v.insertBefore(d,v.firstChild);document.getElementById('newsAll').onclick=()=>{tab='news';render();window.scrollTo(0,0)}}
 function vNews(){const m=me(),L=newsSorted();$('#view').innerHTML=`<h2>📣 333GYMニュース</h2><div class="card"><ul class="newsl">${L.length?L.map(n=>newsItem(n,true)).join(''):'<li class="muted">まだニュースはありません。</li>'}</ul></div><button type="button" class="nwall" id="newsBack">‹ 冒険者にもどる</button>`;
   $('#newsBack').onclick=()=>{tab='hero';render();window.scrollTo(0,0)};if(m){m.newsSeen=Date.now();save()}}
-function newsNav(){if(ADMIN)return;const u=newsUnread(),t=document.querySelector('#tabs [data-t="hero"]');if(t&&u&&!t.querySelector('.nbadge')){const b=document.createElement('i');b.className='nbadge';b.textContent=u;t.appendChild(b)}}
+function newsLine(){const old=document.getElementById('nline');if(ADMIN){if(old)old.remove();return}const L=newsSorted();if(!L.length){if(old)old.remove();return}
+  const n=L[0],u=newsUnread(),d=old||document.createElement('button');d.type='button';d.id='nline';d.className='nline'+(tab==='news'?' on':'');
+  d.innerHTML=`<span class="nlh">📣 ニュース${u?`<i class="nbadge in">${u}</i>`:''}</span><span class="nlt">${n.pin?'📌 ':''}${esc(n.title)}</span><span class="nlm">›</span>`;d.onclick=()=>{tab='news';render();window.scrollTo(0,0)};
+  if(!old){const h=document.querySelector('header');h.after(d)}}
+function newsNav(){return;if(ADMIN)return;const u=newsUnread(),t=document.querySelector('#tabs2 [data-t2="news"]');if(t&&u&&!t.querySelector('.nbadge')){const b=document.createElement('i');b.className='nbadge';b.textContent=u;t.appendChild(b)}}
 function newsAdmin(){if(!ADMIN||tab!=='guild'||document.getElementById('nwadm'))return;const v=document.getElementById('view');const h=[...v.querySelectorAll('h2')].find(x=>x.textContent.includes('宿題を出す'));if(!h)return;
   const d=document.createElement('section');d.id='nwadm';
   const draw=()=>{d.querySelector('#nwlist').innerHTML=newsSorted().map(n=>`<li class="${n.pin?'pin':''}"><div><small>${newsDate(n.t)}・${esc(n.tn)}${n.pin?'・📌重要':''}</small><b>${esc(n.title)}</b></div><span><button type="button" data-np="${n.id}">${n.pin?'固定をはずす':'📌固定'}</button><button type="button" data-nd="${n.id}">消す</button></span></li>`).join('')||'<li class="muted">まだありません。</li>'};
@@ -2086,6 +2104,11 @@ function vBlog(){const L=BLOG().slice().sort((a,b)=>b.t-a.t);
   $('#bgBack').onclick=()=>{tab='feed';render();window.scrollTo(0,0)}}
 function bgEntry(){if(tab!=='feed'||document.getElementById('bgent'))return;const be=document.getElementById('bent');if(!be)return;const b=document.createElement('button');b.type='button';b.id='bgent';b.className='phent bgent';b.innerHTML=`📝 キタエル・クエストblog <small>${BLOG().length?BLOG().length+'本の記事':'ジムの記事'}</small>`;b.onclick=()=>{tab='blog';render();window.scrollTo(0,0)};be.after(b)}
 try{const q=/[?&]blog=(\d+)/.exec(location.search);if(q)tab='blog'}catch(e){}
+// ===== 冒険者ページ上の入口アイコン =====
+function qNav(){if(tab!=='hero'||document.getElementById('qnav'))return;const v=document.getElementById('view');if(!v)return;
+  const it=[['news','📣','ニュース',ADMIN?0:newsUnread()],['photo','📷','写真館',0],['board','📌','掲示板',0],['blog','📝','blog',0]];
+  const d=document.createElement('nav');d.id='qnav';d.className='qnav';d.innerHTML=it.map(([t,i,l,n])=>`<button type="button" data-q="${t}"><b>${i}</b><span>${l}</span>${n?`<i class="nbadge">${n}</i>`:''}</button>`).join('');
+  v.insertBefore(d,v.firstChild);d.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{tab=b.dataset.q;render();window.scrollTo(0,0)})}
 const _r5=render;render=function(){if(tab==='blog'){renderTabs();vBlog();try{sw()}catch(e){}return}if(tab==='board'){renderTabs();vBoard();try{sw()}catch(e){}return}if(tab==='photo'){renderTabs();vPhoto();try{sw()}catch(e){}return}if(tab==='news'&&!ADMIN){renderTabs();vNews();try{sw()}catch(e){}return}const r=_r5.apply(this,arguments);try{newsCard();newsNav();newsAdmin();phEntry();bEntry();bgEntry()}catch(e){console.warn(e)}return r};
 if(!NEWS().length){NEWS().push({id:1,t:Date.now()-864e5,tn:TN(),title:'キタエル・クエスト 試作版スタート！',body:'トレーニングを記録して、相棒といっしょにレベルアップしよう。わからないことはトレーナーに聞いてね。',pin:false});save()}
 render();
