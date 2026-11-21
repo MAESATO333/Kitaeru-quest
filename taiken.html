@@ -143,13 +143,16 @@ dialog.hs::backdrop{background:rgba(30,40,10,.55)}
 .hsi .moral{background:#fff0f4;border-radius:12px;padding:8px 10px;font-weight:800;color:var(--beet)}
 .hsi .close{margin-top:10px}
 .form-wrap .card{margin-top:0}
+.logo .glogo{width:64px;height:64px;border-radius:14px;border:3px solid #fff;box-shadow:0 3px 0 var(--ink);display:block;margin:0 auto}
+.info .ilogo{float:right;width:84px;height:84px;border-radius:16px;margin:0 0 6px 10px}
+.info dd small{color:var(--muted)}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header class="hero-top">
   <canvas class="scene" id="sc-world" width="256" height="144" aria-label="畑の国ミドリ村と、お野菜十勇士"></canvas>
-  <div class="logo"><span class="gym">333GYM ・ 神楽坂</span><h1>キタエル<span>・</span>クエスト</h1></div>
+  <div class="logo"><img class="glogo" src="img/333gym-logo.png" alt="333GYM" width="360" height="360"><h1>キタエル<span>・</span>クエスト</h1></div>
 </header>
 <section class="intro">
   <p>333GYMで からだを鍛えると、<br>アプリの中で <em>お野菜十勇士</em> との<br>冒険が はじまる！</p>
@@ -206,16 +209,16 @@ dialog.hs::backdrop{background:rgba(30,40,10,.55)}
 </section>
 
 <section class="info">
-    <h3>🏠 333GYM</h3>
+    <img class="ilogo" src="img/333gym-logo.png" alt="333GYM" width="360" height="360"><h3>333GYM（神楽坂）</h3>
     <dl>
       <dt>住所</dt><dd>東京都新宿区神楽坂6丁目8番<br>文悠ビル 4F</dd>
-      <dt>営業</dt><dd>9:00〜22:00</dd>
-      <dt>定休日</dt><dd>火曜・水曜</dd>
+      <dt>営業</dt><dd>10:00〜22:00<br><small>（最終受付 21:00）</small></dd>
+      <dt>定休日</dt><dd>火曜日・水曜日</dd>
     </dl>
     <a class="tel" href="tel:0120339531"><small>お電話でのご予約・お問い合わせ</small>📞 0120-339-531</a>
     <a class="map" href="https://www.google.com/maps/search/?api=1&query=%E6%9D%B1%E4%BA%AC%E9%83%BD%E6%96%B0%E5%AE%BF%E5%8C%BA%E7%A5%9E%E6%A5%BD%E5%9D%826-8+%E6%96%87%E6%82%A0%E3%83%93%E3%83%AB" target="_blank" rel="noopener">🗺 地図をひらく</a>
   </section>
-  <footer>333GYM ・ キタエル・クエスト<br>運営：株式会社前里光秀おしゃれデザイン</footer>
+  <footer><img src="img/333gym-logo.png" alt="" width="48" height="48" style="border-radius:10px;display:block;margin:0 auto 6px">333GYM ・ キタエル・クエスト<br>運営：株式会社前里光秀おしゃれデザイン</footer>
 </div>
 
 <dialog class="hs" id="hs"><div class="hsi" id="hsi"></div></dialog>
