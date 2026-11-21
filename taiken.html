@@ -90,7 +90,7 @@ footer{text-align:center;font-size:11px;color:var(--muted);margin:22px 0 0}
 .scene{display:block;width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;border-radius:14px;border:3px solid var(--ink);background:#bfe6f5}
 .hero-top{position:relative;margin:0 -16px;border-bottom:4px solid var(--ink)}
 .hero-top .scene{border:0;border-radius:0}
-.logo{position:absolute;left:0;right:0;top:6%;text-align:center;pointer-events:none}
+.logo{position:absolute;left:0;right:0;top:31%;text-align:center;pointer-events:none}
 .logo .gym{display:inline-block;background:var(--ink);color:var(--lemon);font-family:var(--display);font-weight:800;font-size:12px;letter-spacing:.12em;padding:2px 12px;border-radius:999px}
 .logo h1{margin:6px 0 0;font-family:var(--display);font-weight:800;font-size:clamp(28px,9vw,46px);line-height:1.05;color:#fff;text-shadow:0 3px 0 var(--ink),3px 0 0 var(--ink),-3px 0 0 var(--ink),0 -3px 0 var(--ink),3px 3px 0 var(--ink),-3px 3px 0 var(--ink),3px -3px 0 var(--ink),-3px -3px 0 var(--ink)}
 .logo h1 span{color:var(--lemon)}
@@ -143,7 +143,7 @@ dialog.hs::backdrop{background:rgba(30,40,10,.55)}
 .hsi .moral{background:#fff0f4;border-radius:12px;padding:8px 10px;font-weight:800;color:var(--beet)}
 .hsi .close{margin-top:10px}
 .form-wrap .card{margin-top:0}
-.logo .glogo{width:64px;height:64px;border-radius:14px;border:3px solid #fff;box-shadow:0 3px 0 var(--ink);display:block;margin:0 auto}
+.hero-top .glogo{position:absolute;left:10px;top:10px;width:clamp(44px,13vw,64px);height:auto;border-radius:12px;border:3px solid #fff;box-shadow:0 3px 0 var(--ink);z-index:2}
 .info .ilogo{float:right;width:84px;height:84px;border-radius:16px;margin:0 0 6px 10px}
 .info dd small{color:var(--muted)}
 .launch{display:inline-block;margin:0 0 10px;background:var(--tomato);color:#fff;font-family:var(--display);font-weight:800;font-size:18px;border-radius:999px;padding:6px 18px;border:3px solid #fff;box-shadow:0 3px 0 var(--ink)}.launch b{color:var(--lemon);font-size:22px}
@@ -168,7 +168,7 @@ dialog.hs::backdrop{background:rgba(30,40,10,.55)}
 <div class="wrap">
 <header class="hero-top">
   <canvas class="scene" id="sc-world" width="256" height="144" aria-label="畑の国ミドリ村と、お野菜十勇士"></canvas>
-  <div class="logo"><img class="glogo" src="img/333gym-logo.png" alt="333GYM" width="360" height="360"><h1>キタエル<span>・</span>クエスト</h1></div>
+  <img class="glogo" src="img/333gym-logo.png" alt="333GYM" width="360" height="360"><div class="logo"><h1>キタエル<span>・</span>クエスト</h1></div>
 </header>
 <section class="intro">
   <div class="launch">📱 アプリの正式スタートは <b>12月</b>！</div>
@@ -590,7 +590,7 @@ function world(cv){A.use(cv.getContext('2d'),7);sk();A.sun(222,40,11,'#ffe600','
  A.roundTree(36,96,5,'#f39a1e','#ffc070');A.roundTree(218,96,5,'#e8452c','#ff9a80');A.field(122,144,'#a07a46','#4f9a2a');
  const ks=['carrot','piman','onion','cabbage','daikon','tomato','pumpkin','broccoli','shoga','imo'];
  ks.forEach((k,i)=>A.hero(k,2+i*25,96+(i%2?6:0),1,i>=5));
- avb('sheep',3,70,100,1.9);avb('giraffe',6,98,98,2.1);avb('dog',2,140,100,1.8,true);avb('cat',8,166,100,1.8);avb('hamster',4,192,102,1.6);av('g',20,112,30,2);A.sparkle(110,40);A.sparkle(150,44);A.heart(128,80)}
+ avb('sheep',3,70,100,1.9);avb('giraffe',6,98,98,2.1);avb('dog',2,140,100,1.8,true);avb('cat',8,166,100,1.8);avb('hamster',4,192,102,1.6);av('g',20,112,3,2.1);A.sparkle(110,40);A.sparkle(150,44);A.heart(128,80)}
 function run(cv){A.use(cv.getContext('2d'),3);sk();A.sun(40,30,10,'#ffe600','#fff7b0');clouds(5);
  A.hills(78,5,'#8fc04a',1,.03);for(let i=0;i<6;i++)A.pine(150+i*18,92,18+A.rnd()*8,'#3f7a2a','#4f8a30');
  A.ground(90,'#9ccc3c','#b8dc5a',100);flagRow(84);A.track(104,28);A.R(0,132,W,12,'#9ccc3c');
