@@ -2313,7 +2313,7 @@ function acctPanel(){const v=document.getElementById('view');if(!v||document.get
 (function(){
 const P=location.pathname,base=P.replace(/admin\/?$/,'').replace(/[^/]*$/,''),byQ=/[?&]admin=1/.test(location.search);
 window.KQ_GUEST_URL=byQ?P:base;const adminUrl=base+'admin';
-function sw(){const show=!AUTH.on||!!AUTH.owner;/* ゲスト画面⇄管理ページの切替は、サイト管理人（前里光秀）だけ */let d=document.getElementById('pvsw');if(!show){if(d)d.remove();return}
+function sw(){const show=!AUTH.on||AUTH.role==='trainer';/* ゲスト画面⇄管理ページの切替：いまはトレーナー全員（MITSUさん 2026-11-21） */let d=document.getElementById('pvsw');if(!show){if(d)d.remove();return}
   if(!d){d=document.createElement('div');d.id='pvsw';d.className='pvsw';document.body.appendChild(d)}
   d.innerHTML=`<span>${AUTH.on?'切替':'お試し'}</span><a href="${KQ_GUEST_URL}" class="${ADMIN?'':'on'}">ゲスト画面</a><a href="${byQ?P+'?admin=1':adminUrl}" class="${ADMIN?'on':''}">管理ページ</a>`}
 function myTrBtn(){if(!ADMIN)return;const v=document.getElementById('view');if(!v||document.getElementById('mytr'))return;const n=TN(),m=trMember(n),on=S.current===m.id,L=levelOf(total(m)),t=teamOf(m);
