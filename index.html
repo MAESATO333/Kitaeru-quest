@@ -2119,7 +2119,8 @@ window.AUTH.ja=JA;
 const V='10.12.2',load=src=>new Promise((r,j)=>{const s=document.createElement('script');s.src=src;s.onload=r;s.onerror=()=>j(new Error('load '+src));document.head.appendChild(s)});
 const IOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),SA=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
 const INAPP=/Line\/|FBAN|FBAV|Instagram|Twitter|MicroMessenger|TikTok|BytedanceWebview/i.test(navigator.userAgent);
-window.KQ_SAMEDOM=IOS&&SA;
+// Google Cloud に https://kitaeru-quest.web.app/__/auth/handler を追加したら true にする
+window.KQ_SAMEDOM=false&&IOS&&SA;
 const boot=window.__FB_BOOT||(()=>load(`/__/firebase/${V}/firebase-app-compat.js`).then(()=>Promise.all([load(`/__/firebase/${V}/firebase-auth-compat.js`),load(`/__/firebase/${V}/firebase-firestore-compat.js`)])).then(()=>{
   // iPhoneのホーム画面アプリでは、ログインの受け口を同じドメイン（kitaeru-quest.web.app）にする（iOSが別ドメインの保存をブロックするため）
   if(window.KQ_SAMEDOM&&/\.web\.app$/.test(location.hostname))return fetch('/__/firebase/init.json').then(r=>r.json()).then(c=>{c.authDomain=location.hostname;firebase.initializeApp(c)});
@@ -2147,7 +2148,7 @@ boot().then(()=>{
   const auth=firebase.auth(),db=firebase.firestore();
   $g('gform').onsubmit=e=>{e&&e.preventDefault&&e.preventDefault();const em=$g('gemail').value.trim(),pw=$g('gpass').value;if(!em||!pw){msg('メールアドレスとパスワードを入れてください');return false}$g('glogin').disabled=true;msg('ログインしています…',1);auth.signInWithEmailAndPassword(em,pw).catch(err=>msg(JA(err))).finally(()=>$g('glogin').disabled=false);return false};
   $g('ggoogle').onclick=()=>{const pv=new firebase.auth.GoogleAuthProvider();pv.setCustomParameters({prompt:'select_account'});$g('ggoogle').disabled=true;msg('Googleでログインしています…',1);
-    const sa=matchMedia('(display-mode: standalone)').matches||navigator.standalone;(sa?auth.signInWithRedirect(pv):auth.signInWithPopup(pv).catch(err=>{if(/popup-blocked|operation-not-supported/.test(err.code||''))return auth.signInWithRedirect(pv);throw err})).catch(err=>msg(JA(err))).finally(()=>$g('ggoogle').disabled=false)};
+    const sa=(matchMedia('(display-mode: standalone)').matches||navigator.standalone)&&!(IOS&&!window.KQ_SAMEDOM);(sa?auth.signInWithRedirect(pv):auth.signInWithPopup(pv).catch(err=>{if(/popup-blocked|operation-not-supported/.test(err.code||''))return auth.signInWithRedirect(pv);throw err})).catch(err=>msg(JA(err))).finally(()=>$g('ggoogle').disabled=false)};
   auth.getRedirectResult().catch(err=>msg(JA(err)));
   {const ia=$g('ginapp');if(ia&&INAPP){ia.hidden=false;ia.innerHTML=`⚠ LINEなどのアプリの中の画面では、Googleログインができません。<br>右上の「…」や共有ボタンから<b>「Safariで開く」（Androidは「ブラウザで開く」）</b>を選んでから、ログインしてください。<br><span class="giu">${location.origin}${location.pathname}</span>`}}
   $g('gsignup').onclick=()=>{const em=$g('gemail').value.trim(),pw=$g('gpass').value;if(!em||pw.length<6){msg('メールアドレスと、6文字以上のパスワードを入れてから押してください');return}$g('gsignup').disabled=true;msg('登録しています…',1);
