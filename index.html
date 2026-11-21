@@ -581,6 +581,10 @@ body.admnog header .whol>.dd,body.admnog #who{display:none!important}body.admnog
 .tbits{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}.tbits button{font:inherit;font-size:12px;border:2px solid #f5d27a;background:#fff;border-radius:999px;padding:3px 9px;cursor:pointer}.tbits button.on{background:#c99a00;color:#fff;border-color:#c99a00}
 .tbz{list-style:none;margin:6px 0;padding:0;display:flex;flex-direction:column;gap:4px}.tbz li{display:grid!important;grid-template-columns:40px 1fr;grid-template-areas:'r n' 'r b' 'r e';gap:0 8px;background:#fff;border-radius:10px;padding:6px 8px;align-items:center}.tbz li.me{border:2px solid #f5a524;background:#fffaf0}.tbz li.zero{opacity:.55}
 .tbr{grid-area:r;font-size:22px;text-align:center;font-weight:900}.tbz li>b{grid-area:n;font-size:15px}.tbb{grid-area:b;height:10px;background:#eef3e4;border-radius:5px;overflow:hidden;display:block}.tbb i{display:block;height:100%;background:linear-gradient(90deg,#f5a524,#e8452c)}.tbe{grid-area:e;font-size:12px}.tbe b{font-size:15px;color:#8a3a00}.tbe small{all:unset;margin-left:6px;color:#6f7a5c}
+.flyp{border:3px solid #e8452c!important;background:#fff8f4}.flyp>summary b{color:#b8321c}.flyp>summary small{display:block;font-size:12px;color:#6f7a5c;font-weight:600}
+.flrec{background:#fff;border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:6px;margin:6px 0}.flrec input,.flrec select,#flm,#kqcfgb select,#kqcfgb input{font:inherit;font-size:15px;border:2px solid #f3c2b6;border-radius:10px;padding:6px;box-sizing:border-box}
+.flk{display:flex;flex-direction:column;gap:4px}.flk label{display:flex!important;flex-direction:row!important;align-items:center;gap:6px;font-size:14px}.flk label span{flex:1;font-weight:700}.flk input{width:90px;text-align:right}
+.flsum{font-size:13px;font-weight:700;color:#b8321c;margin:4px 0 8px}
 </style>
 
 </head>
@@ -3390,11 +3394,11 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
  async function loadSv(){if(SV&&Date.now()-svT<5*60000)return;svT=Date.now();try{const q=await fs().collection('surveys').where('open','==',true).get();SV=[];q.forEach(d=>SV.push(Object.assign({id:d.id},d.data())))}catch(e){SV=[]}}
  async function guestBox(){if(!isGuest()||tab!=='hero')return;const v=document.getElementById('view');if(!v||document.getElementById('gsv'))return;
   const m=me();if(!m)return;const s=document.createElement('section');s.id='gsv';s.className='gsv';const a=document.getElementById('trmsg')||document.getElementById('gyoy');a?a.after(s):v.insertBefore(s,v.firstChild);
-  await loadSv();if(!document.body.contains(s))return;m.svDone=m.svDone||{};m.tevDone=m.tevDone||{};
+  await loadSv();await window.kqCfgLoad();if(!document.body.contains(s))return;m.svDone=m.svDone||{};m.tevDone=m.tevDone||{};
   const td=ymdL(Date.now()),cameToday=((m.inAt||{})[td])||(m.visits||[]).includes(td),coach=(window.coachOf&&coachOf(m))||'',evd=m.tevDone[td]||[];
   const sv=(SV||[]).filter(x=>!m.svDone[x.id]);
   s.innerHTML=`${sv.map(x=>`<div class="gsvc svq" data-sv="${esc(x.id)}"><b>📋 ${esc(x.title)}</b><small>333GYMからのアンケートです（${x.qs.length}問）。答えは運営代表責任者だけが読みます。</small><button type="button" class="btn-main" data-svo="${esc(x.id)}">こたえる</button><div class="svf"></div></div>`).join('')}
-   <details class="gsvc tev" ${cameToday&&!evd.length?'open':''}><summary><b>⭐ 今日のトレーナー評価</b><small>${evd.length?'今日は評価ずみです。ありがとう！':cameToday?'今日のトレーニングはどうでしたか？（1分でおわります）':'トレーニングのあとに、5段階でつけてください'}</small></summary><div id="tevf"></div></details>
+   ${(window.KQCFG||{}).tevMode==='off'||((window.KQCFG||{}).tevMode==='visit'&&!cameToday)?'':`<details class="gsvc tev" ${cameToday&&!evd.length?'open':''}><summary><b>⭐ 今日のトレーナー評価</b><small>${evd.length?'今日は評価ずみです。ありがとう！':cameToday?'今日のトレーニングはどうでしたか？（1分でおわります）':'トレーニングのあとに、5段階でつけてください'}</small></summary><div id="tevf"></div></details>`}
    <details class="gsvc dir"><summary><b>📮 運営代表責任者への直通フォーム</b><small>前里光秀（運営代表責任者）だけが読みます。トレーナー・健康管理室・ほかのゲストには見えません。</small></summary><div id="dirf"></div></details>`;
   s.querySelectorAll('[data-svo]').forEach(b=>b.onclick=()=>{const x=SV.find(y=>y.id===b.dataset.svo),box=b.parentNode.querySelector('.svf'),st={};b.remove();
    const draw=()=>{box.innerHTML=`${x.qs.map((q,i)=>`<div class="svqq"><p><b>Q${i+1}.</b> ${esc(q.label)}</p>${q.type==='text'?`<textarea data-tk="${q.k}" rows="3" maxlength="1000"></textarea>`:stars(q.k,st[q.k]||0)}</div>`).join('')}<button type="button" class="btn-main svsend">送信する</button>`;bindStars(box,st);
@@ -3403,7 +3407,7 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
      try{await fs().collection('surveyAns').doc(x.id+'_'+AUTH.user.uid).set({sid:x.id,uid:AUTH.user.uid,name:m.name,a,t:Date.now()});m.svDone[x.id]=Date.now();save();toast('📋 ありがとうございました！');s.remove();guestBox()}catch(e){alert('送れませんでした：'+(e.code||e.message))}}};
     const ob=bindStars;draw()});
   // トレーナー評価
-  {const f=s.querySelector('#tevf'),st={};const TR=(window.TEAM_TRAINERS||TRAINERS).filter(t=>t!==SITE_ADMIN);
+  if(s.querySelector('#tevf')){const f=s.querySelector('#tevf'),st={};const TR=(window.TEAM_TRAINERS||TRAINERS).filter(t=>t!==SITE_ADMIN);
    const draw=()=>{f.innerHTML=`<label>今日のトレーナー<select id="tevtr">${TRAINERS.filter(t=>t!==SITE_ADMIN).map(t=>`<option ${t===(st._tr||coach)?'selected':''} ${evd.includes(t)?'disabled':''}>${esc(t)}</option>`).join('')}</select></label>
      ${TEV_ITEMS.map(([k,l,d])=>`<div class="svqq"><p><b>${esc(l)}</b><br><small>${esc(d)}</small></p>${stars(k,st[k]||0)}</div>`).join('')}
      <textarea id="tevc" rows="2" maxlength="500" placeholder="ひとこと（なくてもOK）"></textarea><button type="button" class="btn-main" id="tevs">⭐ 評価を送る</button><small class="muted">★1つ＝10EXPとしてトレーナーのEXPになります（番付・月間MVP）。あなたの名前やひとことは運営代表責任者だけが見ます。トレーナーには名前が分からない形で点数だけが届きます。</small>`;bindStars(f,st);
@@ -3530,6 +3534,64 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
  async function mvpNews(){if(!ready())return;const pm=prevMon(nowMon());try{const k='kq-mvp-'+pm;if(localStorage.getItem(k))return;const ref=fs().collection('staffNews').doc('mvp_'+pm);const ex=await ref.get();if(ex.exists){localStorage.setItem(k,1);return}
   if(!SC)await load();const x=mvpOf(pm);if(!x)return;await ref.set({t:Date.now(),kind:'mvp',by:TN(),text:`🏅 ${monL(pm)}の月間MVPトレーナーは ${x.tr}さん！（評価EXP ${x.exp.toLocaleString()}・平均★${x.avg.toFixed(2)}）おめでとうございます！`});localStorage.setItem(k,1)}catch(e){}}
  let mv=0;const _r=render;render=function(){const r=_r.apply(this,arguments);try{panel();if(!mv&&ready()){mv=1;setTimeout(mvpNews,4000)}}catch(e){console.warn(e)}return r};
+})();
+</script>
+<script>
+// ===== v166：設定（運営代表責任者）・チラシ営業の成績と番付（MITSUさん 2026-11-21）=====
+(function(){
+ const fs=()=>firebase.firestore();const ok=()=>window.AUTH&&AUTH.on&&AUTH.user&&window.firebase&&firebase.apps&&firebase.apps.length;
+ const DEF={tevMode:'visit',fl:{hand:1,trial:50,join:300}};let cfgT=0;
+ window.KQCFG=Object.assign({},DEF);
+ window.kqCfgLoad=async function(force){if(!ok())return KQCFG;if(!force&&Date.now()-cfgT<5*60000)return KQCFG;cfgT=Date.now();try{const d=await fs().doc('kqcfg/main').get();if(d.exists){const x=d.data();KQCFG=Object.assign({},DEF,x,{fl:Object.assign({},DEF.fl,x.fl||{})})}}catch(e){}return KQCFG};
+ const FK=[['hand','📄 チラシを配った','枚'],['trial','📞 体験予約につながった','件'],['join','🎉 入会につながった','件']];
+ const TRS=()=>TRAINERS.filter(t=>t!==SITE_ADMIN);
+ const ymdL=t=>{const d=new Date(t);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+ const nowMon=()=>ymdL(Date.now()).slice(0,7),monL=k=>`${+k.slice(0,4)}年${+k.slice(5,7)}月`;
+ const wkL=wk=>{const t=(wk*7+2)*864e5-5*36e5;const a=new Date(t),b=new Date(t+6*864e5);return `${a.getMonth()+1}/${a.getDate()}〜${b.getMonth()+1}/${b.getDate()}`};
+ const pts=x=>(x.n||0)*((KQCFG.fl||DEF.fl)[x.kind]||0);
+ let FL=null,err='',vt='week',vm='';
+ async function load(){try{const q=await fs().collection('flyer').get();FL=[];q.forEach(d=>FL.push(Object.assign({id:d.id},d.data())));err=''}catch(e){FL=[];err=e.code||'err'}}
+ function rank(list){const by={};TRS().forEach(t=>by[t]={tr:t,p:0,hand:0,trial:0,join:0});list.forEach(x=>{const r=by[x.tr];if(!r)return;r[x.kind]=(r[x.kind]||0)+(x.n||0);r.p+=pts(x)});return Object.values(by).sort((a,b)=>b.p-a.p||b.join-a.join||b.trial-a.trial)}
+ const MED=['🥇','🥈','🥉'];
+ async function panel(re){if(!(ADMIN&&ok()&&AUTH.role==='trainer'&&tab==='guild'))return;const v=document.getElementById('view');if(!v)return;let d=document.getElementById('flyp');if(d&&!re)return;
+  if(!d){d=document.createElement('details');d.id='flyp';d.className='acct flyp';const k=document.getElementById('trbz')||document.getElementById('mytr');k?k.after(d):v.insertBefore(d,v.firstChild);d.addEventListener('toggle',()=>{if(d.open)draw(1)})}
+  d.innerHTML=`<summary><b>📣 チラシ営業の成績・番付</b><small>配ったチラシ・体験予約・入会を記録 → 今週の番付・月間ランキング（全トレーナー）</small></summary><div id="flyin"></div>`;if(d.open)draw(1)}
+ async function draw(reload){const b=document.getElementById('flyin');if(!b)return;if(reload||!FL){b.innerHTML='<p class="muted">読みこみ中…</p>';await kqCfgLoad(1);await load()}
+  const cm=nowMon(),wk=weekNo();if(!vm)vm=cm;const F=KQCFG.fl||DEF.fl;const me=TN();
+  const list=vt==='week'?FL.filter(x=>x.wk===wk):vt==='lastweek'?FL.filter(x=>x.wk===wk-1):FL.filter(x=>x.mon===vm);const R=rank(list),mx=Math.max(1,...R.map(r=>r.p));
+  const months=[...new Set(FL.map(x=>x.mon).concat(cm))].sort().reverse();const mineAll=FL.filter(x=>x.tr===me).sort((a,b)=>b.t-a.t);
+  b.innerHTML=`${err?`<div class="zsk">読みこめませんでした（${esc(err)}）。Firebaseのルールの貼りかえが必要です。</div>`:''}
+   <p class="muted" style="font-size:12px">点数：チラシ1枚＝${F.hand}点・体験予約1件＝${F.trial}点・入会1件＝${F.join}点（運営代表責任者が設定）</p>
+   <div class="flrec"><b>✏ ${esc(me)}さんの成績を記録する</b>
+    ${AUTH.owner?`<label>トレーナー<select id="fltr">${TRS().map(t=>`<option>${esc(t)}</option>`).join('')}</select></label>`:''}
+    <label>日にち<input type="date" id="fldt" value="${ymdL(Date.now())}"></label>
+    <div class="flk">${FK.map(([k,l,u])=>`<label><span>${l}</span><input type="number" min="0" max="10000" inputmode="numeric" data-fk="${k}" placeholder="0"> ${u}</label>`).join('')}</div>
+    <input id="flmemo" maxlength="200" placeholder="メモ（例：駅前で配布・〇〇町のポスティング）"><button type="button" class="btn-main" id="flsave">📣 記録する</button></div>
+   <h4>🏆 チラシ営業番付</h4><div class="kgtabs">${[['week','今週'],['lastweek','先週'],['month','月間']].map(([k,l])=>`<button type="button" data-flt="${k}" class="${vt===k?'on':''}">${l}</button>`).join('')}</div>
+   ${vt==='month'?`<select id="flm">${months.map(m=>`<option value="${m}" ${m===vm?'selected':''}>${monL(m)}${m===cm?'（今月）':''}</option>`).join('')}</select>`:`<p class="muted" style="font-size:12px">${vt==='week'?'今週':'先週'}：${wkL(vt==='week'?wk:wk-1)}（土曜4:00に切りかわり）</p>`}
+   <ol class="tbz">${R.map((r,i)=>`<li class="${r.tr===me?'me':''} ${r.p?'':'zero'}"><span class="tbr">${r.p?(MED[i]||`${i+1}位`):'—'}</span><b>${esc(r.tr)}</b><span class="tbb"><i style="width:${Math.round(r.p/mx*100)}%"></i></span><span class="tbe"><b>${r.p.toLocaleString()}</b> 点<small>📄${r.hand.toLocaleString()}枚・📞${r.trial}件・🎉${r.join}件</small></span></li>`).join('')}</ol>
+   <div class="flsum">合計：📄 ${R.reduce((p,r)=>p+r.hand,0).toLocaleString()}枚・📞 体験予約 ${R.reduce((p,r)=>p+r.trial,0)}件・🎉 入会 ${R.reduce((p,r)=>p+r.join,0)}件</div>
+   <h4>🗒 ${esc(me)}さんの記録</h4><ul class="khana">${mineAll.slice(0,40).map(x=>`<li><b>${esc(x.date)}</b>・${(FK.find(f=>f[0]===x.kind)||[])[1]||''} ${x.n}${(FK.find(f=>f[0]===x.kind)||[])[2]||''}${x.memo?`<br><small>${esc(x.memo)}</small>`:''}<button type="button" class="phdel" data-fld="${esc(x.id)}">消す</button></li>`).join('')||'<li class="muted">まだ記録はありません</li>'}</ul>`;
+  b.querySelectorAll('[data-flt]').forEach(x=>x.onclick=()=>{vt=x.dataset.flt;draw(0)});const sm=b.querySelector('#flm');if(sm)sm.onchange=()=>{vm=sm.value;draw(0)};
+  b.querySelector('#flsave').onclick=async()=>{const date=b.querySelector('#fldt').value||ymdL(Date.now());const tr=AUTH.owner?b.querySelector('#fltr').value:me;const memo=b.querySelector('#flmemo').value.trim();
+   const t0=new Date(date+'T12:00').getTime();const w=Math.floor(((t0+5*36e5)/864e5-2)/7);const items=[...b.querySelectorAll('[data-fk]')].map(i=>({kind:i.dataset.fk,n:Math.max(0,Math.min(10000,Math.floor(+i.value||0)))})).filter(x=>x.n>0);
+   if(!items.length){toast('数を入れてください');return}
+   try{for(const x of items){const o={tr,kind:x.kind,n:x.n,date,wk:w,mon:date.slice(0,7),memo,by:me,uid:AUTH.user.uid,t:Date.now()};const r=await fs().collection('flyer').add(o);FL.push(Object.assign({id:r.id},o))}
+    if(items.some(x=>x.kind==='join')&&window.sNewsG)try{sNewsG('flyer',`🎉 ${tr}さんのチラシ営業から入会が${items.find(x=>x.kind==='join').n}件！`)}catch(e){}
+    toast('📣 記録しました');draw(0)}catch(e){alert('記録できませんでした：'+(e.code||e.message))}};
+  b.querySelectorAll('[data-fld]').forEach(x=>x.onclick=async()=>{if(!confirm('この記録を消しますか？'))return;try{await fs().collection('flyer').doc(x.dataset.fld).delete();FL=FL.filter(y=>y.id!==x.dataset.fld);draw(0)}catch(e){alert(e.code||e.message)}})}
+ // 運営代表責任者の設定（👑 パネルの中に「⚙ 設定」）
+ async function cfgBox(){if(!(ADMIN&&ok()&&AUTH.owner&&tab==='guild'))return;const own=document.getElementById('ownin');if(!own||own.querySelector('#kqcfgb'))return;
+  await kqCfgLoad(1);if(own.querySelector('#kqcfgb'))return;const F=KQCFG.fl||DEF.fl;const d=document.createElement('details');d.id='kqcfgb';d.className='grbulk';
+  d.innerHTML=`<summary>⚙ 設定（トレーナー評価・チラシ営業）</summary>
+   <label>⭐ トレーナー評価のカードを出すとき<select id="cftev"><option value="visit" ${KQCFG.tevMode==='visit'?'selected':''}>入室した日だけ（おすすめ）</option><option value="always" ${KQCFG.tevMode==='always'?'selected':''}>いつも出す（入室した日は開いた状態）</option><option value="off" ${KQCFG.tevMode==='off'?'selected':''}>出さない（お休み）</option></select></label>
+   <p class="muted" style="font-size:12px">📣 チラシ営業の点数</p><div class="flk">${FK.map(([k,l,u])=>`<label><span>${l}</span>1${u}＝<input type="number" min="0" max="10000" data-cf="${k}" value="${F[k]}">点</label>`).join('')}</div>
+   <button type="button" class="btn-main" id="cfsave">⚙ 設定を保存</button>`;
+  own.appendChild(d);d.querySelector('#cfsave').onclick=async()=>{const fl={};d.querySelectorAll('[data-cf]').forEach(i=>fl[i.dataset.cf]=Math.max(0,Math.floor(+i.value||0)));const o={tevMode:d.querySelector('#cftev').value,fl,t:Date.now()};
+   try{await fs().doc('kqcfg/main').set(o);KQCFG=Object.assign({},DEF,o);toast('⚙ 設定を保存しました')}catch(e){alert('保存できませんでした：'+(e.code||e.message))}}}
+ const _r=render;render=function(){const r=_r.apply(this,arguments);try{panel();setTimeout(cfgBox,300)}catch(e){console.warn(e)}return r};
+ document.addEventListener('toggle',e=>{if(e.target&&e.target.id==='ownp'&&e.target.open)setTimeout(cfgBox,1500)},true);
+ document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#ownin [data-ot]'))setTimeout(cfgBox,200)},true);
 })();
 </script>
 </body>
