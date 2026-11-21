@@ -176,7 +176,7 @@ draw(A){const{R,P}=A;
  A.sparkle(98,52);
  A.bunny(16,112,'#ffffff',2,false,true);A.bunny(30,116,'#f4efe4',2);A.bunny(43,113,'#e8dcc0',2);
 }},
-{text:'キャロットが剣を振ると――\n「キャロット・スラッシュ！」\nオレンジの光が霧を切り裂き、森に朝日が差し込みました。',
+{text:'キャロットが剣を振ると――\n「キャロット・スラッシュ！」\nオレンジの光が霧を切り裂き、森に朝の光が差し込みました。',
 draw(A){const{R,P}=A;
  A.sky(['#f9c060','#ffd878','#ffe8a0','#fff3c0'],100);
  A.sun(190,58,22,'#ffe600','#fff8d0');
@@ -874,6 +874,8 @@ const css=`
 .mzbooks{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
 .mzbooks button{display:flex;flex-direction:column;align-items:center;gap:3px;border:3px solid #ffe600;background:#fffbe0;border-radius:12px;padding:8px 6px;cursor:pointer;font-weight:800;color:#33501a;position:relative}
 .mzbooks canvas{width:64px;height:52px;image-rendering:pixelated}
+.mzvoice{border-color:#e8452c!important}.mzbooks .vo{background:#e8452c;color:#fff;border-radius:999px;padding:1px 8px;font-size:12px}
+.mzvov{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;padding:12px}.mzvin{width:100%;max-width:960px;background:#1b2a12;border-radius:14px;padding:10px;color:#fff}.mzvh{display:flex;align-items:center;gap:8px;margin-bottom:8px}.mzvh b{flex:1;font-size:15px}.mzvx{font:inherit;font-weight:800;border:0;border-radius:999px;padding:6px 12px;background:#fff;color:#333;cursor:pointer}.mzvin video{width:100%;aspect-ratio:16/9;background:#000;border-radius:8px;display:block}.mzvin .mzlead{color:#dfe9cf;margin:6px 0 0}
 .mzbooks small{font-size:11px;color:#6a7a4a}.mzbooks b{font-size:13px;line-height:1.35}
 .mzbooks .seen{position:absolute;top:4px;right:6px;font-size:11px;background:#4f9a2a;color:#fff;border-radius:999px;padding:1px 6px}
 .mzfull{position:fixed;inset:0;z-index:300;background:#1a1420;display:flex;flex-direction:column;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px);overscroll-behavior:contain;touch-action:manipulation}
@@ -955,9 +957,11 @@ function vLobby(w){const sm=seenMap();
   w.innerHTML=`<h2 class="mzh">🎬 ミドリ座 ロビー</h2><canvas class="mzc" id="mzc" width="256" height="144" aria-label="ロビー"></canvas>
   <div class="mzbox" ${NO_SHOWS?'hidden':''}><h3>🎟 上映会のスケジュール</h3><ul class="mzshow" id="mzshows"></ul>${isTr()?`<div class="mzform"><select id="mzep" aria-label="上映する話">${EPISODES.map(e=>`<option value="${e.no}">第${e.no}話 ${E(e.title)}</option>`).join('')}</select><input type="date" id="mzd" aria-label="日にち"><input type="time" id="mzt" step="900" value="20:00" aria-label="時刻"><button type="button" id="mzadd">🎬 この日時で上映会を予約する</button></div><p class="mzlead" style="font-size:12px;margin-top:6px">時間になると、入場した人みんなが同じ場面を一緒に見られます（1話 約2分）。</p>`:''}</div>
   <div class="mzbox"><h3>📚 絵本コーナー（いつでも上映）</h3><p class="mzlead" style="margin-bottom:8px">いつでも好きな話を観られます。最後まで観ると「観たよスタンプ」とEXPがもらえます（1話1回）。</p>
-  <div class="mzbooks">${EPISODES.map(e=>`<button type="button" data-mzep="${e.no}">${sm[e.no]?'<span class="seen">観た！</span>':''}${heroCv(e.hero)}<small>第${e.no}話・${HN[e.hero]}</small><b>${E(e.title)}</b></button>`).join('')}</div></div>`;
+  <div class="mzbooks">${EPISODES.map(e=>`<button type="button" data-mzep="${e.no}">${sm[e.no]?'<span class="seen">観た！</span>':''}${heroCv(e.hero)}<small>第${e.no}話・${HN[e.hero]}</small><b>${E(e.title)}</b></button>`).join('')}</div></div>
+  ${Object.keys(VOICE).length?`<div class="mzbox mzvoice"><h3>🎙 声つき絵本（動画）</h3><p class="mzlead" style="margin-bottom:8px">声と音楽つきの絵本です。音が出るので、まわりに気をつけて観てね。</p><div class="mzbooks">${EPISODES.filter(e=>VOICE[e.no]).map(e=>`<button type="button" data-mzvo="${e.no}"><span class="vo">▶ 声つき</span>${heroCv(e.hero)}<small>第${e.no}話・${HN[e.hero]}</small><b>${E(e.title)}</b></button>`).join('')}</div></div>`:''}`;
   drawLobby(w.querySelector('#mzc').getContext('2d'));drawShows();
   w.querySelectorAll('[data-mzep]').forEach(b=>b.onclick=()=>openFree(+b.dataset.mzep));
+  w.querySelectorAll('[data-mzvo]').forEach(b=>b.onclick=()=>openVoice(+b.dataset.mzvo));
   const add=w.querySelector('#mzadd');if(add){const d=new Date();d.setDate(d.getDate()+1);w.querySelector('#mzd').value=`${d.getFullYear()}-${P2(d.getMonth()+1)}-${P2(d.getDate())}`;
     add.onclick=()=>{const ds=w.querySelector('#mzd').value,ts=w.querySelector('#mzt').value;if(!ds||!ts){say('日にちと時刻を入れてください');return}const at=new Date(ds+'T'+ts).getTime();if(!(at>Date.now())){say('これからの日時を選んでください');return}addScr(+w.querySelector('#mzep').value,at)}}}
 function drawShows(){const ul=document.getElementById('mzshows');if(!ul)return;const now=Date.now(),a=upcoming();
@@ -966,6 +970,12 @@ function drawShows(){const ul=document.getElementById('mzshows');if(!ul)return;c
    :`<li><div>いまは予定がありません。${isTr()?'下から上映会を予約できます。':'絵本コーナーで、いつでも観られます。'}</div></li>`;
   ul.querySelectorAll('[data-mzshow]').forEach(b=>b.onclick=()=>{const s=SCR.find(x=>String(x.id)===b.dataset.mzshow);if(s)openShow(s)});
   ul.querySelectorAll('[data-mzdel]').forEach(b=>b.onclick=()=>{if(b.dataset.c){delScr(b.dataset.mzdel)}else{b.dataset.c=1;b.textContent='本当に取消'}})}
+// 🎙 声つき絵本（動画）v168：第1話（MITSUさん 2026-11-21 完成OK）
+const VOICE={1:'https://videocdn.pollo.ai/web-cdn/pollo/production/cmuzbvtiq0b4fub7xas00yf9z/ori/a79f42da-cb5f-4442-b2ad-9371969e3ddd-0-07df684b7400299f.mp4'};
+function openVoice(n){const ep=EP(n),src=VOICE[n];if(!ep||!src)return;let o=document.getElementById('mzvov');if(o)o.remove();o=document.createElement('div');o.id='mzvov';o.className='mzvov';
+  o.innerHTML=`<div class="mzvin"><div class="mzvh"><b>🎙 第${ep.no}話「${E(ep.title)}」</b><button type="button" class="mzvx" aria-label="とじる">✕ とじる</button></div><video controls playsinline autoplay preload="metadata" src="${src}"></video><p class="mzlead" style="font-size:12px">最後まで観ると「観たよスタンプ」がもらえます（1話1回）。</p></div>`;
+  document.body.appendChild(o);const v=o.querySelector('video');const close=()=>{try{v.pause()}catch(e){}o.remove();try{render()}catch(e){}};
+  o.querySelector('.mzvx').onclick=close;o.onclick=e=>{if(e.target===o)close()};v.onended=()=>{reward(ep)};v.onerror=()=>{say('動画を読みこめませんでした。通信のよいところで、もう一度ためしてね')}}
 function openFree(n){C.mode='free';C.ep=n;C.pi=0;C.auto=true;C.show=null;if(tab!=='cinema'){tab='cinema';C.scene='lobby';render()}openHall()}
 function openShow(s){C.mode='show';C.ep=s.ep;C.show=s;C.pi=0;openHall()}
 function hallOpen(){return !!document.getElementById('mzfull')}
