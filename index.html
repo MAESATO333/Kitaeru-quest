@@ -2119,8 +2119,8 @@ window.AUTH.ja=JA;
 const V='10.12.2',load=src=>new Promise((r,j)=>{const s=document.createElement('script');s.src=src;s.onload=r;s.onerror=()=>j(new Error('load '+src));document.head.appendChild(s)});
 const IOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),SA=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
 const INAPP=/Line\/|FBAN|FBAV|Instagram|Twitter|MicroMessenger|TikTok|BytedanceWebview/i.test(navigator.userAgent);
-// Google Cloud に https://kitaeru-quest.web.app/__/auth/handler を追加したら true にする
-window.KQ_SAMEDOM=false&&IOS&&SA;
+// Google Cloud に https://kitaeru-quest.web.app/__/auth/handler 追加ずみ（2026-11-21 MITSUさん）
+window.KQ_SAMEDOM=IOS&&SA;
 const boot=window.__FB_BOOT||(()=>load(`/__/firebase/${V}/firebase-app-compat.js`).then(()=>Promise.all([load(`/__/firebase/${V}/firebase-auth-compat.js`),load(`/__/firebase/${V}/firebase-firestore-compat.js`)])).then(()=>{
   // iPhoneのホーム画面アプリでは、ログインの受け口を同じドメイン（kitaeru-quest.web.app）にする（iOSが別ドメインの保存をブロックするため）
   if(window.KQ_SAMEDOM&&/\.web\.app$/.test(location.hostname))return fetch('/__/firebase/init.json').then(r=>r.json()).then(c=>{c.authDomain=location.hostname;firebase.initializeApp(c)});
