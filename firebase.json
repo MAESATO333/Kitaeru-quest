@@ -64,6 +64,22 @@
       {
         "source": "/join",
         "destination": "/index.html"
+      },
+      {
+        "source": "/map",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/matsuri",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/book",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/farm",
+        "destination": "/index.html"
       }
     ]
   }

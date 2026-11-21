@@ -154,6 +154,8 @@ dialog.hs::backdrop{background:rgba(30,40,10,.55)}
   <canvas class="scene" id="sc-world" width="256" height="144" aria-label="畑の国ミドリ村と、お野菜十勇士"></canvas>
   <div class="logo"><img class="glogo" src="img/333gym-logo.png" alt="333GYM" width="360" height="360"><h1>キタエル<span>・</span>クエスト</h1></div>
 </header>
+<div id="seedban" hidden style="margin:10px 0;background:#fffbe0;border:3px solid #ffe600;border-radius:16px;padding:10px 14px;font-weight:700;line-height:1.7;color:#33501a">🌰 お友だちから<b>「たね」</b>が届きました！<br>お電話のときに <b>「たねの番号 <span id="seedno"></span>」</b> とお伝えください。紹介してくれたお友だちの畑に、芽が出ます🌱</div>
+<script>(function(){try{var s=(location.search.match(/[?&]seed=(\d{4})/)||[])[1];if(s){document.getElementById('seedno').textContent=s;document.getElementById('seedban').hidden=false}}catch(e){}})();</script>
 <section class="intro">
   <p>333GYMで からだを鍛えると、<br>アプリの中で <em>お野菜十勇士</em> との<br>冒険が はじまる！</p>
   <div class="cta"><a class="btn red" href="#yoyaku">🥕 無料体験を予約する<small>癒しフェア参加の方・11月中のご予約で 体験無料</small></a></div>
