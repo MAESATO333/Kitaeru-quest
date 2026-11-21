@@ -2939,7 +2939,7 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
 (function(){if(typeof ADMIN==='undefined'||!ADMIN)return;
  let M=[],ok=0,busy=0,draft={to:'all',kind:'biz',text:''};
  const isTr=()=>window.AUTH&&AUTH.on&&AUTH.role==='trainer'&&window.firebase&&firebase.apps&&firebase.apps.length;
- const me=()=>TN(),KIND={biz:['📋','業務事項','#2f6d2a'],msg:['💬','メッセージ','#5b4b96']};
+ const me=()=>TN(),KIND={biz:['📋','業務事項','#2f6d2a'],msg:['💬','メッセージ','#5b4b96'],iwai:['㊗','お祝いメッセージ','#e8452c'],thx:['😊','ありがとうございます','#f39a1e']};
  const forMe=x=>x.from!==me()&&(x.to==='all'||x.to===me());
  const unread=()=>M.filter(x=>forMe(x)&&!(x.read&&x.read[me()]));
  const tt=t=>{const d=new Date(t);return `${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`};
@@ -2962,7 +2962,7 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
   const U=unread(),mine=M.filter(x=>x.from===me()),inbox=M.filter(forMe),op=d.open;
   d.innerHTML=`<summary><b>💌 トレーナー同士の連絡</b>${U.length?` <i class="nbadge in">${U.length}</i> <span class="tmnew">新着あり！</span>`:''}<small>業務事項・メッセージ（ゲストには見えません）</small></summary>
    <div class="tmf"><label>あて先<select id="tmto"><option value="all">トレーナー全員</option>${TRAINERS.filter(t=>t!==me()).map(t=>`<option ${draft.to===t?'selected':''}>${esc(t)}</option>`).join('')}</select></label>
-    <label>種類<select id="tmkd"><option value="biz" ${draft.kind==='biz'?'selected':''}>📋 業務事項</option><option value="msg" ${draft.kind==='msg'?'selected':''}>💬 メッセージ</option></select></label>
+    <label>種類<select id="tmkd">${Object.entries(KIND).map(([k,v])=>`<option value="${k}" ${draft.kind===k?'selected':''}>${v[0]} ${v[1]}</option>`).join('')}</select></label>
     <textarea id="tmtx" rows="3" maxlength="1000" placeholder="例：明日の朝、3Bスタジオのマットを入れかえます">${esc(draft.text)}</textarea>
     <button type="button" class="btn-main" id="tmsend">${AUTH.owner?'📢 サイト管理人として送る':'💌 送る'}（${esc(me())}から）</button></div>
    ${ok===-1?'<p class="muted">読みこめませんでした。Firebaseのルール（trMsgs）の貼りかえが必要です。</p>':''}
