@@ -2110,7 +2110,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.s
 const LOCK=false;let ON=/[?&]login=1/.test(location.search);try{if(ON)localStorage.setItem('kq-login','1');if(/[?&]login=0/.test(location.search))localStorage.removeItem('kq-login');ON=ON||localStorage.getItem('kq-login')==='1'}catch(e){}const JOIN=/^\/join\/?$/.test(location.pathname)||/[?&]join=1/.test(location.search);ON=ON||JOIN||(LOCK&&/\.web\.app$|\.firebaseapp\.com$/.test(location.hostname))||(ADMIN&&!/^(localhost|127\.)/.test(location.hostname));
 window.AUTH={on:ON,user:null,role:null};
 if(!ON)return;
-document.body.classList.add('locked','authwait');setTimeout(()=>document.body.classList.remove('authwait'),8000);if(ADMIN){const gs=document.querySelector('#gate .gs');if(gs)gs.textContent='トレーナー専用 管理ページ';}
+document.body.classList.add('locked','authwait');setTimeout(()=>document.body.classList.remove('authwait'),8000);if(ADMIN){const gs=document.querySelector('#gate .gs');if(gs)gs.textContent='トレーナー専用 管理ページ';const su=document.getElementById('gsignup');if(su)su.hidden=true;const gn=document.querySelector('#gate .gn');if(gn)gn.innerHTML='🔒 管理ページに入れるのは、ジムが<b>トレーナーとして登録したメールアドレス</b>だけです。<br>登録したGoogleアカウントで「Googleでログイン」を押してください。';}
 if(JOIN){const gs=document.querySelector('#gate .gs');if(gs)gs.innerHTML='🌱 入会の申しこみ<br><small>Googleか、メールとパスワードで登録してください</small>';
   if(/Line\//i.test(navigator.userAgent)){const g=document.getElementById('gmsg');if(g){g.style.color='#c0392b';g.innerHTML='LINEの中のブラウザでは、Googleログインが使えません。右下の「…」→「ブラウザで開く」（Safari/Chrome）で開き直してください。'}}}
 const $g=id=>document.getElementById(id),msg=(t,ok)=>{if(t)document.body.classList.remove('authwait');const m=$g('gmsg');m.textContent=t||'';m.className='gm'+(ok?' ok':'')};
@@ -2173,6 +2173,7 @@ boot().then(()=>{
     // ③' ルールがまだ合っていなくても、オーナー本人（Googleで確認済みのメール）はトレーナーとして入れる
     if(!ok&&u.emailVerified){try{const hb=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(em));const hx=[...new Uint8Array(hb)].map(b=>b.toString(16).padStart(2,'0')).join('');if(hx==='74933ede2c82fa570047fbcc8a1dd24b985c979d4b98455984ae35a15bf16936'){role='trainer';name='オーナー';ok=true;console.warn('owner fallback: Firestore rules denied ('+why+')')}}catch(e){console.warn(e)}}
     // ④ メール/パスワードで入った人は、トレーナーが作ったアカウントなので会員として入れる
+    if(!ok&&ADMIN){msg(`このアカウント（${u.email}）は、トレーナーとして登録されていません。管理ページには入れません。`);console.warn('admin denied',u.email,why);await auth.signOut();return}
     if(!ok){console.warn('login: no role yet',u.email,why);showReq(u,db,auth);return}
     if(!ok){msg(`このアカウント（${u.email}）は、ジムに登録されていません。受付でお声がけください。`+`［${why||'no-role'}］`);console.warn('login denied',u.email,u.uid,why);await auth.signOut();return}
     {const r=$g('greq');if(r){r.hidden=true;r.innerHTML=''}$g('gform').classList.remove('reqmode')}
@@ -2181,7 +2182,7 @@ boot().then(()=>{
   });
 }).catch(e=>{msg('ログインの準備ができませんでした。通信を確認して、もう一度開いてください');console.warn(e)});
 // header logout
-const hb=document.querySelector('header');if(hb&&!$g('logoutBtn')){const b=document.createElement('button');b.id='logoutBtn';b.className='mode';b.type='button';b.textContent='ログアウト';b.onclick=()=>{if(window.firebase)firebase.auth().signOut().then(()=>{msg('ログアウトしました',1)})};hb.appendChild(b)}
+const hb=document.querySelector('header');if(hb&&!$g('logoutBtn')){const b=document.createElement('button');b.id='logoutBtn';b.className='mode';b.type='button';b.textContent='🚪 ログアウト';b.onclick=()=>{if(window.firebase)firebase.auth().signOut().then(()=>{msg('ログアウトしました',1)})};hb.appendChild(b)}
 // ===== 管理ページ専用ニュース（スタッフだけ・ゲストには出ない）=====
 const HKN0='團野有花',two=(ok,c)=>!!(c&&ok[c]&&ok[HKN0]&&(c!==HKN0||Object.keys(ok).length>1));
 window._sn=window._sn||[];
