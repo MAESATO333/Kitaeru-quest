@@ -2904,5 +2904,6 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
  const _rT=render;render=function(){const r=_rT.apply(this,arguments);try{if(isTr()){if(!window._tkLoaded){window._tkLoaded=1;load();setInterval(load,60000)}if(tab==='guild')setTimeout(()=>panel(),0)}}catch(e){console.warn(e)}return r};
 })();
 </script>
+<script src="quest10.js"></script>
 </body>
 </html>
