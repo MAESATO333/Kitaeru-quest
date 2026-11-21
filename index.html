@@ -2854,7 +2854,7 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
  const _rN=render;render=function(){const r=_rN.apply(this,arguments);try{const c=tab==='cinema';if(c&&!cin)ap(true);else if(!c&&cin){let v=false;try{v=localStorage.getItem('kq-navmin')==='1'}catch(e){}ap(v)}cin=c}catch(e){}return r};
 })();
 </script><script>
-// ===== 📮 体験予約・お問い合わせ（v145）：/taiken から届いたものを管理ページに表示 =====
+// ===== 📮 体験予約・お問い合わせ（v145・準備中）：Firestore taiken を管理ページに表示。いまは申しこみに使わない（MITSUさん 2026-11-21）。フォームの元: /mnt/project-files/kitaeru-quest/taiken/src/form-v1.html =====
 (function(){if(typeof ADMIN==='undefined'||!ADMIN)return;
  const TS={new:['🆕','未対応','#e8452c'],call:['📞','連絡ずみ','#f39a1e'],fix:['📅','体験日きまり','#4f7d2a'],done:['✅','対応おわり','#7a8460'],ng:['🙅','キャンセル','#9b2f5e']};
  window._tk=window._tk||[];let ok=0,loading=0;
@@ -2864,7 +2864,8 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
  async function load(){if(!isTr()||loading)return;loading=1;try{const q=await firebase.firestore().collection('taiken').get();const a=[];q.forEach(d=>a.push(Object.assign({id:d.id},d.data())));
    window._tk=a.sort((x,y)=>((at(y)||0)-(at(x)||0)));ok=1}catch(e){console.warn('taiken',e);ok=-1}loading=0;line();panel(1)}
  const nNew=()=>window._tk.filter(x=>(x.st||'new')==='new').length;
- function line(){let d=document.getElementById('tkline');if(!isTr()){if(d)d.remove();return}
+ function line(){let d=document.getElementById('tkline');if(true){// 準備中：上の行は出さない
+ if(d)d.remove();return}
    if(!d){d=document.createElement('button');d.type='button';d.id='tkline';d.className='snline tkline'}
    const n=nNew(),L=window._tk[0];
    d.innerHTML=`<b>📮 体験予約・お問い合わせ</b><span>${ok===-1?'ルールの貼りかえが必要です':L?`${esc(L.name||'')} さん ${fd(L.d1,L.t1)}`:'まだ届いていません'}</span>${n?`<i class="nbadge in">${n}</i>`:''}`;
@@ -2882,12 +2883,12 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
     <small class="tkt">受付 ${atT(x)}${x.by&&x.stAt?`・最後の対応 ${esc(x.by)}`:''}</small></li>`}
  let flt='open';
  function panel(re){if(!isTr()||tab!=='guild')return;const v=document.getElementById('view');if(!v)return;let d=document.getElementById('taiken');if(d&&!re)return;
-   if(!d){d=document.createElement('details');d.id='taiken';d.className='acct tkp';d.open=true;v.insertBefore(d,v.firstChild)}
+   if(!d){d=document.createElement('details');d.id='taiken';d.className='acct tkp';d.open=false;const ny=document.getElementById('staffnews');if(ny)ny.after(d);else v.appendChild(d)}
    const op=d.open,L=window._tk,F=flt==='open'?L.filter(x=>['new','call','fix'].includes(x.st||'new')):L,n=nNew();
-   d.innerHTML=`<summary><b>📮 体験予約・お問い合わせ</b> <small>体験予約ページ（/taiken）から届きます</small>${n?` <i class="nbadge in">${n}</i>`:''}</summary>
+   d.innerHTML=`<summary><b>📮 体験予約・お問い合わせ</b> <small>準備中：いまは使いません（体験予約は333GYM公式フォームで受付）</small>${n?` <i class="nbadge in">${n}</i>`:''}</summary>
     ${ok===-1?'<div class="zsk">体験予約を読めませんでした。Firebaseのルールを新しいもの（taiken 入り）に貼りかえて「公開」してください。</div>':''}
     <div class="tkf"><button type="button" data-f="open" class="${flt==='open'?'on':''}">対応中 ${L.filter(x=>['new','call','fix'].includes(x.st||'new')).length}</button><button type="button" data-f="all" class="${flt==='all'?'on':''}">ぜんぶ ${L.length}</button><button type="button" data-r="1">🔄 更新</button>
-     <a href="/taiken" target="_blank" rel="noopener">予約ページを見る ↗</a></div>
+     </div>
     <p class="tkhint">届いたら <b>お電話かメールでお返事</b> → ボタンで状態を変えてください（全トレーナーに共有）。</p>
     <ul class="tkl">${F.map(card).join('')||'<li class="muted">ここに届いた体験予約が出ます。</li>'}</ul>`;
    d.open=op;
@@ -2900,7 +2901,7 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
    try{await firebase.firestore().doc('taiken/'+x.id).update(ch);Object.assign(x,ch);line();panel(1);
      if(ch.st&&typeof toast==='function')toast(`${x.name} さん：${TS[ch.st][1]}`)}catch(e){alert('保存できませんでした：'+(e.code||e))}}
  window.tkRefresh=load;
- const _rT=render;render=function(){const r=_rT.apply(this,arguments);try{if(isTr()){if(!window._tkLoaded){window._tkLoaded=1;load();setInterval(load,60000)}setTimeout(line,0);if(tab==='guild')setTimeout(()=>panel(),0)}}catch(e){console.warn(e)}return r};
+ const _rT=render;render=function(){const r=_rT.apply(this,arguments);try{if(isTr()){if(!window._tkLoaded){window._tkLoaded=1;load();setInterval(load,60000)}if(tab==='guild')setTimeout(()=>panel(),0)}}catch(e){console.warn(e)}return r};
 })();
 </script>
 </body>
