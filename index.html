@@ -469,6 +469,7 @@ body.trmode header{background:linear-gradient(180deg,#ffd27a,#ffe9b0)!important}
 .rq2{flex-direction:column;align-items:stretch!important}.rqs2{display:flex;flex-direction:column;gap:4px;margin-top:6px}.rqs2 i{font-style:normal;font-size:12px;background:#fff7e6;border-radius:8px;padding:3px 8px}.rqs2 i.y{background:#eaf7d8}.rqs2 select{font-size:12px;padding:2px 4px}
 .rqbtn button[disabled]{opacity:.45}.rqdid{font-size:12px;color:#4f7d2a;font-weight:800;align-self:center}.rqhow{font-size:12px}
 #rqlist ul,#memp ul{max-height:none!important;overflow:visible!important}.rqlist li.rqhow{display:block!important}.rqlist li.rq2{display:flex!important;flex-direction:column!important;align-items:stretch!important}.rq2>span{flex:none!important}.rq2 .rqbtn{justify-content:flex-end}.rq2 small{background:none!important;color:var(--muted)!important;padding:0!important}
+.snline.tkline{border-color:#e8452c;background:#fff1ec;color:#a8321e;box-shadow:0 2px 0 #e8452c}.tkp{border:3px solid #e8452c!important;background:#fffaf6}.tkp summary b{color:#c0392b}.tkf{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0 4px}.tkf button,.tkb button{font:inherit;font-size:12px;font-weight:800;border:2px solid #cfe3a8;background:#fff;border-radius:999px;padding:4px 10px;cursor:pointer}.tkf button.on,.tkb button.on{background:#33501a;color:#fff;border-color:#33501a}.tkf a{margin-left:auto;font-size:12px;font-weight:800;color:#4f7d2a}.tkhint{font-size:12px;color:var(--muted);margin:2px 0 6px}.tkl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}.tkp .tkl>li.tki{display:block!important;}.tki{background:#fff;border:2px solid #f0d8cc;border-left:6px solid #e8452c;border-radius:12px;padding:8px 10px}.tkh{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.tkh b{font-size:16px}.tkh small{color:var(--muted)}.tkst{margin-left:auto;color:#fff;font-size:11px;font-weight:800;border-radius:999px;padding:1px 8px}.tkg{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;font-size:13px;margin:6px 0}.tkg span{color:var(--muted);font-weight:700}.tkm,.tkn{font-size:13px;background:#fffbe6;border-radius:8px;padding:6px 8px;margin:4px 0;white-space:pre-wrap;word-break:break-word}.tkn{background:#eef6e2}.tkc{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.tkc a{font-weight:800;font-size:14px;text-decoration:none;background:#33501a;color:#ffe600;border-radius:10px;padding:6px 10px;word-break:break-all}.tkb{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 2px}.tkt{color:var(--muted);font-size:11px}
 .snline{display:flex;align-items:center;gap:8px;width:100%;margin:2px 0 4px;padding:8px 12px;border-radius:12px;border:2px solid #5b4b96;background:#f4f0ff;color:#3d2f73;font-weight:800;font-size:13px;text-align:left;box-shadow:0 2px 0 #5b4b96}.snline span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}.snline b{flex:none}
 .snp summary{cursor:pointer;font-size:16px;color:#3d2f73}.snp summary small{font-size:11px;color:var(--muted);font-weight:600}.snl{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:6px;max-height:none!important;overflow:visible!important}.snl li{display:flex!important;gap:8px;align-items:flex-start;background:#fff;border:2px solid #e4def7;border-radius:10px;padding:6px 10px;font-size:13px}.snl li.new{border-color:#5b4b96;background:#faf8ff}.snk{font-size:18px}.snl small{color:var(--muted);background:none!important;padding:0!important}
 .rtabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}.rtabs button{border:2px solid #cfe3a8;background:#fff;border-radius:12px;padding:6px 2px;font-weight:800;font-size:12px;color:#33501a;display:flex;flex-direction:column;align-items:center}.rtabs button b{font-size:16px}.rtabs button.on{background:#33501a;color:#fff;border-color:#33501a}
@@ -2852,5 +2853,56 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
  ap(mn);
  const _rN=render;render=function(){const r=_rN.apply(this,arguments);try{const c=tab==='cinema';if(c&&!cin)ap(true);else if(!c&&cin){let v=false;try{v=localStorage.getItem('kq-navmin')==='1'}catch(e){}ap(v)}cin=c}catch(e){}return r};
 })();
-</script></body>
+</script><script>
+// ===== 📮 体験予約・お問い合わせ（v145・準備中）：Firestore taiken を管理ページに表示。いまは申しこみに使わない（MITSUさん 2026-11-21）。フォームの元: /mnt/project-files/kitaeru-quest/taiken/src/form-v1.html =====
+(function(){if(typeof ADMIN==='undefined'||!ADMIN)return;
+ const TS={new:['🆕','未対応','#e8452c'],call:['📞','連絡ずみ','#f39a1e'],fix:['📅','体験日きまり','#4f7d2a'],done:['✅','対応おわり','#7a8460'],ng:['🙅','キャンセル','#9b2f5e']};
+ window._tk=window._tk||[];let ok=0,loading=0;
+ const isTr=()=>window.AUTH&&AUTH.role==='trainer'&&window.firebase&&firebase.apps&&firebase.apps.length;
+ const WD='日月火水木金土',fd=(d,t)=>{if(!d)return '';const [y,m,dd]=d.split('-').map(Number);return `${m}/${dd}（${WD[new Date(y,m-1,dd).getDay()]}）${t?' '+t:''}`};
+ const at=x=>x.at&&x.at.toDate?x.at.toDate():null,atT=x=>{const d=at(x);return d?`${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`:''};
+ async function load(){if(!isTr()||loading)return;loading=1;try{const q=await firebase.firestore().collection('taiken').get();const a=[];q.forEach(d=>a.push(Object.assign({id:d.id},d.data())));
+   window._tk=a.sort((x,y)=>((at(y)||0)-(at(x)||0)));ok=1}catch(e){console.warn('taiken',e);ok=-1}loading=0;line();panel(1)}
+ const nNew=()=>window._tk.filter(x=>(x.st||'new')==='new').length;
+ function line(){let d=document.getElementById('tkline');if(true){// 準備中：上の行は出さない
+ if(d)d.remove();return}
+   if(!d){d=document.createElement('button');d.type='button';d.id='tkline';d.className='snline tkline'}
+   const n=nNew(),L=window._tk[0];
+   d.innerHTML=`<b>📮 体験予約・お問い合わせ</b><span>${ok===-1?'ルールの貼りかえが必要です':L?`${esc(L.name||'')} さん ${fd(L.d1,L.t1)}`:'まだ届いていません'}</span>${n?`<i class="nbadge in">${n}</i>`:''}`;
+   const p=document.getElementById('snline')||document.getElementById('entrow')||document.querySelector('header');if(p&&p.nextElementSibling!==d)p.after(d);
+   d.onclick=()=>{tab='guild';render();setTimeout(()=>{const s=document.getElementById('taiken');if(s){s.open=true;s.scrollIntoView({behavior:'smooth',block:'start'})}},80)}}
+ function card(x){const s=TS[x.st||'new']||TS.new,tel=String(x.tel||'').replace(/[^0-9+]/g,'');
+   return `<li class="tki" data-id="${esc(x.id)}" style="border-left-color:${s[2]}">
+    <div class="tkh"><b>${esc(x.name||'')}</b>${x.kana?` <small>${esc(x.kana)}</small>`:''} <span class="tkst" style="background:${s[2]}">${s[0]} ${s[1]}</span></div>
+    <div class="tkg"><span>第1希望</span><b>${esc(fd(x.d1,x.t1))}</b>${x.d2?`<span>第2希望</span><b>${esc(fd(x.d2,x.t2))}</b>`:''}
+     <span>プログラム</span><b>${esc((x.progs||[]).join('・')||'未選択')}</b><span>知ったきっかけ</span><b>${esc(x.src||'')}</b><span>お返事</span><b>${esc(x.how||'どちらでも')}</b></div>
+    ${x.msg?`<div class="tkm">💬 ${esc(x.msg)}</div>`:''}
+    <div class="tkc">${tel?`<a href="tel:${esc(tel)}">📞 ${esc(x.tel)}</a>`:''}${x.email?`<a href="mailto:${esc(x.email)}?subject=${encodeURIComponent('【333GYM】体験レッスンのご予約ありがとうございます')}">✉️ ${esc(x.email)}</a>`:''}</div>
+    ${x.note?`<div class="tkn">📝 ${esc(x.note)}${x.by?` <small>（${esc(x.by)}）</small>`:''}</div>`:''}
+    <div class="tkb">${Object.entries(TS).map(([k,v])=>`<button type="button" data-st="${k}" class="${(x.st||'new')===k?'on':''}">${v[0]} ${v[1]}</button>`).join('')}<button type="button" data-note="1">📝 メモ</button></div>
+    <small class="tkt">受付 ${atT(x)}${x.by&&x.stAt?`・最後の対応 ${esc(x.by)}`:''}</small></li>`}
+ let flt='open';
+ function panel(re){if(!isTr()||tab!=='guild')return;const v=document.getElementById('view');if(!v)return;let d=document.getElementById('taiken');if(d&&!re)return;
+   if(!d){d=document.createElement('details');d.id='taiken';d.className='acct tkp';d.open=false;const ny=document.getElementById('staffnews');if(ny)ny.after(d);else v.appendChild(d)}
+   const op=d.open,L=window._tk,F=flt==='open'?L.filter(x=>['new','call','fix'].includes(x.st||'new')):L,n=nNew();
+   d.innerHTML=`<summary><b>📮 体験予約・お問い合わせ</b> <small>準備中：いまは使いません（体験予約は333GYM公式フォームで受付）</small>${n?` <i class="nbadge in">${n}</i>`:''}</summary>
+    ${ok===-1?'<div class="zsk">体験予約を読めませんでした。Firebaseのルールを新しいもの（taiken 入り）に貼りかえて「公開」してください。</div>':''}
+    <div class="tkf"><button type="button" data-f="open" class="${flt==='open'?'on':''}">対応中 ${L.filter(x=>['new','call','fix'].includes(x.st||'new')).length}</button><button type="button" data-f="all" class="${flt==='all'?'on':''}">ぜんぶ ${L.length}</button><button type="button" data-r="1">🔄 更新</button>
+     </div>
+    <p class="tkhint">届いたら <b>お電話かメールでお返事</b> → ボタンで状態を変えてください（全トレーナーに共有）。</p>
+    <ul class="tkl">${F.map(card).join('')||'<li class="muted">ここに届いた体験予約が出ます。</li>'}</ul>`;
+   d.open=op;
+   d.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{flt=b.dataset.f;panel(1)});
+   d.querySelector('[data-r]').onclick=load;
+   d.querySelectorAll('.tki').forEach(li=>{const id=li.dataset.id,x=L.find(y=>y.id===id);
+     li.querySelectorAll('[data-st]').forEach(b=>b.onclick=()=>upd(x,{st:b.dataset.st}));
+     li.querySelector('[data-note]').onclick=()=>{const t=prompt('メモ（例：11/24 15:00 で体験決定・石井）',x.note||'');if(t!==null)upd(x,{note:t.slice(0,200)})}})}
+ async function upd(x,ch){const by=(typeof TN==='function'?TN():'')||'';ch.by=by;ch.stAt=Date.now();
+   try{await firebase.firestore().doc('taiken/'+x.id).update(ch);Object.assign(x,ch);line();panel(1);
+     if(ch.st&&typeof toast==='function')toast(`${x.name} さん：${TS[ch.st][1]}`)}catch(e){alert('保存できませんでした：'+(e.code||e))}}
+ window.tkRefresh=load;
+ const _rT=render;render=function(){const r=_rT.apply(this,arguments);try{if(isTr()){if(!window._tkLoaded){window._tkLoaded=1;load();setInterval(load,60000)}if(tab==='guild')setTimeout(()=>panel(),0)}}catch(e){console.warn(e)}return r};
+})();
+</script>
+</body>
 </html>

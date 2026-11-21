@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>キタエル・クエスト｜333GYM</title>
+<meta name="description" content="333GYM（神楽坂）のトレーニングで育つ冒険アプリ「キタエル・クエスト」とお野菜十勇士の紹介。加圧トレーニング・YOGA・食事セラピー・カパラバティ・マシントレーニング。健康管理室あり・看護師常駐。">
+<meta name="theme-color" content="#bcdc3c">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;800&family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
+<style>
+:root{--ink:#33501a;--leaf:#4f7d2a;--lime:#bcdc3c;--lemon:#ffe600;--tomato:#e8452c;--carrot:#f39a1e;--beet:#9b2f5e;--banana:#f5d63d;--kiwi:#9ccc3c;--cream:#fffdf0;--muted:#6f7a55;--chalk:#2f3a1c;--display:'M PLUS Rounded 1c','Zen Maru Gothic',sans-serif}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:'Zen Maru Gothic','M PLUS Rounded 1c',sans-serif;color:var(--chalk);background:#f3f9df;background-image:radial-gradient(#e2efbd 1.5px,transparent 1.5px);background-size:18px 18px;line-height:1.6}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px 40px}
+canvas.px{image-rendering:pixelated;image-rendering:crisp-edges}
+/* ヘッダー */
+.top{background:var(--lime);border-bottom:4px solid var(--ink);padding:14px 16px 0;text-align:center;position:relative;overflow:hidden}
+.top .gym{display:inline-block;background:var(--ink);color:var(--lemon);font-family:var(--display);font-weight:800;font-size:13px;letter-spacing:.12em;padding:3px 12px;border-radius:999px}
+.top h1{margin:8px 0 2px;font-family:var(--display);font-weight:800;font-size:30px;line-height:1.25;color:var(--ink)}
+.top h1 em{font-style:normal;color:var(--tomato)}
+.top .sub{margin:0;font-weight:700;color:var(--ink);font-size:14px}
+.heroes{display:flex;justify-content:center;gap:2px;margin:10px auto 0;max-width:520px}
+.heroes canvas{width:15%;max-width:72px;height:auto;animation:hop 1.6s ease-in-out infinite}
+.heroes canvas:nth-child(2n){animation-delay:.4s}.heroes canvas:nth-child(3n){animation-delay:.8s}
+@keyframes hop{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@media (prefers-reduced-motion:reduce){.heroes canvas{animation:none}}
+.grass{height:14px;background:repeating-linear-gradient(90deg,var(--leaf) 0 8px,var(--kiwi) 8px 16px);margin:0 -16px}
+/* 特典 */
+.offer{margin:16px 0 0;background:#fff;border:3px solid var(--tomato);border-radius:18px;padding:14px;text-align:center;box-shadow:0 4px 0 var(--tomato);position:relative}
+.offer .rib{display:inline-block;background:var(--tomato);color:#fff;font-weight:900;font-size:13px;border-radius:8px;padding:2px 10px}
+.offer b.big{display:block;font-family:var(--display);font-size:26px;color:var(--tomato);margin:4px 0 2px;line-height:1.3}
+.offer p{margin:0;font-size:14px;font-weight:700}
+.offer small{color:var(--muted);font-size:12px}
+/* 安心 */
+.care{margin:14px 0 0;background:#eaf4ff;border:3px solid #3a78c2;border-radius:18px;padding:12px 14px;display:flex;gap:12px;align-items:center}
+.care .ic{flex:none;width:52px;height:52px;border-radius:50%;background:#fff;border:3px solid #3a78c2;display:grid;place-items:center;font-size:26px}
+.care b{color:#24589a;font-size:16px}.care p{margin:2px 0 0;font-size:13px}
+.progs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:14px 0 0}
+.pg{background:#fff;border:2px solid var(--ink);border-radius:14px;padding:8px 10px;display:flex;gap:8px;align-items:center;font-size:13px}
+.pg canvas{width:38px;height:auto;flex:none}.pg b{display:block;font-size:14px;color:var(--ink)}.pg small{color:var(--muted);font-size:11px;line-height:1.35;display:block}
+/* フォーム */
+.card{margin:18px 0 0;background:var(--cream);border:3px solid var(--ink);border-radius:20px;padding:16px;box-shadow:0 5px 0 var(--ink)}
+.card h2{margin:0 0 4px;font-family:var(--display);font-size:21px;color:var(--ink)}
+.card .lead{margin:0 0 10px;font-size:13px;color:var(--muted);font-weight:700}
+.reply{display:flex;gap:10px;align-items:center;background:#fff6c7;border:2px dashed var(--carrot);border-radius:14px;padding:10px 12px;margin:0 0 14px;font-size:14px;font-weight:700}
+.reply canvas{width:44px;height:auto;flex:none}
+.f{margin:0 0 14px}
+.f>label,.f>.lab{display:block;font-weight:900;font-size:15px;color:var(--ink);margin:0 0 5px}
+.req,.opt{display:inline-block;font-size:11px;font-weight:800;border-radius:6px;padding:0 6px;margin-left:6px;vertical-align:2px}
+.req{background:var(--tomato);color:#fff}.opt{background:#e6ebd6;color:var(--muted)}.rec{background:var(--carrot);color:#fff}
+.f input[type=text],.f input[type=tel],.f input[type=email],.f input[type=date],.f select,.f textarea{width:100%;font:inherit;font-size:16px;padding:11px 12px;border-radius:12px;border:2px solid #b9d48a;background:#fff;color:var(--chalk)}
+.f input:focus,.f select:focus,.f textarea:focus{outline:3px solid var(--lemon);border-color:var(--ink)}
+.f textarea{min-height:92px;resize:vertical}
+.f .hint{font-size:12px;color:var(--muted);margin:4px 0 0}
+.row{display:flex;gap:8px}.row>*{flex:1;min-width:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips label{position:relative;cursor:pointer}
+.chips input{position:absolute;opacity:0;width:1px;height:1px}
+.chips span{display:inline-block;padding:8px 12px;border-radius:999px;border:2px solid #b9d48a;background:#fff;font-weight:800;font-size:14px}
+.chips input:checked+span{background:var(--lime);border-color:var(--ink);color:var(--ink)}
+.chips input:focus-visible+span{outline:3px solid var(--lemon)}
+.err{color:#c0392b;font-weight:800;font-size:13px;margin:4px 0 0;min-height:0}
+.agree{font-size:13px;display:flex;gap:8px;align-items:flex-start;margin:0 0 14px}
+.agree input{width:20px;height:20px;flex:none;margin-top:2px;accent-color:var(--leaf)}
+.send{width:100%;font:inherit;font-family:var(--display);font-weight:800;font-size:20px;background:var(--tomato);color:#fff;border:0;border-radius:16px;padding:15px;cursor:pointer;box-shadow:0 5px 0 #b5321e}
+.send:active{transform:translateY(3px);box-shadow:0 2px 0 #b5321e}.send:disabled{opacity:.6}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.fmsg{margin:10px 0 0;font-weight:800;color:#c0392b;font-size:14px;text-align:center}
+/* 完了 */
+.done{text-align:center}
+.done canvas{width:120px;height:auto}
+.done h2{font-size:24px}
+.done .big{font-size:16px;font-weight:800;color:var(--ink)}
+.summary{text-align:left;background:#fff;border:2px solid #cfe3a8;border-radius:14px;padding:10px 12px;font-size:13px;margin:12px 0}
+.summary div{display:flex;gap:8px;border-bottom:1px dashed #e2ecc8;padding:3px 0}.summary div:last-child{border:0}.summary dt{flex:none;width:6.5em;color:var(--muted);font-weight:800}
+/* 店舗 */
+.info{margin:18px 0 0;background:#fff;border:3px solid var(--ink);border-radius:18px;padding:14px}
+.info h3{margin:0 0 8px;font-family:var(--display);color:var(--ink);font-size:18px}
+.info dl{margin:0;display:grid;grid-template-columns:5em 1fr;gap:6px 10px;font-size:14px}.info dt{font-weight:900;color:var(--leaf)}.info dd{margin:0}
+.tel{display:block;margin:12px 0 0;text-align:center;background:var(--ink);color:var(--lemon);text-decoration:none;font-family:var(--display);font-weight:800;font-size:22px;border-radius:14px;padding:10px}
+.tel small{display:block;font-size:12px;color:#fff;font-weight:700}
+.map{display:block;text-align:center;margin:8px 0 0;font-weight:800;color:var(--leaf)}
+footer{text-align:center;font-size:11px;color:var(--muted);margin:22px 0 0}
+[hidden]{display:none!important}
+/* ===== 世界観ページ ===== */
+.scene{display:block;width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;border-radius:14px;border:3px solid var(--ink);background:#bfe6f5}
+.hero-top{position:relative;margin:0 -16px;border-bottom:4px solid var(--ink)}
+.hero-top .scene{border:0;border-radius:0}
+.logo{position:absolute;left:0;right:0;top:6%;text-align:center;pointer-events:none}
+.logo .gym{display:inline-block;background:var(--ink);color:var(--lemon);font-family:var(--display);font-weight:800;font-size:12px;letter-spacing:.12em;padding:2px 12px;border-radius:999px}
+.logo h1{margin:6px 0 0;font-family:var(--display);font-weight:800;font-size:clamp(28px,9vw,46px);line-height:1.05;color:#fff;text-shadow:0 3px 0 var(--ink),3px 0 0 var(--ink),-3px 0 0 var(--ink),0 -3px 0 var(--ink),3px 3px 0 var(--ink),-3px 3px 0 var(--ink),3px -3px 0 var(--ink),-3px -3px 0 var(--ink)}
+.logo h1 span{color:var(--lemon)}
+.intro{background:var(--lime);margin:0 -16px;padding:14px 16px 16px;text-align:center;border-bottom:4px solid var(--ink)}
+.intro p{margin:0;font-weight:900;font-size:17px;color:var(--ink);line-height:1.55}
+.intro p em{font-style:normal;background:#fff;border-radius:8px;padding:0 6px;color:var(--tomato)}
+.cta{display:flex;flex-direction:column;gap:8px;margin:12px 0 0}
+.btn{display:block;text-align:center;text-decoration:none;font-family:var(--display);font-weight:800;font-size:18px;border-radius:16px;padding:13px 12px;border:0;cursor:pointer;width:100%}
+.btn.red{background:var(--tomato);color:#fff;box-shadow:0 5px 0 #b5321e}
+.btn.green{background:#fff;color:var(--ink);border:3px solid var(--ink);box-shadow:0 4px 0 var(--ink)}
+.btn small{display:block;font-size:12px;font-weight:700;opacity:.9}
+.sec{margin:26px 0 0}
+.sec>h2{margin:0 0 4px;font-family:var(--display);font-weight:800;font-size:23px;color:var(--ink);display:flex;align-items:center;gap:8px}
+.sec>h2 .no{flex:none;background:var(--tomato);color:#fff;font-size:13px;border-radius:999px;padding:1px 10px}
+.sec>.lead{margin:0 0 12px;font-size:14px;font-weight:700;color:var(--muted)}
+.story{background:#fff;border:3px solid var(--ink);border-radius:18px;padding:14px;box-shadow:0 4px 0 var(--ink)}
+.story p{margin:10px 0 0;font-size:15px}.story p:first-of-type{margin-top:12px}
+.story b{color:var(--leaf)}
+.heroes10{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.hc{background:#fff;border:3px solid var(--c,var(--ink));border-radius:18px;padding:10px 10px 12px;text-align:center;cursor:pointer;font:inherit;color:inherit;position:relative;box-shadow:0 4px 0 var(--c,var(--ink))}
+.hc canvas{width:100%;max-width:120px;height:auto;image-rendering:pixelated;background:radial-gradient(circle,#fffbe0 55%,transparent 56%);border-radius:50%}
+.hc b{display:block;font-family:var(--display);font-size:17px;color:var(--ink);margin-top:2px}
+.hc .rl{display:inline-block;font-size:11px;font-weight:800;color:#fff;background:var(--c);border-radius:999px;padding:0 8px}
+.hc .cp{display:block;font-size:12px;font-weight:700;color:var(--muted);line-height:1.4;margin-top:4px}
+.hc .more{display:block;margin-top:6px;font-size:12px;font-weight:900;color:var(--tomato)}
+.adv{display:flex;flex-direction:column;gap:16px}
+.adv figure{margin:0;background:#fff;border:3px solid var(--ink);border-radius:18px;overflow:hidden;box-shadow:0 4px 0 var(--ink)}
+.adv figure .scene{border:0;border-radius:0;border-bottom:3px solid var(--ink)}
+.adv figcaption{padding:10px 12px 12px}
+.adv figcaption b{display:block;font-family:var(--display);font-size:18px;color:var(--ink)}
+.adv figcaption .tag{display:inline-block;font-size:11px;font-weight:800;color:#fff;background:var(--leaf);border-radius:6px;padding:0 6px;margin-right:4px}
+.adv figcaption p{margin:4px 0 0;font-size:14px}
+.feat{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ft{background:#fff;border:2px solid var(--ink);border-radius:14px;padding:8px;display:flex;gap:8px;align-items:center}
+.ft canvas{width:40px;height:auto;flex:none;image-rendering:pixelated}
+.ft b{display:block;font-size:13px;color:var(--ink);line-height:1.35}.ft small{display:block;font-size:11px;color:var(--muted);line-height:1.35}
+.cinema{background:#2d1a3a;color:#fff;border:3px solid var(--ink);border-radius:18px;overflow:hidden;box-shadow:0 4px 0 var(--ink)}
+.cinema img{display:block;width:100%;image-rendering:pixelated}
+.cinema div{padding:10px 12px 12px}.cinema b{font-family:var(--display);font-size:18px;color:var(--lemon)}.cinema p{margin:4px 0 0;font-size:14px}
+dialog.hs{border:0;padding:0;border-radius:20px;max-width:520px;width:calc(100% - 24px);max-height:88vh;background:var(--cream);color:var(--chalk);box-shadow:0 10px 40px rgba(0,0,0,.35)}
+dialog.hs::backdrop{background:rgba(30,40,10,.55)}
+.hsi{padding:16px;border-top:10px solid var(--c,var(--lime))}
+.hsi .hh{display:flex;gap:12px;align-items:center}
+.hsi .hh canvas{width:92px;height:auto;image-rendering:pixelated;flex:none}
+.hsi h3{margin:0;font-family:var(--display);font-size:22px;color:var(--ink)}
+.hsi .cp{font-weight:800;color:var(--muted);font-size:13px}
+.hsi .kq{margin:10px 0;background:#fff;border-radius:12px;padding:8px 10px;font-weight:900;color:var(--ink)}
+.hsi h4{margin:12px 0 4px;font-family:var(--display);color:var(--tomato);font-size:17px}
+.hsi p{margin:0 0 8px;font-size:14px}
+.hsi .moral{background:#fff0f4;border-radius:12px;padding:8px 10px;font-weight:800;color:var(--beet)}
+.hsi .close{margin-top:10px}
+.form-wrap .card{margin-top:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero-top">
+  <canvas class="scene" id="sc-world" width="256" height="144" aria-label="畑の国ミドリ村と、お野菜十勇士"></canvas>
+  <div class="logo"><span class="gym">333GYM ・ 神楽坂</span><h1>キタエル<span>・</span>クエスト</h1></div>
+</header>
+<section class="intro">
+  <p>333GYMで からだを鍛えると、<br>アプリの中で <em>お野菜十勇士</em> との<br>冒険が はじまる！</p>
+  <div class="cta"><a class="btn red" href="#yoyaku">🥕 無料体験を予約する<small>癒しフェア参加の方・11月中のご予約で 体験無料</small></a></div>
+</section>
+
+<section class="sec">
+  <h2><span class="no">物語</span>畑の国「ミドリ村」</h2>
+  <div class="story">
+    <p>畑の国のまんなかにある、ちいさな <b>ミドリ村</b>。ここには、野菜の力をからだいっぱいにためた <b>お野菜十勇士</b> がくらしています。</p>
+    <p>霧の魔物モヤモヤン、ぐったり鬼、ナマケ竜……。村をこまらせる魔物たちに立ち向かう いちばんの武器は、<b>毎日の小さな一歩</b>。</p>
+    <p>あなたが333GYMでトレーニングするたびに、アプリの中のあなたの冒険者も強くなり、レベルアップ＆進化。十勇士の中から <b>相棒</b> をえらんで、いっしょに村を守りましょう！</p>
+  </div>
+</section>
+
+<section class="sec">
+  <h2><span class="no">十勇士</span>お野菜十勇士</h2>
+  <p class="lead">タップすると、それぞれの武勇伝が読めます。</p>
+  <div class="heroes10" id="h10"></div>
+</section>
+
+<section class="sec">
+  <h2><span class="no">333GYM</span>十勇士と、からだの冒険</h2>
+  <p class="lead">ジムでのがんばりが、そのまま冒険のパワーになります。</p>
+  <div class="adv">
+    <figure><canvas class="scene" id="sc-train" width="256" height="144"></canvas><figcaption><b>💪 鍛える</b><span class="tag">加圧トレーニング</span><span class="tag">マシントレーニング</span><p>ブロッコ将軍とカボッチャが、今日もバーベルとダンベルで修行中。短い時間でしっかり効く加圧と、部位ごとにていねいなマシントレで、力と根性がぐんぐんアップ！</p></figcaption></figure>
+    <figure><canvas class="scene" id="sc-run" width="256" height="144"></canvas><figcaption><b>🏃 走る</b><span class="tag">有酸素</span><p>キャロットを先頭に、リコピンちゃん・ダイコンタ・イモ吉がミドリ村をランニング。走った分だけ持久力のEXPがたまります。</p></figcaption></figure>
+    <figure><canvas class="scene" id="sc-yoga" width="256" height="144"></canvas><figcaption><b>🧘 ととのえる</b><span class="tag">YOGA</span><p>いやし手キャベリンと玉ちゃんの、ひだまりヨガ教室。木のポーズで、ぐらつかないバランス力と、やさしい呼吸を。アーサナ203種の図鑑つき！</p></figcaption></figure>
+    <figure><canvas class="scene" id="sc-breath" width="256" height="144"></canvas><figcaption><b>🌬 呼吸する</b><span class="tag">カパラバティ</span><p>ジンジャー忍者とリコピンちゃんの、朝日の呼吸法。お腹からの呼吸で、体の芯からぽかぽかに。</p></figcaption></figure>
+    <figure><canvas class="scene" id="sc-meal" width="256" height="144"></canvas><figcaption><b>🍽 食べる</b><span class="tag">食事セラピー</span><p>がまんしない、食べ方の練習。食べたお野菜は「パワー図鑑」に集まって、十勇士の力になります。</p></figcaption></figure>
+  </div>
+</section>
+
+<section class="sec">
+  <h2><span class="no">アプリ</span>アプリでできること</h2>
+  <div class="feat" id="feat"></div>
+  <div class="cinema" style="margin-top:12px"><img src="img/midoriza.png" alt="絵本映画館 ミドリ座" width="844" height="474"><div><b>🎬 絵本映画館 ミドリ座</b><p>アプリの中の映画館で、十勇士の絵本「畑の国の お野菜十勇士」全10話が観られます。みんなで観る上映会も！</p></div></div>
+</section>
+
+<div class="sec"><section class="care">
+    <div class="ic">🩺</div>
+    <div><b>健康管理室あり・看護師常駐</b><p>体調のこと、からだの不安も、いつでも相談できます。はじめての方も安心してどうぞ。</p></div>
+  </section></div>
+
+<section class="sec form-wrap" id="yoyaku">
+  <h2><span class="no">体験</span>無料体験のご予約</h2>
+  <section class="offer">
+    <span class="rib">🎁 いまだけ特典</span>
+    <b class="big">体験レッスン 無料</b>
+    <p>癒しフェアに参加の方と、<br>11月に体験予約をした方が対象です</p>
+  </section>
+  <div class="reply" style="margin-top:14px"><canvas class="px" data-k="carrot" width="27" height="22"></canvas><span>ご予約のあと、<b>トレーナーからお電話かメールでお返事</b>します。日時はそのときに決まります。</span></div>
+  <a class="btn red" href="https://www.333gym.design/inqiry.html#/" target="_blank" rel="noopener">🥕 無料体験を予約する<small>333GYM 公式の予約フォームがひらきます</small></a>
+</section>
+
+<section class="info">
+    <h3>🏠 333GYM</h3>
+    <dl>
+      <dt>住所</dt><dd>東京都新宿区神楽坂6丁目8番<br>文悠ビル 4F</dd>
+      <dt>営業</dt><dd>9:00〜22:00</dd>
+      <dt>定休日</dt><dd>火曜・水曜</dd>
+    </dl>
+    <a class="tel" href="tel:0120365531"><small>お電話でのご予約・お問い合わせ</small>📞 0120-365-531</a>
+    <a class="map" href="https://www.google.com/maps/search/?api=1&query=%E6%9D%B1%E4%BA%AC%E9%83%BD%E6%96%B0%E5%AE%BF%E5%8C%BA%E7%A5%9E%E6%A5%BD%E5%9D%826-8+%E6%96%87%E6%82%A0%E3%83%93%E3%83%AB" target="_blank" rel="noopener">🗺 地図をひらく</a>
+  </section>
+  <footer>333GYM ・ キタエル・クエスト<br>運営：株式会社前里光秀おしゃれデザイン</footer>
+</div>
+
+<dialog class="hs" id="hs"><div class="hsi" id="hsi"></div></dialog>
+<script>
+const {HEROES,drawHero}=(()=>{// お野菜七戦士：ドット絵キャラ（24x26）
+const HEROES = [
+ {key:'carrot', name:'キャロット', veg:'にんじん', role:'剣士', stat:'力', color:'#f39a1e', weapon:'sword', face:[8,7],
+  pal:{o:'#a8520e',C:'#f39a1e',h:'#ffc070',g:'#3f8a2a',G:'#7fbf2a'},
+  body:['......g..g......','.....gGggGg.....','......gGGg......','....oooooooo....','...oCCCCCCCCo...','...oChCCCCCCo...','...oChCCCCCCo...','...oCCCCCCCCo...','....oCCCCCCo....','....oCCCCCCo....','.....oCCCCo.....','.....oCCCCo.....','......oCCo......','.......oo.......'], arm:8},
+ {key:'piman', name:'ピッピマン', veg:'ピーマン', role:'盾の騎士', stat:'根性', color:'#4f8a2a', weapon:'shield', face:[8,6],
+  pal:{o:'#1f5a14',G:'#4f9a2a',h:'#9ccc3c',s:'#33501a'},
+  body:['.......ss.......','......ss........','...oooooooooo...','..oGGGGGGGGGGo..','.oGGhGGGGGGGGGo.','.oGhGGGGGGGGGGo.','.oGhGGGGGGGGGGo.','.oGGGGGGGGGGGGo.','.oGGGGGGGGGGGGo.','.oGGGGGGGGGGGGo.','..oGGGGooGGGGo..','...oooo..oooo...'], arm:7},
+ {key:'onion', name:'玉ちゃん', veg:'玉ねぎ', role:'まほう使い', stat:'技', color:'#c88a3a', weapon:'wand', face:[8,8],
+  pal:{o:'#8a5a1e',Y:'#f0c070',h:'#fff0c0',y:'#c8a050',w:'#e8dcc0'},
+  body:['.......y........','.......yy.......','......oYYo......','.....oYYYYo.....','....oYYYYYYo....','...oYYhYYYYYo...','..oYYhYYYYYYYo..','..oYhYYYYYYYYo..','..oYYYYYYYYYYo..','..oYYYYYYYYYYo..','...oYYYYYYYYo...','....oYYYYYYo....','.....oooooo.....'], arm:9},
+ {key:'cabbage', name:'キャベリン', veg:'キャベツ', role:'いやし手', stat:'根性', color:'#9ccc3c', weapon:'heart', face:[8,6],
+  pal:{o:'#4f8a2a',L:'#c8ec8a',l:'#8ac85a',h:'#effad8'},
+  body:['.....oooooo.....','...ooLLLLLLoo...','..oLLlLLLLlLLo..','.oLlLhLlLLLLlLo.','.oLLhLLLLLLLLLo.','oLLlLLLLLLLLlLLo','oLLLLLLLLLLLLLLo','oLLLLLLLLLLLLLLo','oLlLLLLLLLLLLlLo','.oLLlLLLLLLLlLo.','..oLLLLLLLLLLo..','...oooooooooo...'], arm:7},
+ {key:'daikon', name:'ダイコンタ', veg:'大根', role:'弓使い', stat:'技', color:'#e8e4d8', weapon:'bow', face:[8,7],
+  pal:{o:'#a89f8a',W:'#fbf8ee',h:'#ffffff',g:'#3f8a2a',G:'#7fbf2a',p:'#e8e0c8'},
+  body:['.....g.gg.g.....','....gGgGGgGg....','.....gGGGGg.....','......gGGg......','....oooooooo....','...oWWWWWWWWo...','...oWhWWWWWWo...','...oWhWWWWWWo...','...oWWWWWWWWo...','...oWWWWWWWWo...','....oWWWWWWo....','....oWWWWWWo....','.....oWWWWo.....','......oWWo......','.......oo.......'], arm:8},
+ {key:'tomato', name:'リコピンちゃん', veg:'トマト', role:'格闘家', stat:'力', color:'#e8452c', weapon:'glove', face:[8,7],
+  pal:{o:'#a8221c',R:'#e8452c',h:'#ff9a80',g:'#3f8a2a',G:'#7fbf2a'},
+  body:['.....g.gg.g.....','......gGGg......','....oooggooo....','..ooRRRRRRRRoo..','.oRRhhRRRRRRRRo.','.oRhRRRRRRRRRRo.','oRRhRRRRRRRRRRRo','oRRRRRRRRRRRRRRo','oRRRRRRRRRRRRRRo','.oRRRRRRRRRRRRo.','..ooRRRRRRRRoo..','....oooooooo....'], arm:7},
+ {key:'pumpkin', name:'カボッチャ', veg:'かぼちゃ', role:'重戦士', stat:'持久', color:'#2f6a3a', weapon:'hammer', face:[8,6],
+  pal:{o:'#1f3a1a',P:'#4f8a3a',p:'#33661f',h:'#9ccc6a',s:'#8a6a3a',Y:'#f39a1e'},
+  body:['.......ss.......','.......s........','...oooooooooo...','.ooPPpPPPPpPPoo.','oPPhpPPPPPpPPPPo','oPhPpPPPPPpPPPPo','oPPPpPPPPPpPPPPo','oPPPpPPPPPpPPPPo','oPPPpPPPPPpPPPPo','.oPPpPPPPPpPPPo.','..ooooooooooo...'], arm:6},
+ {key:'broccoli', name:'ブロッコ将軍', veg:'ブロッコリー', role:'槍使い', stat:'力', color:'#2f6a1e', weapon:'spear', face:[8,9],
+  pal:{g:'#1f5a14',G:'#3f8a2a',h:'#8fcf3a',d:'#2a6a1e',o:'#5f8a2a',S:'#c8e48a',s:'#a8c868'},
+  body:['...gg..gg..gg...','..gGhggGhggGhg..','.gGhGGgGhGgGhGg.','gGGGdGGGGdGGGdGg','gGhGGGdGhGGGdGGg','.gGGdGGGGGdGGGg.','..gggsgggsgggg..','....osSSsSSo....','...oSSSSSSSSo...','...oSSSSSSSSo...','...oSSSSSSSSo...','...osSSSSSSso...','....oSSSSSSo....','.....oooooo.....'], arm:9},
+ {key:'shoga', name:'ジンジャー忍者', veg:'生姜', role:'忍者', stat:'技', color:'#c8a060', weapon:'shuriken', face:[8,5],
+  pal:{t:'#a8804a',T:'#e8c27a',y:'#fff0c0',r:'#e8452c'},
+  body:['.......tt.......','..tt..tTTt..tt..','.tTTttTTTTttTTt.','..trrrrrrrrrrt..','.tTyTTTTTTTTTt..','.tTyTTTTTTTTTTt.','.tTTTTTTTTTTTTt.','..tTTTTTTTTTTt..','...ttTTTTTTtt...','.....tttttt.....'], arm:6},
+ {key:'imo', name:'イモ吉', veg:'さつまいも', role:'応援団長', stat:'根性', color:'#a8346a', weapon:'flag', face:[8,5],
+  pal:{o:'#5a1e3a',P:'#b03c74',h:'#e080b0',y:'#f5d63d'},
+  body:['......oooo......','....ooPPPPoo....','...oPPhPPPPPo...','..oPPhPPPPPPPo..','..oPPPPPPPPPPo..','..oPPPPPPPPPPo..','..oPPPPPPPPPPo..','..oPPPPPPPPPPo..','...oPPPPPPPPo...','....ooPPPPoo....','......oyyo......','.......yy.......'], arm:6},
+];
+const W=27,H=22,OX=5,OY=5;
+const LIMB='#33501a';
+function drawHero(cv,h){
+  cv.width=W;cv.height=H;const x=cv.getContext('2d');x.imageSmoothingEnabled=false;
+  const px=(a,b,c)=>{x.fillStyle=c;x.fillRect(a,b,1,1)};
+  const body=h.body;
+  // 脚
+  const by=OY+body.length; const cx=OX+8;
+  [[cx-3,cx-2],[cx+1,cx+2]].forEach(([a,b],i)=>{px(a+1,by-1,LIMB);px(a+1,by,LIMB);px(a,by+1,LIMB);px(a+1,by+1,LIMB);px(i?b+1:a-1,by+1,LIMB);});
+  // 体
+  body.forEach((r,y)=>[...r].forEach((c,xx)=>{if(c!=='.')px(OX+xx,OY+y,h.pal[c])}));
+  // 腕
+  const r=body[h.arm],L=r.search(/[^.]/),R=r.length-1-[...r].reverse().join('').search(/[^.]/),ay=OY+h.arm;
+  px(OX+L-1,ay,LIMB);px(OX+L-2,ay+1,LIMB);px(OX+L-3,ay+1,LIMB);px(OX+L-3,ay+2,LIMB);px(OX+L-2,ay+2,LIMB);
+  px(OX+R+1,ay,LIMB);px(OX+R+2,ay-1,LIMB);px(OX+R+3,ay-1,LIMB);px(OX+R+3,ay-2,LIMB);px(OX+R+2,ay-2,LIMB);
+  // 顔
+  const [fx,fy]=[OX+h.face[0],OY+h.face[1]];
+  ['#1f1a14'].forEach(k=>{px(fx-3,fy,k);px(fx-3,fy+1,k);px(fx+2,fy,k);px(fx+2,fy+1,k)});
+    px(fx-5,fy+2,'#ff8fa8');px(fx-4,fy+2,'#ff8fa8');px(fx+3,fy+2,'#ff8fa8');px(fx+4,fy+2,'#ff8fa8');
+  px(fx-1,fy+2,'#1f1a14');px(fx,fy+2,'#1f1a14');px(fx-1,fy+3,'#e8456a');px(fx,fy+3,'#e8456a');
+  // 武器（右手 = OX+R+3, ay-2 あたり）
+  const hx=OX+R+3,hy=ay-2;const W2={
+    spear:()=>{for(let i=-1;i<=7;i++)px(hx,hy-i,'#8a6a3a');px(hx,hy-8,'#dfe8f0');px(hx,hy-9,'#ffffff');px(hx-1,hy-8,'#a8b4c4');px(hx+1,hy-8,'#a8b4c4');px(hx-1,hy-7,'#e8452c');px(hx+1,hy-7,'#e8452c')},
+    shuriken:()=>{const sx=hx+1,sy=hy-3;[[0,0],[0,-1],[0,1],[-1,0],[1,0],[-1,-2],[1,2],[2,-1],[-2,1]].forEach(([a,b])=>px(sx+a,sy+b,'#7a8494'));px(sx,sy,'#dfe8f0')},
+    flag:()=>{for(let i=1;i<=9;i++)px(hx,hy-i,'#8a6a3a');for(let a=1;a<=5;a++)for(let b=-9;b<=-6;b++)px(hx+a,hy+b,(a+b)%2?'#f5d63d':'#e8452c')},
+    sword:()=>{for(let i=1;i<=6;i++)px(hx,hy-i,'#dfe8f0');px(hx,hy-7,'#ffffff');px(hx-1,hy-1,'#f5d63d');px(hx+1,hy-1,'#f5d63d');for(let i=2;i<=6;i++)px(hx+1,hy-i,'#9fb4c8')},
+    wand:()=>{for(let i=1;i<=5;i++)px(hx,hy-i,'#8a5a1e');px(hx,hy-6,'#f5d63d');px(hx-1,hy-7,'#f5d63d');px(hx,hy-7,'#fff3a0');px(hx+1,hy-7,'#f5d63d');px(hx,hy-8,'#f5d63d');px(hx-1,hy-6,'#f5d63d');px(hx+1,hy-6,'#f5d63d');px(hx+2,hy-9,'#ffec80');px(hx-2,hy-9,'#ffec80')},
+    heart:()=>{for(let i=1;i<=5;i++)px(hx,hy-i,'#ff8fb0');px(hx-2,hy-9,'#ffffff');[[-1,-9],[1,-9],[-2,-8],[-1,-8],[0,-8],[1,-8],[2,-8],[-1,-7],[0,-7],[1,-7],[0,-6]].forEach(([a,b])=>px(hx+a,hy+b,'#e8456a'))},
+    bow:()=>{[[1,-5],[2,-4],[2,-3],[2,-2],[2,-1],[2,0],[2,1],[1,2]].forEach(([a,b])=>px(hx+a,hy+b,'#8a5a1e'));for(let b=-4;b<=1;b++)px(hx,hy+b,'#e8dcc0');px(hx-1,hy-2,'#e8452c');px(hx+3,hy-2,'#e8452c');},
+    glove:()=>{[[0,0],[1,0],[0,-1],[1,-1],[-1,-1],[0,-2],[1,-2],[-1,0]].forEach(([a,b])=>px(hx+a,hy+b,'#f5d63d'));px(hx+1,hy+1,'#d9ad1c');px(hx,hy+1,'#d9ad1c');const lx=OX+L-3,ly=ay+2;[[0,0],[-1,0],[0,-1],[-1,-1],[1,-1],[0,1],[-1,1]].forEach(([a,b])=>px(lx+a,ly+b,'#f5d63d'))},
+    hammer:()=>{for(let i=1;i<=5;i++)px(hx,hy-i,'#8a6a3a');for(let a=-2;a<=2;a++)for(let b=-8;b<=-6;b++)px(hx+a,hy+b,a===-2||a===2?'#7a8494':'#a8b4c4');px(hx,hy-7,'#f39a1e')},
+    shield:()=>{const lx=OX+L-4,ly=ay-1;for(let a=-2;a<=2;a++)for(let b=0;b<=5;b++){if(b===5&&Math.abs(a)>0)continue;if(b===4&&Math.abs(a)>1)continue;px(lx+a,ly+b,(Math.abs(a)===2||b===0)?'#a8b4c4':'#dfe8f0')}px(lx,ly+2,'#4f9a2a');px(lx-1,ly+2,'#4f9a2a');px(lx+1,ly+2,'#4f9a2a');px(lx,ly+1,'#4f9a2a');px(lx,ly+3,'#4f9a2a');
+      for(let i=1;i<=6;i++)px(hx,hy-i,'#dfe8f0');px(hx-1,hy-1,'#f5d63d');px(hx+1,hy-1,'#f5d63d')},
+  };W2[h.weapon]();
+}
+
+;return {HEROES,drawHero};})();
+window.HEROES=HEROES;window.drawHero=drawHero;
+
+</script>
+<script>
+// ===== 絵本のドット絵ツール（256x144 のキャンバスに描く） =====
+const ART=(()=>{
+let x,seed=1;
+const W=256,H=144;
+function use(ctx,s){x=ctx;x.imageSmoothingEnabled=false;seed=s||1;x.globalAlpha=1}
+const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647};
+const R=(a,b,w,h,c)=>{x.fillStyle=c;x.fillRect(Math.round(a),Math.round(b),Math.round(w),Math.round(h))};
+const P=(a,b,c)=>R(a,b,1,1,c);
+const disc=(cx,cy,r,c)=>{for(let j=-r;j<=r;j++)for(let i=-r;i<=r;i++)if(i*i+j*j<=r*r+r*.6)P(cx+i,cy+j,c)};
+const oval=(cx,cy,rx,ry,c)=>{for(let j=-ry;j<=ry;j++)for(let i=-rx;i<=rx;i++)if((i*i)/(rx*rx)+(j*j)/(ry*ry)<=1.05)P(cx+i,cy+j,c)};
+const alpha=(a,f)=>{x.globalAlpha=a;f();x.globalAlpha=1};
+const glow=(cx,cy,r,c,a=.3)=>alpha(a,()=>{disc(cx,cy,r,c);disc(cx,cy,Math.round(r*.7),c)});
+function sky(cols,h=H){const bh=Math.ceil(h/cols.length);cols.forEach((c,i)=>R(0,i*bh,W,bh,c));
+  // バンドの境目をディザでなじませる
+  cols.forEach((c,i)=>{if(!i)return;for(let k=0;k<W;k+=2)P(k+(i%2),i*bh-1,c)})}
+function stars(n,h,cols=['#fff3a0','#ffffff']){for(let i=0;i<n;i++)P(rnd()*W,rnd()*h,cols[i%cols.length])}
+function sun(cx,cy,r,c1='#ffe600',c2='#fff3a0'){glow(cx,cy,r+8,c1,.25);disc(cx,cy,r,c1);disc(cx,cy,Math.max(1,r-4),c2)}
+function moon(cx,cy,r,bg){disc(cx,cy,r,'#fff3c8');disc(cx+Math.round(r*.5),cy-Math.round(r*.3),r,bg)}
+function pine(tx,base,h,c,c2,trunk='#3a2a1a'){R(tx+5,base-h*.3,3,h*.3,trunk);const th=h*.78;for(let j=0;j<th;j++){const w=Math.max(1,(j/th)*9|0);R(tx+6-w,base-h+j,w*2+1,1,j%3?c:c2)}}
+function bush(cx,cy,r,c,c2){disc(cx,cy,r,c);disc(cx-r*.6|0,cy+2,r*.7|0,c);disc(cx+r*.6|0,cy+2,r*.7|0,c);for(let i=0;i<r*2;i++)P(cx-r+rnd()*r*2,cy-r*.5+rnd()*r,c2)}
+function roundTree(tx,base,r,c,c2,trunk='#6a4a2a'){R(tx-2,base-r*1.6,4,r*1.6,trunk);bush(tx,base-r*1.8|0,r,c,c2)}
+function hills(y,amp,c,ph=0,f=.03){for(let i=0;i<W;i++){const h=y-Math.sin(i*f+ph)*amp-Math.sin(i*f*2.3+ph)*amp*.4;R(i,h,1,H-h,c)}}
+function ground(y,c,c2,n=120){R(0,y,W,H-y,c);for(let i=0;i<n;i++)P(rnd()*W,y+1+rnd()*(H-y),c2)}
+function field(y0,y1,c,leaf){for(let y=y0;y<y1;y+=4){R(0,y,W,2,c);for(let i=(y/4%2)*6;i<W;i+=12){P(i,y-1,leaf);P(i+1,y-2,leaf);P(i-1,y-2,leaf)}}}
+function house(hx,hy,w,h,wall,roof,win='#ffe9a0'){R(hx,hy,w,h,wall);for(let j=0;j<=w/2+2;j++)R(hx-2+j,hy-j*.7-1,w+4-j*2,1,roof);R(hx+w/2-2,hy+h-6,4,6,'#6a4a2a');R(hx+2,hy+3,4,4,win);R(hx+w-6,hy+3,4,4,win)}
+function fence(y,c='#c8a060'){for(let i=0;i<W;i+=6){R(i,y,1,6,c)}R(0,y+1,W,1,c);R(0,y+4,W,1,c)}
+function path(cx,y0,y1,c,c2,top=6,grow=1.6,lean=0){for(let j=0;j<y1-y0;j++){const w=top+j*grow;R(cx-w/2+j*lean,y0+j,w,1,j%4?c:c2)}}
+function sparkle(sx,sy,c='#ffffff'){P(sx,sy,c);P(sx-1,sy,c);P(sx+1,sy,c);P(sx,sy-1,c);P(sx,sy+1,c);P(sx-2,sy,'#fff3a0');P(sx+2,sy,'#fff3a0');P(sx,sy-2,'#fff3a0');P(sx,sy+2,'#fff3a0')}
+function heart(hx,hy,c='#e8456a'){['.x.x.','xxxxx','xxxxx','.xxx.','..x..'].forEach((r,j)=>[...r].forEach((ch,i)=>{if(ch==='x')P(hx+i,hy+j,c)}))}
+function shake(sx,sy,h,c='#ffffff'){for(let j=0;j<h;j+=3){P(sx,sy+j,c);P(sx+1,sy+j+1,c)}}
+function speedLines(cx,cy,n,len,c,a=.6){alpha(a,()=>{x.fillStyle=c;for(let i=0;i<n;i++){const t=i/n*Math.PI*2,r0=len*.4;for(let k=0;k<len*.6;k++)P(cx+Math.cos(t)*(r0+k),cy+Math.sin(t)*(r0+k),c)}})}
+// 十勇士（アプリと同じドット絵）
+const cache={};
+function heroImg(key){if(cache[key])return cache[key];const c=document.createElement('canvas');drawHero(c,HEROES.find(h=>h.key===key));return cache[key]=c}
+function hero(key,hx,hy,s=2,flip=false){const im=heroImg(key);x.save();if(flip){x.translate(Math.round(hx)+27*s,Math.round(hy));x.scale(-1,1);x.drawImage(im,0,0,27*s,22*s)}else x.drawImage(im,Math.round(hx),Math.round(hy),27*s,22*s);x.restore()}
+function blush(hx,hy,s=2){alpha(.8,()=>{R(hx,hy,3*s,s,'#ff5a7a')})}
+// 子うさぎ（k=ピョン太の葉っぱスカーフ）
+const BUN=['.w..w.','.wp.wp','.w..w.','wwwwww','wewwew','wwnnww','.wwww.','.w..w.'];
+const BUNP=['.w..w.','.wp.wp','.w..w.','wwwwww','wewwew','wwnnww','kkkkkk','.wwww.','.w..w.'];
+function bunny(bx,by,c='#ffffff',s=2,flip=false,pyon=false,face='e'){s=Math.max(1,Math.round(s));bx=Math.round(bx);by=Math.round(by);const m=pyon?BUNP:BUN;m.forEach((r,j)=>[...r].forEach((ch,i)=>{if(ch==='.')return;let col={w:c,p:'#ff8fa8',e:'#1f1a14',n:'#e8456a',k:'#4f9a2a'}[ch];if(ch==='e'&&face==='x')col=c;R(bx+(flip?5-i:i)*s,by+j*s,s,s,col)}));if(face==='x'){/* ぎゅっと目 */R(bx+0*s,by+4*s,2*s,s*.5,'#1f1a14');R(bx+4*s,by+4*s,2*s,s*.5,'#1f1a14')}if(pyon){P(bx+(flip?0:5)*s+s,by+6*s,'#9ccc3c')}}
+// 霧の魔物 モヤモヤン（mood: smile / sly / sleep / small）
+function moya(mx,my,s=1,mood='sly',cols=['#b8aed0','#cfc6e2','#e4def0','#d9d2ea']){
+  const blobs=[[0,0,16],[-14,8,13],[16,10,12],[-26,18,9],[29,22,8]];
+  blobs.forEach(([a,b,r],i)=>disc(mx+a*s,my+b*s,Math.round(r*s),cols[i%3]));
+  [[0,0,12],[-12,8,9],[14,10,8]].forEach(([a,b,r])=>disc(mx+a*s,my+b*s,Math.round(r*s),cols[3]||cols[2]));
+  const e=Math.max(1,Math.round(2*s)),ex=Math.round(6*s),ey=Math.round(-4*s);
+  const ink='#3a2758';
+  if(mood==='sleep'){R(mx-ex-e,my+ey+e,e*2,1,ink);R(mx+ex-e,my+ey+e,e*2,1,ink)}
+  else{R(mx-ex-e,my+ey,e+1,e+1,ink);R(mx+ex-1,my+ey,e+1,e+1,ink);P(mx-ex-e,my+ey,'#ffffff');P(mx+ex-1,my+ey,'#ffffff')}
+  if(mood==='sly'){R(mx-ex-e-1,my+ey-2,e+3,1,'#8a7aa8');R(mx+ex-2,my+ey-2,e+3,1,'#8a7aa8');R(mx-3*s,my+4*s,6*s,1,ink);P(mx-3*s-1,my+4*s-1,ink);P(mx+3*s,my+4*s-1,ink)}
+  else{R(mx-2*s,my+4*s,4*s,1,ink);P(mx-2*s-1,my+4*s-1,ink);P(mx+2*s,my+4*s-1,ink)}
+  R(mx-ex-e-3*s,my+ey+3*s,2*s,s,'#ff8fa8');R(mx+ex+2*s,my+ey+3*s,2*s,s,'#ff8fa8');
+}
+function mist(x0,y0,x1,y1,c,d=.25){for(let j=y0;j<y1;j++)for(let i=x0;i<x1;i++)if((i+j)%3===0&&rnd()<d)P(i,j,c)}
+function sign(sx,sy,w,h,board='#c8a060',post='#6a4a2a'){R(sx+w/2-1,sy+h,2,10,post);R(sx,sy,w,h,board);R(sx,sy,w,1,'#e8c890');R(sx,sy+h-1,w,1,'#8a6a3a')}
+function lantern(lx,ly){R(lx,ly-6,1,6,'#6a4a2a');glow(lx,ly+2,7,'#ffe600',.25);R(lx-2,ly,5,5,'#f39a1e');R(lx-1,ly+1,3,3,'#ffe600')}
+function footprints(pts,c){pts.forEach(([a,b])=>{P(a,b,c);P(a+1,b,c);P(a,b-1,c)})}
+
+// ---- 追加の 小道具 ----
+function snow(n,c='#ffffff',y0=0,y1=H){for(let i=0;i<n;i++){const a=rnd()*W,b=y0+rnd()*(y1-y0);P(a,b,c);if(i%4==0){P(a+1,b,c);P(a,b+1,c)}}}
+function snowGround(y,c='#f4f8ff',c2='#dfe8f4'){R(0,y,W,H-y,c);for(let i=0;i<W;i+=3){const h=Math.sin(i*.08)*2;R(i,y+h-1,3,2,c)}for(let i=0;i<80;i++)P(rnd()*W,y+3+rnd()*(H-y),c2)}
+function castle(cx,base,w,h,wall='#cfd8e8',roof='#5a6aa8',win='#ffe9a0'){R(cx-w/2,base-h,w,h,wall);for(let i=0;i<w;i+=6)R(cx-w/2+i,base-h-3,3,3,wall);
+  [[-w/2-6,1.3],[w/2-2,1.3]].forEach(([dx,k])=>{R(cx+dx,base-h*k,8,h*k,wall);for(let j=0;j<8;j++)R(cx+dx+j*.5,base-h*k-j*1.2-1,8-j,1.2,roof)});
+  R(cx-5,base-12,10,12,'#5a3a2a');R(cx-5,base-13,10,2,'#8a6a4a');[[-w/2+6,-h+8],[w/2-12,-h+8],[-4,-h+6]].forEach(([a,b])=>R(cx+a,base+b,5,6,win))}
+function crow(cx,cy,s=1,flip=false){const m=['..kk...','.kkkk..','kkWkkyy','kkkkk..','.kkkkk.','..kkkkk','...k.k.'];m.forEach((r,j)=>[...r].forEach((ch,i)=>{if(ch==='.')return;R(cx+(flip?6-i:i)*s,cy+j*s,s,s,{k:'#2a2a3a',W:'#ffffff',y:'#f5d63d'}[ch])}))}
+function person(px,py,s=2,body='#e8452c',hair='#4a3020',crown=false){s=Math.max(1,Math.round(s));px=Math.round(px);py=Math.round(py);// 村の人・王さま（シンプル）
+  const m=['..hhh..','.hhhhh.','.hfffh.','.fefef.','..fff..','.bbbbb.','bbbbbbb','b.bbb.b','..b.b..','..d.d..'];
+  m.forEach((r,j)=>[...r].forEach((ch,i)=>{if(ch==='.')return;R(px+i*s,py+j*s,s,s,{h:hair,f:'#ffd8b0',e:'#1f1a14',b:body,d:'#4a3a2a'}[ch])}));
+  if(crown){[[1,-2],[3,-3],[5,-2],[1,-1],[2,-1],[3,-1],[4,-1],[5,-1],[3,-2]].forEach(([a,b])=>R(px+a*s,py+b*s,s,s,'#f5d63d'));R(px+3*s,py-3*s,s,s,'#e8452c')}}
+function bed(bx,by,w,c='#9fb4e8'){R(bx,by,w,10,'#8a6a4a');R(bx+2,by-2,w-4,6,c);R(bx+2,by-4,10,4,'#ffffff');R(bx,by-8,3,18,'#6a4a2a')}
+function pot(px,py,c='#3a3a4a',steam=true){R(px,py,18,10,c);R(px-2,py,22,2,'#5a5a6a');R(px+1,py+10,16,2,c);if(steam)alpha(.6,()=>{for(let k=0;k<3;k++)for(let j=0;j<10;j++)P(px+4+k*5+Math.round(Math.sin(j*.8+k)*1.5),py-2-j,'#ffffff')})}
+function bowl(bx,by,c='#f39a1e'){R(bx,by,10,1,'#ffffff');R(bx+1,by+1,8,3,c);R(bx+2,by+4,6,1,c);alpha(.6,()=>{P(bx+3,by-2,'#ffffff');P(bx+6,by-3,'#ffffff');P(bx+4,by-4,'#ffffff')})}
+function bug(bx,by,c='#7a9a3a',s=1){[[1,0],[3,0],[0,1],[1,1],[2,1],[3,1],[4,1],[0,2],[1,2],[2,2],[3,2],[4,2],[1,3],[3,3]].forEach(([a,b])=>R(bx+a*s,by+b*s,s,s,c));R(bx+1*s,by+1*s,s,s,'#1f1a14');R(bx+3*s,by+1*s,s,s,'#1f1a14');alpha(.6,()=>{R(bx-s,by,s,s,'#ffffff');R(bx+5*s,by,s,s,'#ffffff')})}
+function wind(n,c='#ffffff',a=.6){alpha(a,()=>{for(let i=0;i<n;i++){const y=rnd()*H,x0=rnd()*W,l=10+rnd()*30;R(x0,y,l,1,c);R(x0+l,y-1,3,1,c)}})}
+function blob(mx,my,s,cols,mood='sly',horns=null){moya(mx,my,s,mood,cols);if(horns){R(mx-10*s,my-16*s,3*s,5*s,horns);R(mx+7*s,my-16*s,3*s,5*s,horns)}}
+function dragon(dx,dy,s=2,c='#8acf9a',c2='#5aa86a',sleepy=true){const m=['....ggg.....','...gGGGg....','..gGGGGGg...','..gGeGGeg...','..gGGGGGGgg.','...gGmmGGGGg','....gggGGGGg','..gggGGGGGg.','.gGGGGGGGg..','gGGGGGGGGg..','.gg.gg.gg...'];m.forEach((r,j)=>[...r].forEach((ch,i)=>{if(ch==='.')return;let col={g:c2,G:c,e:'#1f1a14',m:'#e8456a'}[ch];if(ch==='e'&&sleepy){R(dx+i*s,dy+j*s,s,s,c);R(dx+i*s-s*.3,dy+j*s+s*.6,s*1.6,Math.max(1,s*.3),'#1f1a14');return}R(dx+i*s,dy+j*s,s,s,col)}));R(dx+4*s,dy-s,s,s,'#f5d63d');R(dx+6*s,dy-s,s,s,'#f5d63d')}
+function oni(ox,oy,s=2,c='#8a8ab8'){const m=['.h.....h.','.hh...hh.','..ccccc..','.ccccccc.','ccecccecc','ccccccccc','cccmmmccc','.ccccccc.','.ccccccc.','..c...c..'];m.forEach((r,j)=>[...r].forEach((ch,i)=>{if(ch==='.')return;R(ox+i*s,oy+j*s,s,s,{h:'#f5d63d',c,e:'#1f1a14',m:'#5a3a6a'}[ch])}));alpha(.6,()=>{R(ox+2*s,oy+5*s,s*1.5,s*.6,'#5a5a8a');R(ox+6*s,oy+5*s,s*1.5,s*.6,'#5a5a8a')})}
+function table(tx,ty,w){R(tx,ty,w,3,'#c8a060');R(tx,ty+3,w,1,'#8a6a3a');R(tx+2,ty+4,2,10,'#8a6a3a');R(tx+w-4,ty+4,2,10,'#8a6a3a')}
+function letter(lx,ly){R(lx,ly,10,7,'#fffdf3');R(lx,ly,10,1,'#c8a060');P(lx+2,ly+2,'#c8a060');P(lx+3,ly+3,'#c8a060');P(lx+4,ly+4,'#e8452c');P(lx+5,ly+3,'#c8a060');P(lx+6,ly+2,'#c8a060');R(lx+1,ly+5,6,1,'#c8c0a0')}
+function jar(jx,jy){R(jx,jy,6,7,'#f5b030');R(jx+1,jy-2,4,2,'#c8803a');P(jx+1,jy+1,'#fff3a0')}
+function flagLine(y,cols=['#e8452c','#ffe600','#4f9a2a','#f39a1e','#9b2f5e']){R(0,y,W,1,'#8a6a3a');for(let i=0;i<W;i+=10){const c=cols[(i/10)%cols.length];for(let j=0;j<5;j++)R(i+2+j*.5,y+1+j,6-j,1,c)}}
+function track(y,h){R(0,y,W,h,'#d8a878');for(let k=1;k<4;k++)for(let i=0;i<W;i+=4)R(i,y+k*h/4,2,1,'#ffffff')}
+function sea(y,c='#3a9ad8',c2='#7ac8f0'){R(0,y,W,H-y,c);for(let i=0;i<60;i++)R(rnd()*W,y+2+rnd()*(H-y),4,1,c2)}
+function umbrella(ux,uy,c='#e8452c'){for(let j=0;j<6;j++)R(ux-j*2,uy+j,j*4+1,1,c);R(ux,uy+6,1,12,'#6a4a2a')}
+function sweat(sx,sy){P(sx,sy,'#9fd8ff');P(sx,sy+1,'#9fd8ff');P(sx-1,sy+2,'#9fd8ff');P(sx,sy+2,'#9fd8ff')}
+function zz(zx,zy,c='#ffffff'){[[0,0],[1,0],[2,0],[1,1],[0,2],[1,2],[2,2]].forEach(([a,b])=>P(zx+a,zy+b,c));[[0,0],[1,0],[1,1],[0,2],[1,2]].forEach(([a,b])=>P(zx+5+a,zy-4+b,c))}
+return {snow,snowGround,castle,crow,person,bed,pot,bowl,bug,wind,blob,dragon,oni,table,letter,jar,flagLine,track,sea,umbrella,sweat,zz,W,H,use,rnd,R,P,disc,oval,alpha,glow,sky,stars,sun,moon,pine,bush,roundTree,hills,ground,field,house,fence,path,sparkle,heart,shake,speedLines,hero,blush,bunny,moya,mist,sign,lantern,footprints,get x(){return x}};
+})();
+
+</script>
+<script>
+// ===== 333GYM の冒険シーン（256x144 ドット絵） =====
+const SCN=(()=>{const A=ART,W=256,H=144;
+const sk=()=>A.sky(['#5fb4e8','#7cc4ee','#9ad2f0','#b8e0f2','#d6ecf2','#eaf4dc']);
+const clouds=n=>{for(let i=0;i<n;i++)A.alpha(.9,()=>{A.oval(20+i*50,18+(i%2)*12,10,3,'#ffffff');A.oval(28+i*50,16+(i%2)*12,7,3,'#ffffff')})};
+const TREE=['......aa......','.....a..a.....','....a....a....','...a.hhhh.a...','...ahhhhhha...','...ahssssha...','...a.ssss.a...','....atttta....','....tttttt....','....tttttt....','.....tttt.....','.....pppp.....','.....pp.pp....','.....pp..pp...','.....pp...pp..','.....pp..pp...','.....pp.pp....','.....pp.......','.....pp.......','.....pp.......','.....ff.......'];
+const treePose=(x,y,s,pal)=>TREE.forEach((r,j)=>[...r].forEach((c,i)=>{if(c!=='.')A.R(x+i*s,y+j*s,s,s,pal[c])}));
+const mat=(x,y,w,c,c2)=>{A.R(x,y,w,4,c);A.R(x,y+4,w,1,c2)};
+const plate=(x,y,h,c)=>{A.R(x,y-h/2,3,h,c);A.R(x,y-h/2,1,h,'#ffffff33')};
+const barbell=(x1,x2,y)=>{A.R(x1,y,x2-x1,2,'#a8b4c4');A.R(x1,y,x2-x1,1,'#dfe8f0');plate(x1-1,y+1,14,'#e8452c');plate(x1+3,y+1,10,'#33501a');plate(x2-2,y+1,14,'#e8452c');plate(x2-6,y+1,10,'#33501a')};
+const dumbbell=(x,y,c='#4f7d2a')=>{A.R(x,y,8,2,'#a8b4c4');A.R(x-2,y-2,3,6,c);A.R(x+7,y-2,3,6,c)};
+const mirror=(x,y,w,h)=>{A.R(x,y,w,h,'#ffffff');A.R(x+2,y+2,w-4,h-4,'#d4ecf5');A.alpha(.6,()=>{for(let i=0;i<w;i+=12)A.R(x+4+i,y+4,3,h-8,'#ffffff')})};
+const floor=(y,c='#d9a868',c2='#c8955a')=>{A.R(0,y,W,H-y,c);for(let k=y+5;k<H;k+=6)A.R(0,k,W,1,c2)};
+const wall=(c,c2)=>{A.R(0,0,W,H,c);for(let i=0;i<W;i+=16)A.R(i,0,1,96,c2)};
+const flagRow=y=>A.flagLine(y);
+function world(cv){A.use(cv.getContext('2d'),7);sk();A.sun(222,40,11,'#ffe600','#fff7b0');clouds(6);
+ A.hills(88,6,'#8fc04a',.4,.025);A.hills(96,4,'#6fa83a',2,.04);
+ for(let i=0;i<4;i++)A.pine(4+i*10,100,22+A.rnd()*6,'#3f7a2a','#4f8a30');for(let i=0;i<4;i++)A.pine(212+i*11,100,22+A.rnd()*6,'#3f7a2a','#4f8a30');
+ A.ground(98,'#9ccc3c','#b8dc5a',160);A.house(54,84,18,13,'#f3e2c0','#e8452c');A.house(184,85,16,12,'#fff0d0','#f39a1e');
+ A.roundTree(36,96,5,'#f39a1e','#ffc070');A.roundTree(218,96,5,'#e8452c','#ff9a80');A.field(122,144,'#a07a46','#4f9a2a');
+ const ks=['carrot','piman','onion','cabbage','daikon','tomato','pumpkin','broccoli','shoga','imo'];
+ ks.forEach((k,i)=>A.hero(k,2+i*25,96+(i%2?6:0),1,i>=5));
+ A.sparkle(120,70);A.sparkle(150,60);A.heart(128,80)}
+function run(cv){A.use(cv.getContext('2d'),3);sk();A.sun(40,30,10,'#ffe600','#fff7b0');clouds(5);
+ A.hills(78,5,'#8fc04a',1,.03);for(let i=0;i<6;i++)A.pine(150+i*18,92,18+A.rnd()*8,'#3f7a2a','#4f8a30');
+ A.ground(90,'#9ccc3c','#b8dc5a',100);flagRow(84);A.track(104,28);A.R(0,132,W,12,'#9ccc3c');
+ [['carrot',146,76],['tomato',96,84],['daikon',48,78],['imo',2,86]].forEach(([k,x,y],i)=>{A.speedLines(x-2,y+30,4,16,'#ffffff',.8);A.hero(k,x,y,2.6);A.sweat(x+62,y+10)});
+ A.sign(206,100,40,16);A.R(210,104,32,2,'#ffffff');A.R(210,109,24,2,'#ffffff')}
+function train(cv){A.use(cv.getContext('2d'),5);wall('#fff6d8','#f3e6bd');
+ A.R(0,0,W,10,'#33501a');for(let i=6;i<W;i+=40)A.R(i,2,24,6,'#bcdc3c');
+ mirror(8,16,110,70);mirror(124,16,60,70);
+ // ラック
+ A.R(196,20,4,80,'#7a8494');A.R(240,20,4,80,'#7a8494');A.R(196,20,48,3,'#7a8494');for(let y=40;y<96;y+=18){A.R(198,y,44,2,'#a8b4c4');dumbbell(205,y-3,'#e8452c');dumbbell(224,y-3,'#33501a')}
+ floor(96);A.R(0,96,W,2,'#8a6a3a');mat(20,124,90,'#33501a','#1f3a10');
+ // ブロッコ将軍がバーベル
+ A.hero('broccoli',22,56,3.2);barbell(8,118,62);A.sweat(28,70);A.sweat(104,74);
+ // カボッチャがダンベル、ピッピマン応援
+ A.hero('pumpkin',112,70,2.6);dumbbell(176,72,'#f39a1e');A.sweat(110,76);
+ A.hero('piman',192,96,1.7,true);A.heart(212,88);A.sparkle(70,60);A.sparkle(150,70)}
+function yoga(cv){A.use(cv.getContext('2d'),11);wall('#f6ead0','#efdfbf');
+ A.R(14,10,70,46,'#ffffff');A.R(17,13,64,40,'#bfe6f5');A.R(48,13,3,40,'#ffffff');A.R(17,32,64,3,'#ffffff');A.sun(68,22,6,'#ffe600','#fff7b0');A.bush(26,50,6,'#4f9a2a','#7fbf2a');
+ A.R(214,48,16,18,'#e8452c');A.R(211,44,22,5,'#c8382a');A.bush(222,36,10,'#4f9a2a','#8fcf3a');A.bush(214,28,6,'#3f8a2a','#7fbf2a');
+ floor(88);mat(18,124,64,'#a7d84a','#7fae3a');mat(96,124,64,'#ff9ac0','#e8708f');mat(174,124,64,'#9fd8ff','#5fa8d8');
+ treePose(32,66,3,{a:'#f6c9a0',h:'#5a3a24',s:'#f6c9a0',t:'#9b2f5e',p:'#33501a',f:'#f6c9a0'});
+ A.hero('cabbage',94,66,2.6);A.hero('onion',172,66,2.6,true);
+ A.heart(150,74);A.sparkle(92,70);A.sparkle(240,80);A.sparkle(20,62)}
+function meal(cv){A.use(cv.getContext('2d'),13);wall('#fff0d8','#f6e2c0');
+ A.R(10,10,80,50,'#ffffff');A.R(13,13,74,44,'#e8f6d0');for(let i=0;i<4;i++)A.R(18,18+i*10,60,2,'#cfe3a8');A.R(18,16,30,3,'#e8452c');
+ A.R(150,14,90,4,'#c8a060');[[156,'#f39a1e'],[176,'#e8452c'],[196,'#4f9a2a'],[216,'#9b2f5e']].forEach(([x,c])=>{A.R(x,6,10,8,c);A.R(x+2,4,6,2,'#ffffff')});
+ floor(100,'#e8c898','#d8b07a');A.table(40,96,176);
+ A.bowl(60,88,'#f39a1e');A.bowl(96,88,'#4f9a2a');A.bowl(150,88,'#e8452c');A.pot(118,80);A.bowl(186,88,'#9b2f5e');
+ A.hero('carrot',6,50,2.2);A.hero('daikon',192,46,2.2,true);A.hero('imo',100,30,1.8);A.heart(58,70);A.heart(196,66);A.sparkle(140,60)}
+function breath(cv){A.use(cv.getContext('2d'),17);A.sky(['#ffd9a0','#ffe2b5','#ffeccb','#fff5de','#fffbe9','#f3f9df']);A.sun(128,62,22,'#ffe600','#fff3a0');
+ A.hills(92,5,'#8fc04a',3,.03);A.ground(100,'#9ccc3c','#b8dc5a',120);
+ mat(28,128,80,'#ffe600','#d9ad1c');mat(148,128,80,'#bcdc3c','#7fae3a');
+ A.hero('shoga',30,58,3);A.hero('tomato',146,58,3,true);
+ for(let i=0;i<3;i++){A.alpha(.85,()=>{A.R(112+i*3,70+i*7,14,1,'#ffffff');A.R(130-i*3,70+i*7,14,1,'#ffffff')})}
+ A.sparkle(120,30);A.sparkle(30,40);A.sparkle(220,36);A.heart(128,96)}
+return {world,run,train,yoga,meal,breath};})();
+
+</script>
+<script>
+const STORY=[{"h": "キャロット（にんじんの剣士）", "catch": "まっすぐ前へ！オレンジの熱血剣士", "kuchi": "「その一歩が、いちばん強い剣だ！」", "bt": "くらやみ森の夜明け", "paras": ["ミドリ村のとなりの「くらやみ森」に、ある日、霧の魔物「モヤモヤン」があらわれた。森はまっ暗になり、遊びに来ていた子うさぎたちが帰れなくなってしまった。", "みんなが「夜が明けるまで待とう」と言う中、キャロットはひとり剣をにぎった。「待ってたら、あの子たちが寒いだろ！」　本当は、暗いところが大の苦手。足はガクガク。でも、心はまっすぐだった。", "森の中で、キャロットは気づいた。体にたっぷりたくわえた“β-カロテン”のおかげで、暗い中でも目がよく見える！　木の根っこも、子うさぎの小さな足あとも、ちゃんと見えた。", "モヤモヤンは「どうせ迷うぞ〜」とささやいてくる。キャロットはさけんだ。「迷ったら、とりあえず一歩！」　剣をふると、オレンジの光が霧を切りさき、森に朝日がさしこんだ。", "子うさぎたちを背中に乗せて帰ったキャロット。お礼を言われると、真っ赤になって「べ、べつに、ちょっと散歩してただけだ！」　その日から、くらやみ森は「夜明けの森」と呼ばれている。"], "moral": "こわくても、一歩ふみ出せば、道は見えてくる。\n\n---"}, {"h": "ピッピマン（ピーマンの盾の騎士）", "catch": "苦くても、守りは最強！優しい盾の騎士", "kuchi": "「ボクの盾がある限り、大丈夫！」", "bt": "ハックション大嵐の七日間", "paras": ["ある冬、畑の国に「ハックション大嵐」がやってきた。冷たい風にのって、カゼひき虫たちが村じゅうに飛んでくる。", "村の子どもたちは、前の日まで「ピーマン、にがーい！」と言っていた子たちだった。ピッピマンは少しだけ迷った。でも、すぐに盾をかまえた。「苦いって言われても、守りたい気持ちは苦くないもん！」", "ピッピマンの盾は、“ビタミンC”の光でできている。しかも、火のそばでも、なかなか壊れない。七日七晩、ピッピマンは学校の入口に立ちつづけ、カゼひき虫をはね返した。", "八日目の朝、嵐がやんだ。ふらふらのピッピマンに、ひとりの女の子が近づいてきて、小さな声で言った。「……ピーマン、ちょっとだけ食べてみたよ。細く切って、いためたら食べられた」", "ピッピマンの目から、ぽろっと涙。「苦くてもいいんだ。ボクはボクのまま、みんなを守ればいいんだ」　それからピッピマンは、苦いと言われても笑って「いつか好きになってね！」と言えるようになった。"], "moral": "自分のちょっと苦手なところも、ちゃんと誰かを守る力になる。\n\n---"}, {"h": "玉ちゃん（玉ねぎの魔法使い）", "catch": "涙の数だけ強くなる、ころころ魔法使い", "kuchi": "「できる、できる、できる！」", "bt": "ぐったり鬼と、ひとつぶの涙", "paras": ["玉ちゃんは小さいころ、魔法学校で「泣き虫さん」と呼ばれていた。玉ちゃんが魔法を使うと、なぜかまわりの人の目から涙が出てしまうから。「わたしの魔法は、人を泣かせるだけなのかな……」", "ある夏、村に「ぐったり鬼」があらわれた。畑の人たちはみんな、体が重くて動けない。ごはんを食べても力がわかない。鬼が、みんなの疲れをどんどん集めていたのだ。", "玉ちゃんは図書館で、古い本を見つけた。「涙の魔法の正体は“硫化アリル”。お豆や玄米にふくまれるビタミンB1という“元気のもと”を、体にしっかりとどける力がある」　玉ちゃんの魔法は、泣かせるためのものじゃなかった！", "玉ちゃんは、村の人たちのお豆ごはんや、おみそ汁に、そっと魔法をかけてまわった。「できる、できる、できる！」　みんなの体に元気がもどり、ぐったり鬼はしゅるしゅると小さくなって逃げていった。", "その夜、村の人たちは玉ちゃんにお礼を言いながら、うれし涙をながした。「この涙は、いい涙だね」　玉ちゃんは、はじめて自分の魔法が好きになった。"], "moral": "弱点だと思っていたことが、だれかを助ける力になることもある。\n\n---"}, {"h": "キャベリン（キャベツのいやし手）", "catch": "やさしさ何枚重ね？みんなの癒し手", "kuchi": "「今日もここにいてくれて、ありがとう」", "bt": "キリキリ大王と、千枚の葉っぱ", "paras": ["お城の王さまが、毎晩おなかをかかえて苦しんでいた。原因は「キリキリ大王」。心配ごとをエサにして、王さまの胃をチクチクいじめる、小さな大王だった。", "国じゅうのお医者さんも、剣士も、どうにもできなかった。そこへ呼ばれたのがキャベリン。キャベリンは戦わなかった。かわりに、王さまの話を一晩じゅう聞いた。「本当は、毎日こわかったんですね」", "話を聞きながら、キャベリンは葉っぱを一枚ずつ、王さまのおなかにそっと重ねた。キャベリンの葉には、胃をやさしく守る“ビタミンU”の力がつまっている。一枚、また一枚。千枚目を重ねたとき、キリキリ大王は「こんなに優しくされたら、いじめられないよ〜」と、ころんと眠ってしまった。", "朝、王さまはひさしぶりにぐっすり眠れた顔で言った。「何でもほうびを取らせよう」　キャベリンは首をふった。「じゃあ、王さまも、ちゃんと休んでくださいね」", "帰り道、キャベリンはふらっと倒れそうになった。自分のことを忘れて、一晩じゅうがんばっていたから。それを支えたのは、こっそりついてきたキャロットだった。「おまえも休め！」　キャベリンは、はじめて「ありがとう」を言う側になって、少し照れた。"], "moral": "優しさは、ちゃんと自分にも向けてあげよう。\n\n---"}, {"h": "ダイコンタ（大根の弓使い）", "catch": "ねらった的は外さない！まっすぐ伸びる弓使い", "kuchi": "「ねらいは決まった。あとは放つだけ」", "bt": "ズッシリ大ゴロンの大合戦", "paras": ["お正月あけ、畑の国は大変なことになっていた。みんなお餅やごちそうを食べすぎて、お腹が重たく、ぜんぜん動けない。そこへ、眠気とダルさのかたまり「ズッシリ大ゴロン」が、のしのしやってきた。", "「ダイコンタ、たのむ！」とみんなが言う。でも、木の上のカラスがからかった。「大根役者に何ができる〜」　ダイコンタは何も言い返さず、ただ静かに弓を引いた。", "ダイコンタの矢は、白く光る“ジアスターゼ”。ごはんやお餅のでんぷんを、すーっと消化しやすくしてくれる。矢はズッシリ大ゴロンに、ひとつ残らず命中した。", "ただし、この矢には弱点がある。火であぶると力がなくなってしまうのだ。だからダイコンタは、矢をいつも「すりおろしたて」で放つ。手間がかかっても、ぜったいに手をぬかない。", "戦いのあと、さっきのカラスがもじもじしながらやってきた。「……さっきはごめん。かっこよかった」　ダイコンタはちょっとだけ笑って、自分の葉っぱを一枚あげた。「これ、栄養たっぷりなんだ。食べて」"], "moral": "言い返さなくても、まっすぐな行動がいちばん伝わる。\n\n---"}, {"h": "リコピンちゃん（トマトの格闘家）", "catch": "真っ赤なハートで突き進む！キラキラ格闘家", "kuchi": "「ほんっとに応援してるんだから！」", "bt": "サビサビ団と、真夏の太陽", "paras": ["真夏のある日、海辺の町に「サビサビ団」がやってきた。強い日ざしにまぎれて、人びとの体を少しずつサビさせてしまう、こまったやつらだ。", "町の人はみんな、日がさの下でしょんぼり。リコピンちゃんは腕まくりをした。「あたしの出番ね！　太陽の下でこそ、赤く輝くのがトマトなんだから！」", "リコピンちゃんの赤いパンチには、体のサビを防ぐ“リコピン”がつまっている。でもサビサビ団は数が多い。だんだん息が切れてきた、そのとき——ジンジャー忍者が、そっとオリーブオイルを投げてくれた。「油と組めば、力がもっと体にとどくでござる」", "オイルをまとったリコピンちゃんは、さらに真っ赤にパワーアップ！「リコピン・ストレート！」　サビサビ団はピカピカにみがかれて、ただのいい人たちにもどってしまった。", "戦いのあと、リコピンちゃんはジンジャー忍者に言った。「……あ、ありがと。あたしひとりでも勝てたけどね！」　そう言いながら、ちゃんと自分のトマトスープを半分わけてあげた。"], "moral": "ひとりでがんばるより、仲間と組むともっと強くなれる。\n\n---"}, {"h": "カボッチャ（かぼちゃの重戦士）", "catch": "どっしり、ほくほく。寒い冬の守り神", "kuchi": "「ゆっくりでいいんだよ。じっくり甘くなるからね」", "bt": "いちばん長い冬の夜", "paras": ["むかし、畑の国に、春がなかなか来ない年があった。冬の大魔物「コゴエール」が、空に居すわってしまったのだ。畑はこおり、野菜たちはどんどん元気をなくしていった。", "みんなが「もうだめだ」と下を向く中、カボッチャはどっしりと立っていた。「おいら、夏にとれて、冬まで元気でいられるんだ。だから大丈夫。いっしょに待とう」", "カボッチャは毎晩、こごえるみんなのところをまわって、ほくほくのスープをつくった。β-カロテン、ビタミンC、ビタミンE。“ビタミンエース”のスープを飲んだ村の人たちは、カゼもひかずに冬をこえていった。", "一年でいちばん夜が長い「冬至」の日。コゴエールが、最後の大吹雪をおこした。カボッチャはハンマーをふりあげた。「ホクホク・インパクト！」　あたたかい光がはじけて、空の魔物はとけて消え、次の日から、昼が少しずつ長くなりはじめた。", "それから、畑の国では冬至の日にかぼちゃを食べるようになった——と、村では言い伝えられている。カボッチャは「おいらのおかげってわけじゃないよ〜」と照れるけれど、その日はいちばんの人気者だ。"], "moral": "あせらず、じっくり。つづけた人が、最後に春をつれてくる。\n\n---"}, {"h": "ブロッコ将軍（ブロッコリーの槍使い）", "catch": "小さな房もあつまれば森となる！緑の大将軍", "kuchi": "「勝負は、昨日の自分とじゃ！」", "bt": "つぼみ千人隊と、ナマケ竜", "paras": ["山のふもとに「ナマケ竜」がすみついた。竜のあくびをあびると、だれでも「今日はいっか〜」と寝ころんでしまう。とうとう村中の人が、ゴロゴロしはじめた。", "ブロッコ将軍は、頭の小さなつぼみたちに号令をかけた。「つぼみ千人隊、整列じゃ！」　ひとつひとつは小さな房。でも、千人が並ぶと、それは大きな緑の森になる。", "ナマケ竜の大あくびが、つぼみ隊をおそう。何人かが、うとうと……。将軍はさけんだ。「一回でよい！　一歩でよい！　昨日のおのれに勝つのじゃ！」　つぼみたちは一人、また一人と立ちあがった。ビタミンCと葉酸を力に、みんなの元気がもどっていく。", "とうとう、ナマケ竜のほうが目をまるくした。「なんでそんなに、毎日がんばれるの……？」　将軍は槍を下ろして言った。「がんばるのではない。毎日少しずつ、楽しんでおるだけじゃ」", "ナマケ竜はそれから、毎朝こっそり将軍の朝礼に参加している。ただし、将軍のお話が長すぎて、ときどきやっぱり寝てしまうらしい。"], "moral": "小さな一歩も、毎日あつまれば大きな森になる。\n\n---"}, {"h": "ジンジャー忍者（生姜の忍者）", "catch": "影から見守り、体の芯からぽかぽかに！", "kuchi": "「ニンニン！　元気の術、発動でござる」", "bt": "ひえひえ城の、ひみつの任務", "paras": ["ある冬、北の「ひえひえ城」に住む人たちが、みんな手足が冷たくて、外に出られなくなっていた。城の地下で、冷気の妖怪「ヒエラ」が、毎晩つめたい息をはいていたのだ。", "この任務をまかされたのは、ジンジャー忍者。だれにも見つからず、城にしのびこむ。（じつは三日間、ずっと天井にはりついていた。だれも気づかなかった。）", "地下でヒエラと向かい合う。ジンジャー忍者は、まず生のままの“ジンゲロールの術”で、ヒエラのつまった鼻をすっきりさせた。つぎに、かまどで自分をあぶって“ショウガオールの術”。熱で力を変えるのが、忍びの極意でござる。", "ぽかぽかの湯気が城じゅうにひろがり、人びとの手足に、ふわっと温かさがもどってきた。ヒエラも「あったかいって、気持ちいい……」と、ふにゃっととけてしまった。", "朝、城の人たちは「誰が助けてくれたんだろう」とふしぎがった。テーブルの上には、はちみつ生姜湯と、小さな手紙。「お仕事、お疲れさまでござる。——J」　そのころジンジャー忍者は、窓の外で耳まで真っ赤にしていた。"], "moral": "人知れずがんばるやさしさも、ちゃんとだれかをあたためている。\n\n---"}, {"h": "イモ吉（さつまいもの応援団長）", "catch": "おなかもココロもほっこり！みんなの応援団長", "kuchi": "「頑張ってるの、ちゃんと知ってるっぺよ〜！」", "bt": "ツマリンボと、秋の大運動会", "paras": ["ある秋、村いちばんの運動会の前の日。選手たちがみんな、おなかの調子をくずしてしまった。犯人は、おなかのトンネルをつまらせる「ツマリンボ」。このままでは運動会は中止だ。", "「おらにまかせるっぺ！」　応援団長のイモ吉は、旗をかついで立ちあがった。でも本当は、ひざがガクガク。大きなことを言ったあとで、こっそりおなかが「グ〜」と鳴った。", "イモ吉は選手のみんなのところをまわって、ほくほくの焼きいもをくばった。“食物繊維”と、白いみつ“ヤラピン”の力で、つまったトンネルがすーっと通っていく。ツマリンボは、慌てて逃げだした。", "運動会の当日。イモ吉は誰よりも大きな声で旗をふった。「フレー！　フレー！　みんなー！」　勝った子にも、ころんだ子にも、同じくらい大きな声で。ころんで泣いた子が、もう一度走りだしたとき、会場じゅうから拍手がわいた。", "閉会式で「MVPはイモ吉！」と呼ばれた。イモ吉はぽかんとして言った。「おら、走ってないっぺよ？」　みんなは笑って答えた。「いちばん走ってたのは、イモ吉の声だよ！」"], "moral": "応援する人も、ちゃんとチームの主役。"}];
+(function(){
+const $=id=>document.getElementById(id);
+const sc=(id,f)=>{try{f($(id))}catch(e){console.warn(id,e)}};
+sc('sc-world',SCN.world);sc('sc-run',SCN.run);sc('sc-train',SCN.train);sc('sc-yoga',SCN.yoga);sc('sc-meal',SCN.meal);sc('sc-breath',SCN.breath);
+const H=k=>HEROES.find(h=>h.key===k);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cvs=(k)=>{const c=document.createElement('canvas');drawHero(c,H(k));return c};
+const order=['carrot','piman','onion','cabbage','daikon','tomato','pumpkin','broccoli','shoga','imo'];
+const box=$('h10');
+order.forEach((k,i)=>{const h=H(k),s=STORY[i];const b=document.createElement('button');b.type='button';b.className='hc';b.style.setProperty('--c',h.color);
+  b.innerHTML=`<span class="cvh"></span><b>${esc(h.name)}</b><span class="rl">${esc(h.veg)}の${esc(h.role)}</span><span class="cp">${esc(s.catch)}</span><span class="more">武勇伝を読む ▶</span>`;
+  b.querySelector('.cvh').replaceWith(cvs(k));b.onclick=()=>open(k,s,h);box.appendChild(b)});
+function open(k,s,h){const d=$('hs'),i=$('hsi');i.style.setProperty('--c',h.color);
+  i.innerHTML=`<div class="hh"><span class="cvh"></span><div><h3>${esc(h.name)}</h3><div class="cp">${esc(h.veg)}の${esc(h.role)}<br>${esc(s.catch)}</div></div></div>
+   <div class="kq">💬 ${esc(s.kuchi)}</div><h4>武勇伝「${esc(s.bt)}」</h4>${s.paras.map(p=>`<p>${esc(p)}</p>`).join('')}
+   <p class="moral">🌸 ${esc(s.moral)}</p><button type="button" class="btn red close">とじる</button>`;
+  i.querySelector('.cvh').replaceWith(cvs(k));i.querySelector('.close').onclick=()=>d.close();
+  if(d.showModal)d.showModal();else d.setAttribute('open','');i.scrollTop=0;d.scrollTop=0}
+$('hs').addEventListener('click',e=>{if(e.target.id==='hs')$('hs').close()});
+const F=[['broccoli','キャラが育って進化','最後は八百万の神さまに'],['carrot','相棒が毎日ひとこと','十勇士から相棒をえらぶ'],['imo','チーム対抗戦','毎週土曜に発表＆ごほうび'],['cabbage','宿題と花マル','トレーナーからのミッション'],['daikon','アプリで予約','予約も変更もスマホで'],['piman','キタエル掲示板','がんばりにエールを送りあう'],['tomato','パワー図鑑','食べたお野菜を集めよう'],['pumpkin','キタエル写真館','相棒と記念撮影']];
+$('feat').innerHTML=F.map(f=>`<div class="ft"><span data-k="${f[0]}"></span><div><b>${f[1]}</b><small>${f[2]}</small></div></div>`).join('');
+$('feat').querySelectorAll('[data-k]').forEach(s=>s.replaceWith(cvs(s.dataset.k)));
+})();
+</script>
+<script>document.querySelectorAll('canvas[data-k]').forEach(c=>drawHero(c,HEROES.find(h=>h.key===c.dataset.k)));</script>
+</body>
+</html>
