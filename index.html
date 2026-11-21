@@ -2148,8 +2148,12 @@ boot().then(()=>{
   const auth=firebase.auth(),db=firebase.firestore();
   $g('gform').onsubmit=e=>{e&&e.preventDefault&&e.preventDefault();const em=$g('gemail').value.trim(),pw=$g('gpass').value;if(!em||!pw){msg('メールアドレスとパスワードを入れてください');return false}$g('glogin').disabled=true;msg('ログインしています…',1);auth.signInWithEmailAndPassword(em,pw).catch(err=>msg(JA(err))).finally(()=>$g('glogin').disabled=false);return false};
   $g('ggoogle').onclick=()=>{const pv=new firebase.auth.GoogleAuthProvider();pv.setCustomParameters({prompt:'select_account'});$g('ggoogle').disabled=true;msg('Googleでログインしています…',1);
-    const sa=IOS||matchMedia('(display-mode: standalone)').matches||navigator.standalone;/* iPhone/iPadは同じドメインのリダイレクト（ポップアップは使わない） */(sa?auth.signInWithRedirect(pv):auth.signInWithPopup(pv).catch(err=>{if(/popup-blocked|operation-not-supported/.test(err.code||''))return auth.signInWithRedirect(pv);throw err})).catch(err=>msg(JA(err))).finally(()=>$g('ggoogle').disabled=false)};
-  auth.getRedirectResult().catch(err=>msg(JA(err)));
+    /* iPhoneのホーム画面アプリ：ポップアップ（リダイレクトだと戻ったときに結果が消える）。iPhoneのSafari：同じドメインのリダイレクト。そのほか：ポップアップ */
+    const red=IOS&&!SA;const go=()=>{try{localStorage.setItem('kq-gtry',String(Date.now()))}catch(e){}return auth.signInWithRedirect(pv)};
+    (red?go():auth.signInWithPopup(pv).catch(err=>{if(!IOS&&/popup-blocked|operation-not-supported/.test(err.code||''))return go();throw err}))
+      .catch(err=>{const c=(err&&err.code)||String(err&&err.message||err);msg(JA(err)+`［${c}］`+(IOS&&SA?' ／ ホーム画面アプリで入れないときは、Safariで kitaeru-quest.web.app'+location.pathname+' を開いてログインしてください。':''));console.warn('google login',err)}).finally(()=>$g('ggoogle').disabled=false)};
+  auth.getRedirectResult().then(r=>{let t=0;try{t=+localStorage.getItem('kq-gtry')||0;localStorage.removeItem('kq-gtry')}catch(e){}
+    if(t&&Date.now()-t<600000&&!(r&&r.user)&&!auth.currentUser)msg('Googleから戻ってきましたが、ログインの結果を受けとれませんでした［no-redirect-result'+(SA?'・app':'')+(IOS?'・ios':'')+'］。もう一度「Googleでログイン」を押してください。')}).catch(err=>{const c=(err&&err.code)||'';msg(JA(err)+(c?`［${c}］`:''))});
   {const ia=$g('ginapp');if(ia&&INAPP){ia.hidden=false;ia.innerHTML=`⚠ LINEなどのアプリの中の画面では、Googleログインができません。<br>右上の「…」や共有ボタンから<b>「Safariで開く」（Androidは「ブラウザで開く」）</b>を選んでから、ログインしてください。<br><span class="giu">${location.origin}${location.pathname}</span>`}}
   $g('gsignup').onclick=()=>{const em=$g('gemail').value.trim(),pw=$g('gpass').value;if(!em||pw.length<6){msg('メールアドレスと、6文字以上のパスワードを入れてから押してください');return}$g('gsignup').disabled=true;msg('登録しています…',1);
     auth.createUserWithEmailAndPassword(em,pw).catch(err=>msg(err.code==='auth/email-already-in-use'?'このメールはもう登録されています。上の「ログイン」で入ってください':JA(err))).finally(()=>$g('gsignup').disabled=false)};
@@ -2179,6 +2183,11 @@ boot().then(()=>{
     {const r=$g('greq');if(r){r.hidden=true;r.innerHTML=''}$g('gform').classList.remove('reqmode')}
     if(JOIN){location.replace(role==='trainer'?'/admin':(window.KQ_GUEST_URL||'/'));return}
     AUTH.role=role;AUTH.name=name;document.body.classList.remove('locked','authwait');applyRole();
+    try{const hb2=document.querySelector('header'),hasPw=(u.providerData||[]).some(p=>p&&p.providerId==='password');let pb=$g('pwLinkBtn');
+      if(hb2&&isG&&!hasPw&&u.email){if(!pb){pb=document.createElement('button');pb.id='pwLinkBtn';pb.className='mode';pb.type='button';pb.textContent='🔑 パスワード設定';hb2.appendChild(pb)}
+        pb.onclick=async()=>{const a=prompt(`${u.email} にパスワードを設定します。\nホーム画面アプリでも「メールとパスワード」で、同じアカウントに入れるようになります。\n6文字以上のパスワードを入れてください`);if(!a)return;if(a.length<6){alert('6文字以上にしてください');return}const b=prompt('確認のため、もう一度入れてください');if(a!==b){alert('2回のパスワードがちがいます');return}
+          try{await auth.currentUser.linkWithCredential(firebase.auth.EmailAuthProvider.credential(u.email,a));pb.remove();alert('パスワードを設定しました。次からは、メールアドレスとこのパスワードでも入れます（Googleでもそのまま入れます）')}catch(e){alert(e.code==='auth/requires-recent-login'?'安全のため、一度ログアウトして入り直してから、もう一度押してください':'設定できませんでした：'+(e.code||e.message))}}}
+      else if(pb)pb.remove()}catch(e){console.warn(e)}
   });
 }).catch(e=>{msg('ログインの準備ができませんでした。通信を確認して、もう一度開いてください');console.warn(e)});
 // header logout
