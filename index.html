@@ -539,6 +539,15 @@ body.admnog header .whol>.dd,body.admnog #who{display:none!important}body.admnog
 .kan{background:#fff;border:2px solid #d9d2ea;border-radius:12px;padding:10px;margin-top:8px}.kflag{background:#fff0ec;border:2px solid #e8452c;border-radius:10px;padding:6px 10px;font-weight:800;color:#a8321e;font-size:13px;line-height:1.7;margin:6px 0}.kok{background:#eef7e2;border-radius:10px;padding:6px 10px;font-weight:800;color:#2f6d2a;font-size:13px;margin:6px 0}
 .kmet{margin-top:8px}.kmh{display:flex;justify-content:space-between;gap:6px;font-size:13px;flex-wrap:wrap}.kmh i{font-style:normal;font-weight:900}.kmh i.up{color:#2f6d2a}.kmh i.dn{color:#e8452c}.kspk{width:100%;height:56px;display:block;background:#fbfaf6;border-radius:8px}
 .kall{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}.kall li{display:flex;align-items:center;gap:8px;background:#f7f5fb;border-radius:10px;padding:6px 10px;cursor:pointer;font-size:13px}.kall li.on{outline:2px solid #6b5aa0}.kall li span{flex:1;color:#6f5a8a}.kall i{font-style:normal;font-weight:900;border-radius:999px;padding:1px 8px;font-size:12px}.kfn{background:#e8452c;color:#fff}.kfo{background:#cfe3a8;color:#2f6d2a}
+.karp{border:3px solid #2f6d2a!important}.karp>summary b{color:#2f6d2a}.karp>summary small{display:block;font-size:12px;color:#6f7a5c;font-weight:600}
+.kar h3{margin:8px 0 6px;font-size:16px;color:#2f6d2a}.kar h4{margin:12px 0 4px;font-size:14px}.kar h4 small{font-weight:600;color:#6f7a5c;font-size:12px}
+.kst{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:4px}.kst div{background:#f2f8e6;border-radius:10px;padding:6px 4px;text-align:center}.kst small{display:block;font-size:10px;color:#6f7a5c;font-weight:800}.kst b{font-size:17px;color:#2f6d2a}
+.kchart{width:100%;height:120px;display:block;background:#fbfdf6;border-radius:10px;border:1px solid #e3ead2}.kcx{display:flex;justify-content:space-between;font-size:11px;color:#6f7a5c;margin-top:2px}.kcx b{color:#2f6d2a}
+.kmon{display:flex;gap:3px;align-items:flex-end;margin-top:6px;overflow-x:auto}.kmon div{flex:1;min-width:22px;display:flex;flex-direction:column;align-items:center;font-size:10px}.kmon i{display:block;width:70%;background:#9ccc3c;border-radius:4px 4px 0 0}.kmon b{font-size:9px;color:#33501a}.kmon small{color:#6f7a5c}
+.ktb{width:100%;border-collapse:collapse;font-size:12px}.ktb th{background:#2f6d2a;color:#fff;padding:4px;font-weight:800}.ktb td{border-bottom:1px solid #e3ead2;padding:4px;text-align:center;vertical-align:middle}.ktb tr.win td{background:#fff8d6}.ktb small{color:#6f7a5c}
+.khana{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;max-height:280px;overflow:auto}.khana li{background:#fff;border-left:5px solid #e0457b;border-radius:8px;padding:5px 8px;font-size:13px}.khana small{color:#6f7a5c}
+.kpn{display:flex;flex-direction:column;gap:6px;margin-bottom:6px}.kpn textarea{font:inherit;font-size:15px;border:2px solid #cfe3a8;border-radius:10px;padding:8px}
+.kml{list-style:none;margin:6px 0 10px;padding:0;display:flex;flex-direction:column;gap:5px;max-height:320px;overflow:auto}.kml li{max-width:85%;border-radius:12px;padding:6px 10px;font-size:13px}.kml li.g{background:#eef7e2;align-self:flex-start}.kml li.t{background:#ece6f8;align-self:flex-end}.kml p{margin:2px 0 0}.kml small{color:#6f7a5c;font-size:11px}
 </style>
 
 </head>
@@ -616,7 +625,7 @@ function teamWinner(sc){return Object.keys(sc).sort((a,b)=>sc[b]-sc[a])[0]}
 function teamSettle(){const wk=weekNo();if(S.teamWk==null){S.teamWk=wk;save();return}if(S.teamWk>=wk)return;const prev=wk-1,map=teamMap(prev),sc=teamScores(prev),win=teamWinner(sc),tr=(teamDefs(prev).find(d=>d.k===win)||{}).tr;
   const fk=Object.keys(FOODS),gift=fk[hashStr('gift'+prev)%fk.length];
   S.members.forEach(m=>{if(map[m.id]!==win)return;['str','end','tec','grit'].forEach(k=>m.stats[k]+=TEAM_GIFT/4);giveFood(m,gift)});
-  S.teamLast={wk:prev,win,winName:tName(win),tr,gift,mine:map[S.current]===win,seen:false};
+  S.teamLast={wk:prev,win,winName:tName(win),tr,gift,mine:map[S.current]===win,seen:false};S.teamHist=S.teamHist||{};S.teamHist[prev]={sc,win};
   S.feed.unshift({id:S.nextId++,who:'trainer',tn:tr||TN(),text:`先週のチーム対抗戦は「${tName(win)}」（${tr}トレーナー）が1位！ メンバー全員に🎁 +${TEAM_GIFT} EXP と「${FOODS[gift].name}」をプレゼント`,xp:TEAM_GIFT,stat:'grit',t:Date.now(),cheers:[]});
   S.teamWk=wk;save()}
 const STAMPS=[
@@ -1947,7 +1956,7 @@ function vGuild(){
     m.titles.push(t);S.feed.unshift({id:S.nextId++,who:'trainer',tn:TN(),to:m.id,text:`${m.name}さんに称号「${t}」を授与`,xp:0,stat:'tec',t:Date.now(),cheers:[]});save();toast(`称号「${t}」を授けました`)};
   document.querySelectorAll('[data-st]').forEach(b=>b.onclick=()=>{
     const [mid,hid]=b.dataset.st.split(':'),m=byId(mid),h=m.homework.find(x=>x.id==hid);
-    h.status='stamped';h.stAt=Date.now();h.stT=TN();if(!m.coach)m.coach=TN();m.boost=(m.boost||0)+2;const hf=Object.keys(FOODS)[hashStr(String(h.id)+m.id)%Object.keys(FOODS).length];giveFood(m,hf);
+    h.status='stamped';h.stAt=Date.now();h.stT=TN();try{if(window.AUTH&&AUTH.on&&AUTH.role==='trainer'&&window.firebase&&firebase.apps.length)firebase.firestore().collection('hana').add({mid:m.id,mname:m.name,uid:m.uid||'',text:h.text||'',by:TN(),t:h.stAt}).catch(e=>console.warn('hana',e))}catch(e){}if(!m.coach)m.coach=TN();m.boost=(m.boost||0)+2;const hf=Object.keys(FOODS)[hashStr(String(h.id)+m.id)%Object.keys(FOODS).length];giveFood(m,hf);
     const before=levelOf(total(m)).lv;['str','end','tec','grit'].forEach(k=>m.stats[k]+=15);m.weekXp+=60;
     S.feed.unshift({id:S.nextId++,who:'trainer',tn:TN(),to:m.id,text:`${m.name}さんの宿題「${h.text}」に花マル🌸スタンプ！ パワーアップ`,xp:60,stat:'grit',t:Date.now(),cheers:[]});save();
     const after=levelOf(total(m)).lv;
@@ -2533,7 +2542,8 @@ function tevPanel(){if(!ADMIN||tab!=='guild'||document.getElementById('tev'))ret
 const KANGO='團野有花';window.KK=window.KK||{open:false,notes:[],st:''};
 const kgMe=()=>!!(window.AUTH&&AUTH.on&&AUTH.user&&AUTH.role==='trainer'&&TN()===KANGO);
 const kgHash=async pw=>{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(AUTH.user.uid+':kenko:'+pw));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')};
-async function kgLoad(){const db=firebase.firestore(),q=await db.collection('health').get(),a=[];q.forEach(d=>a.push(Object.assign({id:d.id},d.data())));KK.notes=a.sort((x,y)=>(y.t||0)-(x.t||0));try{const r=await db.collection('kango').get(),c=[];r.forEach(d=>c.push(Object.assign({id:d.id},d.data())));KK.recs=c}catch(e){console.warn('kango',e);KK.recs=[];KK.recErr=1}
+async function kgLoad(){const db=firebase.firestore(),q=await db.collection('health').get(),a=[];q.forEach(d=>a.push(Object.assign({id:d.id},d.data())));KK.notes=a.sort((x,y)=>(y.t||0)-(x.t||0));try{const r=await db.collection('roles').get(),g=[];r.forEach(d=>{const x=d.data();if(x.role==='member'&&!d.id.startsWith('g_'))g.push({id:'u:'+d.id,uid:d.id,name:x.name||x.email||'（名前なし）'})});KK.gs=g.sort((a,b)=>a.name.localeCompare(b.name,'ja'))}catch(e){KK.gs=[]}
+  try{const r=await db.collection('kango').get(),c=[];r.forEach(d=>c.push(Object.assign({id:d.id},d.data())));KK.recs=c}catch(e){console.warn('kango',e);KK.recs=[];KK.recErr=1}
   // この端末に残っている古いメモ（v159まで）をクラウドへ移す
   let n=0;for(const m of S.members){if(!(m.health||[]).length)continue;for(const x of m.health){const o={mid:m.id,mname:m.name,prog:x.prog||'all',text:x.text,t:x.t||Date.now(),tn:x.tn||KANGO};try{const r=await db.collection('health').add(o);KK.notes.unshift(Object.assign({id:r.id},o));n++}catch(e){console.warn(e)}}delete m.health}
   if(n){save();toast(`🩺 この端末の健康メモ ${n}件をクラウドに移しました`)}}
@@ -2556,18 +2566,18 @@ function kenkoPanel(re){if(!ADMIN||tab!=='guild')return;let d=document.getElemen
      document.getElementById('kkin').onclick=go;document.getElementById('kkpw').onkeydown=e=>{if(e.key==='Enter')go()};return}
    // ---- 開いている（團野さんだけ）----
    b.innerHTML=`<p class="muted" style="font-size:12px;margin:0">🔓 ${KANGO}さんだけが見ています。健康メモは、各プログラムの記録ページにも出ます（${KANGO}さんが開いているときだけ）。<button type="button" id="kkout" class="kkout">🔒 閉じる</button></p>
-    <label>ゲスト<select id="kkm">${S.members.map(m=>`<option value="${m.id}" ${m.id===(KK.mid||S.current)?'selected':''}>${esc(m.name)}</option>`).join('')}</select></label>
-    <div class="kktabs">${[['rec','🩺 看護記録'],['ana','📊 分析'],['memo','📝 健康メモ']].map(([k,l])=>`<button type="button" data-kt="${k}" class="${(KK.tab||'rec')===k?'on':''}">${l}</button>`).join('')}</div>
-    <div id="kkrec" ${(KK.tab||'rec')==='rec'?'':'hidden'}></div><div id="kkana" ${KK.tab==='ana'?'':'hidden'}></div>
+    <label>ゲスト<select id="kkm">${(KK.gs||[]).length?`<optgroup label="登録ゲスト">${KK.gs.map(g=>`<option value="${g.id}" ${g.id===KK.mid?'selected':''}>${esc(g.name)}</option>`).join('')}</optgroup>`:''}<optgroup label="${(KK.gs||[]).length?'見本（この端末）':'ゲスト'}">${S.members.filter(m=>!m.tr).map(m=>`<option value="${m.id}" ${m.id===(KK.mid||S.current)?'selected':''}>${esc(m.name)}</option>`).join('')}</optgroup></select></label>
+    <div class="kktabs">${[['rec','🩺 看護記録'],['ana','📊 分析'],['kar','📈 カルテ'],['memo','📝 メモ']].map(([k,l])=>`<button type="button" data-kt="${k}" class="${(KK.tab||'rec')===k?'on':''}">${l}</button>`).join('')}</div>
+    <div id="kkrec" ${(KK.tab||'rec')==='rec'?'':'hidden'}></div><div id="kkana" ${KK.tab==='ana'?'':'hidden'}></div><div id="kkkar" ${KK.tab==='kar'?'':'hidden'}></div>
     <div class="hform" id="kkmemo" ${KK.tab==='memo'?'':'hidden'}><div class="hnt">📝 健康メモを書く <small>${KANGO}さんだけが読めます（ゲスト・ほかのトレーナーには見えません）</small></div>
     <label>プログラム<select id="hkp">${HPROG.map(([k,l])=>`<option value="${k}">${l}</option>`).join('')}</select></label>
     <textarea id="hkt" rows="3" maxlength="400" placeholder="例：血圧がやや高め。加圧は弱めの設定で。水分をこまめに。"></textarea>
     <button type="button" class="btn-main" id="hksave">メモを保存する</button><ul class="hlist" id="hkl"></ul></div>`;
    const hdraw=()=>{const id=document.getElementById('kkm').value,L=KK.notes.filter(x=>x.mid===id);document.getElementById('hkl').innerHTML=L.length?L.map(x=>`<li><div class="hnm">${new Date(x.t).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric'})}・${esc(x.tn||'')}・<b>${hpName(x.prog)}</b><button type="button" class="phdel" data-hdel="${esc(x.id)}">消す</button></div><p>${esc(x.text)}</p></li>`).join(''):'<li class="muted">まだメモはありません。</li>';
     document.querySelectorAll('[data-hdel]').forEach(bt=>bt.onclick=async()=>{if(!confirm('このメモを消しますか？'))return;try{await firebase.firestore().collection('health').doc(bt.dataset.hdel).delete();KK.notes=KK.notes.filter(x=>x.id!==bt.dataset.hdel);hdraw()}catch(e){alert(e.code||e.message)}})};
-   document.getElementById('hksave').onclick=async()=>{const t=document.getElementById('hkt').value.trim();if(!t){toast('メモを書いてください');return}const m=byId(document.getElementById('kkm').value);const o={mid:m.id,mname:m.name,prog:document.getElementById('hkp').value,text:t,t:Date.now(),tn:KANGO};
+   document.getElementById('hksave').onclick=async()=>{const t=document.getElementById('hkt').value.trim();if(!t){toast('メモを書いてください');return}const m=KGU(document.getElementById('kkm').value);const o={mid:m.id,mname:m.name,prog:document.getElementById('hkp').value,text:t,t:Date.now(),tn:KANGO};
     try{const r=await firebase.firestore().collection('health').add(o);KK.notes.unshift(Object.assign({id:r.id},o));document.getElementById('hkt').value='';toast(`${m.name}さんの健康メモを保存しました`);hdraw()}catch(e){alert('保存できませんでした：'+(e.code||e.message))}};
-   document.getElementById('kkm').onchange=()=>{KK.mid=document.getElementById('kkm').value;hdraw();kgRec()};d.querySelectorAll('[data-kt]').forEach(bt=>bt.onclick=()=>{KK.tab=bt.dataset.kt;d.querySelectorAll('[data-kt]').forEach(x=>x.classList.toggle('on',x===bt));document.getElementById('kkrec').hidden=KK.tab!=='rec';document.getElementById('kkana').hidden=KK.tab!=='ana';document.getElementById('kkmemo').hidden=KK.tab!=='memo'});kgRec();
+   document.getElementById('kkm').onchange=()=>{KK.mid=document.getElementById('kkm').value;hdraw();kgRec()};d.querySelectorAll('[data-kt]').forEach(bt=>bt.onclick=()=>{KK.tab=bt.dataset.kt;d.querySelectorAll('[data-kt]').forEach(x=>x.classList.toggle('on',x===bt));document.getElementById('kkrec').hidden=KK.tab!=='rec';document.getElementById('kkana').hidden=KK.tab!=='ana';document.getElementById('kkkar').hidden=KK.tab!=='kar';document.getElementById('kkmemo').hidden=KK.tab!=='memo'});kgRec();
    document.getElementById('kkout').onclick=()=>{KK.open=false;KK.notes=[];KK.recs=[];try{sessionStorage.removeItem('kq-kk')}catch(e){}kenkoPanel(1);render()};hdraw()})}
 
 // ===== 🩺 看護記録（ゲストごと・日付順）と 📊 分析（v160・團野有花さんだけ）=====
@@ -2577,6 +2587,7 @@ const kcv=(x,k)=>k==='cond'?((x.cond||3)-1)*25:(+x[k]||0);
 const kci=c=>(KCOND.find(z=>z[0]===c)||KCOND[2]);
 const kdate=d=>{const [y,m,dd]=String(d||'').split('-').map(Number);return y?`${m}/${dd}`:''};
 const kToday=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const KGU=id=>byId(id)||(KK.gs||[]).find(g=>g.id===id)||{id,name:'（不明）'};
 const kRecsOf=mid=>(KK.recs||[]).filter(x=>x.mid===mid).sort((a,b)=>(a.date||'').localeCompare(b.date||'')||(a.t||0)-(b.t||0));
 function kFlags(L){const f=[];if(!L.length)return f;const a=L[L.length-1],b=L[L.length-2];
   if((a.cond||3)<=2)f.push(`${kci(a.cond)[1]} 最新の体調が「${kci(a.cond)[2]}」`);
@@ -2588,7 +2599,7 @@ function kFlags(L){const f=[];if(!L.length)return f;const a=L[L.length-1],b=L[L.
 function kSpark(L,k,col){if(L.length<2)return '<small class="muted">2回以上の記録でグラフが出ます</small>';const W=280,H=56,P=6,xs=i=>P+i*(W-2*P)/(L.length-1),ys=v=>H-P-v*(H-2*P)/100;
   const pts=L.map((x,i)=>`${xs(i).toFixed(1)},${ys(kcv(x,k)).toFixed(1)}`).join(' ');
   return `<svg viewBox="0 0 ${W} ${H}" class="kspk" preserveAspectRatio="none"><line x1="${P}" x2="${W-P}" y1="${ys(50)}" y2="${ys(50)}" stroke="#e3ead2" stroke-dasharray="3 3"/><polyline points="${pts}" fill="none" stroke="${col}" stroke-width="2.5" stroke-linejoin="round"/>${L.map((x,i)=>`<circle cx="${xs(i).toFixed(1)}" cy="${ys(kcv(x,k)).toFixed(1)}" r="3" fill="${col}"/>`).join('')}</svg>`}
-function kgRec(){const rb=document.getElementById('kkrec'),ab=document.getElementById('kkana');if(!rb||!ab)return;const mid=document.getElementById('kkm').value,m=byId(mid),L=kRecsOf(mid);KK.mid=mid;
+function kgRec(){const rb=document.getElementById('kkrec'),ab=document.getElementById('kkana');if(!rb||!ab)return;const mid=document.getElementById('kkm').value,m=KGU(mid),L=kRecsOf(mid);KK.mid=mid;
   const F=KK.f||(KK.f={cond:3,g:50,n:50,c:50,s:50});
   rb.innerHTML=`${KK.recErr?'<div class="kklock">⚠ 看護記録を読みこめませんでした。Firebaseのルール（kango）の貼りかえが必要です。</div>':''}
    <div class="kkf"><div class="hnt">🩺 ${esc(m.name)}さんの看護記録をつける <small>看護師の視点で・${KANGO}さんだけが読めます</small></div>
@@ -2610,14 +2621,21 @@ function kgRec(){const rb=document.getElementById('kkrec'),ab=document.getElemen
   rb.querySelectorAll('[data-krdel]').forEach(bt=>bt.onclick=async()=>{if(!confirm('この記録を消しますか？'))return;try{await firebase.firestore().collection('kango').doc(bt.dataset.krdel).delete();KK.recs=KK.recs.filter(x=>x.id!==bt.dataset.krdel);kgRec()}catch(e){alert(e.code||e.message)}});
   // ---- 📊 分析 ----
   const fl=kFlags(L),avg=k=>L.length?Math.round(L.reduce((a,x)=>a+kcv(x,k),0)/L.length):0,last=L[L.length-1],prev=L[L.length-2];
-  const all=S.members.map(mm=>{const R=kRecsOf(mm.id);return {mm,R,f:kFlags(R)}}).filter(x=>x.R.length).sort((a,b)=>b.f.length-a.f.length||((b.R[b.R.length-1].date||'').localeCompare(a.R[a.R.length-1].date||'')));
+  const all=(KK.gs||[]).concat(S.members.filter(x=>!x.tr)).map(mm=>{const R=kRecsOf(mm.id);return {mm,R,f:kFlags(R)}}).filter(x=>x.R.length).sort((a,b)=>b.f.length-a.f.length||((b.R[b.R.length-1].date||'').localeCompare(a.R[a.R.length-1].date||'')));
   ab.innerHTML=`<div class="kan"><div class="hnt">📊 ${esc(m.name)}さんの分析 <small>${L.length?`${kdate(L[0].date)}〜${kdate(last.date)}・${L.length}回`:'記録がまだありません'}</small></div>
    ${fl.length?`<div class="kflag">${fl.map(x=>`<div>${esc(x)}</div>`).join('')}</div>`:L.length?'<div class="kok">✅ いまのところ、気になるサインはありません</div>':''}
    ${L.length?KMET.map(([k,l,col])=>{const a=avg(k),v=kcv(last,k),dv=prev?v-kcv(prev,k):0;return `<div class="kmet"><div class="kmh"><b style="color:${col}">${l}</b><span>最新 <b>${k==='cond'?kci(last.cond)[1]+' '+kci(last.cond)[2]:v+'%'}</b>${prev&&dv?` <i class="${(k==='g'?dv<0:dv>0)?'up':'dn'}">${dv>0?'▲':'▼'}${Math.abs(k==='cond'?dv/25:dv)}${k==='cond'?'段':'%'}</i>`:''}・平均 ${k==='cond'?(a/25+1).toFixed(1)+'／5':a+'%'}</span></div>${kSpark(L,k,col)}</div>`}).join(''):''}
    </div>
    <div class="kan"><div class="hnt">👥 みんなの看護記録 <small>注意サインが多い順</small></div>
    <ul class="kall">${all.map(({mm,R,f})=>{const z=R[R.length-1];return `<li data-kgo="${mm.id}" class="${mm.id===mid?'on':''}"><b>${esc(mm.name)}</b><span>${kci(z.cond)[1]} 最後 ${kdate(z.date)}・${R.length}回</span>${f.length?`<i class="kfn">⚠ ${f.length}</i>`:'<i class="kfo">OK</i>'}</li>`}).join('')||'<li class="muted">まだだれの記録もありません</li>'}</ul></div>`;
+  {const kb=document.getElementById('kkkar');if(kb&&window.karteBox){const g=m.uid?{uid:m.uid,name:m.name}:{local:m.id,name:m.name};kb.innerHTML='<div class="kmsg" id="kkmsg"></div><div id="kkkb"></div>';window.karteBox(document.getElementById('kkkb'),g,{kango:true});kgMsgs(document.getElementById('kkmsg'),m)}}
   ab.querySelectorAll('[data-kgo]').forEach(li=>li.onclick=()=>{document.getElementById('kkm').value=li.dataset.kgo;KK.mid=li.dataset.kgo;kgRec();const h=document.getElementById('kenko');if(h)h.scrollIntoView({behavior:'smooth',block:'start'})})}
+
+// 健康管理室：このゲストと 團野有花さんとの、キタエル・クエストでのやり取り（メッセージ）をすべて表示
+async function kgMsgs(box,m){if(!box)return;if(!m.uid){box.innerHTML=`<div class="hnt">💬 ${esc(m.name)}さんとのやり取り</div><p class="muted" style="font-size:13px">見本のゲストです。登録ゲストを選ぶと、アプリでのやり取りがすべて出ます。</p>`;return}
+  box.innerHTML='<p class="muted">やり取りを読みこんでいます…</p>';let L=[];try{const q=await firebase.firestore().collection('gMsgs').where('uid','==',m.uid).get();q.forEach(d=>L.push(d.data()))}catch(e){box.innerHTML=`<p class="muted">読みこめませんでした（${esc(e.code||'')}）</p>`;return}
+  L=L.filter(x=>x.dir==='g2t'?(x.tr===KANGO||x.tr==='all'):x.from===KANGO).sort((a,b)=>a.t-b.t);
+  box.innerHTML=`<div class="hnt">💬 ${esc(m.name)}さんと${KANGO}さんのやり取り <small>アプリのメッセージ・古い順・${L.length}件</small></div><ul class="kml">${L.map(x=>`<li class="${x.dir==='g2t'?'g':'t'}"><small>${new Date(x.t).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}・${x.dir==='g2t'?esc(m.name)+'さん'+(x.tr==='all'?'（トレーナー全員あて）':''):KANGO}</small><p>${esc(x.text)}</p></li>`).join('')||'<li class="muted">まだやり取りはありません</li>'}</ul>`}
 // 同じタブで開き直したとき（パスワード入力ずみ）は自動で開く
 setInterval(()=>{try{if(!KK.open&&kgMe()&&sessionStorage.getItem('kq-kk')===AUTH.user.uid&&!KK._try){KK._try=1;firebase.firestore().doc('kenko/owner').get().then(o=>{if(o.exists&&o.data().uid===AUTH.user.uid){KK.open=true;return kgLoad().then(()=>{if(document.getElementById('kenko'))kenkoPanel(1);render()})}}).catch(e=>console.warn(e))}if(KK.open&&!kgMe()){KK.open=false;KK.notes=[]}}catch(e){}},1500);
 function coursePanel(){if(!ADMIN||tab!=='guild'||document.getElementById('cpan'))return;const v=document.getElementById('view');const h=document.getElementById('tev')||[...v.querySelectorAll('h2')].find(x=>x.textContent.includes('宿題を出す'));if(!h)return;
@@ -3150,6 +3168,87 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
  function draw(re){try{badge();line();if(ADMIN)panelA(re);else panelG(re)}catch(e){console.warn(e)}}
  const _r=render;render=function(){const r=_r.apply(this,arguments);draw(0);return r};
  setInterval(()=>{if(!started)start();else badge()},1000);
+})();
+</script>
+<script>
+// ===== 📈 ゲストの成長カルテ v161（MITSUさん 2026-11-21）=====
+// ゲストの端末が、毎日のEXP・チーム対抗戦・花マルを Firestore stats/{uid} に記録 → 全トレーナーが1年分を見られる。
+// 「🔒 わたしだけのメモ」は Firestore pNotes（書いた本人のアカウントだけ読める。ほかのトレーナー・ゲストには見えない）
+(function(){
+ const DAYMS=864e5,fs=()=>firebase.firestore();
+ const ymd=t=>{const d=new Date(t);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+ const ready=()=>window.AUTH&&AUTH.on&&AUTH.user&&window.firebase&&firebase.apps&&firebase.apps.length;
+ // ---------- 自分（ゲスト）の記録を作る ----------
+ function snap(m){const tot=total(m),td=ymd(Date.now()+((S.dayShift||0)*DAYMS)),wk=weekNo();
+  m.daily=m.daily||{};m.daily[td]=tot;const ks=Object.keys(m.daily).sort();while(ks.length>400)delete m.daily[ks.shift()];
+  m.wkStart=m.wkStart||{};if(m.wkStart[wk]==null)m.wkStart[wk]=tot;const wks=Object.keys(m.wkStart).map(Number).sort((a,b)=>a-b);while(wks.length>60)delete m.wkStart[wks.shift()];
+  return m}
+ function weeksOf(m){const cur=weekNo(),out={},TH=S.teamHist||{};const wks=new Set(Object.keys(m.wkStart||{}).map(Number));Object.keys(TH).forEach(w=>{if(+w>cur-53)wks.add(+w)});
+  [...wks].sort((a,b)=>a-b).forEach(wk=>{try{const team=teamOf(m,wk);if(!team)return;const sc=wk===cur?teamScores(cur):(TH[wk]&&TH[wk].sc);const order=sc?Object.keys(sc).sort((a,b)=>sc[b]-sc[a]):null;
+    const st=(m.wkStart||{})[wk],nx=(m.wkStart||{})[wk+1];const xp=st==null?null:Math.max(0,Math.round((nx!=null?nx:(wk===cur?total(m):st))-st));
+    out[wk]={team,teamName:tName(team),tr:(teamDefs(wk).find(d=>d.k===team)||{}).tr||'',rank:order?order.indexOf(team)+1:null,n:order?order.length:null,xp,win:!!(TH[wk]&&TH[wk].win===team),live:wk===cur}}catch(e){}});return out}
+ const hanaOf=m=>(m.homework||[]).filter(h=>h.status==='stamped'&&h.stAt).map(h=>({t:h.stAt,by:h.stT||'',text:h.text||''})).sort((a,b)=>a.t-b.t);
+ function localStats(m){snap(m);const tot=total(m);return {name:m.name,total:Math.round(tot),lv:levelOf(tot).lv,weekXp:Math.round(m.weekXp||0),daily:m.daily,weeks:weeksOf(m),hana:hanaOf(m),t:Date.now(),local:true}}
+ window.kqLocalStats=localStats;
+ let lastPush=0,lastSig='';
+ function push(force){if(!ready()||AUTH.role!=='member'||ADMIN)return;const m=me();if(!m||m.tr)return;const st=localStats(m);delete st.local;st.uid=AUTH.user.uid;
+  const sig=JSON.stringify([st.total,st.lv,Object.keys(st.daily).length,st.hana.length,Object.keys(st.weeks).length]);if(!force&&sig===lastSig&&Date.now()-lastPush<30*60000)return;
+  lastSig=sig;lastPush=Date.now();try{save()}catch(e){}fs().doc('stats/'+AUTH.user.uid).set(st).catch(e=>{console.warn('stats',e);lastSig=''})}
+ setInterval(()=>push(0),60000);document.addEventListener('visibilitychange',()=>{if(document.hidden)push(1)});setTimeout(()=>push(1),8000);
+
+ // ---------- カルテの表示（管理ページ・健康管理室で共通）----------
+ let ST=null,HANA=null,PN=null;
+ async function loadAll(force){if(!ready()||AUTH.role!=='trainer')return;if(ST&&!force)return;
+  try{const q=await fs().collection('stats').get();ST={};q.forEach(d=>ST[d.id]=d.data())}catch(e){console.warn('stats',e);ST={_err:e.code||'err'}}
+  try{const q=await fs().collection('hana').get();HANA=[];q.forEach(d=>HANA.push(d.data()))}catch(e){HANA=[]}
+  try{const q=await fs().collection('pNotes').where('author','==',AUTH.user.uid).get();PN=[];q.forEach(d=>PN.push(Object.assign({id:d.id},d.data())))}catch(e){PN=[];console.warn('pNotes',e)}}
+ window.kqKarteLoad=loadAll;
+ const WD='日月火水木金土';
+ const wkDate=wk=>{const t=(wk*7+2)*DAYMS-(9-4)*36e5;const d=new Date(t);return `${d.getMonth()+1}/${d.getDate()}`};
+ function chart(daily){const ks=Object.keys(daily||{}).sort();const cut=ymd(Date.now()-365*DAYMS);const K=ks.filter(k=>k>=cut);if(K.length<2)return '<p class="muted" style="font-size:13px">2日分以上たまると、グラフが出ます（ゲストがアプリを開いた日に記録されます）。</p>';
+  const W=320,H=120,P=8,t0=new Date(K[0]+'T00:00').getTime(),t1=new Date(K[K.length-1]+'T00:00').getTime()||t0+1,v=K.map(k=>daily[k]),lo=Math.min(...v),hi=Math.max(...v)||1,
+   x=k=>P+(new Date(k+'T00:00').getTime()-t0)/Math.max(1,t1-t0)*(W-2*P),y=val=>H-P-(val-lo)/Math.max(1,hi-lo)*(H-2*P);
+  const pts=K.map(k=>`${x(k).toFixed(1)},${y(daily[k]).toFixed(1)}`).join(' ');
+  // 月ごとに増えたEXP
+  const mon={};K.forEach((k,i)=>{if(!i)return;const mk=k.slice(0,7);mon[mk]=(mon[mk]||0)+Math.max(0,daily[k]-daily[K[i-1]])});const mk=Object.keys(mon).sort().slice(-12),mx=Math.max(1,...mk.map(k=>mon[k]));
+  return `<svg viewBox="0 0 ${W} ${H}" class="kchart" preserveAspectRatio="none"><polyline points="${P},${H-P} ${pts} ${W-P},${H-P}" fill="#e7f3d0" stroke="none"/><polyline points="${pts}" fill="none" stroke="#2f6d2a" stroke-width="2.5" stroke-linejoin="round"/></svg>
+   <div class="kcx"><span>${K[0].slice(5).replace('-','/')}</span><span>合計 ${Math.round(lo)} → <b>${Math.round(hi)} EXP</b></span><span>${K[K.length-1].slice(5).replace('-','/')}</span></div>
+   <div class="kmon">${mk.map(k=>`<div><i style="height:${Math.round(mon[k]/mx*48)+2}px"></i><b>${Math.round(mon[k])}</b><small>${+k.slice(5)}月</small></div>`).join('')}</div>`}
+ window.karteBox=async function(box,g,opt){if(!box)return;box.innerHTML='<p class="muted">カルテを読みこんでいます…</p>';await loadAll();
+  let st=null;if(g.uid)st=ST&&ST[g.uid];else if(g.local){const m=byId(g.local);if(m)st=localStats(m)}
+  const name=g.name||(st&&st.name)||'';
+  if(!st){box.innerHTML=`<div class="kar"><h3>📈 ${esc(name)}さんのカルテ</h3><p class="muted" style="font-size:13px">${ST&&ST._err?'読みこめませんでした。Firebaseのルール（stats）の貼りかえが必要です。':'まだ記録がありません。ゲストが新しいアプリを開くと、その日から記録されます。'}</p></div>`;return}
+  const W=st.weeks||{},wk=Object.keys(W).map(Number).sort((a,b)=>b-a),wins=wk.filter(k=>W[k].win).length;
+  let hana=(st.hana||[]).slice();(HANA||[]).filter(h=>(g.uid&&h.uid===g.uid)||(!h.uid&&h.mname===name)).forEach(h=>{if(!hana.some(x=>Math.abs(x.t-h.t)<60000))hana.push({t:h.t,by:h.by,text:h.text})});hana.sort((a,b)=>b.t-a.t);
+  const now=new Date(),thisM=hana.filter(h=>{const d=new Date(h.t);return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth()}).length,yr=hana.filter(h=>h.t>Date.now()-365*DAYMS).length;
+  const myN=(PN||[]).filter(n=>n.gkey===(g.uid||'l:'+g.local)).sort((a,b)=>b.t-a.t);
+  box.innerHTML=`<div class="kar"><h3>📈 ${esc(name)}さんのカルテ</h3>
+   <div class="kst"><div><small>いまのEXP</small><b>${st.total.toLocaleString()}</b></div><div><small>レベル</small><b>Lv${st.lv}</b></div><div><small>花マル🌸 総数</small><b>${hana.length}</b></div><div><small>チーム1位</small><b>${wins}回</b></div></div>
+   <small class="muted">最終更新：${st.t?new Date(st.t).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'—'}${st.local?'（この端末のデータ）':''}</small>
+   <h4>📊 1年間のEXPの推移</h4>${chart(st.daily)}
+   <h4>🏆 チーム対抗戦の記録（${wk.length}週）</h4>
+   <table class="ktb"><tr><th>週</th><th>チーム</th><th>順位</th><th>その週のEXP</th></tr>${wk.slice(0,53).map(k=>{const x=W[k];return `<tr class="${x.win?'win':''}"><td>${wkDate(k)}〜${x.live?'<br><small>今週</small>':''}</td><td>${esc(x.teamName)}<br><small>${esc(x.tr||'')}</small></td><td>${x.rank?`<b>${x.rank}位</b>／${x.n}${x.win?' 👑':''}`:'—'}</td><td>${x.xp==null?'—':x.xp.toLocaleString()}${x.win?`<br><small>🎁 +${TEAM_GIFT}</small>`:''}</td></tr>`}).join('')||'<tr><td colspan="4" class="muted">まだ記録がありません</td></tr>'}</table>
+   <h4>🌸 花マルスタンプ <small>今月 ${thisM}回・1年 ${yr}回・総数 ${hana.length}回</small></h4>
+   <ul class="khana">${hana.slice(0,100).map(h=>{const d=new Date(h.t);return `<li><b>${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}（${WD[d.getDay()]}）${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}</b>・${esc(h.by||'')}<br><small>${esc(h.text||'')}</small></li>`}).join('')||'<li class="muted">まだ花マルはありません</li>'}</ul>
+   ${opt&&opt.kango?'':`<h4>🔒 わたしだけのメモ <small>${esc(TN())}さんにしか見えません（ほかのトレーナー・ゲストには見えません）</small></h4>
+   <div class="kpn"><textarea id="kpt" rows="2" maxlength="600" placeholder="例：次は肩まわりを重点的に。本人は朝型。"></textarea><button type="button" class="btn-main" id="kps">🔒 メモを残す</button></div>
+   <ul class="khana">${myN.map(n=>`<li><b>${new Date(n.t).toLocaleString('ja-JP',{year:'numeric',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}</b><button type="button" class="phdel" data-pnd="${esc(n.id)}">消す</button><br>${esc(n.text)}</li>`).join('')||'<li class="muted">まだメモはありません</li>'}</ul>`}</div>`;
+  const sb=box.querySelector('#kps');if(sb)sb.onclick=async()=>{const t=box.querySelector('#kpt').value.trim();if(!t){toast('メモを書いてください');return}const o={author:AUTH.user.uid,tn:TN(),gkey:g.uid||'l:'+g.local,gname:name,text:t,t:Date.now()};
+   try{const r=await fs().collection('pNotes').add(o);(PN=PN||[]).push(Object.assign({id:r.id},o));toast('🔒 メモを残しました（あなただけが見られます）');window.karteBox(box,g,opt)}catch(e){alert('保存できませんでした：'+(e.code||e.message)+'\nFirebaseのルールの貼りかえが必要かもしれません')}};
+  box.querySelectorAll('[data-pnd]').forEach(b=>b.onclick=async()=>{if(!confirm('このメモを消しますか？'))return;try{await fs().collection('pNotes').doc(b.dataset.pnd).delete();PN=PN.filter(x=>x.id!==b.dataset.pnd);window.karteBox(box,g,opt)}catch(e){alert(e.code||e.message)}})};
+
+ // ---------- 管理タブ：📈 ゲストの成長カルテ（全トレーナー）----------
+ let sel='';
+ async function panel(re){if(!ADMIN||tab!=='guild'||!ready()||AUTH.role!=='trainer')return;const v=document.getElementById('view');if(!v)return;let d=document.getElementById('karte');if(d&&!re)return;
+  if(!d){d=document.createElement('details');d.id='karte';d.className='acct karp';const y=document.getElementById('yoy');y?y.after(d):v.insertBefore(d,v.firstChild);d.addEventListener('toggle',()=>{if(d.open)draw()})}
+  d.innerHTML=`<summary><b>📈 ゲストの成長カルテ</b><small>いまのEXP・1年の推移・チーム対抗戦の順位・花マルの記録（全トレーナー）／🔒 わたしだけのメモ</small></summary><div id="karin"></div>`;if(d.open)draw()}
+ async function draw(){const b=document.getElementById('karin');if(!b)return;b.innerHTML='<p class="muted">読みこみ中…</p>';await loadAll(1);
+  const reg=Object.entries(ST||{}).filter(([k])=>k!=='_err').map(([uid,x])=>({key:'u:'+uid,uid,name:x.name||'（名前なし）',lv:x.lv,total:x.total})).sort((a,b)=>a.name.localeCompare(b.name,'ja'));
+  const loc=S.members.filter(m=>!m.tr).map(m=>({key:'l:'+m.id,local:m.id,name:m.name}));
+  if(!sel)sel=(reg[0]||loc[0]||{}).key||'';
+  b.innerHTML=`<label>ゲスト<select id="karsel">${reg.length?`<optgroup label="登録ゲスト（${reg.length}人）">${reg.map(g=>`<option value="${g.key}" ${g.key===sel?'selected':''}>${esc(g.name)}（Lv${g.lv}）</option>`).join('')}</optgroup>`:''}<optgroup label="見本（この端末）">${loc.map(g=>`<option value="${g.key}" ${g.key===sel?'selected':''}>${esc(g.name)}</option>`).join('')}</optgroup></select></label>${ST&&ST._err?'<p class="muted">登録ゲストの記録を読めませんでした。Firebaseのルール（stats）の貼りかえが必要です。</p>':''}<div id="karbox"></div>`;
+  const show=()=>{sel=b.querySelector('#karsel').value;const g=reg.concat(loc).find(x=>x.key===sel);if(g)window.karteBox(b.querySelector('#karbox'),g)};b.querySelector('#karsel').onchange=show;show()}
+ const _r=render;render=function(){const r=_r.apply(this,arguments);try{panel()}catch(e){console.warn(e)}return r};
 })();
 </script>
 </body>
