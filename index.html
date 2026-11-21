@@ -573,6 +573,14 @@ body.admnog header .whol>.dd,body.admnog #who{display:none!important}body.admnog
 .obar{flex:1;height:12px;background:#eef3e4;border-radius:6px;overflow:hidden;display:block}.obar>i{display:block;height:100%;border-radius:6px}
 .odir{list-style:none;margin:6px 0;padding:0;display:flex;flex-direction:column;gap:6px}.odir li{display:block!important;background:#fff;border-radius:10px;padding:8px;font-size:14px}.odir li.new{border:2px solid #9b2f5e}.odir li small{all:unset;font-size:12px;color:#6f7a5c;font-weight:700}.odir li .btn-sub{float:right;font-size:12px;padding:3px 8px}
 .dirline{display:block;width:100%;font:inherit;font-size:13px;font-weight:800;background:#9b2f5e;color:#fff;border:0;padding:6px;cursor:pointer}
+.trbzp{border:3px solid #c99a00!important;background:#fffdf2}.trbzp>summary b{color:#8a6a00}.trbzp>summary small{display:block;font-size:12px;color:#6f7a5c;font-weight:600}
+.tbmvp{background:linear-gradient(135deg,#fff3b0,#ffd86b);border-radius:14px;padding:10px 12px;margin:8px 0;font-weight:800;color:#6b4e00;text-align:center}.tbmvp b{display:block;font-size:22px;color:#8a3a00}.tbmvp span{font-size:12px}.tbmvp small{font-size:12px}
+.tbme select,#tbm{font:inherit;font-size:15px;border:2px solid #cfe3a8;border-radius:10px;padding:6px;width:100%;box-sizing:border-box;margin:4px 0}
+.tbit{display:flex;flex-direction:column;gap:4px;margin:8px 0}.tbit>div{display:flex;align-items:center;gap:6px;font-size:13px}.tbit small{width:80px;flex:none;font-weight:700}.tbit>div>i{flex:1;height:12px;background:#eef3e4;border-radius:6px;overflow:hidden;display:block}.tbit>div>i>i{display:block;height:100%;background:#f5a524;border-radius:6px}.tbit b{width:44px;text-align:right}
+.tbleg{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:11px;margin-top:4px}.tbleg span:before{content:'';display:inline-block;width:10px;height:3px;background:var(--c);margin-right:3px;vertical-align:middle}.tbleg span.on{font-weight:900}
+.tbits{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}.tbits button{font:inherit;font-size:12px;border:2px solid #f5d27a;background:#fff;border-radius:999px;padding:3px 9px;cursor:pointer}.tbits button.on{background:#c99a00;color:#fff;border-color:#c99a00}
+.tbz{list-style:none;margin:6px 0;padding:0;display:flex;flex-direction:column;gap:4px}.tbz li{display:grid!important;grid-template-columns:40px 1fr;grid-template-areas:'r n' 'r b' 'r e';gap:0 8px;background:#fff;border-radius:10px;padding:6px 8px;align-items:center}.tbz li.me{border:2px solid #f5a524;background:#fffaf0}.tbz li.zero{opacity:.55}
+.tbr{grid-area:r;font-size:22px;text-align:center;font-weight:900}.tbz li>b{grid-area:n;font-size:15px}.tbb{grid-area:b;height:10px;background:#eef3e4;border-radius:5px;overflow:hidden;display:block}.tbb i{display:block;height:100%;background:linear-gradient(90deg,#f5a524,#e8452c)}.tbe{grid-area:e;font-size:12px}.tbe b{font-size:15px;color:#8a3a00}.tbe small{all:unset;margin-left:6px;color:#6f7a5c}
 </style>
 
 </head>
@@ -3362,6 +3370,7 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
  const dt=t=>{const d=new Date(t);return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`};
  // トレーナー評価の5項目（MITSUさん決定 2026-11-21）
  window.TEV_ITEMS=window.TEV_ITEMS||[['genki','元気','明るく元気に迎えてくれた'],['care','気づかい','その日の体調やケガに気を配ってくれた'],['voice','声かけ','やる気が出る声かけがあった'],['power','強さ','きつすぎず、ゆるすぎず、ちょうどよい強さだった'],['again','また受けたい','このトレーナーのトレーニングを、また受けたい']];
+ const TEV_PT=10;window.TEV_PT=TEV_PT;// ★1つ＝10EXP（1項目最大50・1回の評価で最大250EXP）
  const SURVEY_TPL=`総合的に、333GYMに満足していますか
 トレーナーの対応はいかがですか
 施設・スタジオの清潔さはいかがですか
@@ -3397,10 +3406,11 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
   {const f=s.querySelector('#tevf'),st={};const TR=(window.TEAM_TRAINERS||TRAINERS).filter(t=>t!==SITE_ADMIN);
    const draw=()=>{f.innerHTML=`<label>今日のトレーナー<select id="tevtr">${TRAINERS.filter(t=>t!==SITE_ADMIN).map(t=>`<option ${t===(st._tr||coach)?'selected':''} ${evd.includes(t)?'disabled':''}>${esc(t)}</option>`).join('')}</select></label>
      ${TEV_ITEMS.map(([k,l,d])=>`<div class="svqq"><p><b>${esc(l)}</b><br><small>${esc(d)}</small></p>${stars(k,st[k]||0)}</div>`).join('')}
-     <textarea id="tevc" rows="2" maxlength="500" placeholder="ひとこと（なくてもOK）"></textarea><button type="button" class="btn-main" id="tevs">⭐ 評価を送る</button><small class="muted">評価は運営代表責任者だけが見ます。トレーナー本人には、名前が分からない形でまとめて伝えます。</small>`;bindStars(f,st);
+     <textarea id="tevc" rows="2" maxlength="500" placeholder="ひとこと（なくてもOK）"></textarea><button type="button" class="btn-main" id="tevs">⭐ 評価を送る</button><small class="muted">★1つ＝10EXPとしてトレーナーのEXPになります（番付・月間MVP）。あなたの名前やひとことは運営代表責任者だけが見ます。トレーナーには名前が分からない形で点数だけが届きます。</small>`;bindStars(f,st);
     f.querySelector('#tevtr').onchange=e=>{st._tr=e.target.value};
     f.querySelector('#tevs').onclick=async()=>{const tr=f.querySelector('#tevtr').value;const miss=TEV_ITEMS.filter(([k])=>!st[k]);if(miss.length){toast(`★をあと${miss.length}つ えらんでください`);return}if(evd.includes(tr)){toast('このトレーナーは今日評価ずみです');return}
      const sc={};TEV_ITEMS.forEach(([k])=>sc[k]=st[k]);try{await fs().collection('trEval').add({uid:AUTH.user.uid,name:m.name,tr,date:td,s:sc,items:TEV_ITEMS.map(x=>x[1]),comment:f.querySelector('#tevc').value.trim(),t:Date.now()});
+      try{await fs().collection('trScore').add({tr,date:td,wk:weekNo(),mon:td.slice(0,7),s:sc,exp:TEV_ITEMS.reduce((p,[k])=>p+sc[k]*TEV_PT,0),t:Date.now()})}catch(e){console.warn('trScore',e)}
       m.tevDone[td]=evd.concat(tr);Object.keys(m.tevDone).sort().slice(0,-30).forEach(k=>delete m.tevDone[k]);save();toast('⭐ 評価を送りました。ありがとう！');s.remove();guestBox()}catch(e){alert('送れませんでした：'+(e.code||e.message))}}};
    draw()}
   // 直通フォーム
@@ -3464,6 +3474,62 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
   l.innerHTML=`📮 運営代表責任者への直通メッセージ <i class="nbadge in">${n}</i>`;l.onclick=()=>{otab='dir';tab='guild';render();setTimeout(()=>{const d=document.getElementById('ownp');if(d){d.open=true;d.scrollIntoView({block:'start'})}},200)}}catch(e){}}
  const _r=render;render=function(){const r=_r.apply(this,arguments);try{guestBox();ownPanel();dirLine()}catch(e){console.warn(e)}return r};
  setInterval(()=>{dirChk=0;try{dirLine()}catch(e){}},5*60000);
+})();
+</script>
+<script>
+// ===== v165：トレーナー評価EXP・番付・月間MVP（MITSUさん 2026-11-21）=====
+// Firestore trScore {tr,date,wk,mon,s{},exp,t}（ゲスト名・コメントなし）→ 全トレーナーが見られる
+(function(){
+ const fs=()=>firebase.firestore();const ready=()=>ADMIN&&window.AUTH&&AUTH.on&&AUTH.user&&AUTH.role==='trainer'&&window.firebase&&firebase.apps&&firebase.apps.length;
+ let SC=null,err='',vt='week',vi='all',vm='',tg='';
+ const TRS=()=>TRAINERS.filter(t=>t!==SITE_ADMIN);
+ const IT=()=>window.TEV_ITEMS||[],PT=()=>window.TEV_PT||10;
+ const monL=k=>`${+k.slice(0,4)}年${+k.slice(5,7)}月`;const nowMon=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`};
+ const prevMon=k=>{let y=+k.slice(0,4),m=+k.slice(5,7)-1;if(!m){m=12;y--}return `${y}-${String(m).padStart(2,'0')}`};
+ const wkL=wk=>{const t=(wk*7+2)*864e5-5*36e5;const a=new Date(t),b=new Date(t+6*864e5);return `${a.getMonth()+1}/${a.getDate()}〜${b.getMonth()+1}/${b.getDate()}`};
+ async function load(){try{const q=await fs().collection('trScore').get();SC=[];q.forEach(d=>SC.push(d.data()));err=''}catch(e){SC=[];err=e.code||'err'}}
+ // 番付：items=='all' は合計EXP、項目キーならその項目のEXP
+ function rank(list,item){const by={};TRS().forEach(t=>by[t]={tr:t,exp:0,n:0,sum:0});list.forEach(x=>{const r=by[x.tr];if(!r)return;r.n++;if(item==='all'){r.exp+=x.exp||0;r.sum+=IT().reduce((p,[k])=>p+((x.s||{})[k]||0),0)/IT().length}else{const v=(x.s||{})[item]||0;r.exp+=v*PT();r.sum+=v}});
+  return Object.values(by).map(r=>Object.assign(r,{avg:r.n?r.sum/r.n:0})).sort((a,b)=>b.exp-a.exp||b.avg-a.avg)}
+ const MED=['🥇','🥈','🥉'];
+ function table(R){const mx=Math.max(1,...R.map(r=>r.exp));return `<ol class="tbz">${R.map((r,i)=>`<li class="${r.tr===TN()?'me':''} ${r.n?'':'zero'}"><span class="tbr">${r.n?(MED[i]||`${i+1}位`):'—'}</span><b>${esc(r.tr)}</b><span class="tbb"><i style="width:${Math.round(r.exp/mx*100)}%"></i></span><span class="tbe"><b>${r.exp.toLocaleString()}</b> EXP<small>平均 ★${r.avg.toFixed(2)}・${r.n}回</small></span></li>`).join('')}</ol>`}
+ function mvpOf(mon){const R=rank(SC.filter(x=>x.mon===mon),'all');return R[0]&&R[0].n?R[0]:null}
+ function chart(tr){// 12か月の月間EXP（線）と平均★
+  let k=nowMon();const ks=[];for(let i=0;i<12;i++){ks.unshift(k);k=prevMon(k)}const ser=TRS().map(t=>({t,v:ks.map(m=>SC.filter(x=>x.tr===t&&x.mon===m).reduce((p,x)=>p+(x.exp||0),0))}));
+  const mx=Math.max(1,...ser.flatMap(x=>x.v)),W=320,H=130,P=10,X=i=>P+i*(W-2*P)/11,Y=v=>H-P-v/mx*(H-2*P);
+  const C=['#2f6d2a','#e8452c','#f08a12','#7d4a9b','#c99a00','#3f9a3a','#9b2f5e','#2c6fb3'];
+  return `<svg viewBox="0 0 ${W} ${H+14}" class="kchart">${ser.map((x,i)=>`<polyline points="${x.v.map((v,j)=>`${X(j).toFixed(1)},${Y(v).toFixed(1)}`).join(' ')}" fill="none" stroke="${C[i%C.length]}" stroke-width="${x.t===tr?4:1.5}" opacity="${x.t===tr?1:.45}" stroke-linejoin="round"/>`).join('')}${ks.map((m,j)=>j%2?'':`<text x="${X(j)}" y="${H+12}" font-size="9" text-anchor="middle" fill="#6f7a5c">${+m.slice(5)}月</text>`).join('')}</svg>
+   <div class="tbleg">${ser.map((x,i)=>`<span style="--c:${C[i%C.length]}" class="${x.t===tr?'on':''}">${esc(x.t)}</span>`).join('')}</div>`}
+ async function panel(re){if(!ready()||tab!=='guild')return;const v=document.getElementById('view');if(!v)return;let d=document.getElementById('trbz');if(d&&!re)return;
+  if(!d){d=document.createElement('details');d.id='trbz';d.className='acct trbzp';const k=document.getElementById('mytr')||document.getElementById('yoy');k?k.after(d):v.insertBefore(d,v.firstChild);d.addEventListener('toggle',()=>{if(d.open)draw(1)})}
+  d.innerHTML=`<summary><b>🏆 トレーナー番付・月間MVP</b><small>ゲストからの評価（★1つ＝${PT()}EXP）で決まる、今週・今月・項目別の番付（全トレーナーが見られます）</small></summary><div id="trbzin"></div>`;if(d.open)draw(1)}
+ async function draw(reload){const b=document.getElementById('trbzin');if(!b)return;if(reload||!SC){b.innerHTML='<p class="muted">読みこみ中…</p>';await load()}
+  const me=TN(),cm=nowMon(),wk=weekNo();if(!vm)vm=cm;if(!tg)tg=TRS().includes(me)?me:TRS()[0];
+  const mine=SC.filter(x=>x.tr===tg),tot=mine.reduce((p,x)=>p+(x.exp||0),0),avgAll=mine.length?mine.reduce((p,x)=>p+IT().reduce((q,[k])=>q+((x.s||{})[k]||0),0)/IT().length,0)/mine.length:0;
+  const list=vt==='week'?SC.filter(x=>x.wk===wk):vt==='lastweek'?SC.filter(x=>x.wk===wk-1):SC.filter(x=>x.mon===vm);
+  const mvp=mvpOf(prevMon(cm)),mvpNow=mvpOf(cm);
+  const months=[...new Set(SC.map(x=>x.mon).concat(cm))].sort().reverse();
+  b.innerHTML=`${err?`<div class="zsk">読みこめませんでした（${esc(err)}）。Firebaseのルールの貼りかえが必要です。</div>`:''}
+   ${mvp?`<div class="tbmvp">🏅 <small>${monL(prevMon(cm))}の</small> 月間MVPトレーナー<b>${esc(mvp.tr)}</b><span>${mvp.exp.toLocaleString()} EXP・平均 ★${mvp.avg.toFixed(2)}</span></div>`:''}
+   <div class="tbme"><label>トレーナー<select id="tbtg">${TRS().map(t=>`<option ${t===tg?'selected':''}>${esc(t)}</option>`).join('')}</select></label>
+    <div class="kst"><div><small>評価EXP 合計</small><b>${tot.toLocaleString()}</b></div><div><small>平均</small><b>★${avgAll.toFixed(2)}</b></div><div><small>評価の数</small><b>${mine.length}</b></div><div><small>月間MVP</small><b>${months.filter(m=>m<cm&&(mvpOf(m)||{}).tr===tg).length}回</b></div></div>
+    <div class="tbit">${IT().map(([k,l])=>{const v=mine.map(x=>(x.s||{})[k]).filter(x=>x>=1);const a=v.length?v.reduce((p,c)=>p+c,0)/v.length:0;return `<div><small>${esc(l)}</small><i><i style="width:${a/5*100}%"></i></i><b>★${a.toFixed(1)}</b></div>`}).join('')}</div>
+    <h4>📈 月ごとの評価EXP（12か月）</h4>${chart(tg)}</div>
+   <h4>🏆 番付</h4>
+   <div class="kgtabs">${[['week','今週'],['lastweek','先週'],['month','月間']].map(([k,l])=>`<button type="button" data-tbt="${k}" class="${vt===k?'on':''}">${l}</button>`).join('')}</div>
+   ${vt==='month'?`<select id="tbm">${months.map(m=>`<option value="${m}" ${m===vm?'selected':''}>${monL(m)}${m===cm?'（今月）':''}</option>`).join('')}</select>`:`<p class="muted" style="font-size:12px">${vt==='week'?'今週':'先週'}：${wkL(vt==='week'?wk:wk-1)}（土曜4:00に切りかわり）</p>`}
+   <div class="tbits">${[['all','総合']].concat(IT().map(([k,l])=>[k,l])).map(([k,l])=>`<button type="button" data-tbi="${k}" class="${vi===k?'on':''}">${k==='all'?'🏆 ':''}${esc(l)}番付</button>`).join('')}</div>
+   ${table(rank(list,vi))}
+   ${vt==='month'&&vm===cm&&mvpNow?`<p class="muted" style="font-size:12px">いまのところ今月のMVP候補は <b>${esc(mvpNow.tr)}</b> さん。月が変わると決定します。</p>`:''}
+   <h4>🏅 月間MVPトレーナーの記録</h4><ul class="khana">${months.filter(m=>m<cm).map(m=>{const x=mvpOf(m);return x?`<li><b>${monL(m)}</b>・🏅 ${esc(x.tr)}さん（${x.exp.toLocaleString()} EXP・★${x.avg.toFixed(2)}）</li>`:''}).join('')||'<li class="muted">月が変わると、ここにMVPが残ります</li>'}</ul>
+   <p class="muted" style="font-size:12px">点数だけが集まります（ゲストの名前やひとことは、運営代表責任者だけが見られます）。</p>`;
+  b.querySelector('#tbtg').onchange=e=>{tg=e.target.value;draw(0)};
+  b.querySelectorAll('[data-tbt]').forEach(x=>x.onclick=()=>{vt=x.dataset.tbt;draw(0)});b.querySelectorAll('[data-tbi]').forEach(x=>x.onclick=()=>{vi=x.dataset.tbi;draw(0)});
+  const sm=b.querySelector('#tbm');if(sm)sm.onchange=()=>{vm=sm.value;draw(0)}}
+ // 月がかわって最初に開いたとき、先月のMVPをスタッフニュースへ（1回だけ）
+ async function mvpNews(){if(!ready())return;const pm=prevMon(nowMon());try{const k='kq-mvp-'+pm;if(localStorage.getItem(k))return;const ref=fs().collection('staffNews').doc('mvp_'+pm);const ex=await ref.get();if(ex.exists){localStorage.setItem(k,1);return}
+  if(!SC)await load();const x=mvpOf(pm);if(!x)return;await ref.set({t:Date.now(),kind:'mvp',by:TN(),text:`🏅 ${monL(pm)}の月間MVPトレーナーは ${x.tr}さん！（評価EXP ${x.exp.toLocaleString()}・平均★${x.avg.toFixed(2)}）おめでとうございます！`});localStorage.setItem(k,1)}catch(e){}}
+ let mv=0;const _r=render;render=function(){const r=_r.apply(this,arguments);try{panel();if(!mv&&ready()){mv=1;setTimeout(mvpNews,4000)}}catch(e){console.warn(e)}return r};
 })();
 </script>
 </body>
