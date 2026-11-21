@@ -920,7 +920,9 @@ async function loadScr(force){if(!force&&Date.now()-scrAt<25000)return;scrAt=Dat
   if(d&&window.AUTH&&AUTH.user){try{const q=await d.collection('screenings').get();a=[];q.forEach(x=>a.push(Object.assign({id:x.id},x.data())));scrErr=null}catch(e){scrErr=String(e&&e.code||e);a=null}}
   SCR=(a||lget()).filter(x=>x&&x.ep&&x.at).sort((x,y)=>x.at-y.at);if(tab==='cinema'&&C.scene==='lobby')drawShows();try{entMark()}catch(e){}}
 const dur=s=>(EP(s.ep)?EP(s.ep).pages.length+2:10)*PAGE_MS;
-const upcoming=()=>SCR.filter(s=>s.at+dur(s)>Date.now());
+// v162（MITSUさん 2026-11-21）：日時を決める上映会はやめて、いつでも観られる形だけにする
+const NO_SHOWS=true;
+const upcoming=()=>NO_SHOWS?[]:SCR.filter(s=>s.at+dur(s)>Date.now());
 async function addScr(ep,at){const it={ep,at,by:(()=>{try{return TN()}catch(e){return''}})(),t:Date.now()};const d=fdb();
   if(d&&window.AUTH&&AUTH.user){try{await d.collection('screenings').doc(String(at)+'_'+ep).set(it);say('上映会を予約しました');await loadScr(true);return}catch(e){say('保存できませんでした（ルールの更新が必要かもしれません）：'+(e&&e.code||e));return}}
   const a=lget();a.push(Object.assign({id:'l'+Date.now()},it));lset(a);say('上映会を予約しました（この端末だけ）');loadScr(true)}
@@ -951,8 +953,8 @@ function vOut(w){const nx=upcoming()[0];
   drawOut(w.querySelector('#mzc').getContext('2d'));w.querySelector('#mzin').onclick=()=>{C.scene='lobby';render();scrollTo(0,0)}}
 function vLobby(w){const sm=seenMap();
   w.innerHTML=`<h2 class="mzh">🎬 ミドリ座 ロビー</h2><canvas class="mzc" id="mzc" width="256" height="144" aria-label="ロビー"></canvas>
-  <div class="mzbox"><h3>🎟 上映会のスケジュール</h3><ul class="mzshow" id="mzshows"></ul>${isTr()?`<div class="mzform"><select id="mzep" aria-label="上映する話">${EPISODES.map(e=>`<option value="${e.no}">第${e.no}話 ${E(e.title)}</option>`).join('')}</select><input type="date" id="mzd" aria-label="日にち"><input type="time" id="mzt" step="900" value="20:00" aria-label="時刻"><button type="button" id="mzadd">🎬 この日時で上映会を予約する</button></div><p class="mzlead" style="font-size:12px;margin-top:6px">時間になると、入場した人みんなが同じ場面を一緒に見られます（1話 約2分）。</p>`:''}</div>
-  <div class="mzbox"><h3>📚 絵本コーナー（自由上映）</h3><p class="mzlead" style="margin-bottom:8px">いつでも好きな話を観られます。最後まで観ると「観たよスタンプ」とEXPがもらえます（1話1回）。</p>
+  <div class="mzbox" ${NO_SHOWS?'hidden':''}><h3>🎟 上映会のスケジュール</h3><ul class="mzshow" id="mzshows"></ul>${isTr()?`<div class="mzform"><select id="mzep" aria-label="上映する話">${EPISODES.map(e=>`<option value="${e.no}">第${e.no}話 ${E(e.title)}</option>`).join('')}</select><input type="date" id="mzd" aria-label="日にち"><input type="time" id="mzt" step="900" value="20:00" aria-label="時刻"><button type="button" id="mzadd">🎬 この日時で上映会を予約する</button></div><p class="mzlead" style="font-size:12px;margin-top:6px">時間になると、入場した人みんなが同じ場面を一緒に見られます（1話 約2分）。</p>`:''}</div>
+  <div class="mzbox"><h3>📚 絵本コーナー（いつでも上映）</h3><p class="mzlead" style="margin-bottom:8px">いつでも好きな話を観られます。最後まで観ると「観たよスタンプ」とEXPがもらえます（1話1回）。</p>
   <div class="mzbooks">${EPISODES.map(e=>`<button type="button" data-mzep="${e.no}">${sm[e.no]?'<span class="seen">観た！</span>':''}${heroCv(e.hero)}<small>第${e.no}話・${HN[e.hero]}</small><b>${E(e.title)}</b></button>`).join('')}</div></div>`;
   drawLobby(w.querySelector('#mzc').getContext('2d'));drawShows();
   w.querySelectorAll('[data-mzep]').forEach(b=>b.onclick=()=>openFree(+b.dataset.mzep));
