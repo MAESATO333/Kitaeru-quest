@@ -2400,7 +2400,7 @@ const P=location.pathname,base=P.replace(/admin\/?$/,'').replace(/[^/]*$/,''),by
 window.KQ_GUEST_URL=byQ?P:base;const adminUrl=base+'admin';
 function sw(){const show=!AUTH.on||AUTH.role==='trainer';/* ゲスト画面⇄管理ページの切替：いまはトレーナー全員（MITSUさん 2026-11-21） */let d=document.getElementById('pvsw');if(!show){if(d)d.remove();return}
   if(!d){d=document.createElement('div');d.id='pvsw';d.className='pvsw';document.body.appendChild(d)}
-  d.innerHTML=`<span>${AUTH.on?'切替':'お試し'}</span><a href="${KQ_GUEST_URL}" class="${ADMIN?'':'on'}">ゲスト画面</a><a href="${byQ?P+'?admin=1':adminUrl}" class="${ADMIN?'on':''}">管理ページ</a>`}
+  /* v172 MITSUさん：ボタンの文字は「お試し画面」だけ。押すとゲスト画面⇄管理ページが入れかわる */d.innerHTML=`<a href="${ADMIN?KQ_GUEST_URL:(byQ?P+'?admin=1':adminUrl)}" class="on" title="${ADMIN?'ゲスト画面へ':'管理ページへ'}">お試し画面</a>`}
 function myTrBtn(){if(!ADMIN)return;const v=document.getElementById('view');if(!v||document.getElementById('mytr'))return;const n=TN(),m=trMember(n),on=S.current===m.id,L=levelOf(total(m)),t=teamOf(m);
   const d=document.createElement('div');d.id='mytr';d.className='mytr'+(on?' on':'');
   const ex=`<div class="mtx"><div class="${on?'cur':''}"><b>💪 自分のトレーニング</b>：トレーナー本人（${esc(n)}）の記録をつけるモード。EXPは自分のレベルと、チーム対抗戦${t?'「'+esc(tName(t))+'」':''}の点数になります。</div><div class="${on?'':'cur'}"><b>👥 ゲストの管理</b>：お客さんを選んで、その人の記録・宿題・花マル🌸スタンプ・評価を見たり、つけたりするモード。</div></div>`;
