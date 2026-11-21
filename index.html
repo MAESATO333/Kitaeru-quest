@@ -3660,5 +3660,31 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
  setTimeout(()=>{try{parade();plaza();sides()}catch(e){}},800);
 })();
 </script>
+<script>
+// ===== v170：左右の余白のキャラと吹き出しを、重ならないように並べなおす（MITSUさん「重ならないで！」2026-11-21）=====
+(function(){
+ const PAD=10;
+ function box(el){const r=el.getBoundingClientRect();let L=r.left,T=r.top,R=r.right,B=r.bottom;el.querySelectorAll('*').forEach(c=>{const q=c.getBoundingClientRect();if(!q.width)return;L=Math.min(L,q.left);T=Math.min(T,q.top);R=Math.max(R,q.right);B=Math.max(B,q.bottom)});return {L,T,R,B}}
+ const hit=(a,b)=>a.L<b.R+PAD&&a.R+PAD>b.L&&a.T<b.B+PAD&&a.B+PAD>b.T;
+ function lay(){const decos=[...document.querySelectorAll('.deco')];if(!decos.length)return;
+  const block=[];['pvsw'].forEach(id=>{const e=document.getElementById(id);if(e&&e.getBoundingClientRect().width){const r=e.getBoundingClientRect();block.push({L:r.left,T:r.top,R:r.right,B:r.bottom})}});
+  const nav=document.getElementById('nav')||document.querySelector('nav');if(nav){const r=nav.getBoundingClientRect();if(r.height)block.push({L:0,T:r.top,R:innerWidth,B:innerHeight})}
+  decos.forEach(dc=>{if(getComputedStyle(dc).display==='none')return;const D=dc.getBoundingClientRect();if(D.width<60)return;
+   const items=[...dc.querySelectorAll(':scope > .dk')];const taken=block.slice();
+   // 雲・太陽はそのまま。キャラは1つずつ、空いている場所へ
+   items.forEach(el=>{el.style.visibility='hidden';});
+   items.forEach(el=>{
+    if(!el.dataset.ox){el.dataset.ox=parseFloat(el.style.left)||50;el.dataset.oy=parseFloat(el.style.top)||0}
+    const ox=+el.dataset.ox,oy=+el.dataset.oy;const tryAt=(xp,yp)=>{el.style.left=xp+'%';el.style.top=yp+'%';const b=box(el);if(b.L<D.left+2||b.R>D.right-2||b.T<D.top||b.B>D.bottom)return null;return taken.some(t=>hit(b,t))?null:b};
+    let b=tryAt(ox,oy);
+    if(!b){outer:for(let dy=0;dy<=100;dy+=1){for(const sy of [1,-1]){const y=oy+sy*dy;if(y<0||y>98)continue;for(let x=8;x<=92;x+=4){const xx=Math.abs(x-ox)<1?ox:x;b=tryAt(xx,y);if(b)break outer}}}}
+    if(b){taken.push(b);el.style.visibility='';el.style.display=''}else{el.style.display='none'}})})}
+ let t=0;const go=()=>{clearTimeout(t);t=setTimeout(()=>{try{lay()}catch(e){console.warn(e)}},250)};
+ addEventListener('resize',go);addEventListener('load',go);setTimeout(go,1200);setTimeout(go,3000);
+ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(go);
+ const _r=render;render=function(){const r=_r.apply(this,arguments);if(!document.querySelector('.deco [data-placed]'))go();return r};
+ window.kqLayDeco=lay;
+})();
+</script>
 </body>
 </html>
