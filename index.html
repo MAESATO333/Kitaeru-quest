@@ -524,6 +524,11 @@ body.navmin nav .in{display:none!important}body.navmin nav{padding-top:4px;paddi
 .ginapp{background:#fff1d6;border:2px solid #f5a524;border-radius:12px;padding:8px 10px;font-size:13px;font-weight:700;color:#7a4a00;line-height:1.6;margin:0 0 8px;text-align:left}.ginapp .giu{user-select:all;-webkit-user-select:all;font-family:monospace;color:#33501a}
 .tnfix{font-size:18px;color:#33501a}.tnlk{font-size:12px;font-weight:800;color:#8a6d00;background:#fff4c2;border-radius:999px;padding:2px 8px;margin-left:6px}
 body.admnog header .whol>.dd,body.admnog #who{display:none!important}body.admnog #whoName{display:inline-block!important;font-size:15px;padding:2px 10px 2px 4px;color:#33501a;white-space:nowrap}body.admnog header .whol{max-width:none!important}
+.tmline{order:20;flex-basis:100%;margin-top:6px;border-color:#c2185b;background:#fff0f6;color:#8a1450;box-shadow:0 2px 0 #c2185b}.tmline.has{background:#ffe0ee;animation:tmp 1.6s ease-in-out infinite}@keyframes tmp{50%{box-shadow:0 2px 0 #c2185b,0 0 0 4px #ffb3d1}}
+.tmp{border:3px solid #c2185b!important;background:#fffafc}.tmp>summary b{color:#a0144e}.tmp>summary small{display:block;font-size:12px;color:#7a6070;font-weight:600}.tmnew{color:#c2185b;font-weight:900}
+.tmf{display:flex;flex-direction:column;gap:6px;margin:8px 0}.tmf label{display:flex;flex-direction:column;font-size:12px;font-weight:800;gap:2px}.tmf textarea{font:inherit;font-size:15px;border:2px solid #cfe3a8;border-radius:10px;padding:8px}
+.tmh4{margin:10px 0 4px;font-size:14px}.tmp .tml>li.tmi{display:block!important;flex-direction:column!important}.tmp .tmh{flex-direction:row!important}.tmp .tmh .tmk,.tmp .tmh .tmo{white-space:nowrap;flex:none!important;max-width:none!important;overflow:visible!important;width:auto!important}.tml{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}.tmi{background:#fff;border-radius:10px;border-left:6px solid #2f6d2a;padding:8px 10px}.tmi.own{background:#fff3f8}.tmi p{margin:4px 0 0;white-space:pre-wrap;line-height:1.55;font-weight:700;color:#33501a}
+.tmh{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;font-size:13px}.tmh small{margin-left:auto;color:#7a8460}.tmk,.tmo{color:#fff;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:900}.tmo{background:#c2185b}.tmr{display:block;margin-top:4px;color:#7a8460;font-size:12px}.tmsub{margin-top:8px}.tmsub>summary{font-weight:800;font-size:13px;cursor:pointer}
 </style>
 
 </head>
@@ -2929,5 +2934,50 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
 })();
 </script>
 <script src="quest10.js"></script>
+<script>
+// ===== 💌 トレーナー同士の連絡（業務事項・メッセージ）v157（MITSUさん 2026-11-21）：Firestore trMsgs、トレーナーだけ読める =====
+(function(){if(typeof ADMIN==='undefined'||!ADMIN)return;
+ let M=[],ok=0,busy=0,draft={to:'all',kind:'biz',text:''};
+ const isTr=()=>window.AUTH&&AUTH.on&&AUTH.role==='trainer'&&window.firebase&&firebase.apps&&firebase.apps.length;
+ const me=()=>TN(),KIND={biz:['📋','業務事項','#2f6d2a'],msg:['💬','メッセージ','#5b4b96']};
+ const forMe=x=>x.from!==me()&&(x.to==='all'||x.to===me());
+ const unread=()=>M.filter(x=>forMe(x)&&!(x.read&&x.read[me()]));
+ const tt=t=>{const d=new Date(t);return `${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`};
+ async function load(){if(!isTr()||busy)return;busy=1;try{const q=await firebase.firestore().collection('trMsgs').get();const a=[];q.forEach(d=>a.push(Object.assign({id:d.id},d.data())));M=a.sort((x,y)=>(y.t||0)-(x.t||0)).slice(0,200);ok=1}catch(e){console.warn('trMsgs',e);ok=-1}busy=0;line();panel(1)}
+ function badge(){const b=document.getElementById('admBadge');if(!b)return;b.textContent=(window.AUTH&&AUTH.on&&AUTH.role==='trainer')?`${me()}専用管理ページ`:'トレーナー管理ページ'}
+ function line(){let d=document.getElementById('tmline');if(!isTr()){if(d)d.remove();return}
+  if(!d){d=document.createElement('button');d.type='button';d.id='tmline';d.className='snline tmline'}
+  const U=unread(),n=U[0];
+  d.classList.toggle('has',!!U.length);
+  d.innerHTML=`<b>💌 トレーナーからの新着${U.length?'！':''}</b><span>${ok===-1?'ルールの貼りかえが必要です':n?`${n.owner?'📢 サイト管理人 ':''}${esc(n.from)}：${esc(n.text)}`:'トレーナー同士の連絡はここに届きます'}</span>${U.length?`<i class="nbadge in">${U.length}</i>`:''}`;
+  const h=document.querySelector('header');if(h&&d.parentNode!==h)h.appendChild(d);
+  d.onclick=()=>{tab='guild';render();setTimeout(()=>{const p=document.getElementById('trmsg');if(p){p.open=true;p.scrollIntoView({behavior:'smooth',block:'start'});markRead()}},80)}}
+ async function markRead(){const U=unread();if(!U.length)return;const k=me();for(const x of U){x.read=Object.assign({},x.read,{[k]:Date.now()});try{await firebase.firestore().collection('trMsgs').doc(x.id).update(new firebase.firestore.FieldPath('read',k),Date.now())}catch(e){console.warn(e)}}line();panel(1)}
+ function item(x){const k=KIND[x.kind]||KIND.msg,mine=x.from===me(),rd=Object.keys(x.read||{});
+  return `<li class="tmi${x.owner?' own':''}${mine?' mine':''}" style="border-left-color:${x.owner?'#c2185b':k[2]}">
+   <div class="tmh">${x.owner?'<span class="tmo">📢 サイト管理人から</span>':''}<span class="tmk" style="background:${k[2]}">${k[0]} ${k[1]}</span><b>${esc(x.from)}</b> → ${x.to==='all'?'トレーナー全員':esc(x.to)}<small>${tt(x.t)}</small></div>
+   <p>${esc(x.text)}</p>${mine?`<small class="tmr">${rd.length?'👀 読んだ人：'+rd.map(esc).join('・'):'まだだれも読んでいません'}</small>`:''}</li>`}
+ function panel(re){const v=document.getElementById('view');if(!v||tab!=='guild'||!isTr())return;let d=document.getElementById('trmsg');if(d&&!re)return;
+  if(!d){d=document.createElement('details');d.id='trmsg';d.className='acct tmp';const y=document.getElementById('yoy');y?y.before(d):v.insertBefore(d,v.firstChild);d.addEventListener('toggle',()=>{if(d.open)markRead()})}
+  const U=unread(),mine=M.filter(x=>x.from===me()),inbox=M.filter(forMe),op=d.open;
+  d.innerHTML=`<summary><b>💌 トレーナー同士の連絡</b>${U.length?` <i class="nbadge in">${U.length}</i> <span class="tmnew">新着あり！</span>`:''}<small>業務事項・メッセージ（ゲストには見えません）</small></summary>
+   <div class="tmf"><label>あて先<select id="tmto"><option value="all">トレーナー全員</option>${TRAINERS.filter(t=>t!==me()).map(t=>`<option ${draft.to===t?'selected':''}>${esc(t)}</option>`).join('')}</select></label>
+    <label>種類<select id="tmkd"><option value="biz" ${draft.kind==='biz'?'selected':''}>📋 業務事項</option><option value="msg" ${draft.kind==='msg'?'selected':''}>💬 メッセージ</option></select></label>
+    <textarea id="tmtx" rows="3" maxlength="1000" placeholder="例：明日の朝、3Bスタジオのマットを入れかえます">${esc(draft.text)}</textarea>
+    <button type="button" class="btn-main" id="tmsend">${AUTH.owner?'📢 サイト管理人として送る':'💌 送る'}（${esc(me())}から）</button></div>
+   ${ok===-1?'<p class="muted">読みこめませんでした。Firebaseのルール（trMsgs）の貼りかえが必要です。</p>':''}
+   <h4 class="tmh4">📥 届いた連絡（${inbox.length}件）</h4><ul class="tml">${inbox.slice(0,50).map(item).join('')||'<li class="muted">まだ届いていません</li>'}</ul>
+   <details class="tmsub"><summary>📤 送った連絡（${mine.length}件）</summary><ul class="tml">${mine.slice(0,50).map(item).join('')||'<li class="muted">まだ送っていません</li>'}</ul></details>`;
+  if(d.open!==op)d.open=op;
+  const g=id=>d.querySelector('#'+id);g('tmto').value=draft.to;
+  g('tmto').onchange=e=>draft.to=e.target.value;g('tmkd').onchange=e=>draft.kind=e.target.value;g('tmtx').oninput=e=>draft.text=e.target.value;
+  g('tmsend').onclick=async()=>{const text=draft.text.trim();if(!text){alert('内容を書いてください');return}const b=g('tmsend');b.disabled=true;
+   const it={from:me(),owner:!!AUTH.owner,to:draft.to,kind:draft.kind,text,t:Date.now(),read:{}};
+   try{const r=await firebase.firestore().collection('trMsgs').add(it);M.unshift(Object.assign({id:r.id},it));draft.text='';toast(`💌 ${draft.to==='all'?'トレーナー全員':draft.to}に送りました`);panel(1)}catch(e){alert('送れませんでした：'+(e.code||e.message)+'\nFirebaseのルールの貼りかえが必要かもしれません');b.disabled=false}}}
+ const _r=render;render=function(){const r=_r.apply(this,arguments);try{badge();line();panel()}catch(e){console.warn(e)}return r};
+ let started=0;function start(){if(started||!isTr())return;started=1;load();setInterval(load,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()})}
+ setInterval(()=>{if(!started)start();else{badge()}},1000);
+})();
+</script>
 </body>
 </html>
