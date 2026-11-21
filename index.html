@@ -559,6 +559,9 @@ body.admnog header .whol>.dd,body.admnog #who{display:none!important}body.admnog
 .grpg{margin-top:8px}.grph{display:flex;align-items:center;gap:10px;background:#f2f8e6;border-radius:12px;padding:10px;margin-bottom:8px}.grph .grav{width:44px;height:44px;font-size:20px}.grph b{font-size:18px;display:block}.grph small{color:#6f7a5c}
 .hwoth{margin-top:8px}.hwoth>summary{cursor:pointer;font-weight:800;color:#6f7a5c;padding:6px 0}.hwoth .card{opacity:.85}
 .klog{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px}.klog li{background:#fff;border-radius:8px;padding:5px 8px;font-size:13px}.klog li small{all:unset;color:#6f7a5c;font-size:12px;margin-right:6px;font-weight:700}.klog li b{all:unset;color:#2f6d2a;font-weight:800}
+.grlk{background:#fff;border:3px dashed #b9a3c9;border-radius:12px;padding:10px;margin:8px 0}.grlk.open{border:3px solid #7d4a9b;background:#faf5ff}.grlk>b{color:#5b2f7a;font-size:16px}.grlk p{margin:6px 0 0;font-size:13px}.grlkn{display:block;font-size:12px;color:#6f5a7c;margin:2px 0 6px}
+.grlf{display:flex;flex-direction:column;gap:6px}.grlf select,.grlf textarea{font:inherit;font-size:14px;border:2px solid #d9c6e8;border-radius:10px;padding:6px}
+.grll{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}.grll li{display:block!important;background:#fff;border-radius:8px;padding:6px 8px;font-size:14px}.grll li small{all:unset;font-size:12px;color:#6f5a7c;font-weight:700}.grll li .phdel{float:right}
 .grbulk{margin-top:10px}.grbulk>summary{font-weight:800;cursor:pointer;color:#2f6d2a}.gradd{display:flex;gap:6px;margin:8px 0;flex-wrap:wrap}.gradd input{flex:1 1 160px;width:auto}.grbulk textarea{width:100%;box-sizing:border-box;font:inherit;font-size:14px;border:2px solid #cfe3a8;border-radius:10px;padding:8px}.grpv{background:#fff8d6;border-radius:10px;padding:8px;margin-top:6px;font-size:13px;line-height:1.7}
 </style>
 
@@ -3275,6 +3278,20 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
 (function(){
  const fs=()=>firebase.firestore();let G=null,R={},err='',q='',openTr={},OG='';
  const canOpen=g=>!!g;
+ const canCoach=g=>!g.coach||g.coach===TN()||AUTH.owner;
+ const LK={biz:'📝 記録',talk:'💬 面談',goal:'🎯 目標',body:'🩺 体の様子',care:'⚠ 気をつけること'};
+ async function ledger(box,g){if(!box)return;
+  if(g.coach!==TN()){box.innerHTML=`<div class="grlk"><b>🔐 担当トレーナーの記録簿</b><p>${g.coach?`担当の <b>${esc(g.coach)}</b> さんだけが開けます。`:'担当トレーナーが決まると、その人だけが開けます。'}<br><small>満足度・宿題・入室・グラフ・トレーニング記録は、下のカルテで全トレーナーが見られます。</small></p></div>`;return}
+  box.innerHTML='<div class="grlk open"><b>🔐 担当トレーナーの記録簿</b><p class="muted">読みこみ中…</p></div>';let L=[],er='';
+  try{const q=await fs().collection('ledger').where('gid','==',g.id).get();q.forEach(d=>L.push(Object.assign({id:d.id},d.data())))}catch(e){er=e.code||'err'}
+  L.sort((a,b)=>b.t-a.t);
+  box.innerHTML=`<div class="grlk open"><b>🔐 担当トレーナーの記録簿</b><small class="grlkn">${esc(g.name)}さんの担当（${esc(TN())}さん）だけが開けます。ほかのトレーナー・サイト管理人・ゲストには見えません。</small>
+   ${er?`<div class="zsk">読みこめませんでした（${esc(er)}）。Firebaseのルールの貼りかえが必要です。</div>`:''}
+   <div class="grlf"><select id="grlk">${Object.entries(LK).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select><textarea id="grlt" rows="3" maxlength="2000" placeholder="例：本人の目標は「夏までに5kg」。ひざに不安あり、スクワットは浅めから。"></textarea><button type="button" class="btn-main" id="grls">🔐 記録簿に書く</button></div>
+   <ul class="grll">${L.map(x=>{const d=new Date(x.t);return `<li><small>${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}・${LK[x.kind]||'📝 記録'}・${esc(x.tn||'')}</small>${x.author===AUTH.user.uid?`<button type="button" class="phdel" data-lgd="${esc(x.id)}">消す</button>`:''}<div>${esc(x.text).replace(/\n/g,'<br>')}</div></li>`}).join('')||'<li class="muted">まだ記録はありません</li>'}</ul></div>`;
+  box.querySelector('#grls').onclick=async()=>{const t=box.querySelector('#grlt').value.trim();if(!t){toast('記録を書いてください');return}
+   try{await fs().collection('ledger').add({gid:g.id,gname:g.name,kind:box.querySelector('#grlk').value,text:t,author:AUTH.user.uid,tn:TN(),t:Date.now()});toast('🔐 記録簿に残しました');ledger(box,g)}catch(e){alert('保存できませんでした：'+(e.code||e.message)+'\nFirebaseのルールの貼りかえが必要かもしれません')}};
+  box.querySelectorAll('[data-lgd]').forEach(x=>x.onclick=async()=>{if(!confirm('この記録を消しますか？'))return;try{await fs().collection('ledger').doc(x.dataset.lgd).delete();ledger(box,g)}catch(e){alert(e.code||e.message)}})}
  const ready=()=>ADMIN&&window.AUTH&&AUTH.on&&AUTH.role==='trainer'&&window.firebase&&firebase.apps&&firebase.apps.length;
  const norm=x=>String(x||'').replace(/[\s　]/g,'');
  async function load(){try{const a=await fs().collection('guests').get();G=[];a.forEach(d=>G.push(Object.assign({id:d.id},d.data())));err='';window.KQ_COACH={};G.forEach(g=>{if(g.coach)KQ_COACH[norm(g.name)]=g.coach})}catch(e){G=[];err=e.code||'err'}
@@ -3291,7 +3308,7 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
     b.innerHTML=`<button type="button" class="btn-sub" id="grbk">‹ 一覧にもどる</button>
      <div class="grpg"><div class="grph"><span class="grav">${esc(g.name.slice(0,1))}</span><div><b>${esc(g.name)}さん</b><small>担当：${esc(g.coach||'なし')}${g.coach&&g.coach!==TN()?'（担当外・見るだけ）':''}　${uid?'📱 アプリ利用中':'📱 アプリはまだ'}</small></div></div>
      ${TN()==='團野有花'?'<button type="button" class="btn-main" id="grkk">🩺 健康管理室で、このゲストの看護記録をひらく</button>':''}
-     <div id="grkb"></div></div>`;
+     <div id="grlg"></div><div id="grkb"></div></div>`;ledger(b.querySelector('#grlg'),g);
     b.querySelector('#grbk').onclick=()=>{OG='';draw(0)};const kk=b.querySelector('#grkk');if(kk)kk.onclick=()=>{if(window.KK){KK.mid=uid?'u:'+uid:'r:'+g.id;KK.tab='rec'}const e=document.getElementById('kenko');if(e){if(e.tagName==='DETAILS')e.open=true;try{kenkoPanel(1)}catch(x){}setTimeout(()=>e.scrollIntoView({block:'start'}),200)}};
     if(window.karteBox)window.karteBox(b.querySelector('#grkb'),uid?{uid,name:g.name}:{gkey:'r:'+g.id,name:g.name});return}OG=''}
   const mine=(G||[]).filter(g=>g.coach===TN()).sort((x,y)=>x.name.localeCompare(y.name,'ja')),all=TN()==='團野有花'||AUTH.owner;
@@ -3302,10 +3319,10 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
    <p class="muted" style="font-size:12px">名前をタップすると、そのゲストの個別ページ（カルテ・🔒わたしだけのメモ）がひらきます。${all?'':''}担当外のゲストも、下の一覧の「ひらく」でトレーニング記録やカルテを見られます（宿題・花マルは担当トレーナーが行います）。</p>
    <h4 class="grmy">📋 トレーナーごとの担当ゲスト</h4>
    <input type="search" id="grq" placeholder="🔍 名前でさがす" value="${esc(q)}">
-   ${Object.entries(by).filter(([t,a])=>a.length||t).map(([t,a])=>{const L=a.filter(hit);if(q&&!L.length)return '';return `<div class="grtr"><button type="button" class="grh" data-grt="${esc(t)}">${openTr[t]||q?'▼':'▶'} <b>${t?esc(t):'担当なし'}</b> <span>${a.length}人</span></button>${openTr[t]||q?`<ul class="grl">${L.map(g=>`<li><span>${esc(g.name)}</span>${R[norm(g.name)]?'<i class="gron">📱 アプリ利用中</i>':''}${canOpen(g)?`<button type="button" class="gropen" data-gro="${esc(g.id)}">ひらく</button>`:''}<select data-grc="${esc(g.id)}"><option value="">担当なし</option>${TRAINERS.map(n=>`<option ${n===g.coach?'selected':''}>${esc(n)}</option>`).join('')}</select><button type="button" class="phdel" data-grd="${esc(g.id)}">消す</button></li>`).join('')||'<li class="muted">まだいません</li>'}</ul>`:''}</div>`}).join('')}
+   ${Object.entries(by).filter(([t,a])=>a.length||t).map(([t,a])=>{const L=a.filter(hit);if(q&&!L.length)return '';return `<div class="grtr"><button type="button" class="grh" data-grt="${esc(t)}">${openTr[t]||q?'▼':'▶'} <b>${t?esc(t):'担当なし'}</b> <span>${a.length}人</span></button>${openTr[t]||q?`<ul class="grl">${L.map(g=>`<li><span>${esc(g.name)}</span>${R[norm(g.name)]?'<i class="gron">📱 アプリ利用中</i>':''}${canOpen(g)?`<button type="button" class="gropen" data-gro="${esc(g.id)}">ひらく</button>`:''}<select data-grc="${esc(g.id)}" ${canCoach(g)?'':'disabled title="担当の変更は、いまの担当トレーナーかサイト管理人だけができます"'}><option value="">担当なし</option>${TRAINERS.map(n=>`<option ${n===g.coach?'selected':''}>${esc(n)}</option>`).join('')}</select>${canCoach(g)?`<button type="button" class="phdel" data-grd="${esc(g.id)}">消す</button>`:''}</li>`).join('')||'<li class="muted">まだいません</li>'}</ul>`:''}</div>`}).join('')}
    <details class="grbulk"><summary>＋ ゲストを登録する（1人ずつ・まとめて）</summary>
     <div class="gradd"><input id="grn" placeholder="名前（例：ユウコ・タシロ）"><select id="grc"><option value="">担当なし</option>${TRAINERS.map(n=>`<option ${n===TN()?'selected':''}>${esc(n)}</option>`).join('')}</select><button type="button" class="btn-main" id="gra">登録</button></div>
-    <p class="muted" style="font-size:12px">まとめて登録：「●佐々木美香さん　担当ゲスト」の行の下に、1行に1人ずつ名前を書いたものを貼りつけてください。同じ名前がすでにある人は、担当だけ書きかえます（重ねて登録しません）。</p>
+    <p class="muted" style="font-size:12px">担当の変更は、いまの担当トレーナーかサイト管理人だけができます（🔐記録簿を守るため）。<br>まとめて登録：「●佐々木美香さん　担当ゲスト」の行の下に、1行に1人ずつ名前を書いたものを貼りつけてください。同じ名前がすでにある人は、担当だけ書きかえます（重ねて登録しません）。</p>
     <textarea id="grbt" rows="8" placeholder="●佐々木美香さん　担当ゲスト&#10;メグミ&#10;マナカ&#10;…"></textarea><button type="button" class="btn-main" id="grbp">まとめて確認する</button><div id="grpv"></div></details>`;
   const s=b.querySelector('#grq');s.oninput=()=>{q=s.value;const c=s.selectionStart;draw(0);const n=document.getElementById('grq');if(n){n.focus();try{n.setSelectionRange(c,c)}catch(e){}}};
   b.querySelectorAll('[data-gro]').forEach(x=>x.onclick=()=>{OG=x.dataset.gro;draw(0);document.getElementById('gros').scrollIntoView({block:'start'})});
@@ -3318,7 +3335,7 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
    const nw=L.filter(x=>!G.some(g=>norm(g.name)===norm(x.name))),up=L.filter(x=>G.some(g=>norm(g.name)===norm(x.name)&&g.coach!==x.coach)),cnt={};L.forEach(x=>cnt[x.coach||'担当なし']=(cnt[x.coach||'担当なし']||0)+1);
    pv.innerHTML=`<div class="grpv"><b>${L.length}人</b>を読みとりました：${Object.entries(cnt).map(([k,n])=>`${esc(k)} ${n}人`).join('・')}<br>新しく登録 <b>${nw.length}人</b>・担当を書きかえ <b>${up.length}人</b>・そのまま ${L.length-nw.length-up.length}人<br><button type="button" class="btn-main" id="grgo">この内容で登録する</button></div>`;
    pv.querySelector('#grgo').onclick=async()=>{const bt=pv.querySelector('#grgo');bt.disabled=true;bt.textContent='登録しています…';let n=0,u=0;
-    try{for(const x of L){const ex=G.find(g=>norm(g.name)===norm(x.name));if(!ex){const r=await fs().collection('guests').add({name:x.name,coach:x.coach,by:TN(),t:Date.now()});G.push({id:r.id,name:x.name,coach:x.coach});n++}else if(ex.coach!==x.coach&&x.coach){await fs().collection('guests').doc(ex.id).update({coach:x.coach,by:TN(),t:Date.now()});ex.coach=x.coach;u++}}
+    try{for(const x of L){const ex=G.find(g=>norm(g.name)===norm(x.name));if(!ex){const r=await fs().collection('guests').add({name:x.name,coach:x.coach,by:TN(),t:Date.now()});G.push({id:r.id,name:x.name,coach:x.coach});n++}else if(ex.coach!==x.coach&&x.coach&&canCoach(ex)){await fs().collection('guests').doc(ex.id).update({coach:x.coach,by:TN(),t:Date.now()});ex.coach=x.coach;u++}}
      toast(`👥 ${n}人を登録、${u}人の担当を書きかえました`);b.querySelector('#grbt').value='';draw(0)}catch(e){alert('途中で止まりました：'+(e.code||e.message)+`\n（${n}人まで登録ずみ）`);draw(1)}}}}
  let pre=0;const _r=render;render=function(){const r=_r.apply(this,arguments);try{panel();if(!pre&&ready()){pre=1;load().then(()=>{if(tab==='guild'&&!document.getElementById('gros')?.open)render();else try{badge()}catch(e){}})}}catch(e){console.warn(e)}return r};
 })();
