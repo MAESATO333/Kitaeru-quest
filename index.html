@@ -3360,8 +3360,8 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
  const isOwn=()=>ready()&&ADMIN&&AUTH.owner;
  const ymdL=t=>{const d=new Date(t);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
  const dt=t=>{const d=new Date(t);return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`};
- // トレーナー評価の5項目（MITSUさんの確認待ち：案A）
- window.TEV_ITEMS=window.TEV_ITEMS||[['exp','説明のわかりやすさ','やり方や目的を、わかりやすく教えてくれた'],['care','体調への気づかい','その日の体調やケガに気を配ってくれた'],['fit','強さ・メニューのちょうどよさ','きつすぎず、ゆるすぎず、ちょうどよかった'],['cheer','声かけ・はげまし','やる気が出る声かけがあった'],['again','また受けたい度','このトレーナーのトレーニングを、また受けたい']];
+ // トレーナー評価の5項目（MITSUさん決定 2026-11-21）
+ window.TEV_ITEMS=window.TEV_ITEMS||[['genki','元気','明るく元気に迎えてくれた'],['care','気づかい','その日の体調やケガに気を配ってくれた'],['voice','声かけ','やる気が出る声かけがあった'],['power','強さ','きつすぎず、ゆるすぎず、ちょうどよい強さだった'],['again','また受けたい','このトレーナーのトレーニングを、また受けたい']];
  const SURVEY_TPL=`総合的に、333GYMに満足していますか
 トレーナーの対応はいかがですか
 施設・スタジオの清潔さはいかがですか
