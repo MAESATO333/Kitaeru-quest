@@ -585,6 +585,21 @@ body.admnog header .whol>.dd,body.admnog #who{display:none!important}body.admnog
 .flrec{background:#fff;border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:6px;margin:6px 0}.flrec input,.flrec select,#flm,#kqcfgb select,#kqcfgb input{font:inherit;font-size:15px;border:2px solid #f3c2b6;border-radius:10px;padding:6px;box-sizing:border-box}
 .flk{display:flex;flex-direction:column;gap:4px}.flk label{display:flex!important;flex-direction:row!important;align-items:center;gap:6px;font-size:14px}.flk label span{flex:1;font-weight:700}.flk input{width:90px;text-align:right}
 .flsum{font-size:13px;font-weight:700;color:#b8321c;margin:4px 0 8px}
+#kqpar{position:relative;height:54px;overflow:hidden;margin:6px 0 4px;border-radius:14px;background:linear-gradient(#c9ecff 0 60%,transparent 60%),repeating-linear-gradient(90deg,#9ccc3c 0 10px,#b8dc5a 10px 20px);border:3px solid #4f7d2a;pointer-events:none}
+#kqpar .kqpr{position:absolute;bottom:2px;left:0;display:flex;gap:14px;white-space:nowrap;animation:kqwalk 38s linear infinite}#kqpar .kqpr+.kqpr{animation-delay:-19s}
+.kqpw{display:inline-block;animation:kqhop 1.1s ease-in-out infinite}.kqpw canvas,.kqplz canvas,.kqdk canvas,.kqsun canvas{image-rendering:pixelated}
+.kqpw canvas{width:36px;height:36px;display:block}
+.kqsun{position:absolute;right:8px;top:2px;display:flex;flex-direction:column;align-items:center;animation:kqfloat 3s ease-in-out infinite}.kqsun canvas{width:30px;height:30px;filter:drop-shadow(0 0 6px #ffd84a)}.kqsun small{font-size:9px;font-weight:900;color:#8a5a00;background:#fff7c0;border-radius:6px;padding:0 4px;line-height:1.3}
+@keyframes kqwalk{from{transform:translateX(-100%)}to{transform:translateX(110vw)}}@keyframes kqhop{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}@keyframes kqfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.kqplz{position:relative;height:150px;margin:18px 0 6px;border-radius:16px;overflow:hidden;background:linear-gradient(#d9f1ff 0 62%,#9ccc3c 62% 66%,#b8dc5a 66%);border:3px solid #4f7d2a;pointer-events:none}
+.kqcl{position:absolute;left:10%;top:12px;width:60px;height:16px;background:#fff;border-radius:10px;box-shadow:20px -8px 0 2px #fff}.kqcl.b{left:62%;top:22px;transform:scale(.8)}
+.kqpp{position:absolute;bottom:10px;display:flex;flex-direction:column;align-items:center;animation:kqhop 1.6s ease-in-out infinite}.kqpp canvas{width:44px;height:44px}.kqpp.big canvas{width:56px;height:56px}
+.kqpp small{font-size:10px;font-weight:900;color:#2f4a12;background:rgba(255,255,255,.8);border-radius:6px;padding:0 4px;margin-top:1px}
+.kqbb{font-size:10px;font-weight:800;background:#fff;border:2px solid #4f7d2a;border-radius:10px;padding:1px 5px;margin-bottom:2px;white-space:nowrap;max-width:110px;overflow:hidden;text-overflow:ellipsis}
+.kqpp:nth-child(odd) .kqbb{transform:translateY(-18px)}.kqbb{max-width:96px}
+.kqdk canvas{width:48px;height:48px}
+@media (prefers-reduced-motion:reduce){#kqpar .kqpr,.kqpw,.kqpp,.kqsun{animation:none}#kqpar .kqpr+.kqpr{display:none}}
+body.navmin #kqpar{}
 </style>
 
 </head>
@@ -3608,6 +3623,41 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
  const R=render;render=function(){const user=Date.now()-lastClick<1500;// ボタンを押したときの更新はすぐ。自動の更新は入力が終わるまで待つ
   if(!user&&kqBusy()){pend=1;return}pend=0;return R.apply(this,arguments)};
  setInterval(flush,2000);
+})();
+</script>
+<script>
+// ===== v169：ミドリ村のにぎわい — 八百万の神々と動物たちが、あちこちに（MITSUさん 2026-11-21、/taiken の絵を流用）=====
+(function(){
+ if(typeof paintHero!=='function'||typeof paintKami!=='function')return;
+ const RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const SH=['#e2483d','#3a7bea','#4f7d2a','#f39a1e','#9b2f5e','#e8456a','#2fa39a'];
+ const KM=[[0,'名もなき小さな神'],[3,'恵比寿さま'],[5,'木花咲耶姫'],[6,'天鈿女命'],[12,'建御雷神'],[15,'月読命'],[16,'素戔嗚尊'],[20,'天照大神']];
+ const AN=[['m','冒険者'],['f','冒険者'],['dog','いぬ'],['cat','ねこ'],['sheep','ひつじ'],['giraffe','キリン'],['hamster','ハムスター']];
+ const SAY={g:['よくきたのう','みんな、えらい！','今日も見ておるぞ','ナイス筋肉！','続けるのが一番じゃ','おぬし、光っておる','福がくるぞ〜','野菜もたべるのじゃ'],
+  dog:['ワン！いっしょに走ろ','おさんぽ行こ！'],cat:['にゃ〜ストレッチ','のび〜〜'],sheep:['メェ〜深呼吸','ふわふわヨガ'],giraffe:['首もストレッチ','背すじピーン'],hamster:['カラカラ回るよ！','ひまわりの種で元気'],m:['ファイト！','もう1セット！'],f:['いい汗かいた！','ナイス！']};
+ const day=Math.floor((Date.now()+9*36e5)/864e5);const rnd=i=>{let x=Math.sin(day*999+i*77.7)*10000;return x-Math.floor(x)};
+ function avc(look,st,sh,cls){const c=document.createElement('canvas');c.className=cls||'kqav';if(look==='g')paintKami(c,st,sh||'#f2c230');else paintHero(c,st,sh,'#4a3426',look);return c}
+ const pick=i=>{if(rnd(i)<.45){const k=KM[Math.floor(rnd(i+50)*KM.length)];return {look:'g',st:k[0],name:k[1],sh:SH[i%7]}}const a=AN[Math.floor(rnd(i+90)*AN.length)];return {look:a[0],st:Math.floor(rnd(i+130)*21),name:a[1],sh:SH[(i+3)%7]}};
+ const say=(c,i)=>{const L=SAY[c.look]||SAY.m;return L[Math.floor(rnd(i+300)*L.length)]};
+ // (1) 画面の上：ミドリ村パレード（神さま・動物が歩いていく）
+ function parade(){if(document.getElementById('kqpar'))return;const v=document.getElementById('view');if(!v)return;const d=document.createElement('div');d.id='kqpar';d.setAttribute('aria-hidden','true');
+  const row=document.createElement('div');row.className='kqpr';for(let i=0;i<14;i++){const c=pick(i);const w=document.createElement('span');w.className='kqpw';w.style.animationDelay=(-(i%5)*.23)+'s';w.appendChild(avc(c.look,c.st,c.sh));row.appendChild(w)}
+  d.appendChild(row);d.appendChild(row.cloneNode(true));d.querySelectorAll('.kqpr')[1].querySelectorAll('canvas').forEach((cv,i)=>{const o=row.querySelectorAll('canvas')[i];cv.getContext('2d').drawImage(o,0,0)});
+  const sun=document.createElement('div');sun.className='kqsun';const am=avc('g',20,'#f2c230');sun.appendChild(am);sun.insertAdjacentHTML('beforeend','<small>天照大神</small>');d.appendChild(sun);
+  v.parentNode.insertBefore(d,v)}
+ // (2) 各ページの下：神さま・動物たちのひろば（ひとこと付き）
+ function plaza(){const v=document.getElementById('view');if(!v||v.querySelector('.kqplz'))return;if(typeof tab!=='undefined'&&tab==='cinema')return;
+  const base=(typeof tab==='string'?tab.length*13:0)+(ADMIN?500:0);const d=document.createElement('div');d.className='kqplz';d.setAttribute('aria-hidden','true');
+  let h='<div class="kqcl"></div><div class="kqcl b"></div>';d.innerHTML=h;
+  for(let i=0;i<5;i++){const c=pick(base+i);const w=document.createElement('div');w.className='kqpp'+(i===2?' big':'');w.style.left=(6+i*19)+'%';w.style.animationDelay=(-i*.4)+'s';
+   const b=document.createElement('span');b.className='kqbb';b.textContent=say(c,base+i);w.appendChild(b);w.appendChild(avc(c.look,c.st,c.sh));const n=document.createElement('small');n.textContent=c.name;w.appendChild(n);d.appendChild(w)}
+  v.appendChild(d)}
+ // (3) パソコンの左右の余白：野菜の勇者たちのあいだに、神さまと動物も
+ function sides(){document.querySelectorAll('.deco').forEach((dc,si)=>{if(dc.dataset.kq)return;dc.dataset.kq=1;
+  [[12,14],[52,34],[14,64],[46,90]].forEach(([x,y],i)=>{const c=pick(900+si*10+i);const w=document.createElement('div');w.className='dk kqdk';w.style.left=(si?100-x-12:x)+'%';w.style.top=y+'%';w.style.animationDelay=(-i*.5)+'s';
+   w.appendChild(avc(c.look,c.st,c.sh));const b=document.createElement('div');b.className='bb';b.textContent=say(c,900+si*10+i);w.appendChild(b);dc.appendChild(w)})})}
+ const _r=render;render=function(){const r=_r.apply(this,arguments);try{parade();plaza();sides()}catch(e){console.warn(e)}return r};
+ setTimeout(()=>{try{parade();plaza();sides()}catch(e){}},800);
 })();
 </script>
 </body>
