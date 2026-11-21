@@ -527,7 +527,7 @@ body.admnog header .whol>.dd,body.admnog #who{display:none!important}body.admnog
 .tmline{order:20;flex-basis:100%;margin-top:6px;border-color:#c2185b;background:#fff0f6;color:#8a1450;box-shadow:0 2px 0 #c2185b}.tmline.has{background:#ffe0ee;animation:tmp 1.6s ease-in-out infinite}@keyframes tmp{50%{box-shadow:0 2px 0 #c2185b,0 0 0 4px #ffb3d1}}
 .tmp{border:3px solid #c2185b!important;background:#fffafc}.tmp>summary b{color:#a0144e}.tmp>summary small{display:block;font-size:12px;color:#7a6070;font-weight:600}.tmnew{color:#c2185b;font-weight:900}
 .tmf{display:flex;flex-direction:column;gap:6px;margin:8px 0}.tmf label{display:flex;flex-direction:column;font-size:12px;font-weight:800;gap:2px}.tmf textarea{font:inherit;font-size:15px;border:2px solid #cfe3a8;border-radius:10px;padding:8px}
-.tmh4{margin:10px 0 4px;font-size:14px}.tmp .tml>li.tmi{display:block!important;flex-direction:column!important}.tmp .tmh{flex-direction:row!important}.tmp .tmh .tmk,.tmp .tmh .tmo{white-space:nowrap;flex:none!important;max-width:none!important;overflow:visible!important;width:auto!important}.tml{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}.tmi{background:#fff;border-radius:10px;border-left:6px solid #2f6d2a;padding:8px 10px}.tmi.own{background:#fff3f8}.tmi p{margin:4px 0 0;white-space:pre-wrap;line-height:1.55;font-weight:700;color:#33501a}
+.tmh4{margin:10px 0 4px;font-size:14px}.tmmode{display:flex;gap:6px;margin:8px 0 2px}.tmmode button{flex:1;font:inherit;font-weight:900;font-size:14px;border:2px solid #c2185b;background:#fff;color:#a0144e;border-radius:999px;padding:6px}.tmmode button.on{background:#c2185b;color:#fff}.tmg{background:#4f7d2a!important}.tmun{font:inherit;font-size:12px;font-weight:800;border:2px solid #e0457b;color:#c2185b;background:#fff;border-radius:999px;padding:2px 10px;margin-left:6px;cursor:pointer}.gtmp{margin-bottom:12px}.tmp .tml>li.tmi{display:block!important;flex-direction:column!important}.tmp .tmh{flex-direction:row!important}.tmp .tmh .tmk,.tmp .tmh .tmo{white-space:nowrap;flex:none!important;max-width:none!important;overflow:visible!important;width:auto!important}.tml{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}.tmi{background:#fff;border-radius:10px;border-left:6px solid #2f6d2a;padding:8px 10px}.tmi.own{background:#fff3f8}.tmi p{margin:4px 0 0;white-space:pre-wrap;line-height:1.55;font-weight:700;color:#33501a}
 .tmh{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;font-size:13px}.tmh small{margin-left:auto;color:#7a8460}.tmk,.tmo{color:#fff;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:900}.tmo{background:#c2185b}.tmr{display:block;margin-top:4px;color:#7a8460;font-size:12px}.tmsub{margin-top:8px}.tmsub>summary{font-weight:800;font-size:13px;cursor:pointer}
 </style>
 
@@ -2935,48 +2935,128 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
 </script>
 <script src="quest10.js"></script>
 <script>
-// ===== 💌 トレーナー同士の連絡（業務事項・メッセージ）v157（MITSUさん 2026-11-21）：Firestore trMsgs、トレーナーだけ読める =====
-(function(){if(typeof ADMIN==='undefined'||!ADMIN)return;
- let M=[],ok=0,busy=0,draft={to:'all',kind:'biz',text:''};
- const isTr=()=>window.AUTH&&AUTH.on&&AUTH.role==='trainer'&&window.firebase&&firebase.apps&&firebase.apps.length;
- const me=()=>TN(),KIND={biz:['📋','業務事項','#2f6d2a'],msg:['💬','メッセージ','#5b4b96'],iwai:['㊗','お祝いメッセージ','#e8452c'],thx:['😊','ありがとうございます','#f39a1e']};
- const forMe=x=>x.from!==me()&&(x.to==='all'||x.to===me());
- const unread=()=>M.filter(x=>forMe(x)&&!(x.read&&x.read[me()]));
+// ===== 💌 メッセージ v159（MITSUさん 2026-11-21）=====
+// トレーナー⇄トレーナー・前里光秀（Firestore trMsgs）、トレーナー⇄ゲスト（Firestore gMsgs）。送った本人は24時間以内なら「送信取消」→直して送り直せる。
+// ゲストは自分の分だけ。ゲストから前里光秀（サイト管理人）へは送れない。
+(function(){
+ const SITE='前里光秀',DAY=86400000;
+ const KIND={biz:['📋','業務事項','#2f6d2a'],msg:['💬','メッセージ','#5b4b96'],iwai:['㊗','お祝いメッセージ','#e8452c'],thx:['😊','ありがとうございます','#f39a1e']};
+ const fs=()=>firebase.firestore();
+ const ready=()=>window.AUTH&&AUTH.on&&AUTH.user&&window.firebase&&firebase.apps&&firebase.apps.length;
+ const isTr=()=>ready()&&AUTH.role==='trainer';
+ const isG=()=>ready()&&AUTH.role==='member'&&!ADMIN;
+ const me=()=>TN();
  const tt=t=>{const d=new Date(t);return `${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`};
- async function load(){if(!isTr()||busy)return;busy=1;try{const q=await firebase.firestore().collection('trMsgs').get();const a=[];q.forEach(d=>a.push(Object.assign({id:d.id},d.data())));M=a.sort((x,y)=>(y.t||0)-(x.t||0)).slice(0,200);ok=1}catch(e){console.warn('trMsgs',e);ok=-1}busy=0;line();panel(1)}
- function badge(){const b=document.getElementById('admBadge');if(!b)return;b.textContent=(window.AUTH&&AUTH.on&&AUTH.role==='trainer')?`${me()}専用管理ページ`:'トレーナー管理ページ'}
- function line(){let d=document.getElementById('tmline');if(!isTr()){if(d)d.remove();return}
+ const canUndo=x=>x.fromUid===(AUTH.user&&AUTH.user.uid)&&Date.now()-(x.t||0)<DAY;
+ const kindSel=(id,v)=>`<select id="${id}">${Object.entries(KIND).map(([k,a])=>`<option value="${k}" ${v===k?'selected':''}>${a[0]} ${a[1]}</option>`).join('')}</select>`;
+ const left=x=>{const h=Math.max(0,Math.ceil((DAY-(Date.now()-x.t))/3600000));return `あと${h}時間`};
+ let TM=[],GM=[],GU=[],ok=0,busy=0,started=0;
+ const D={mode:'tr',to:'all',g:'',kind:'biz',text:''};          // 管理ページの下書き
+ const GD={to:'',kind:'msg',text:''};                             // ゲスト画面の下書き
+
+ // ---------- 読みこみ ----------
+ async function load(){if(busy||!ready())return;busy=1;
+  try{if(isTr()){const a=await fs().collection('trMsgs').get();TM=[];a.forEach(d=>TM.push(Object.assign({id:d.id,_c:'trMsgs'},d.data())));
+     try{const b=await fs().collection('gMsgs').get();GM=[];b.forEach(d=>GM.push(Object.assign({id:d.id,_c:'gMsgs'},d.data())))}catch(e){console.warn('gMsgs',e);ok=-1;busy=0;draw(1);return}
+     if(!GU.length){try{const r=await fs().collection('roles').get();const u=[];r.forEach(d=>{const x=d.data();if(x.role==='member'&&!d.id.startsWith('g_'))u.push({uid:d.id,name:x.name||x.email||'（名前なし）',coach:x.coach||''})});GU=u.sort((p,q)=>p.name.localeCompare(q.name,'ja'))}catch(e){console.warn(e)}}}
+   else if(isG()){const b=await fs().collection('gMsgs').where('uid','==',AUTH.user.uid).get();GM=[];b.forEach(d=>GM.push(Object.assign({id:d.id,_c:'gMsgs'},d.data())))}
+   ok=1}catch(e){console.warn('msgs',e);ok=-1}
+  TM.sort((x,y)=>(y.t||0)-(x.t||0));GM.sort((x,y)=>(y.t||0)-(x.t||0));busy=0;draw(1)}
+ function start(){if(started||!ready())return;started=1;load();setInterval(load,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()})}
+
+ // ---------- 未読 ----------
+ const trIn=x=>x.from!==me()&&(x.to==='all'||x.to===me());
+ const gIn=x=>x.dir==='g2t'&&(x.tr==='all'||x.tr===me());
+ const unT=()=>TM.filter(x=>trIn(x)&&!(x.read&&x.read[me()])).concat(GM.filter(x=>gIn(x)&&!(x.readT&&x.readT[me()])));
+ const unG=()=>GM.filter(x=>x.dir==='t2g'&&!x.readG);
+ async function markRead(){const k=me();
+  if(isTr()){for(const x of TM.filter(x=>trIn(x)&&!(x.read&&x.read[k]))){x.read=Object.assign({},x.read,{[k]:Date.now()});try{await fs().collection('trMsgs').doc(x.id).update(new firebase.firestore.FieldPath('read',k),Date.now())}catch(e){console.warn(e)}}
+   for(const x of GM.filter(x=>gIn(x)&&!(x.readT&&x.readT[k]))){x.readT=Object.assign({},x.readT,{[k]:Date.now()});try{await fs().collection('gMsgs').doc(x.id).update(new firebase.firestore.FieldPath('readT',k),Date.now())}catch(e){console.warn(e)}}}
+  else if(isG()){for(const x of unG()){x.readG=Date.now();try{await fs().collection('gMsgs').doc(x.id).update({readG:x.readG})}catch(e){console.warn(e)}}}
+  draw(1)}
+
+ // ---------- 上の「新着」行 ----------
+ function line(){let d=document.getElementById('tmline');const on=isTr()||isG();if(!on){if(d)d.remove();return}
   if(!d){d=document.createElement('button');d.type='button';d.id='tmline';d.className='snline tmline'}
-  const U=unread(),n=U[0];
-  d.classList.toggle('has',!!U.length);
-  d.innerHTML=`<b>💌 トレーナーからの新着${U.length?'！':''}</b><span>${ok===-1?'ルールの貼りかえが必要です':n?`${n.owner?'📢 サイト管理人 ':''}${esc(n.from)}：${esc(n.text)}`:'トレーナー同士の連絡はここに届きます'}</span>${U.length?`<i class="nbadge in">${U.length}</i>`:''}`;
+  const U=isTr()?unT():unG(),n=U[0];d.classList.toggle('has',!!U.length);
+  const who=x=>x._c==='gMsgs'?(x.dir==='g2t'?`🙋 ${x.gname||'ゲスト'}さん`:`${x.from}トレーナー`):`${x.owner?'📢 サイト管理人 ':''}${x.from}`;
+  d.innerHTML=`<b>💌 トレーナーからの新着${U.length?'！':''}</b><span>${ok===-1?(isTr()?'ルールの貼りかえが必要です':'読みこめませんでした'):n?`${esc(who(n))}：${esc(n.text)}`:(isTr()?'トレーナー・ゲストからの連絡はここに届きます':'トレーナーからのメッセージはここに届きます')}</span>${U.length?`<i class="nbadge in">${U.length}</i>`:''}`;
+  if(isTr())d.querySelector('b').textContent=`💌 ${U.some(x=>x._c==='gMsgs')&&!U.some(x=>x._c==='trMsgs')?'ゲスト':'トレーナー'}からの新着${U.length?'！':''}`;
   const h=document.querySelector('header');if(h&&d.parentNode!==h)h.appendChild(d);
-  d.onclick=()=>{tab='guild';render();setTimeout(()=>{const p=document.getElementById('trmsg');if(p){p.open=true;p.scrollIntoView({behavior:'smooth',block:'start'});markRead()}},80)}}
- async function markRead(){const U=unread();if(!U.length)return;const k=me();for(const x of U){x.read=Object.assign({},x.read,{[k]:Date.now()});try{await firebase.firestore().collection('trMsgs').doc(x.id).update(new firebase.firestore.FieldPath('read',k),Date.now())}catch(e){console.warn(e)}}line();panel(1)}
- function item(x){const k=KIND[x.kind]||KIND.msg,mine=x.from===me(),rd=Object.keys(x.read||{});
-  return `<li class="tmi${x.owner?' own':''}${mine?' mine':''}" style="border-left-color:${x.owner?'#c2185b':k[2]}">
-   <div class="tmh">${x.owner?'<span class="tmo">📢 サイト管理人から</span>':''}<span class="tmk" style="background:${k[2]}">${k[0]} ${k[1]}</span><b>${esc(x.from)}</b> → ${x.to==='all'?'トレーナー全員':esc(x.to)}<small>${tt(x.t)}</small></div>
-   <p>${esc(x.text)}</p>${mine?`<small class="tmr">${rd.length?'👀 読んだ人：'+rd.map(esc).join('・'):'まだだれも読んでいません'}</small>`:''}</li>`}
- function panel(re){const v=document.getElementById('view');if(!v||tab!=='guild'||!isTr())return;let d=document.getElementById('trmsg');if(d&&!re)return;
+  d.onclick=()=>{tab=ADMIN?'guild':'hero';render();setTimeout(()=>{const p=document.getElementById('trmsg');if(p){p.open=true;p.scrollIntoView({behavior:'smooth',block:'start'});markRead()}},80)}}
+ function badge(){if(!ADMIN)return;const b=document.getElementById('admBadge');if(!b)return;b.textContent=(window.AUTH&&AUTH.on&&AUTH.role==='trainer')?`${me()}専用管理ページ`:'トレーナー管理ページ'}
+
+ // ---------- 1件の表示 ----------
+ function item(x,mine){const k=KIND[x.kind]||KIND.msg,isGm=x._c==='gMsgs';
+  let head;if(isGm)head=x.dir==='t2g'?`<b>${esc(x.from)}</b> → ${ADMIN?'🙋 '+esc(x.gname||'')+'さん':'あなた'}`:`${ADMIN?'🙋 <b>'+esc(x.gname||'')+'さん</b>':'<b>あなた</b>'} → ${x.tr==='all'?'トレーナー全員':esc(x.tr)}`;
+  else head=`<b>${esc(x.from)}</b> → ${x.to==='all'?'トレーナー全員':esc(x.to)}`;
+  let rd='';if(mine){if(isGm){rd=x.dir==='t2g'?(x.readG?'👀 読みました':'まだ読まれていません'):(Object.keys(x.readT||{}).length?'👀 読んだ人：'+Object.keys(x.readT).map(esc).join('・'):'まだ読まれていません')}else{const r=Object.keys(x.read||{});rd=r.length?'👀 読んだ人：'+r.map(esc).join('・'):'まだだれも読んでいません'}}
+  return `<li class="tmi${x.owner?' own':''}${isGm?' gm':''}" style="border-left-color:${x.owner?'#c2185b':k[2]}">
+   <div class="tmh">${x.owner?'<span class="tmo">📢 サイト管理人から</span>':''}${isGm&&ADMIN?'<span class="tmo tmg">🙋 ゲスト</span>':''}<span class="tmk" style="background:${k[2]}">${k[0]} ${k[1]}</span>${head}<small>${tt(x.t)}</small></div>
+   <p>${esc(x.text)}</p>${mine?`<div class="tmr">${rd}${canUndo(x)?` <button type="button" class="tmun" data-un="${x._c}:${esc(x.id)}">↩ 送信取消（${left(x)}）</button>`:''}</div>`:''}</li>`}
+ async function undo(key,setDraft){const [c,id]=key.split(':');const L=c==='trMsgs'?TM:GM,x=L.find(y=>y.id===id);if(!x)return;
+  if(!confirm('この送信を取り消しますか？\n（取り消したあと、直して送り直せます）'))return;
+  try{await fs().collection(c).doc(id).delete();L.splice(L.indexOf(x),1);setDraft(x);toast('↩ 送信を取り消しました。直して送り直せます');draw(1);
+   setTimeout(()=>{const t=document.getElementById(ADMIN?'tmtx':'gmtx');if(t){t.focus();t.scrollIntoView({behavior:'smooth',block:'center'})}},120)}
+  catch(e){alert('取り消せませんでした：'+(e.code||e.message)+'\n（送ってから24時間をすぎると取り消せません）')}}
+
+ // ---------- 管理ページ ----------
+ function panelA(re){const v=document.getElementById('view');if(!v||tab!=='guild'||!isTr())return;let d=document.getElementById('trmsg');if(d&&!re)return;
   if(!d){d=document.createElement('details');d.id='trmsg';d.className='acct tmp';const y=document.getElementById('yoy');y?y.before(d):v.insertBefore(d,v.firstChild);d.addEventListener('toggle',()=>{if(d.open)markRead()})}
-  const U=unread(),mine=M.filter(x=>x.from===me()),inbox=M.filter(forMe),op=d.open;
-  d.innerHTML=`<summary><b>💌 トレーナー同士の連絡</b>${U.length?` <i class="nbadge in">${U.length}</i> <span class="tmnew">新着あり！</span>`:''}<small>業務事項・メッセージ（ゲストには見えません）</small></summary>
-   <div class="tmf"><label>あて先<select id="tmto"><option value="all">トレーナー全員</option>${TRAINERS.filter(t=>t!==me()).map(t=>`<option ${draft.to===t?'selected':''}>${esc(t)}</option>`).join('')}</select></label>
-    <label>種類<select id="tmkd">${Object.entries(KIND).map(([k,v])=>`<option value="${k}" ${draft.kind===k?'selected':''}>${v[0]} ${v[1]}</option>`).join('')}</select></label>
-    <textarea id="tmtx" rows="3" maxlength="1000" placeholder="例：明日の朝、3Bスタジオのマットを入れかえます">${esc(draft.text)}</textarea>
-    <button type="button" class="btn-main" id="tmsend">${AUTH.owner?'📢 サイト管理人として送る':'💌 送る'}（${esc(me())}から）</button></div>
-   ${ok===-1?'<p class="muted">読みこめませんでした。Firebaseのルール（trMsgs）の貼りかえが必要です。</p>':''}
-   <h4 class="tmh4">📥 届いた連絡（${inbox.length}件）</h4><ul class="tml">${inbox.slice(0,50).map(item).join('')||'<li class="muted">まだ届いていません</li>'}</ul>
-   <details class="tmsub"><summary>📤 送った連絡（${mine.length}件）</summary><ul class="tml">${mine.slice(0,50).map(item).join('')||'<li class="muted">まだ送っていません</li>'}</ul></details>`;
+  const op=d.open,U=unT(),uid=AUTH.user.uid;
+  const inbox=TM.filter(trIn).concat(GM.filter(gIn)).sort((a,b)=>b.t-a.t),sent=TM.filter(x=>x.fromUid===uid||(!x.fromUid&&x.from===me())).concat(GM.filter(x=>x.dir==='t2g'&&x.fromUid===uid)).sort((a,b)=>b.t-a.t);
+  const trOpts=`<option value="all">トレーナー全員</option>${TRAINERS.filter(t=>t!==me()).map(t=>`<option ${D.to===t?'selected':''}>${esc(t)}${t===SITE?'（サイト管理人）':''}</option>`).join('')}`;
+  const gOpts=`<option value="">ゲストをえらぶ</option>${GU.map(g=>`<option value="${esc(g.uid)}" ${D.g===g.uid?'selected':''}>${esc(g.name)}${g.coach?'（担当 '+esc(g.coach)+'）':''}</option>`).join('')}`;
+  d.innerHTML=`<summary><b>💌 メッセージ・連絡</b>${U.length?` <i class="nbadge in">${U.length}</i> <span class="tmnew">新着あり！</span>`:''}<small>トレーナー同士・サイト管理人・ゲストとのやりとり</small></summary>
+   <div class="tmmode"><button type="button" data-md="tr" class="${D.mode==='tr'?'on':''}">👔 トレーナーへ</button><button type="button" data-md="g" class="${D.mode==='g'?'on':''}">🙋 ゲストへ</button></div>
+   <div class="tmf">${D.mode==='tr'?`<label>あて先<select id="tmto">${trOpts}</select></label>`:`<label>あて先のゲスト<select id="tmg">${gOpts}</select></label>${GU.length?'':'<small class="muted">登録ずみのゲストがまだいません</small>'}`}
+    <label>種類${kindSel('tmkd',D.kind)}</label>
+    <textarea id="tmtx" rows="3" maxlength="1000" placeholder="${D.mode==='tr'?'例：明日の朝、3Bスタジオのマットを入れかえます':'例：今日のトレーニングおつかれさまでした！'}">${esc(D.text)}</textarea>
+    <button type="button" class="btn-main" id="tmsend">${AUTH.owner?'📢 サイト管理人として送る':'💌 送る'}（${esc(me())}から）</button>
+    <small class="muted">送ってから24時間以内なら「送信取消」で取り消して、直して送り直せます。</small></div>
+   ${ok===-1?'<p class="muted">読みこめませんでした。Firebaseのルール（trMsgs・gMsgs）の貼りかえが必要です。</p>':''}
+   <h4 class="tmh4">📥 届いた連絡（${inbox.length}件）</h4><ul class="tml">${inbox.slice(0,60).map(x=>item(x,false)).join('')||'<li class="muted">まだ届いていません</li>'}</ul>
+   <details class="tmsub" ${D.sentOpen?'open':''}><summary>📤 送った連絡（${sent.length}件）</summary><ul class="tml">${sent.slice(0,60).map(x=>item(x,true)).join('')||'<li class="muted">まだ送っていません</li>'}</ul></details>`;
   if(d.open!==op)d.open=op;
-  const g=id=>d.querySelector('#'+id);g('tmto').value=draft.to;
-  g('tmto').onchange=e=>draft.to=e.target.value;g('tmkd').onchange=e=>draft.kind=e.target.value;g('tmtx').oninput=e=>draft.text=e.target.value;
-  g('tmsend').onclick=async()=>{const text=draft.text.trim();if(!text){alert('内容を書いてください');return}const b=g('tmsend');b.disabled=true;
-   const it={from:me(),owner:!!AUTH.owner,to:draft.to,kind:draft.kind,text,t:Date.now(),read:{}};
-   try{const r=await firebase.firestore().collection('trMsgs').add(it);M.unshift(Object.assign({id:r.id},it));draft.text='';toast(`💌 ${draft.to==='all'?'トレーナー全員':draft.to}に送りました`);panel(1)}catch(e){alert('送れませんでした：'+(e.code||e.message)+'\nFirebaseのルールの貼りかえが必要かもしれません');b.disabled=false}}}
- const _r=render;render=function(){const r=_r.apply(this,arguments);try{badge();line();panel()}catch(e){console.warn(e)}return r};
- let started=0;function start(){if(started||!isTr())return;started=1;load();setInterval(load,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()})}
- setInterval(()=>{if(!started)start();else{badge()}},1000);
+  const g=id=>d.querySelector('#'+id);
+  d.querySelectorAll('[data-md]').forEach(b=>b.onclick=()=>{D.mode=b.dataset.md;panelA(1)});
+  if(g('tmto'))g('tmto').onchange=e=>D.to=e.target.value;if(g('tmg'))g('tmg').onchange=e=>D.g=e.target.value;
+  g('tmkd').onchange=e=>D.kind=e.target.value;g('tmtx').oninput=e=>D.text=e.target.value;
+  d.querySelector('.tmsub').addEventListener('toggle',e=>D.sentOpen=e.target.open);
+  d.querySelectorAll('[data-un]').forEach(b=>b.onclick=()=>undo(b.dataset.un,x=>{if(x._c==='gMsgs'){D.mode='g';D.g=x.uid}else{D.mode='tr';D.to=x.to}D.kind=x.kind;D.text=x.text}));
+  g('tmsend').onclick=async()=>{const text=D.text.trim();if(!text){alert('内容を書いてください');return}const b=g('tmsend');
+   let c,it;if(D.mode==='tr'){c='trMsgs';it={from:me(),fromUid:uid,owner:!!AUTH.owner,to:D.to,kind:D.kind,text,t:Date.now(),read:{}}}
+   else{const gu=GU.find(x=>x.uid===D.g);if(!gu){alert('あて先のゲストをえらんでください');return}c='gMsgs';it={uid:gu.uid,gname:gu.name,dir:'t2g',from:me(),fromUid:uid,owner:!!AUTH.owner,tr:me(),kind:D.kind,text,t:Date.now(),readG:0,readT:{}}}
+   b.disabled=true;try{const r=await fs().collection(c).add(it);(c==='trMsgs'?TM:GM).unshift(Object.assign({id:r.id,_c:c},it));D.text='';D.sentOpen=true;toast(`💌 ${c==='gMsgs'?it.gname+'さん':(D.to==='all'?'トレーナー全員':D.to)}に送りました`);panelA(1)}
+   catch(e){alert('送れませんでした：'+(e.code||e.message)+'\nFirebaseのルールの貼りかえが必要かもしれません');b.disabled=false}}}
+
+ // ---------- ゲスト画面 ----------
+ function panelG(re){const v=document.getElementById('view');if(!v||tab!=='hero'||!isG())return;let d=document.getElementById('trmsg');if(d&&!re)return;
+  if(!d){d=document.createElement('details');d.id='trmsg';d.className='acct tmp gtmp';const y=document.getElementById('gyoy');y?y.after(d):v.insertBefore(d,v.firstChild);d.addEventListener('toggle',()=>{if(d.open)markRead()})}
+  const op=d.open,U=unG(),uid=AUTH.user.uid;
+  const coach=(()=>{try{const x=S.members.find(y=>y.id==='me');return x&&x.coach||''}catch(e){return ''}})();
+  const TRS=TRAINERS.filter(t=>t!==SITE);if(!GD.to)GD.to=TRS.includes(coach)?coach:'all';
+  const L=GM.slice().sort((a,b)=>b.t-a.t);
+  d.innerHTML=`<summary><b>💌 トレーナーとのメッセージ</b>${U.length?` <i class="nbadge in">${U.length}</i> <span class="tmnew">新着あり！</span>`:''}<small>トレーナーにメッセージを送れます（ほかのゲストには見えません）</small></summary>
+   <div class="tmf"><label>あて先<select id="gmto"><option value="all" ${GD.to==='all'?'selected':''}>トレーナー全員</option>${TRS.map(t=>`<option ${GD.to===t?'selected':''}>${esc(t)}${t===coach?'（担当）':''}</option>`).join('')}</select></label>
+    <label>種類${kindSel('gmkd',GD.kind)}</label>
+    <textarea id="gmtx" rows="3" maxlength="1000" placeholder="例：来週の予約、時間を相談したいです">${esc(GD.text)}</textarea>
+    <button type="button" class="btn-main" id="gmsend">💌 送る</button><small class="muted">送ってから24時間以内なら「送信取消」で取り消して、直して送り直せます。</small></div>
+   ${ok===-1?'<p class="muted">読みこめませんでした。少したってから開き直してください。</p>':''}
+   <ul class="tml">${L.slice(0,60).map(x=>item(x,x.dir==='g2t')).join('')||'<li class="muted">まだメッセージはありません</li>'}</ul>`;
+  if(d.open!==op)d.open=op;
+  const g=id=>d.querySelector('#'+id);
+  g('gmto').onchange=e=>GD.to=e.target.value;g('gmkd').onchange=e=>GD.kind=e.target.value;g('gmtx').oninput=e=>GD.text=e.target.value;
+  d.querySelectorAll('[data-un]').forEach(b=>b.onclick=()=>undo(b.dataset.un,x=>{GD.to=x.tr;GD.kind=x.kind;GD.text=x.text}));
+  g('gmsend').onclick=async()=>{const text=GD.text.trim();if(!text){alert('内容を書いてください');return}if(GD.to===SITE){alert('このあて先には送れません');return}
+   let gname='';try{gname=(S.members.find(y=>y.id==='me')||{}).name||AUTH.name||''}catch(e){}
+   const it={uid,gname,dir:'g2t',from:gname,fromUid:uid,owner:false,tr:GD.to,kind:GD.kind,text,t:Date.now(),readG:0,readT:{}};const b=g('gmsend');b.disabled=true;
+   try{const r=await fs().collection('gMsgs').add(it);GM.unshift(Object.assign({id:r.id,_c:'gMsgs'},it));GD.text='';toast(`💌 ${GD.to==='all'?'トレーナー全員':GD.to+'トレーナー'}に送りました`);panelG(1)}
+   catch(e){alert('送れませんでした：'+(e.code||e.message));b.disabled=false}}}
+
+ function draw(re){try{badge();line();if(ADMIN)panelA(re);else panelG(re)}catch(e){console.warn(e)}}
+ const _r=render;render=function(){const r=_r.apply(this,arguments);draw(0);return r};
+ setInterval(()=>{if(!started)start();else badge()},1000);
 })();
 </script>
 </body>
