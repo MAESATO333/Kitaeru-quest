@@ -563,6 +563,16 @@ body.admnog header .whol>.dd,body.admnog #who{display:none!important}body.admnog
 .grlf{display:flex;flex-direction:column;gap:6px}.grlf select,.grlf textarea{font:inherit;font-size:14px;border:2px solid #d9c6e8;border-radius:10px;padding:6px}
 .grll{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}.grll li{display:block!important;background:#fff;border-radius:8px;padding:6px 8px;font-size:14px}.grll li small{all:unset;font-size:12px;color:#6f5a7c;font-weight:700}.grll li .phdel{float:right}
 .grbulk{margin-top:10px}.grbulk>summary{font-weight:800;cursor:pointer;color:#2f6d2a}.gradd{display:flex;gap:6px;margin:8px 0;flex-wrap:wrap}.gradd input{flex:1 1 160px;width:auto}.grbulk textarea{width:100%;box-sizing:border-box;font:inherit;font-size:14px;border:2px solid #cfe3a8;border-radius:10px;padding:8px}.grpv{background:#fff8d6;border-radius:10px;padding:8px;margin-top:6px;font-size:13px;line-height:1.7}
+.gsv{display:flex;flex-direction:column;gap:10px;margin:0 0 12px}.gsvc{background:#fff;border:3px solid #cfe3a8;border-radius:16px;padding:10px 12px}.gsvc>summary,.gsvc>b{cursor:pointer;display:block}.gsvc>summary b,.gsvc>b{font-size:16px;color:#2f6d2a}.gsvc small{display:block;font-size:12px;color:#6f7a5c}
+.gsvc.svq{border-color:#f5a524;background:#fffaf0}.gsvc.tev{border-color:#b9a3c9}.gsvc.tev>summary b{color:#5b2f7a}.gsvc.dir{border-color:#9b2f5e}.gsvc.dir>summary b{color:#9b2f5e}
+.gsvc textarea,.gsvc select,.ownp input,.ownp textarea{font:inherit;font-size:15px;border:2px solid #cfe3a8;border-radius:10px;padding:8px;width:100%;box-sizing:border-box;margin:6px 0}
+.svqq{margin:8px 0;padding:6px 0;border-bottom:1px dashed #e3ecd2}.svqq p{margin:0 0 4px;font-size:14px}
+.tvst{display:flex;align-items:center;gap:2px;flex-wrap:wrap}.tvst button{font-size:28px;line-height:1;background:none;border:0;color:#d9d9d9;cursor:pointer;padding:2px}.tvst button.on{color:#f5a524}.tvst small{display:inline!important;margin-left:6px;font-weight:700}
+.ownp{border:3px solid #c99a00!important;background:#fffbea}.ownp>summary b{color:#8a6a00}.ownp>summary small{display:block;font-size:12px;color:#6f7a5c;font-weight:600}
+.oq{background:#fff;border-radius:10px;padding:8px;margin:6px 0}.oav{float:right;font-size:20px;font-weight:900;color:#2f6d2a}.odr{display:flex;align-items:center;gap:6px;font-size:12px}.odr small:first-child{width:28px;flex:none}
+.obar{flex:1;height:12px;background:#eef3e4;border-radius:6px;overflow:hidden;display:block}.obar>i{display:block;height:100%;border-radius:6px}
+.odir{list-style:none;margin:6px 0;padding:0;display:flex;flex-direction:column;gap:6px}.odir li{display:block!important;background:#fff;border-radius:10px;padding:8px;font-size:14px}.odir li.new{border:2px solid #9b2f5e}.odir li small{all:unset;font-size:12px;color:#6f7a5c;font-weight:700}.odir li .btn-sub{float:right;font-size:12px;padding:3px 8px}
+.dirline{display:block;width:100%;font:inherit;font-size:13px;font-weight:800;background:#9b2f5e;color:#fff;border:0;padding:6px;cursor:pointer}
 </style>
 
 </head>
@@ -3338,6 +3348,122 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
     try{for(const x of L){const ex=G.find(g=>norm(g.name)===norm(x.name));if(!ex){const r=await fs().collection('guests').add({name:x.name,coach:x.coach,by:TN(),t:Date.now()});G.push({id:r.id,name:x.name,coach:x.coach});n++}else if(ex.coach!==x.coach&&x.coach&&canCoach(ex)){await fs().collection('guests').doc(ex.id).update({coach:x.coach,by:TN(),t:Date.now()});ex.coach=x.coach;u++}}
      toast(`👥 ${n}人を登録、${u}人の担当を書きかえました`);b.querySelector('#grbt').value='';draw(0)}catch(e){alert('途中で止まりました：'+(e.code||e.message)+`\n（${n}人まで登録ずみ）`);draw(1)}}}}
  let pre=0;const _r=render;render=function(){const r=_r.apply(this,arguments);try{panel();if(!pre&&ready()){pre=1;load().then(()=>{if(tab==='guild'&&!document.getElementById('gros')?.open)render();else try{badge()}catch(e){}})}}catch(e){console.warn(e)}return r};
+})();
+</script>
+<script>
+// ===== v164：GYM満足度アンケート・トレーナー評価・運営代表責任者への直通フォーム（MITSUさん 2026-11-21）=====
+// 結果・評価・直通メッセージは Firestore のルールで「サイト管理人（前里光秀）」だけが読める
+(function(){
+ const fs=()=>firebase.firestore();
+ const ready=()=>window.AUTH&&AUTH.on&&AUTH.user&&window.firebase&&firebase.apps&&firebase.apps.length;
+ const isGuest=()=>ready()&&!ADMIN&&AUTH.role==='member';
+ const isOwn=()=>ready()&&ADMIN&&AUTH.owner;
+ const ymdL=t=>{const d=new Date(t);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+ const dt=t=>{const d=new Date(t);return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`};
+ // トレーナー評価の5項目（MITSUさんの確認待ち：案A）
+ window.TEV_ITEMS=window.TEV_ITEMS||[['exp','説明のわかりやすさ','やり方や目的を、わかりやすく教えてくれた'],['care','体調への気づかい','その日の体調やケガに気を配ってくれた'],['fit','強さ・メニューのちょうどよさ','きつすぎず、ゆるすぎず、ちょうどよかった'],['cheer','声かけ・はげまし','やる気が出る声かけがあった'],['again','また受けたい度','このトレーナーのトレーニングを、また受けたい']];
+ const SURVEY_TPL=`総合的に、333GYMに満足していますか
+トレーナーの対応はいかがですか
+施設・スタジオの清潔さはいかがですか
+予約のとりやすさはいかがですか
+健康管理室・看護師がいる安心感はありますか
+アプリ「キタエル・クエスト」は楽しいですか
+料金に納得していますか
+これからも続けたいと思いますか
+友だちや家族に333GYMをすすめたいですか
+✏ よかったこと・改善してほしいことを自由に書いてください`;
+ const parseQs=t=>String(t).split(/\r?\n/).map(x=>x.trim()).filter(Boolean).map((x,i)=>/^✏/.test(x)?{k:'q'+i,label:x.replace(/^✏\s*/,''),type:'text'}:{k:'q'+i,label:x,type:'scale5'});
+ const stars=(name,val)=>`<div class="tvst" data-n="${name}">${[1,2,3,4,5].map(v=>`<button type="button" data-v="${v}" class="${val>=v?'on':''}">★</button>`).join('')}<small>${val?['','とても不満','不満','ふつう','満足','とても満足'][val]:'えらんでね'}</small></div>`;
+ function bindStars(root,state){root.querySelectorAll('.tvst').forEach(w=>w.querySelectorAll('button').forEach(b=>b.onclick=()=>{state[w.dataset.n]=+b.dataset.v;w.outerHTML=stars(w.dataset.n,state[w.dataset.n]);bindStars(root,state)}))}
+
+ // ---------- ゲスト画面 ----------
+ let SV=null,svT=0;
+ async function loadSv(){if(SV&&Date.now()-svT<5*60000)return;svT=Date.now();try{const q=await fs().collection('surveys').where('open','==',true).get();SV=[];q.forEach(d=>SV.push(Object.assign({id:d.id},d.data())))}catch(e){SV=[]}}
+ async function guestBox(){if(!isGuest()||tab!=='hero')return;const v=document.getElementById('view');if(!v||document.getElementById('gsv'))return;
+  const m=me();if(!m)return;const s=document.createElement('section');s.id='gsv';s.className='gsv';const a=document.getElementById('trmsg')||document.getElementById('gyoy');a?a.after(s):v.insertBefore(s,v.firstChild);
+  await loadSv();if(!document.body.contains(s))return;m.svDone=m.svDone||{};m.tevDone=m.tevDone||{};
+  const td=ymdL(Date.now()),cameToday=((m.inAt||{})[td])||(m.visits||[]).includes(td),coach=(window.coachOf&&coachOf(m))||'',evd=m.tevDone[td]||[];
+  const sv=(SV||[]).filter(x=>!m.svDone[x.id]);
+  s.innerHTML=`${sv.map(x=>`<div class="gsvc svq" data-sv="${esc(x.id)}"><b>📋 ${esc(x.title)}</b><small>333GYMからのアンケートです（${x.qs.length}問）。答えは運営代表責任者だけが読みます。</small><button type="button" class="btn-main" data-svo="${esc(x.id)}">こたえる</button><div class="svf"></div></div>`).join('')}
+   <details class="gsvc tev" ${cameToday&&!evd.length?'open':''}><summary><b>⭐ 今日のトレーナー評価</b><small>${evd.length?'今日は評価ずみです。ありがとう！':cameToday?'今日のトレーニングはどうでしたか？（1分でおわります）':'トレーニングのあとに、5段階でつけてください'}</small></summary><div id="tevf"></div></details>
+   <details class="gsvc dir"><summary><b>📮 運営代表責任者への直通フォーム</b><small>前里光秀（運営代表責任者）だけが読みます。トレーナー・健康管理室・ほかのゲストには見えません。</small></summary><div id="dirf"></div></details>`;
+  s.querySelectorAll('[data-svo]').forEach(b=>b.onclick=()=>{const x=SV.find(y=>y.id===b.dataset.svo),box=b.parentNode.querySelector('.svf'),st={};b.remove();
+   const draw=()=>{box.innerHTML=`${x.qs.map((q,i)=>`<div class="svqq"><p><b>Q${i+1}.</b> ${esc(q.label)}</p>${q.type==='text'?`<textarea data-tk="${q.k}" rows="3" maxlength="1000"></textarea>`:stars(q.k,st[q.k]||0)}</div>`).join('')}<button type="button" class="btn-main svsend">送信する</button>`;bindStars(box,st);
+    box.querySelector('.svsend').onclick=async()=>{const miss=x.qs.filter(q=>q.type!=='text'&&!st[q.k]);if(miss.length){toast(`まだ答えていない質問があります（${miss.length}問）`);return}
+     const a=Object.assign({},st);box.querySelectorAll('[data-tk]').forEach(t=>{if(t.value.trim())a[t.dataset.tk]=t.value.trim()});
+     try{await fs().collection('surveyAns').doc(x.id+'_'+AUTH.user.uid).set({sid:x.id,uid:AUTH.user.uid,name:m.name,a,t:Date.now()});m.svDone[x.id]=Date.now();save();toast('📋 ありがとうございました！');s.remove();guestBox()}catch(e){alert('送れませんでした：'+(e.code||e.message))}}};
+    const ob=bindStars;draw()});
+  // トレーナー評価
+  {const f=s.querySelector('#tevf'),st={};const TR=(window.TEAM_TRAINERS||TRAINERS).filter(t=>t!==SITE_ADMIN);
+   const draw=()=>{f.innerHTML=`<label>今日のトレーナー<select id="tevtr">${TRAINERS.filter(t=>t!==SITE_ADMIN).map(t=>`<option ${t===(st._tr||coach)?'selected':''} ${evd.includes(t)?'disabled':''}>${esc(t)}</option>`).join('')}</select></label>
+     ${TEV_ITEMS.map(([k,l,d])=>`<div class="svqq"><p><b>${esc(l)}</b><br><small>${esc(d)}</small></p>${stars(k,st[k]||0)}</div>`).join('')}
+     <textarea id="tevc" rows="2" maxlength="500" placeholder="ひとこと（なくてもOK）"></textarea><button type="button" class="btn-main" id="tevs">⭐ 評価を送る</button><small class="muted">評価は運営代表責任者だけが見ます。トレーナー本人には、名前が分からない形でまとめて伝えます。</small>`;bindStars(f,st);
+    f.querySelector('#tevtr').onchange=e=>{st._tr=e.target.value};
+    f.querySelector('#tevs').onclick=async()=>{const tr=f.querySelector('#tevtr').value;const miss=TEV_ITEMS.filter(([k])=>!st[k]);if(miss.length){toast(`★をあと${miss.length}つ えらんでください`);return}if(evd.includes(tr)){toast('このトレーナーは今日評価ずみです');return}
+     const sc={};TEV_ITEMS.forEach(([k])=>sc[k]=st[k]);try{await fs().collection('trEval').add({uid:AUTH.user.uid,name:m.name,tr,date:td,s:sc,items:TEV_ITEMS.map(x=>x[1]),comment:f.querySelector('#tevc').value.trim(),t:Date.now()});
+      m.tevDone[td]=evd.concat(tr);Object.keys(m.tevDone).sort().slice(0,-30).forEach(k=>delete m.tevDone[k]);save();toast('⭐ 評価を送りました。ありがとう！');s.remove();guestBox()}catch(e){alert('送れませんでした：'+(e.code||e.message))}}};
+   draw()}
+  // 直通フォーム
+  {const f=s.querySelector('#dirf');const K=['ご意見','ご要望','ご相談','トレーナーについて','その他'];
+   f.innerHTML=`<label>種類<select id="dirk">${K.map(k=>`<option>${k}</option>`).join('')}</select></label><textarea id="dirt" rows="5" maxlength="3000" placeholder="運営代表責任者へ、直接伝えたいことを書いてください。"></textarea><button type="button" class="btn-main" id="dirs">📮 運営代表責任者に送る</button>
+    <small class="muted">送った内容は、前里光秀だけが読めます（トレーナー・健康管理室・ほかのゲストは読めません）。返事が必要なときは、前里からご連絡します。</small>
+    ${(m.dirSent||[]).length?`<p class="muted" style="font-size:12px">この端末から送ったもの：${(m.dirSent||[]).slice(-5).reverse().map(x=>`<br>・${dt(x.t)} ${esc(x.k)}`).join('')}</p>`:''}`;
+   f.querySelector('#dirs').onclick=async()=>{const t=f.querySelector('#dirt').value.trim();if(!t){toast('内容を書いてください');return}if(!confirm('運営代表責任者（前里光秀）に送りますか？'))return;const k=f.querySelector('#dirk').value;
+    try{await fs().collection('direct').add({uid:AUTH.user.uid,name:m.name,kind:k,text:t,t:Date.now(),read:false});m.dirSent=(m.dirSent||[]).concat({t:Date.now(),k}).slice(-20);save();toast('📮 送りました。ありがとうございます');f.querySelector('#dirt').value='';s.remove();guestBox()}catch(e){alert('送れませんでした：'+(e.code||e.message))}}}
+ }
+
+ // ---------- 管理ページ：サイト管理人だけ ----------
+ let D={sv:[],ans:[],ev:[],dir:[],err:''},otab='sv',curSv='';
+ async function loadOwn(){D.err='';const g=async c=>{const q=await fs().collection(c).get(),a=[];q.forEach(d=>a.push(Object.assign({id:d.id},d.data())));return a};
+  for(const [k,c] of [['sv','surveys'],['ans','surveyAns'],['ev','trEval'],['dir','direct']]){try{D[k]=await g(c)}catch(e){D[k]=[];D.err=e.code||'err'}}
+  D.sv.sort((a,b)=>b.t-a.t);D.dir.sort((a,b)=>b.t-a.t);D.ev.sort((a,b)=>b.t-a.t)}
+ function bar(v,max,col){return `<i class="obar"><i style="width:${max?Math.round(v/max*100):0}%;background:${col||'#2f6d2a'}"></i></i>`}
+ function svStats(sv){const A=D.ans.filter(a=>a.sid===sv.id);return {A,qs:sv.qs.map(q=>{if(q.type==='text')return {q,texts:A.map(a=>a.a&&a.a[q.k]).filter(Boolean)};const vals=A.map(a=>a.a&&a.a[q.k]).filter(x=>x>=1);const dist=[1,2,3,4,5].map(v=>vals.filter(x=>x===v).length);return {q,n:vals.length,avg:vals.length?vals.reduce((p,c)=>p+c,0)/vals.length:0,dist}})}}
+ function evStats(list){const by={};list.forEach(e=>{(by[e.tr]=by[e.tr]||[]).push(e)});return Object.entries(by).map(([tr,L])=>{const it=TEV_ITEMS.map(([k])=>{const v=L.map(e=>e.s&&e.s[k]).filter(x=>x>=1);return v.length?v.reduce((p,c)=>p+c,0)/v.length:0});return {tr,n:L.length,it,avg:it.reduce((p,c)=>p+c,0)/it.length,L}}).sort((a,b)=>b.avg-a.avg)}
+ function svgBars(rows,max){const H=26*rows.length+10;return `<svg viewBox="0 0 520 ${H}" style="width:100%;max-width:640px">${rows.map((r,i)=>`<text x="0" y="${i*26+18}" font-size="12" fill="#333">${esc(r[0]).slice(0,22)}</text><rect x="250" y="${i*26+6}" width="${Math.max(2,r[1]/max*230)}" height="16" rx="4" fill="${r[2]||'#4f7d2a'}"/><text x="${256+Math.max(2,r[1]/max*230)}" y="${i*26+18}" font-size="12" font-weight="700" fill="#333">${r[3]||r[1]}</text>`).join('')}</svg>`}
+ function report(kind){// トレーナーに見せる分析資料（印刷・PDF保存できる。ゲストの名前は出さない）
+  let body='',title='';
+  if(kind==='sv'){const sv=D.sv.find(x=>x.id===curSv);if(!sv)return;const st=svStats(sv);title=`${sv.title} 分析資料`;const sc=st.qs.filter(x=>x.q.type!=='text');const all=sc.length?sc.reduce((p,c)=>p+c.avg,0)/sc.length:0;const top=sc.slice().sort((a,b)=>b.avg-a.avg);
+   body=`<p class="m">実施：${dt(sv.t)}〜　回答 <b>${st.A.length}人</b>　全体の平均 <b>${all.toFixed(2)}</b> / 5</p>
+    <h2>質問ごとの平均（5段階）</h2>${svgBars(sc.map(x=>[x.q.label,+x.avg.toFixed(2),x.avg>=4?'#2f6d2a':x.avg>=3?'#e0a100':'#d9452b']),5)}
+    <h2>まとめ</h2><ul><li>よく評価されている点：${top.filter(x=>x.avg>=4).slice(0,3).map(x=>`「${esc(x.q.label)}」(${x.avg.toFixed(2)})`).join('、')||'—'}</li><li>のびしろがある点：${top.filter(x=>x.avg<4).reverse().slice(0,3).map(x=>`「${esc(x.q.label)}」(${x.avg.toFixed(2)})`).join('、')||'—'}</li><li>満足（4・5）の割合：${sc.map(x=>`${esc(x.q.label).slice(0,10)} ${x.n?Math.round((x.dist[3]+x.dist[4])/x.n*100):0}%`).join('／')}</li></ul>
+    <h2>回答の分布</h2><table><tr><th>質問</th><th>★1</th><th>★2</th><th>★3</th><th>★4</th><th>★5</th><th>平均</th></tr>${sc.map(x=>`<tr><td>${esc(x.q.label)}</td>${x.dist.map(d=>`<td>${d}</td>`).join('')}<td><b>${x.avg.toFixed(2)}</b></td></tr>`).join('')}</table>
+    ${st.qs.filter(x=>x.q.type==='text').map(x=>`<h2>自由記述：${esc(x.q.label)}（${x.texts.length}件）</h2><ul>${x.texts.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`).join('')}`}
+  else{const E=evStats(D.ev.filter(e=>e.t>Date.now()-90*864e5));title='トレーナー評価 分析資料（直近90日）';
+   body=`<p class="m">評価 <b>${E.reduce((p,c)=>p+c.n,0)}件</b>（ゲストの名前は出していません）</p><h2>トレーナー別の平均（5段階）</h2>${svgBars(E.map(x=>[x.tr+`（${x.n}件）`,+x.avg.toFixed(2),'#7d4a9b']),5)}
+    <h2>項目ごと</h2><table><tr><th>トレーナー</th>${TEV_ITEMS.map(x=>`<th>${esc(x[1])}</th>`).join('')}<th>平均</th></tr>${E.map(x=>`<tr><td>${esc(x.tr)}</td>${x.it.map(v=>`<td>${v.toFixed(2)}</td>`).join('')}<td><b>${x.avg.toFixed(2)}</b></td></tr>`).join('')}</table>
+    <h2>ひとこと（名前なし）</h2>${E.map(x=>{const c=x.L.filter(e=>e.comment).slice(0,15);return c.length?`<h3>${esc(x.tr)}</h3><ul>${c.map(e=>`<li>${esc(e.comment)}</li>`).join('')}</ul>`:''}).join('')}`}
+  const w=window.open('','_blank');if(!w){alert('ポップアップを許可してください');return}
+  w.document.write(`<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title><style>body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;max-width:760px;margin:20px auto;padding:0 16px;color:#222}h1{margin-top:56px;color:#2f6d2a;border-bottom:4px solid #8cc63f;padding-bottom:6px}h2{color:#2f6d2a;margin-top:24px;font-size:17px}table{border-collapse:collapse;width:100%;font-size:13px}td,th{border:1px solid #cfe3a8;padding:4px 6px;text-align:center}td:first-child{text-align:left}th{background:#f2f8e6}.m{background:#f2f8e6;padding:8px 12px;border-radius:8px}li{margin:3px 0}.pb{position:fixed;right:12px;top:12px;font-size:15px;padding:8px 14px;border-radius:10px;border:0;background:#2f6d2a;color:#fff}@media print{.pb{display:none}}</style><button class="pb" onclick="print()">🖨 印刷・PDF保存</button><h1>${esc(title)}</h1><p>333GYM・キタエル・クエスト　作成：${dt(Date.now())}　作成者：運営代表責任者 前里光秀</p>${body}`);w.document.close()}
+ async function ownPanel(re){if(!isOwn()||tab!=='guild')return;const v=document.getElementById('view');if(!v)return;let d=document.getElementById('ownp');if(d&&!re)return;
+  if(!d){d=document.createElement('details');d.id='ownp';d.className='acct ownp';v.insertBefore(d,v.firstChild);d.addEventListener('toggle',()=>{if(d.open)odraw(1)})}
+  d.innerHTML=`<summary><b>👑 運営代表責任者 専用</b><small>GYM満足度アンケート・トレーナー評価・📮直通メッセージ（前里光秀だけが見られます）</small></summary><div id="ownin"></div>`;if(d.open)odraw(1)}
+ async function odraw(reload){const b=document.getElementById('ownin');if(!b)return;if(reload){b.innerHTML='<p class="muted">読みこみ中…</p>';await loadOwn()}
+  const un=D.dir.filter(x=>!x.read).length;
+  let h=`${D.err?`<div class="zsk">一部を読みこめませんでした（${esc(D.err)}）。Firebaseのルールの貼りかえが必要です。</div>`:''}<div class="kgtabs">${[['sv','📋 アンケート'],['ev','⭐ トレーナー評価'],['dir',`📮 直通メッセージ${un?` <i class="nbadge in">${un}</i>`:''}`]].map(([k,l])=>`<button type="button" data-ot="${k}" class="${otab===k?'on':''}">${l}</button>`).join('')}</div>`;
+  if(otab==='sv'){if(!curSv&&D.sv[0])curSv=D.sv[0].id;const sv=D.sv.find(x=>x.id===curSv);
+   h+=`<details class="grbulk"><summary>＋ 新しいアンケートを発行する</summary><label>タイトル<input id="svti" value="GYM満足度アンケート ${new Date().getFullYear()}年${new Date().getMonth()+1}月"></label><p class="muted" style="font-size:12px">質問を1行に1つ。★5段階で答えます。行のはじめに ✏ をつけると自由記述になります。</p><textarea id="svqs" rows="10">${SURVEY_TPL}</textarea><button type="button" class="btn-main" id="svpub">📋 ゲストに発行する</button></details>
+    ${D.sv.length?`<label>アンケート<select id="svsel">${D.sv.map(x=>`<option value="${esc(x.id)}" ${x.id===curSv?'selected':''}>${x.open?'🟢':'⚪'} ${esc(x.title)}（${D.ans.filter(a=>a.sid===x.id).length}人）</option>`).join('')}</select></label>`:'<p class="muted">まだアンケートはありません。</p>'}`;
+   if(sv){const st=svStats(sv);h+=`<div class="osv"><p>${sv.open?'🟢 回答受付中':'⚪ 締め切りずみ'}・発行 ${dt(sv.t)}・回答 <b>${st.A.length}人</b> <button type="button" class="btn-sub" id="svtog">${sv.open?'締め切る':'受付を再開'}</button> <button type="button" class="btn-main" id="svrep">📄 分析資料を作る</button></p>
+     ${st.qs.map((x,i)=>x.q.type==='text'?`<div class="oq"><b>Q${i+1}. ${esc(x.q.label)}</b><ul>${x.texts.map(t=>`<li>${esc(t)}</li>`).join('')||'<li class="muted">まだありません</li>'}</ul></div>`:`<div class="oq"><b>Q${i+1}. ${esc(x.q.label)}</b><span class="oav">${x.avg.toFixed(2)}</span>${[5,4,3,2,1].map(v=>`<div class="odr"><small>★${v}</small>${bar(x.dist[v-1],Math.max(1,...x.dist),v>=4?'#2f6d2a':v===3?'#e0a100':'#d9452b')}<small>${x.dist[v-1]}</small></div>`).join('')}</div>`).join('')}</div>`}}
+  if(otab==='ev'){const E=evStats(D.ev);h+=`<p class="muted" style="font-size:12px">項目：${TEV_ITEMS.map(x=>esc(x[1])).join('・')}（5段階）</p><button type="button" class="btn-main" id="evrep">📄 トレーナーに見せる分析資料を作る（直近90日・名前なし）</button>
+    ${E.map(x=>`<div class="oq"><b>${esc(x.tr)}</b> <small>${x.n}件</small><span class="oav">${x.avg.toFixed(2)}</span>${TEV_ITEMS.map(([k,l],i)=>`<div class="odr"><small style="width:150px">${esc(l)}</small>${bar(x.it[i],5,'#7d4a9b')}<small>${x.it[i].toFixed(1)}</small></div>`).join('')}
+     <details><summary>評価の一覧（${x.n}件）</summary><ul class="khana">${x.L.slice(0,60).map(e=>`<li><b>${esc(e.date||'')}</b>・${esc(e.name||'')}・平均 ${(TEV_ITEMS.reduce((p,[k])=>p+((e.s||{})[k]||0),0)/TEV_ITEMS.length).toFixed(1)}${e.comment?`<br>${esc(e.comment)}`:''}</li>`).join('')}</ul></details></div>`).join('')||'<p class="muted">まだ評価はありません。</p>'}`}
+  if(otab==='dir'){h+=`<ul class="odir">${D.dir.map(x=>`<li class="${x.read?'':'new'}"><small>${dt(x.t)}・${esc(x.kind||'')}・${esc(x.name||'')}さん</small>${x.read?'':`<button type="button" class="btn-sub" data-dr="${esc(x.id)}">読んだ</button>`}<div>${esc(x.text).replace(/\n/g,'<br>')}</div></li>`).join('')||'<li class="muted">まだメッセージはありません。</li>'}</ul>`}
+  b.innerHTML=h;
+  b.querySelectorAll('[data-ot]').forEach(x=>x.onclick=()=>{otab=x.dataset.ot;odraw(0)});
+  const ss=b.querySelector('#svsel');if(ss)ss.onchange=()=>{curSv=ss.value;odraw(0)};
+  const pb=b.querySelector('#svpub');if(pb)pb.onclick=async()=>{const title=b.querySelector('#svti').value.trim(),qs=parseQs(b.querySelector('#svqs').value);if(!title||!qs.length){toast('タイトルと質問を入れてください');return}if(!confirm(`「${title}」（${qs.length}問）をゲストに発行しますか？`))return;
+   try{const r=await fs().collection('surveys').add({title,qs,open:true,t:Date.now(),by:TN()});curSv=r.id;toast('📋 発行しました');odraw(1)}catch(e){alert(e.code||e.message)}};
+  const tg=b.querySelector('#svtog');if(tg)tg.onclick=async()=>{const sv=D.sv.find(x=>x.id===curSv);try{await fs().collection('surveys').doc(sv.id).update({open:!sv.open});odraw(1)}catch(e){alert(e.code||e.message)}};
+  const rp=b.querySelector('#svrep');if(rp)rp.onclick=()=>report('sv');const er=b.querySelector('#evrep');if(er)er.onclick=()=>report('ev');
+  b.querySelectorAll('[data-dr]').forEach(x=>x.onclick=async()=>{try{await fs().collection('direct').doc(x.dataset.dr).update({read:true});D.dir.find(y=>y.id===x.dataset.dr).read=true;odraw(0)}catch(e){alert(e.code||e.message)}})}
+ // 管理人のヘッダーに直通メッセージの新着
+ let dirChk=0;async function dirLine(){if(!isOwn())return;if(Date.now()-dirChk<60000)return;dirChk=Date.now();try{const q=await fs().collection('direct').where('read','==',false).get();let l=document.getElementById('dirline');const n=q.size;
+  if(!n){if(l)l.remove();return}if(!l){l=document.createElement('button');l.type='button';l.id='dirline';l.className='dirline';const h=document.querySelector('header')||document.body;h.appendChild(l)}
+  l.innerHTML=`📮 運営代表責任者への直通メッセージ <i class="nbadge in">${n}</i>`;l.onclick=()=>{otab='dir';tab='guild';render();setTimeout(()=>{const d=document.getElementById('ownp');if(d){d.open=true;d.scrollIntoView({block:'start'})}},200)}}catch(e){}}
+ const _r=render;render=function(){const r=_r.apply(this,arguments);try{guestBox();ownPanel();dirLine()}catch(e){console.warn(e)}return r};
+ setInterval(()=>{dirChk=0;try{dirLine()}catch(e){}},5*60000);
 })();
 </script>
 </body>
