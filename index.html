@@ -3204,7 +3204,7 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
    try{const r=await fs().collection('gMsgs').add(it);GM.unshift(Object.assign({id:r.id,_c:'gMsgs'},it));GD.text='';toast(`💌 ${GD.to==='all'?'トレーナー全員':GD.to+'トレーナー'}に送りました`);panelG(1)}
    catch(e){alert('送れませんでした：'+(e.code||e.message));b.disabled=false}}}
 
- function draw(re){try{badge();line();if(ADMIN)panelA(re);else panelG(re)}catch(e){console.warn(e)}}
+ function draw(re){if(re&&window.kqBusy&&kqBusy()){clearTimeout(draw._t);draw._t=setTimeout(()=>draw(re),1000);try{badge();line()}catch(e){}return}try{badge();line();if(ADMIN)panelA(re);else panelG(re)}catch(e){console.warn(e)}}
  const _r=render;render=function(){const r=_r.apply(this,arguments);draw(0);return r};
  setInterval(()=>{if(!started)start();else badge()},1000);
 })();
@@ -3592,6 +3592,22 @@ let tries=0;const w=setInterval(()=>{tries++;if(window.AUTH&&(AUTH.role==='train
  const _r=render;render=function(){const r=_r.apply(this,arguments);try{panel();setTimeout(cfgBox,300)}catch(e){console.warn(e)}return r};
  document.addEventListener('toggle',e=>{if(e.target&&e.target.id==='ownp'&&e.target.open)setTimeout(cfgBox,1500)},true);
  document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#ownin [data-ot]'))setTimeout(cfgBox,200)},true);
+})();
+</script>
+<script>
+// ===== v167：文字を入力しているあいだは、自動の画面更新を待たせる（MITSUさん 2026-11-21：入力中に画面が飛ぶ・送るボタンが1回で効かない）=====
+(function(){
+ let down=0,lastClick=0,pend=0,upAt=0;
+ const editing=()=>{const a=document.activeElement;if(!a||!a.closest||!a.closest('#view,#nav,header'))return false;return a.tagName==='TEXTAREA'||a.isContentEditable||(a.tagName==='INPUT'&&!/^(button|submit|checkbox|radio|range|file|color|date|time)$/i.test(a.type||''))};
+ window.kqBusy=()=>editing()||down||Date.now()-upAt<400;
+ document.addEventListener('pointerdown',()=>{down=1},true);
+ const up=()=>{down=0;upAt=Date.now();setTimeout(flush,450)};document.addEventListener('pointerup',up,true);document.addEventListener('pointercancel',up,true);
+ document.addEventListener('click',e=>{const t=e.target;if(t&&t.closest&&t.closest('textarea,input:not([type=button]):not([type=submit]):not([type=checkbox]):not([type=radio])'))return;lastClick=Date.now()},true);document.addEventListener('change',()=>{lastClick=Date.now()},true);document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!editing())lastClick=Date.now()},true);
+ document.addEventListener('focusout',()=>setTimeout(flush,500),true);
+ function flush(){if(pend&&!kqBusy()){pend=0;try{render()}catch(e){console.warn(e)}}}
+ const R=render;render=function(){const user=Date.now()-lastClick<1500;// ボタンを押したときの更新はすぐ。自動の更新は入力が終わるまで待つ
+  if(!user&&kqBusy()){pend=1;return}pend=0;return R.apply(this,arguments)};
+ setInterval(flush,2000);
 })();
 </script>
 </body>
