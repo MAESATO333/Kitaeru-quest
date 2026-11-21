@@ -162,6 +162,17 @@ dialog.hs::backdrop{background:rgba(30,40,10,.55)}
 .parade{display:flex;flex-wrap:wrap;justify-content:center;gap:0;margin:14px -16px 0;padding:10px 8px;background:repeating-linear-gradient(90deg,#9ccc3c 0 10px,#b8dc5a 10px 20px);border-top:3px solid var(--ink);border-bottom:3px solid var(--ink)}
 .parade .av{width:44px;height:44px;animation:hop 1.4s ease-in-out infinite}
 @media (prefers-reduced-motion:reduce){.parade .av{animation:none}}
+.mpar{position:relative;height:96px;overflow:hidden;margin:14px -16px 0;background:linear-gradient(#c9ecff 0 58%,transparent 58%),repeating-linear-gradient(90deg,#9ccc3c 0 10px,#b8dc5a 10px 20px);border-top:3px solid var(--ink);border-bottom:3px solid var(--ink)}
+.mpar.top{margin-top:0;border-top:0}
+.mpr{position:absolute;bottom:4px;left:0;display:flex;gap:0;white-space:nowrap;animation:mwalk 40s linear infinite}
+.mpw{display:inline-block;margin-right:18px;animation:mhop .55s ease-in-out infinite}.mpw .av{width:52px;height:52px;display:block}
+.msun{position:absolute;right:6px;top:2px;z-index:2;display:flex;flex-direction:column;align-items:center;animation:mfloat 3s ease-in-out infinite;background:radial-gradient(circle,#fff6b0 0,#ffe27a55 45%,transparent 70%);padding:2px 6px}
+.msun .av{width:62px;height:62px;filter:drop-shadow(0 0 8px #ffd84a)}
+.msun small{font-size:11px;font-weight:900;color:#8a5a00;background:#fff7c0;border-radius:6px;padding:0 5px;line-height:1.4}
+@keyframes mwalk{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+@keyframes mhop{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes mfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@media (prefers-reduced-motion:reduce){.mpr,.mpw,.msun{animation:none}}
 </style>
 </head>
 <body>
@@ -170,6 +181,7 @@ dialog.hs::backdrop{background:rgba(30,40,10,.55)}
   <canvas class="scene" id="sc-world" width="256" height="144" aria-label="畑の国ミドリ村と、お野菜十勇士"></canvas>
   <img class="glogo" src="img/333gym-logo.png" alt="333GYM" width="360" height="360"><div class="logo"><h1>キタエル<span>・</span>クエスト</h1></div>
 </header>
+<div class="mpar top" data-n="12" aria-hidden="true"></div>
 <section class="intro">
   <div class="launch">📱 アプリの正式スタートは <b>12月</b>！</div>
   <p>333GYMで体を鍛えると、<br>アプリの中で <em>お野菜十勇士</em> との<br>冒険が始まる！</p>
@@ -198,7 +210,7 @@ dialog.hs::backdrop{background:rgba(30,40,10,.55)}
   <h3 class="kh">✨ Lv100からは「八百万の神様」の道へ</h3>
   <p class="lead">名もなき小さな神から始まり、恵比寿、木花咲耶姫……最後は天照大神に。</p>
   <div class="kami" id="kami"></div>
-  <div class="parade" id="parade" aria-hidden="true"></div>
+  <div class="mpar" data-n="14" aria-hidden="true"></div>
 </section>
 
 <section class="sec">
@@ -659,9 +671,10 @@ $('looks').querySelectorAll('.lkr').forEach(d=>{if(d.dataset.g){[0,10,20].forEac
 const KM=[[0,'名もなき小さな神'],[3,'恵比寿'],[5,'木花咲耶姫'],[6,'天鈿女命'],[12,'建御雷神'],[15,'月読命'],[16,'素戔嗚尊'],[20,'天照大神']];
 $('kami').innerHTML=KM.map(k=>`<div class="km"><span data-st="${k[0]}"></span><b>${k[1]}</b></div>`).join('');
 $('kami').querySelectorAll('[data-st]').forEach(s=>s.replaceWith(avc('g',+s.dataset.st)));
-const PL=['m','f','dog','cat','sheep','giraffe','hamster','g'];let ph='';
-for(let i=0;i<24;i++){ph+=`<span data-i="${i}"></span>`}$('parade').innerHTML=ph;
-$('parade').querySelectorAll('span').forEach(s=>{const i=+s.dataset.i,l=PL[i%8],st=l==='g'?(i*7)%21:(i*5)%21;const c=avc(l,st,SH[i%7]);c.style.animationDelay=(i%5)*.25+'s';s.replaceWith(c)});
+const PL=['g','dog','cat','sheep','giraffe','hamster','m','f'];
+document.querySelectorAll('.mpar').forEach((d,bi)=>{const n=+d.dataset.n;const mk=()=>{const r=document.createElement('div');r.className='mpr';for(let i=0;i<n;i++){const k=bi*31+i,l=PL[(k*5)%8],st=l==='g'?[0,3,5,6,12,15,16][k%7]:(k*7)%21;const w=document.createElement('span');w.className='mpw';w.style.animationDelay=(-(i%4)*.18)+'s';w.appendChild(avc(l,st,SH[k%7]));r.appendChild(w)}return r};
+  const r=mk();r.querySelectorAll('.mpw').forEach(w=>{const c=w.cloneNode(true);c.firstChild.getContext('2d').drawImage(w.firstChild,0,0);r.appendChild(c)});d.appendChild(r);
+  const s=document.createElement('div');s.className='msun';s.appendChild(avc('g',20));s.insertAdjacentHTML('beforeend','<small>天照大神</small>');d.appendChild(s)});
 const F=[['broccoli','キャラが育って進化','最後は八百万の神様に'],['carrot','相棒が毎日ひとこと','十勇士から相棒を選ぶ'],['imo','チーム対抗戦','毎週土曜に発表＆ご褒美'],['cabbage','宿題と花マル','トレーナーからのミッション'],['daikon','アプリで予約','予約も変更もスマホで'],['piman','キタエル掲示板','頑張りにエールを送り合う'],['tomato','パワー図鑑','食べたお野菜を集めよう'],['pumpkin','キタエル写真館','相棒と記念撮影']];
 $('feat').innerHTML=F.map(f=>`<div class="ft"><span data-k="${f[0]}"></span><div><b>${f[1]}</b><small>${f[2]}</small></div></div>`).join('');
 $('feat').querySelectorAll('[data-k]').forEach(s=>s.replaceWith(cvs(s.dataset.k)));
