@@ -521,6 +521,7 @@ body.trmode header{background:linear-gradient(180deg,#ffd27a,#ffe9b0)!important}
 .gyreq{display:flex;flex-direction:column;gap:6px;background:#fffbe6;border-radius:10px;padding:8px;margin-top:4px}.gyreq b{font-size:13px;color:#8a5200}.gyreq label{display:flex;flex-direction:column;font-size:12px;font-weight:800;color:#6f7a5c}.gyreq input,.gyreq select,.gyreq textarea{font:inherit;font-size:15px;border:2px solid #d7e7b4;border-radius:10px;padding:6px;width:100%;box-sizing:border-box;background:#fff}.gydw{color:#e8452c;font-weight:800}
 .navtog{flex:none!important;margin:0 4px 0 0;background:#fff!important;color:#33501a!important;border:2px solid #33501a!important;border-radius:999px!important;padding:3px 12px!important;font-size:12px!important;font-weight:900!important;display:block!important;opacity:1!important;transform:none!important;box-shadow:0 2px 0 rgba(0,0,0,.2)}
 body.navmin nav .in{display:none!important}body.navmin nav{padding-top:4px;padding-bottom:4px}.navtw{width:100%;max-width:520px;display:flex;justify-content:flex-end;box-sizing:border-box;padding:0 4px}body.navmin .navtw{justify-content:center}body.navmin .navtog{margin:0}
+.ginapp{background:#fff1d6;border:2px solid #f5a524;border-radius:12px;padding:8px 10px;font-size:13px;font-weight:700;color:#7a4a00;line-height:1.6;margin:0 0 8px;text-align:left}.ginapp .giu{user-select:all;-webkit-user-select:all;font-family:monospace;color:#33501a}
 </style>
 
 </head>
@@ -2098,7 +2099,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.s
 <label>パスワード<input id="gpass" type="password" autocomplete="current-password" required></label>
 <button class="gb" id="glogin" type="submit">ログイン</button>
 <div class="gor"><span>または</span></div>
-<button class="ggl" id="ggoogle" type="button"><svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.2-.1-2.4-.4-3.5z"/></svg>Googleでログイン</button>
+<div class="ginapp" id="ginapp" hidden></div><button class="ggl" id="ggoogle" type="button"><svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.2-.1-2.4-.4-3.5z"/></svg>Googleでログイン</button>
 <div class="gm" id="gmsg"></div>
 <button class="gl" id="gsignup" type="button">はじめての方：このメールとパスワードで新しく登録する</button>
 <button class="gl" id="gforgot" type="button">パスワードを忘れたとき</button>
@@ -2116,7 +2117,13 @@ const $g=id=>document.getElementById(id),msg=(t,ok)=>{if(t)document.body.classLi
 const JA=e=>{const c=(e&&e.code)||'';const t={'auth/popup-closed-by-user':'Googleのログインが途中で閉じられました','auth/cancelled-popup-request':'Googleのログインが途中で閉じられました','auth/unauthorized-domain':'このアドレスはGoogleログインの許可がまだです（Firebaseの設定が必要です）','auth/account-exists-with-different-credential':'このメールはパスワードで登録済みです。メールとパスワードで入ってください','auth/invalid-credential':'メールアドレスかパスワードがちがいます','auth/wrong-password':'メールアドレスかパスワードがちがいます','auth/user-not-found':'メールアドレスかパスワードがちがいます','auth/invalid-email':'メールアドレスの形がちがいます','auth/too-many-requests':'何度も失敗したので、しばらく待ってからお試しください','auth/network-request-failed':'インターネットにつながっていません','auth/email-already-in-use':'このメールアドレスはもう登録されています','auth/weak-password':'パスワードは6文字以上にしてください','auth/operation-not-allowed':'ログイン方法がまだ有効になっていません（Firebaseの設定が必要です）','auth/configuration-not-found':'ログイン機能がまだ有効になっていません（Firebaseの設定が必要です）','permission-denied':'権限がありません（Firestoreのルール設定を確認してください）','unavailable':'データベースにつながりません（Firestoreが作られているか確認してください）','failed-precondition':'データベースの準備ができていません'}[c];return t?t+'［'+c+'］':('エラー：'+(c||e&&e.message||e))};
 window.AUTH.ja=JA;
 const V='10.12.2',load=src=>new Promise((r,j)=>{const s=document.createElement('script');s.src=src;s.onload=r;s.onerror=()=>j(new Error('load '+src));document.head.appendChild(s)});
-const boot=window.__FB_BOOT||(()=>load(`/__/firebase/${V}/firebase-app-compat.js`).then(()=>Promise.all([load(`/__/firebase/${V}/firebase-auth-compat.js`),load(`/__/firebase/${V}/firebase-firestore-compat.js`)])).then(()=>load('/__/firebase/init.js')));
+const IOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),SA=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const INAPP=/Line\/|FBAN|FBAV|Instagram|Twitter|MicroMessenger|TikTok|BytedanceWebview/i.test(navigator.userAgent);
+window.KQ_SAMEDOM=IOS&&SA;
+const boot=window.__FB_BOOT||(()=>load(`/__/firebase/${V}/firebase-app-compat.js`).then(()=>Promise.all([load(`/__/firebase/${V}/firebase-auth-compat.js`),load(`/__/firebase/${V}/firebase-firestore-compat.js`)])).then(()=>{
+  // iPhoneのホーム画面アプリでは、ログインの受け口を同じドメイン（kitaeru-quest.web.app）にする（iOSが別ドメインの保存をブロックするため）
+  if(window.KQ_SAMEDOM&&/\.web\.app$/.test(location.hostname))return fetch('/__/firebase/init.json').then(r=>r.json()).then(c=>{c.authDomain=location.hostname;firebase.initializeApp(c)});
+  return load('/__/firebase/init.js')}));
 function applyRole(){const tr=AUTH.role==='trainer';if(ADMIN&&!tr){alert('ここはトレーナー専用の管理ページです。ゲストの画面にもどります。');location.replace(window.KQ_GUEST_URL);return}document.body.classList.add('signed');document.body.classList.toggle('member',!tr);if(!tr){S.trainerMode=false;S.kensa=false;S.current='me';const me0=S.members.find(x=>x.id==='me');if(me0&&AUTH.name)me0.name=AUTH.name;if(tab==='guild')tab='hero';save()}render()}
 // 登録の申請（Googleで入ったが、まだ登録されていない人）
 let reqWatch=null;
@@ -2142,6 +2149,7 @@ boot().then(()=>{
   $g('ggoogle').onclick=()=>{const pv=new firebase.auth.GoogleAuthProvider();pv.setCustomParameters({prompt:'select_account'});$g('ggoogle').disabled=true;msg('Googleでログインしています…',1);
     const sa=matchMedia('(display-mode: standalone)').matches||navigator.standalone;(sa?auth.signInWithRedirect(pv):auth.signInWithPopup(pv).catch(err=>{if(/popup-blocked|operation-not-supported/.test(err.code||''))return auth.signInWithRedirect(pv);throw err})).catch(err=>msg(JA(err))).finally(()=>$g('ggoogle').disabled=false)};
   auth.getRedirectResult().catch(err=>msg(JA(err)));
+  {const ia=$g('ginapp');if(ia&&INAPP){ia.hidden=false;ia.innerHTML=`⚠ LINEなどのアプリの中の画面では、Googleログインができません。<br>右上の「…」や共有ボタンから<b>「Safariで開く」（Androidは「ブラウザで開く」）</b>を選んでから、ログインしてください。<br><span class="giu">${location.origin}${location.pathname}</span>`}}
   $g('gsignup').onclick=()=>{const em=$g('gemail').value.trim(),pw=$g('gpass').value;if(!em||pw.length<6){msg('メールアドレスと、6文字以上のパスワードを入れてから押してください');return}$g('gsignup').disabled=true;msg('登録しています…',1);
     auth.createUserWithEmailAndPassword(em,pw).catch(err=>msg(err.code==='auth/email-already-in-use'?'このメールはもう登録されています。上の「ログイン」で入ってください':JA(err))).finally(()=>$g('gsignup').disabled=false)};
   $g('gforgot').onclick=()=>{const em=$g('gemail').value.trim();if(!em){msg('上にメールアドレスを入れてから押してください');return}auth.sendPasswordResetEmail(em).then(()=>msg('パスワード再設定のメールを送りました',1)).catch(err=>msg(JA(err)))};
