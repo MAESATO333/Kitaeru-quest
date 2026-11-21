@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>333GYM 無料体験のご予約</title>
+<meta name="description" content="333GYM（神楽坂）の体験予約ページ。加圧トレーニング・YOGA・食事セラピー・カパラバティ・マシントレーニング。健康管理室あり・看護師常駐。">
+<meta name="theme-color" content="#bcdc3c">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;800&family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
+<style>
+:root{--ink:#33501a;--leaf:#4f7d2a;--lime:#bcdc3c;--lemon:#ffe600;--tomato:#e8452c;--carrot:#f39a1e;--beet:#9b2f5e;--banana:#f5d63d;--kiwi:#9ccc3c;--cream:#fffdf0;--muted:#6f7a55;--chalk:#2f3a1c;--display:'M PLUS Rounded 1c','Zen Maru Gothic',sans-serif}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:'Zen Maru Gothic','M PLUS Rounded 1c',sans-serif;color:var(--chalk);background:#f3f9df;background-image:radial-gradient(#e2efbd 1.5px,transparent 1.5px);background-size:18px 18px;line-height:1.6}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px 40px}
+canvas.px{image-rendering:pixelated;image-rendering:crisp-edges}
+/* ヘッダー */
+.top{background:var(--lime);border-bottom:4px solid var(--ink);padding:14px 16px 0;text-align:center;position:relative;overflow:hidden}
+.top .gym{display:inline-block;background:var(--ink);color:var(--lemon);font-family:var(--display);font-weight:800;font-size:13px;letter-spacing:.12em;padding:3px 12px;border-radius:999px}
+.top h1{margin:8px 0 2px;font-family:var(--display);font-weight:800;font-size:30px;line-height:1.25;color:var(--ink)}
+.top h1 em{font-style:normal;color:var(--tomato)}
+.top .sub{margin:0;font-weight:700;color:var(--ink);font-size:14px}
+.heroes{display:flex;justify-content:center;gap:2px;margin:10px auto 0;max-width:520px}
+.heroes canvas{width:15%;max-width:72px;height:auto;animation:hop 1.6s ease-in-out infinite}
+.heroes canvas:nth-child(2n){animation-delay:.4s}.heroes canvas:nth-child(3n){animation-delay:.8s}
+@keyframes hop{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@media (prefers-reduced-motion:reduce){.heroes canvas{animation:none}}
+.grass{height:14px;background:repeating-linear-gradient(90deg,var(--leaf) 0 8px,var(--kiwi) 8px 16px);margin:0 -16px}
+/* 特典 */
+.offer{margin:16px 0 0;background:#fff;border:3px solid var(--tomato);border-radius:18px;padding:14px;text-align:center;box-shadow:0 4px 0 var(--tomato);position:relative}
+.offer .rib{display:inline-block;background:var(--tomato);color:#fff;font-weight:900;font-size:13px;border-radius:8px;padding:2px 10px}
+.offer b.big{display:block;font-family:var(--display);font-size:26px;color:var(--tomato);margin:4px 0 2px;line-height:1.3}
+.offer p{margin:0;font-size:14px;font-weight:700}
+.offer small{color:var(--muted);font-size:12px}
+/* 安心 */
+.care{margin:14px 0 0;background:#eaf4ff;border:3px solid #3a78c2;border-radius:18px;padding:12px 14px;display:flex;gap:12px;align-items:center}
+.care .ic{flex:none;width:52px;height:52px;border-radius:50%;background:#fff;border:3px solid #3a78c2;display:grid;place-items:center;font-size:26px}
+.care b{color:#24589a;font-size:16px}.care p{margin:2px 0 0;font-size:13px}
+.progs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:14px 0 0}
+.pg{background:#fff;border:2px solid var(--ink);border-radius:14px;padding:8px 10px;display:flex;gap:8px;align-items:center;font-size:13px}
+.pg canvas{width:38px;height:auto;flex:none}.pg b{display:block;font-size:14px;color:var(--ink)}.pg small{color:var(--muted);font-size:11px;line-height:1.35;display:block}
+/* フォーム */
+.card{margin:18px 0 0;background:var(--cream);border:3px solid var(--ink);border-radius:20px;padding:16px;box-shadow:0 5px 0 var(--ink)}
+.card h2{margin:0 0 4px;font-family:var(--display);font-size:21px;color:var(--ink)}
+.card .lead{margin:0 0 10px;font-size:13px;color:var(--muted);font-weight:700}
+.reply{display:flex;gap:10px;align-items:center;background:#fff6c7;border:2px dashed var(--carrot);border-radius:14px;padding:10px 12px;margin:0 0 14px;font-size:14px;font-weight:700}
+.reply canvas{width:44px;height:auto;flex:none}
+.f{margin:0 0 14px}
+.f>label,.f>.lab{display:block;font-weight:900;font-size:15px;color:var(--ink);margin:0 0 5px}
+.req,.opt{display:inline-block;font-size:11px;font-weight:800;border-radius:6px;padding:0 6px;margin-left:6px;vertical-align:2px}
+.req{background:var(--tomato);color:#fff}.opt{background:#e6ebd6;color:var(--muted)}.rec{background:var(--carrot);color:#fff}
+.f input[type=text],.f input[type=tel],.f input[type=email],.f input[type=date],.f select,.f textarea{width:100%;font:inherit;font-size:16px;padding:11px 12px;border-radius:12px;border:2px solid #b9d48a;background:#fff;color:var(--chalk)}
+.f input:focus,.f select:focus,.f textarea:focus{outline:3px solid var(--lemon);border-color:var(--ink)}
+.f textarea{min-height:92px;resize:vertical}
+.f .hint{font-size:12px;color:var(--muted);margin:4px 0 0}
+.row{display:flex;gap:8px}.row>*{flex:1;min-width:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips label{position:relative;cursor:pointer}
+.chips input{position:absolute;opacity:0;width:1px;height:1px}
+.chips span{display:inline-block;padding:8px 12px;border-radius:999px;border:2px solid #b9d48a;background:#fff;font-weight:800;font-size:14px}
+.chips input:checked+span{background:var(--lime);border-color:var(--ink);color:var(--ink)}
+.chips input:focus-visible+span{outline:3px solid var(--lemon)}
+.err{color:#c0392b;font-weight:800;font-size:13px;margin:4px 0 0;min-height:0}
+.agree{font-size:13px;display:flex;gap:8px;align-items:flex-start;margin:0 0 14px}
+.agree input{width:20px;height:20px;flex:none;margin-top:2px;accent-color:var(--leaf)}
+.send{width:100%;font:inherit;font-family:var(--display);font-weight:800;font-size:20px;background:var(--tomato);color:#fff;border:0;border-radius:16px;padding:15px;cursor:pointer;box-shadow:0 5px 0 #b5321e}
+.send:active{transform:translateY(3px);box-shadow:0 2px 0 #b5321e}.send:disabled{opacity:.6}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.fmsg{margin:10px 0 0;font-weight:800;color:#c0392b;font-size:14px;text-align:center}
+/* 完了 */
+.done{text-align:center}
+.done canvas{width:120px;height:auto}
+.done h2{font-size:24px}
+.done .big{font-size:16px;font-weight:800;color:var(--ink)}
+.summary{text-align:left;background:#fff;border:2px solid #cfe3a8;border-radius:14px;padding:10px 12px;font-size:13px;margin:12px 0}
+.summary div{display:flex;gap:8px;border-bottom:1px dashed #e2ecc8;padding:3px 0}.summary div:last-child{border:0}.summary dt{flex:none;width:6.5em;color:var(--muted);font-weight:800}
+/* 店舗 */
+.info{margin:18px 0 0;background:#fff;border:3px solid var(--ink);border-radius:18px;padding:14px}
+.info h3{margin:0 0 8px;font-family:var(--display);color:var(--ink);font-size:18px}
+.info dl{margin:0;display:grid;grid-template-columns:5em 1fr;gap:6px 10px;font-size:14px}.info dt{font-weight:900;color:var(--leaf)}.info dd{margin:0}
+.tel{display:block;margin:12px 0 0;text-align:center;background:var(--ink);color:var(--lemon);text-decoration:none;font-family:var(--display);font-weight:800;font-size:22px;border-radius:14px;padding:10px}
+.tel small{display:block;font-size:12px;color:#fff;font-weight:700}
+.map{display:block;text-align:center;margin:8px 0 0;font-weight:800;color:var(--leaf)}
+footer{text-align:center;font-size:11px;color:var(--muted);margin:22px 0 0}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="top">
+  <span class="gym">333GYM ・ 神楽坂</span>
+  <h1>体験レッスン<br><em>無料</em>のご予約</h1>
+  <p class="sub">お野菜十勇士がお待ちしています！</p>
+  <div class="heroes" id="heroes" aria-hidden="true"></div>
+  <div class="grass"></div>
+</div>
+<main class="wrap">
+  <section class="offer">
+    <span class="rib">🎁 いまだけ特典</span>
+    <b class="big">体験レッスン 無料</b>
+    <p>癒しフェアに参加の方と、<br>11月に体験予約をした方が対象です</p>
+  </section>
+
+  <section class="care">
+    <div class="ic">🩺</div>
+    <div><b>健康管理室あり・看護師常駐</b><p>体調のこと、からだの不安も、いつでも相談できます。はじめての方も安心してどうぞ。</p></div>
+  </section>
+
+  <div class="progs" id="progs"></div>
+
+  <section class="card" id="formcard">
+    <h2>📮 体験予約フォーム</h2>
+    <p class="lead">1分で送れます。<span class="req">必須</span> だけ入れればOKです。</p>
+    <div class="reply"><canvas class="px" data-k="carrot" width="27" height="22"></canvas><span>ご予約のあと、<b>トレーナーからお電話かメールでお返事</b>します。日時はそのときに決まります。</span></div>
+    <form id="f" novalidate>
+      <div class="f"><label for="name">お名前<span class="req">必須</span></label><input type="text" id="name" maxlength="30" autocomplete="name" placeholder="例：神楽坂 はなこ"><div class="err" id="e-name"></div></div>
+      <div class="f"><label for="kana">ふりがな<span class="opt">任意</span></label><input type="text" id="kana" maxlength="40" placeholder="例：かぐらざか はなこ"></div>
+      <div class="f"><label for="tel">電話番号<span class="req">必須</span></label><input type="tel" id="tel" maxlength="20" autocomplete="tel" inputmode="tel" placeholder="例：090-1234-5678"><p class="hint">トレーナーからのお返事に使います。</p><div class="err" id="e-tel"></div></div>
+      <div class="f"><label for="email">メールアドレス<span class="opt rec">できれば</span></label><input type="email" id="email" maxlength="100" autocomplete="email" inputmode="email" placeholder="例：hanako@example.com"><p class="hint">お電話に出にくい方は、ぜひ入れてください。メールでもお返事します。</p><div class="err" id="e-email"></div></div>
+      <div class="f"><span class="lab">お返事の方法<span class="opt">任意</span></span><div class="chips" id="how">
+        <label><input type="radio" name="how" value="どちらでも" checked><span>どちらでも</span></label>
+        <label><input type="radio" name="how" value="電話"><span>📞 電話がいい</span></label>
+        <label><input type="radio" name="how" value="メール"><span>✉️ メールがいい</span></label></div></div>
+      <div class="f"><span class="lab">ご希望の日時（第1希望）<span class="req">必須</span></span>
+        <div class="row"><input type="date" id="d1" aria-label="第1希望の日"><select id="t1" aria-label="第1希望の時間"></select></div>
+        <p class="hint">営業 9:00〜22:00 ／ 火曜・水曜はお休みです。</p><div class="err" id="e-d1"></div></div>
+      <div class="f"><span class="lab">第2希望<span class="opt">任意</span></span>
+        <div class="row"><input type="date" id="d2" aria-label="第2希望の日"><select id="t2" aria-label="第2希望の時間"></select></div><div class="err" id="e-d2"></div></div>
+      <div class="f"><span class="lab">気になるプログラム<span class="opt">いくつでも</span></span><div class="chips" id="pg"></div></div>
+      <div class="f"><label for="src">どこで知りましたか？</label><select id="src">
+        <option>癒しフェア</option><option>チラシ</option><option>お知り合いの紹介</option><option>Instagram</option><option>TikTok・YouTube</option><option>ホームページ・検索</option><option>その他</option></select></div>
+      <div class="f"><label for="msg">ご質問・からだのこと<span class="opt">任意</span></label><textarea id="msg" maxlength="500" placeholder="例：腰痛があります／運動はひさしぶりです／友だちと2人で行きたい など"></textarea></div>
+      <div class="hp" aria-hidden="true"><label>この欄は空のままにしてください<input type="text" id="website" tabindex="-1" autocomplete="off"></label></div>
+      <label class="agree"><input type="checkbox" id="agree"><span>入力した内容は、333GYMからのご連絡と体験のご案内だけに使います。同意して送信します。</span></label>
+      <div class="err" id="e-agree"></div>
+      <button type="submit" class="send" id="send">体験を予約する 🥕</button>
+      <p class="fmsg" id="fmsg" role="alert"></p>
+    </form>
+  </section>
+
+  <section class="card done" id="donecard" hidden>
+    <canvas class="px" data-k="cabbage" width="27" height="22"></canvas>
+    <h2>ご予約ありがとうございます！</h2>
+    <p class="big">トレーナーから<br>お電話かメールでお返事します。</p>
+    <p>日時はそのときに決めましょう。<br>ふだんは1〜2日以内にご連絡します。<br>お急ぎの方はお電話ください。</p>
+    <dl class="summary" id="sum"></dl>
+    <button type="button" class="send" id="again" style="background:var(--leaf);box-shadow:0 5px 0 var(--ink);font-size:16px">もうひとり予約する</button>
+  </section>
+
+  <section class="info">
+    <h3>🏠 333GYM</h3>
+    <dl>
+      <dt>住所</dt><dd>東京都新宿区神楽坂6丁目8番<br>文悠ビル 4F</dd>
+      <dt>営業</dt><dd>9:00〜22:00</dd>
+      <dt>定休日</dt><dd>火曜・水曜</dd>
+    </dl>
+    <a class="tel" href="tel:0120365531"><small>お電話でのご予約・お問い合わせ</small>📞 0120-365-531</a>
+    <a class="map" href="https://www.google.com/maps/search/?api=1&query=%E6%9D%B1%E4%BA%AC%E9%83%BD%E6%96%B0%E5%AE%BF%E5%8C%BA%E7%A5%9E%E6%A5%BD%E5%9D%826-8+%E6%96%87%E6%82%A0%E3%83%93%E3%83%AB" target="_blank" rel="noopener">🗺 地図をひらく</a>
+  </section>
+  <footer>333GYM ・ キタエル・クエスト<br>運営：株式会社前里光秀おしゃれデザイン</footer>
+</main>
+<script>
+const {HEROES,drawHero}=(()=>{// お野菜七戦士：ドット絵キャラ（24x26）
+const HEROES = [
+ {key:'carrot', name:'キャロット', veg:'にんじん', role:'剣士', stat:'力', color:'#f39a1e', weapon:'sword', face:[8,7],
+  pal:{o:'#a8520e',C:'#f39a1e',h:'#ffc070',g:'#3f8a2a',G:'#7fbf2a'},
+  body:['......g..g......','.....gGggGg.....','......gGGg......','....oooooooo....','...oCCCCCCCCo...','...oChCCCCCCo...','...oChCCCCCCo...','...oCCCCCCCCo...','....oCCCCCCo....','....oCCCCCCo....','.....oCCCCo.....','.....oCCCCo.....','......oCCo......','.......oo.......'], arm:8},
+ {key:'piman', name:'ピッピマン', veg:'ピーマン', role:'盾の騎士', stat:'根性', color:'#4f8a2a', weapon:'shield', face:[8,6],
+  pal:{o:'#1f5a14',G:'#4f9a2a',h:'#9ccc3c',s:'#33501a'},
+  body:['.......ss.......','......ss........','...oooooooooo...','..oGGGGGGGGGGo..','.oGGhGGGGGGGGGo.','.oGhGGGGGGGGGGo.','.oGhGGGGGGGGGGo.','.oGGGGGGGGGGGGo.','.oGGGGGGGGGGGGo.','.oGGGGGGGGGGGGo.','..oGGGGooGGGGo..','...oooo..oooo...'], arm:7},
+ {key:'onion', name:'玉ちゃん', veg:'玉ねぎ', role:'まほう使い', stat:'技', color:'#c88a3a', weapon:'wand', face:[8,8],
+  pal:{o:'#8a5a1e',Y:'#f0c070',h:'#fff0c0',y:'#c8a050',w:'#e8dcc0'},
+  body:['.......y........','.......yy.......','......oYYo......','.....oYYYYo.....','....oYYYYYYo....','...oYYhYYYYYo...','..oYYhYYYYYYYo..','..oYhYYYYYYYYo..','..oYYYYYYYYYYo..','..oYYYYYYYYYYo..','...oYYYYYYYYo...','....oYYYYYYo....','.....oooooo.....'], arm:9},
+ {key:'cabbage', name:'キャベリン', veg:'キャベツ', role:'いやし手', stat:'根性', color:'#9ccc3c', weapon:'heart', face:[8,6],
+  pal:{o:'#4f8a2a',L:'#c8ec8a',l:'#8ac85a',h:'#effad8'},
+  body:['.....oooooo.....','...ooLLLLLLoo...','..oLLlLLLLlLLo..','.oLlLhLlLLLLlLo.','.oLLhLLLLLLLLLo.','oLLlLLLLLLLLlLLo','oLLLLLLLLLLLLLLo','oLLLLLLLLLLLLLLo','oLlLLLLLLLLLLlLo','.oLLlLLLLLLLlLo.','..oLLLLLLLLLLo..','...oooooooooo...'], arm:7},
+ {key:'daikon', name:'ダイコンタ', veg:'大根', role:'弓使い', stat:'技', color:'#e8e4d8', weapon:'bow', face:[8,7],
+  pal:{o:'#a89f8a',W:'#fbf8ee',h:'#ffffff',g:'#3f8a2a',G:'#7fbf2a',p:'#e8e0c8'},
+  body:['.....g.gg.g.....','....gGgGGgGg....','.....gGGGGg.....','......gGGg......','....oooooooo....','...oWWWWWWWWo...','...oWhWWWWWWo...','...oWhWWWWWWo...','...oWWWWWWWWo...','...oWWWWWWWWo...','....oWWWWWWo....','....oWWWWWWo....','.....oWWWWo.....','......oWWo......','.......oo.......'], arm:8},
+ {key:'tomato', name:'リコピンちゃん', veg:'トマト', role:'格闘家', stat:'力', color:'#e8452c', weapon:'glove', face:[8,7],
+  pal:{o:'#a8221c',R:'#e8452c',h:'#ff9a80',g:'#3f8a2a',G:'#7fbf2a'},
+  body:['.....g.gg.g.....','......gGGg......','....oooggooo....','..ooRRRRRRRRoo..','.oRRhhRRRRRRRRo.','.oRhRRRRRRRRRRo.','oRRhRRRRRRRRRRRo','oRRRRRRRRRRRRRRo','oRRRRRRRRRRRRRRo','.oRRRRRRRRRRRRo.','..ooRRRRRRRRoo..','....oooooooo....'], arm:7},
+ {key:'pumpkin', name:'カボッチャ', veg:'かぼちゃ', role:'重戦士', stat:'持久', color:'#2f6a3a', weapon:'hammer', face:[8,6],
+  pal:{o:'#1f3a1a',P:'#4f8a3a',p:'#33661f',h:'#9ccc6a',s:'#8a6a3a',Y:'#f39a1e'},
+  body:['.......ss.......','.......s........','...oooooooooo...','.ooPPpPPPPpPPoo.','oPPhpPPPPPpPPPPo','oPhPpPPPPPpPPPPo','oPPPpPPPPPpPPPPo','oPPPpPPPPPpPPPPo','oPPPpPPPPPpPPPPo','.oPPpPPPPPpPPPo.','..ooooooooooo...'], arm:6},
+ {key:'broccoli', name:'ブロッコ将軍', veg:'ブロッコリー', role:'槍使い', stat:'力', color:'#2f6a1e', weapon:'spear', face:[8,9],
+  pal:{g:'#1f5a14',G:'#3f8a2a',h:'#8fcf3a',d:'#2a6a1e',o:'#5f8a2a',S:'#c8e48a',s:'#a8c868'},
+  body:['...gg..gg..gg...','..gGhggGhggGhg..','.gGhGGgGhGgGhGg.','gGGGdGGGGdGGGdGg','gGhGGGdGhGGGdGGg','.gGGdGGGGGdGGGg.','..gggsgggsgggg..','....osSSsSSo....','...oSSSSSSSSo...','...oSSSSSSSSo...','...oSSSSSSSSo...','...osSSSSSSso...','....oSSSSSSo....','.....oooooo.....'], arm:9},
+ {key:'shoga', name:'ジンジャー忍者', veg:'生姜', role:'忍者', stat:'技', color:'#c8a060', weapon:'shuriken', face:[8,5],
+  pal:{t:'#a8804a',T:'#e8c27a',y:'#fff0c0',r:'#e8452c'},
+  body:['.......tt.......','..tt..tTTt..tt..','.tTTttTTTTttTTt.','..trrrrrrrrrrt..','.tTyTTTTTTTTTt..','.tTyTTTTTTTTTTt.','.tTTTTTTTTTTTTt.','..tTTTTTTTTTTt..','...ttTTTTTTtt...','.....tttttt.....'], arm:6},
+ {key:'imo', name:'イモ吉', veg:'さつまいも', role:'応援団長', stat:'根性', color:'#a8346a', weapon:'flag', face:[8,5],
+  pal:{o:'#5a1e3a',P:'#b03c74',h:'#e080b0',y:'#f5d63d'},
+  body:['......oooo......','....ooPPPPoo....','...oPPhPPPPPo...','..oPPhPPPPPPPo..','..oPPPPPPPPPPo..','..oPPPPPPPPPPo..','..oPPPPPPPPPPo..','..oPPPPPPPPPPo..','...oPPPPPPPPo...','....ooPPPPoo....','......oyyo......','.......yy.......'], arm:6},
+];
+const W=27,H=22,OX=5,OY=5;
+const LIMB='#33501a';
+function drawHero(cv,h){
+  cv.width=W;cv.height=H;const x=cv.getContext('2d');x.imageSmoothingEnabled=false;
+  const px=(a,b,c)=>{x.fillStyle=c;x.fillRect(a,b,1,1)};
+  const body=h.body;
+  // 脚
+  const by=OY+body.length; const cx=OX+8;
+  [[cx-3,cx-2],[cx+1,cx+2]].forEach(([a,b],i)=>{px(a+1,by-1,LIMB);px(a+1,by,LIMB);px(a,by+1,LIMB);px(a+1,by+1,LIMB);px(i?b+1:a-1,by+1,LIMB);});
+  // 体
+  body.forEach((r,y)=>[...r].forEach((c,xx)=>{if(c!=='.')px(OX+xx,OY+y,h.pal[c])}));
+  // 腕
+  const r=body[h.arm],L=r.search(/[^.]/),R=r.length-1-[...r].reverse().join('').search(/[^.]/),ay=OY+h.arm;
+  px(OX+L-1,ay,LIMB);px(OX+L-2,ay+1,LIMB);px(OX+L-3,ay+1,LIMB);px(OX+L-3,ay+2,LIMB);px(OX+L-2,ay+2,LIMB);
+  px(OX+R+1,ay,LIMB);px(OX+R+2,ay-1,LIMB);px(OX+R+3,ay-1,LIMB);px(OX+R+3,ay-2,LIMB);px(OX+R+2,ay-2,LIMB);
+  // 顔
+  const [fx,fy]=[OX+h.face[0],OY+h.face[1]];
+  ['#1f1a14'].forEach(k=>{px(fx-3,fy,k);px(fx-3,fy+1,k);px(fx+2,fy,k);px(fx+2,fy+1,k)});
+    px(fx-5,fy+2,'#ff8fa8');px(fx-4,fy+2,'#ff8fa8');px(fx+3,fy+2,'#ff8fa8');px(fx+4,fy+2,'#ff8fa8');
+  px(fx-1,fy+2,'#1f1a14');px(fx,fy+2,'#1f1a14');px(fx-1,fy+3,'#e8456a');px(fx,fy+3,'#e8456a');
+  // 武器（右手 = OX+R+3, ay-2 あたり）
+  const hx=OX+R+3,hy=ay-2;const W2={
+    spear:()=>{for(let i=-1;i<=7;i++)px(hx,hy-i,'#8a6a3a');px(hx,hy-8,'#dfe8f0');px(hx,hy-9,'#ffffff');px(hx-1,hy-8,'#a8b4c4');px(hx+1,hy-8,'#a8b4c4');px(hx-1,hy-7,'#e8452c');px(hx+1,hy-7,'#e8452c')},
+    shuriken:()=>{const sx=hx+1,sy=hy-3;[[0,0],[0,-1],[0,1],[-1,0],[1,0],[-1,-2],[1,2],[2,-1],[-2,1]].forEach(([a,b])=>px(sx+a,sy+b,'#7a8494'));px(sx,sy,'#dfe8f0')},
+    flag:()=>{for(let i=1;i<=9;i++)px(hx,hy-i,'#8a6a3a');for(let a=1;a<=5;a++)for(let b=-9;b<=-6;b++)px(hx+a,hy+b,(a+b)%2?'#f5d63d':'#e8452c')},
+    sword:()=>{for(let i=1;i<=6;i++)px(hx,hy-i,'#dfe8f0');px(hx,hy-7,'#ffffff');px(hx-1,hy-1,'#f5d63d');px(hx+1,hy-1,'#f5d63d');for(let i=2;i<=6;i++)px(hx+1,hy-i,'#9fb4c8')},
+    wand:()=>{for(let i=1;i<=5;i++)px(hx,hy-i,'#8a5a1e');px(hx,hy-6,'#f5d63d');px(hx-1,hy-7,'#f5d63d');px(hx,hy-7,'#fff3a0');px(hx+1,hy-7,'#f5d63d');px(hx,hy-8,'#f5d63d');px(hx-1,hy-6,'#f5d63d');px(hx+1,hy-6,'#f5d63d');px(hx+2,hy-9,'#ffec80');px(hx-2,hy-9,'#ffec80')},
+    heart:()=>{for(let i=1;i<=5;i++)px(hx,hy-i,'#ff8fb0');px(hx-2,hy-9,'#ffffff');[[-1,-9],[1,-9],[-2,-8],[-1,-8],[0,-8],[1,-8],[2,-8],[-1,-7],[0,-7],[1,-7],[0,-6]].forEach(([a,b])=>px(hx+a,hy+b,'#e8456a'))},
+    bow:()=>{[[1,-5],[2,-4],[2,-3],[2,-2],[2,-1],[2,0],[2,1],[1,2]].forEach(([a,b])=>px(hx+a,hy+b,'#8a5a1e'));for(let b=-4;b<=1;b++)px(hx,hy+b,'#e8dcc0');px(hx-1,hy-2,'#e8452c');px(hx+3,hy-2,'#e8452c');},
+    glove:()=>{[[0,0],[1,0],[0,-1],[1,-1],[-1,-1],[0,-2],[1,-2],[-1,0]].forEach(([a,b])=>px(hx+a,hy+b,'#f5d63d'));px(hx+1,hy+1,'#d9ad1c');px(hx,hy+1,'#d9ad1c');const lx=OX+L-3,ly=ay+2;[[0,0],[-1,0],[0,-1],[-1,-1],[1,-1],[0,1],[-1,1]].forEach(([a,b])=>px(lx+a,ly+b,'#f5d63d'))},
+    hammer:()=>{for(let i=1;i<=5;i++)px(hx,hy-i,'#8a6a3a');for(let a=-2;a<=2;a++)for(let b=-8;b<=-6;b++)px(hx+a,hy+b,a===-2||a===2?'#7a8494':'#a8b4c4');px(hx,hy-7,'#f39a1e')},
+    shield:()=>{const lx=OX+L-4,ly=ay-1;for(let a=-2;a<=2;a++)for(let b=0;b<=5;b++){if(b===5&&Math.abs(a)>0)continue;if(b===4&&Math.abs(a)>1)continue;px(lx+a,ly+b,(Math.abs(a)===2||b===0)?'#a8b4c4':'#dfe8f0')}px(lx,ly+2,'#4f9a2a');px(lx-1,ly+2,'#4f9a2a');px(lx+1,ly+2,'#4f9a2a');px(lx,ly+1,'#4f9a2a');px(lx,ly+3,'#4f9a2a');
+      for(let i=1;i<=6;i++)px(hx,hy-i,'#dfe8f0');px(hx-1,hy-1,'#f5d63d');px(hx+1,hy-1,'#f5d63d')},
+  };W2[h.weapon]();
+}
+
+;return {HEROES,drawHero};})();
+window.HEROES=HEROES;window.drawHero=drawHero;
+
+</script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const PROGS=[
+ {k:'加圧トレーニング',h:'tomato',d:'短い時間で、しっかり効く'},
+ {k:'YOGA',h:'cabbage',d:'呼吸とからだをととのえる'},
+ {k:'食事セラピー',h:'carrot',d:'がまんしない、食べ方の練習'},
+ {k:'カパラバティ',h:'onion',d:'お腹からの呼吸法'},
+ {k:'マシントレーニング',h:'broccoli',d:'部位ごとに、ていねいに'},
+];
+const H=k=>HEROES.find(h=>h.key===k)||HEROES[0];
+const cv=(k,cls)=>{const c=document.createElement('canvas');c.className='px'+(cls?' '+cls:'');drawHero(c,H(k));return c};
+['carrot','piman','onion','cabbage','daikon','tomato','pumpkin','broccoli','shoga','imo'].forEach(k=>{if(HEROES.some(h=>h.key===k))$('heroes').appendChild(cv(k))});
+document.querySelectorAll('canvas[data-k]').forEach(c=>drawHero(c,H(c.dataset.k)));
+$('progs').innerHTML=PROGS.map((p,i)=>`<div class="pg" data-i="${i}"><span></span><div><b>${p.k}</b><small>${p.d}</small></div></div>`).join('');
+$('progs').querySelectorAll('.pg').forEach(el=>el.firstChild.replaceWith(cv(PROGS[el.dataset.i].h)));
+$('pg').innerHTML=PROGS.map(p=>`<label><input type="checkbox" name="pg" value="${p.k}"><span>${p.k}</span></label>`).join('')+'<label><input type="checkbox" name="pg" value="まだ決めていない"><span>まだ決めていない</span></label>';
+// 時間
+const times=['','おまかせ','午前（9時〜12時）','お昼（12時〜15時）','夕方（15時〜18時）','夜（18時〜21時）'];
+for(let h=9;h<=20;h++)for(const m of ['00','30'])times.push(`${h}:${m}`);
+const opt=(first)=>times.map((t,i)=>i===0?`<option value="">${first}</option>`:`<option>${t}</option>`).join('');
+$('t1').innerHTML=opt('時間をえらぶ');$('t2').innerHTML=opt('時間（任意）');
+const pad=n=>String(n).padStart(2,'0'),ymd=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const now=new Date(),min=new Date(now.getFullYear(),now.getMonth(),now.getDate()),max=new Date(min.getTime()+120*864e5);
+['d1','d2'].forEach(id=>{$(id).min=ymd(min);$(id).max=ymd(max)});
+const WD='日月火水木金土';
+const dayErr=v=>{if(!v)return '';const [y,m,d]=v.split('-').map(Number),dt=new Date(y,m-1,d);if(isNaN(dt))return '日付をえらんでください';if(dt<min)return '今日より前の日はえらべません';if(dt>max)return '4か月以内の日をえらんでください';const w=dt.getDay();if(w===2||w===3)return `${WD[w]}曜日は定休日です。ほかの日をえらんでください`;return ''};
+['d1','d2'].forEach(id=>$(id).addEventListener('change',()=>{$('e-'+id).textContent=dayErr($(id).value)}));
+// どこで知ったか：URL の ?from= で切りかえ（例 ?from=チラシ）
+try{const f=new URLSearchParams(location.search).get('from');if(f){const s=$('src');const o=[...s.options].find(o=>o.value===f);if(o)s.value=f;else{s.add(new Option(f.slice(0,20)));s.value=f.slice(0,20)}}}catch(e){}
+
+// Firebase（ホスティングの自動設定を使う）
+const V='10.12.2';const load=src=>new Promise((r,j)=>{const s=document.createElement('script');s.src=src;s.onload=r;s.onerror=()=>j(new Error('load '+src));document.head.appendChild(s)});
+let fbP=null;const fb=()=>fbP||(fbP=(window.__FB_BOOT?window.__FB_BOOT():load(`/__/firebase/${V}/firebase-app-compat.js`).then(()=>load(`/__/firebase/${V}/firebase-firestore-compat.js`)).then(()=>load('/__/firebase/init.js'))).then(()=>firebase.firestore()));
+fb().catch(e=>console.warn(e));
+
+const err=(id,t)=>{const e=$('e-'+id);if(e)e.textContent=t||'';return !!t};
+const telOk=v=>{const d=v.replace(/[^0-9]/g,'');return d.length>=10&&d.length<=13};
+const z2h=s=>s.replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/[－ー―‐]/g,'-');
+$('tel').addEventListener('blur',()=>{$('tel').value=z2h($('tel').value.trim())});
+$('f').addEventListener('submit',async ev=>{ev.preventDefault();$('fmsg').textContent='';
+  const v={name:$('name').value.trim(),kana:$('kana').value.trim(),tel:z2h($('tel').value.trim()),email:$('email').value.trim(),
+    how:(document.querySelector('input[name=how]:checked')||{}).value||'どちらでも',
+    d1:$('d1').value,t1:$('t1').value,d2:$('d2').value,t2:$('t2').value,
+    progs:[...document.querySelectorAll('input[name=pg]:checked')].map(x=>x.value),src:$('src').value,msg:$('msg').value.trim()};
+  let bad=false;
+  bad=err('name',v.name?'':'お名前を入れてください')||bad;
+  bad=err('tel',!v.tel?'電話番号を入れてください':telOk(v.tel)?'':'電話番号をもう一度たしかめてください')||bad;
+  bad=err('email',v.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email)?'メールアドレスをもう一度たしかめてください':(v.how==='メール'&&!v.email?'メールでのお返事をご希望なら、メールアドレスを入れてください':''))||bad;
+  bad=err('d1',!v.d1?'第1希望の日をえらんでください':dayErr(v.d1)||(!v.t1?'時間もえらんでください':''))||bad;
+  bad=err('d2',dayErr(v.d2))||bad;
+  bad=err('agree',$('agree').checked?'':'チェックを入れてください')||bad;
+  if(bad){const f=document.querySelector('.err:not(:empty)');if(f)f.parentElement.scrollIntoView({behavior:'smooth',block:'center'});$('fmsg').textContent='赤い文字のところを、もう一度たしかめてください';return}
+  if($('website').value){showDone(v);return}// ロボット対策
+  const b=$('send');b.disabled=true;b.textContent='送っています…';
+  try{const db=await fb();
+    const doc={name:v.name,kana:v.kana,tel:v.tel,email:v.email,how:v.how,d1:v.d1,t1:v.t1,d2:v.d2,t2:v.t2,progs:v.progs,src:v.src,msg:v.msg,st:'new',at:firebase.firestore.FieldValue.serverTimestamp()};
+    await Promise.race([db.collection('taiken').add(doc),new Promise((_,j)=>setTimeout(()=>j(new Error('timeout')),15000))]);
+    showDone(v)}
+  catch(e){console.warn(e);$('fmsg').innerHTML='ごめんなさい、送れませんでした。電波のよい所でもう一度おためしいただくか、<a href="tel:0120365531">0120-365-531</a> にお電話ください。'}
+  b.disabled=false;b.textContent='体験を予約する 🥕'});
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fd=(d,t)=>{if(!d)return '';const [y,m,dd]=d.split('-').map(Number);return `${m}月${dd}日（${WD[new Date(y,m-1,dd).getDay()]}） ${t||''}`};
+function showDone(v){const rows=[['お名前',v.name+' さま'],['電話',v.tel],['メール',v.email||'（なし）'],['お返事',v.how],['第1希望',fd(v.d1,v.t1)],['第2希望',fd(v.d2,v.t2)||'（なし）'],['プログラム',v.progs.join('・')||'（未選択）']];
+  $('sum').innerHTML=rows.map(r=>`<div><dt>${r[0]}</dt><dd>${esc(r[1])}</dd></div>`).join('');
+  $('formcard').hidden=true;$('donecard').hidden=false;$('donecard').scrollIntoView({behavior:'smooth',block:'start'})}
+$('again').onclick=()=>{$('f').reset();$('agree').checked=false;$('donecard').hidden=true;$('formcard').hidden=false;$('formcard').scrollIntoView({behavior:'smooth',block:'start'})};
+})();
+</script>
+</body>
+</html>

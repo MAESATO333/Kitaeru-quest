@@ -25,9 +25,18 @@
         "source": "/admin/",
         "destination": "/admin",
         "type": 301
+      },
+      {
+        "source": "/taiken/",
+        "destination": "/taiken",
+        "type": 301
       }
     ],
     "rewrites": [
+      {
+        "source": "/taiken",
+        "destination": "/taiken.html"
+      },
       {
         "source": "/admin",
         "destination": "/index.html"
